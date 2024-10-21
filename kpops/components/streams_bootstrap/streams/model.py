@@ -5,6 +5,12 @@ from typing import Any
 import pydantic
 from pydantic import BaseModel, ConfigDict, Field
 
+from kpops.components.common.kubernetes_model import (
+    ImagePullPolicy,
+    ResourceLimits,
+    ResourceRequests,
+    Resources,
+)
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
 from kpops.components.streams_bootstrap.model import (
     KafkaConfig,
@@ -224,6 +230,58 @@ class PersistenceConfig(BaseModel):
     )
 
 
+class PrometheusConfig(CamelCaseConfigModel, DescConfigModel):
+    """Prometheus JMX exporter configuration.
+
+    :param jmx: The prometheus JMX exporter configuration.
+
+    """
+
+    class PrometheusJMXConfig(CamelCaseConfigModel, DescConfigModel):
+        """Prometheus JMX exporter configuration.
+
+        :param enabled: Whether to install Prometheus JMX Exporter as a sidecar container and expose JMX metrics to Prometheus.
+        :param image: Docker Image for Prometheus JMX Exporter container.
+        :param image_tag: Docker Image Tag for Prometheus JMX Exporter container.
+        :param image_pull_policy: Docker Image Pull Policy for Prometheus JMX Exporter container.
+        :param port: JMX Exporter Port which exposes metrics in Prometheus format for scraping.
+        :param resources: JMX Exporter resources configuration.
+        """
+
+        enabled: bool = Field(
+            default=True,
+            description=describe_attr("enabled", __doc__),
+        )
+        image: str = Field(
+            default="solsson/kafka-prometheus-jmx-exporter@sha256",
+            description=describe_attr("image", __doc__),
+        )
+        image_tag: str = Field(
+            default="6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e78946143",
+            description=describe_attr("image_tag", __doc__),
+        )
+        image_pull_policy: ImagePullPolicy = Field(
+            default=ImagePullPolicy.IF_NOT_PRESENT,
+            description=describe_attr("image_pull_policy", __doc__),
+        )
+        port: int = Field(
+            default=5556,
+            description=describe_attr("port", __doc__),
+        )
+        resources: Resources = Field(
+            default=Resources(
+                requests=ResourceRequests(cpu="100m", memory="500Mi"),
+                limits=ResourceLimits(cpu="300m", memory="2G"),
+            ),
+            description=describe_attr("resources", __doc__),
+        )
+
+    jmx: PrometheusJMXConfig = Field(
+        default_factory=PrometheusJMXConfig,
+        description=describe_attr("jmx", __doc__),
+    )
+
+
 class StreamsAppValues(StreamsBootstrapValues):
     """streams-bootstrap app configurations.
 
@@ -248,4 +306,9 @@ class StreamsAppValues(StreamsBootstrapValues):
         default=PersistenceConfig(),
         description=describe_attr("persistence", __doc__),
     )
+    prometheus: PrometheusConfig = Field(
+        default_factory=PrometheusConfig,
+        description=describe_attr("prometheus", __doc__),
+    )
+
     model_config = ConfigDict(extra="allow")

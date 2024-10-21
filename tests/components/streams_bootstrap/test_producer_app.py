@@ -46,6 +46,7 @@ class TestProducerApp:
                 "version": "3.2.1",
                 "namespace": "test-namespace",
                 "values": {
+                    "image": "ProducerApp",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "clean_schemas": True,
@@ -90,6 +91,7 @@ class TestProducerApp:
                 "namespace": "test-namespace",
                 "values": {
                     "namespace": "test-namespace",
+                    "image": "ProducerApp",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "to": {
@@ -145,6 +147,7 @@ class TestProducerApp:
                 "test-namespace",
                 {
                     "nameOverride": PRODUCER_APP_HELM_NAME_OVERRIDE,
+                    "image": "ProducerApp",
                     "kafka": {
                         "bootstrapServers": "fake-broker:9092",
                         "outputTopic": "producer-app-output-topic",
@@ -232,6 +235,7 @@ class TestProducerApp:
                     "test-namespace",
                     {
                         "nameOverride": PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE,
+                        "image": "ProducerApp",
                         "kafka": {
                             "bootstrapServers": "fake-broker:9092",
                             "outputTopic": "producer-app-output-topic",
@@ -306,6 +310,7 @@ class TestProducerApp:
                     "test-namespace",
                     {
                         "nameOverride": PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE,
+                        "image": "ProducerApp",
                         "kafka": {
                             "bootstrapServers": "fake-broker:9092",
                             "outputTopic": "producer-app-output-topic",
@@ -331,6 +336,7 @@ class TestProducerApp:
             **{
                 "namespace": "test-namespace",
                 "values": {
+                    "image": "producer-app",
                     "namespace": "test-namespace",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
@@ -383,6 +389,7 @@ class TestProducerApp:
             **{
                 "namespace": "test-namespace",
                 "values": {
+                    "image": "registry/producer-app",
                     "imageTag": "2.2.2",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
@@ -433,6 +440,7 @@ class TestProducerApp:
             **{
                 "namespace": "test-namespace",
                 "values": {
+                    "image": "registry/producer-app",
                     "imageTag": "2.2.2",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },

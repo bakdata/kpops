@@ -209,6 +209,16 @@
             "title": "HelmRepoConfig",
             "type": "object"
         },
+        "ImagePullPolicy": {
+            "description": "Represents the different Kubernetes image pull policies.",
+            "enum": [
+                "Always",
+                "IfNotPresent",
+                "Never"
+            ],
+            "title": "ImagePullPolicy",
+            "type": "string"
+        },
         "InputTopicTypes": {
             "description": "Input topic types.\n\n- INPUT: input topic\n- PATTERN: extra-topic-pattern or input-topic-pattern",
             "enum": [
@@ -217,6 +227,27 @@
             ],
             "title": "InputTopicTypes",
             "type": "string"
+        },
+        "JavaOptions": {
+            "description": "JVM configuration options.",
+            "properties": {
+                "maxRAMPercentage": {
+                    "default": 75,
+                    "description": "Sets the maximum amount of memory that the JVM may use for the Java heap before applying ergonomics heuristics as a percentage of the maximum amount determined as described in the -XX:MaxRAM option",
+                    "title": "Maxrampercentage",
+                    "type": "integer"
+                },
+                "others": {
+                    "description": "List of Java VM options passed to the streams app.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Others",
+                    "type": "array"
+                }
+            },
+            "title": "JavaOptions",
+            "type": "object"
         },
         "KafkaApp": {
             "additionalProperties": true,
@@ -1131,12 +1162,34 @@
                     "title": "Files",
                     "type": "object"
                 },
+                "image": {
+                    "description": "Docker image of the Kafka producer app.",
+                    "title": "Image",
+                    "type": "string"
+                },
+                "imagePullPolicy": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/ImagePullPolicy"
+                        }
+                    ],
+                    "default": "Always",
+                    "description": "Docker image pull policy."
+                },
                 "imageTag": {
                     "default": "latest",
                     "description": "Docker image tag of the streams-bootstrap app.",
                     "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
                     "title": "Imagetag",
                     "type": "string"
+                },
+                "javaOptions": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/JavaOptions"
+                        }
+                    ],
+                    "description": ""
                 },
                 "kafka": {
                     "allOf": [
@@ -1167,6 +1220,24 @@
                     },
                     "title": "Ports",
                     "type": "array"
+                },
+                "resources": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/Resources"
+                        }
+                    ],
+                    "default": {
+                        "limits": {
+                            "cpu": "300m",
+                            "memory": "2G"
+                        },
+                        "requests": {
+                            "cpu": "100m",
+                            "memory": "500Mi"
+                        }
+                    },
+                    "description": "See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
                 },
                 "secretFilesRefs": {
                     "description": "Mount existing secrets as volumes",
@@ -1202,6 +1273,7 @@
                 }
             },
             "required": [
+                "image",
                 "kafka"
             ],
             "title": "ProducerAppValues",
@@ -1307,6 +1379,79 @@
             "title": "ProducerStreamsConfig",
             "type": "object"
         },
+        "PrometheusConfig": {
+            "description": "Prometheus JMX exporter configuration.",
+            "properties": {
+                "jmx": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/PrometheusJMXConfig"
+                        }
+                    ],
+                    "description": "The prometheus JMX exporter configuration."
+                }
+            },
+            "title": "PrometheusConfig",
+            "type": "object"
+        },
+        "PrometheusJMXConfig": {
+            "description": "Prometheus JMX exporter configuration.",
+            "properties": {
+                "enabled": {
+                    "default": true,
+                    "description": "Whether to install Prometheus JMX Exporter as a sidecar container and expose JMX metrics to Prometheus.",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
+                "image": {
+                    "default": "solsson/kafka-prometheus-jmx-exporter@sha256",
+                    "description": "Docker Image for Prometheus JMX Exporter container.",
+                    "title": "Image",
+                    "type": "string"
+                },
+                "imagePullPolicy": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/ImagePullPolicy"
+                        }
+                    ],
+                    "default": "IfNotPresent",
+                    "description": "Docker Image Pull Policy for Prometheus JMX Exporter container."
+                },
+                "imageTag": {
+                    "default": "6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e78946143",
+                    "description": "Docker Image Tag for Prometheus JMX Exporter container.",
+                    "title": "Imagetag",
+                    "type": "string"
+                },
+                "port": {
+                    "default": 5556,
+                    "description": "JMX Exporter Port which exposes metrics in Prometheus format for scraping.",
+                    "title": "Port",
+                    "type": "integer"
+                },
+                "resources": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/Resources"
+                        }
+                    ],
+                    "default": {
+                        "limits": {
+                            "cpu": "300m",
+                            "memory": "2G"
+                        },
+                        "requests": {
+                            "cpu": "100m",
+                            "memory": "500Mi"
+                        }
+                    },
+                    "description": "JMX Exporter resources configuration."
+                }
+            },
+            "title": "PrometheusJMXConfig",
+            "type": "object"
+        },
         "ProtocolSchema": {
             "description": "Represents the different Kubernetes protocols.\n\nhttps://kubernetes.io/docs/reference/networking/service-protocols/",
             "enum": [
@@ -1382,6 +1527,62 @@
                 }
             },
             "title": "RepoAuthFlags",
+            "type": "object"
+        },
+        "ResourceLimits": {
+            "properties": {
+                "cpu": {
+                    "pattern": "^\\d+m$",
+                    "title": "Cpu",
+                    "type": "string"
+                },
+                "memory": {
+                    "pattern": "^\\d+[KMGi]+$",
+                    "title": "Memory",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "cpu",
+                "memory"
+            ],
+            "title": "ResourceLimits",
+            "type": "object"
+        },
+        "ResourceRequests": {
+            "properties": {
+                "cpu": {
+                    "pattern": "^\\d+m$",
+                    "title": "Cpu",
+                    "type": "string"
+                },
+                "memory": {
+                    "pattern": "^\\d+[KMGi]+$",
+                    "title": "Memory",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "cpu",
+                "memory"
+            ],
+            "title": "ResourceRequests",
+            "type": "object"
+        },
+        "Resources": {
+            "properties": {
+                "limits": {
+                    "$ref": "#/$defs/ResourceLimits"
+                },
+                "requests": {
+                    "$ref": "#/$defs/ResourceRequests"
+                }
+            },
+            "required": [
+                "requests",
+                "limits"
+            ],
+            "title": "Resources",
             "type": "object"
         },
         "ServiceConfig": {
@@ -1731,12 +1932,34 @@
                     "title": "Files",
                     "type": "object"
                 },
+                "image": {
+                    "description": "Docker image of the Kafka producer app.",
+                    "title": "Image",
+                    "type": "string"
+                },
+                "imagePullPolicy": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/ImagePullPolicy"
+                        }
+                    ],
+                    "default": "Always",
+                    "description": "Docker image pull policy."
+                },
                 "imageTag": {
                     "default": "latest",
                     "description": "Docker image tag of the streams-bootstrap app.",
                     "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
                     "title": "Imagetag",
                     "type": "string"
+                },
+                "javaOptions": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/JavaOptions"
+                        }
+                    ],
+                    "description": ""
                 },
                 "kafka": {
                     "allOf": [
@@ -1781,6 +2004,32 @@
                     "title": "Ports",
                     "type": "array"
                 },
+                "prometheus": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/PrometheusConfig"
+                        }
+                    ],
+                    "description": ""
+                },
+                "resources": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/Resources"
+                        }
+                    ],
+                    "default": {
+                        "limits": {
+                            "cpu": "300m",
+                            "memory": "2G"
+                        },
+                        "requests": {
+                            "cpu": "100m",
+                            "memory": "500Mi"
+                        }
+                    },
+                    "description": "See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
+                },
                 "secretFilesRefs": {
                     "description": "Mount existing secrets as volumes",
                     "items": {
@@ -1821,6 +2070,7 @@
                 }
             },
             "required": [
+                "image",
                 "kafka"
             ],
             "title": "StreamsAppValues",
@@ -2079,12 +2329,34 @@
                     "title": "Files",
                     "type": "object"
                 },
+                "image": {
+                    "description": "Docker image of the Kafka producer app.",
+                    "title": "Image",
+                    "type": "string"
+                },
+                "imagePullPolicy": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/ImagePullPolicy"
+                        }
+                    ],
+                    "default": "Always",
+                    "description": "Docker image pull policy."
+                },
                 "imageTag": {
                     "default": "latest",
                     "description": "Docker image tag of the streams-bootstrap app.",
                     "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
                     "title": "Imagetag",
                     "type": "string"
+                },
+                "javaOptions": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/JavaOptions"
+                        }
+                    ],
+                    "description": ""
                 },
                 "kafka": {
                     "allOf": [
@@ -2115,6 +2387,24 @@
                     },
                     "title": "Ports",
                     "type": "array"
+                },
+                "resources": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/Resources"
+                        }
+                    ],
+                    "default": {
+                        "limits": {
+                            "cpu": "300m",
+                            "memory": "2G"
+                        },
+                        "requests": {
+                            "cpu": "100m",
+                            "memory": "500Mi"
+                        }
+                    },
+                    "description": "See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
                 },
                 "secretFilesRefs": {
                     "description": "Mount existing secrets as volumes",
@@ -2150,6 +2440,7 @@
                 }
             },
             "required": [
+                "image",
                 "kafka"
             ],
             "title": "StreamsBootstrapValues",

@@ -1,5 +1,7 @@
 import enum
 
+from pydantic import BaseModel, Field
+
 
 class ServiceType(enum.Enum):
     """Represents the different Kubernetes service types.
@@ -22,3 +24,26 @@ class ProtocolSchema(enum.Enum):
     TCP = "TCP"
     UDP = "UDP"
     SCTP = "SCTP"
+
+
+class ImagePullPolicy(enum.Enum):
+    """Represents the different Kubernetes image pull policies."""
+
+    ALWAYS = "Always"
+    IF_NOT_PRESENT = "IfNotPresent"
+    NEVER = "Never"
+
+
+class ResourceLimits(BaseModel):
+    cpu: str = Field(pattern=r"^\d+m$")
+    memory: str = Field(pattern=r"^\d+[KMGi]+$")
+
+
+class ResourceRequests(BaseModel):
+    cpu: str = Field(pattern=r"^\d+m$")
+    memory: str = Field(pattern=r"^\d+[KMGi]+$")
+
+
+class Resources(BaseModel):
+    requests: ResourceRequests
+    limits: ResourceLimits

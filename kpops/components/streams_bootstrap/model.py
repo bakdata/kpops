@@ -6,7 +6,14 @@ import pydantic
 from pydantic import AliasChoices, ConfigDict, Field
 
 from kpops.components.base_components.helm_app import HelmAppValues
-from kpops.components.common.kubernetes_model import ProtocolSchema, ServiceType
+from kpops.components.common.kubernetes_model import (
+    ImagePullPolicy,
+    ProtocolSchema,
+    ResourceLimits,
+    ResourceRequests,
+    Resources,
+    ServiceType,
+)
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
@@ -68,11 +75,32 @@ class ServiceConfig(CamelCaseConfigModel, DescConfigModel):
     )
 
 
+class JavaOptions(CamelCaseConfigModel, DescConfigModel):
+    """JVM configuration options.
+
+    :param max_RAM_percentage: Sets the maximum amount of memory that the JVM may use for the Java heap before applying ergonomics heuristics as a percentage of the maximum amount determined as described in the -XX:MaxRAM option
+    :param others: List of Java VM options passed to the streams app.
+
+    """
+
+    max_RAM_percentage: int = Field(
+        default=75,
+        description=describe_attr("max_RAM_percentage", __doc__),
+    )
+    others: list[str] = Field(
+        default_factory=list,
+        description=describe_attr("others", __doc__),
+    )
+
+
 class StreamsBootstrapValues(HelmAppValues):
     """Base value class for all streams bootstrap related components.
 
+    :param image: Docker image of the Kafka producer app.
     :param image_tag: Docker image tag of the streams-bootstrap app.
+    :param image_pull_policy: Docker image pull policy.
     :param kafka: Kafka configuration for the streams-bootstrap app.
+    :param resources: See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
     :param configuration_env_prefix: Prefix for environment variables to use that should be parsed as command line arguments.
     :param command_line: Map of command line arguments passed to the streams app.
     :param env: Custom environment variables.
@@ -82,14 +110,31 @@ class StreamsBootstrapValues(HelmAppValues):
     :param files: Map of files to mount for the app. File will be mounted as $value.mountPath/$key. $value.content denotes file content (recommended to be used with --set-file).
     """
 
+    image: str = Field(
+        description=describe_attr("image", __doc__),
+    )
+
     image_tag: str = Field(
         default="latest",
         pattern=IMAGE_TAG_PATTERN,
         description=describe_attr("image_tag", __doc__),
     )
 
+    image_pull_policy: ImagePullPolicy = Field(
+        default=ImagePullPolicy.ALWAYS,
+        description=describe_attr("image_pull_policy", __doc__),
+    )
+
     kafka: KafkaConfig = Field(
         description=describe_attr("kafka", __doc__),
+    )
+
+    resources: Resources = Field(
+        default=Resources(
+            requests=ResourceRequests(cpu="100m", memory="500Mi"),
+            limits=ResourceLimits(cpu="300m", memory="2G"),
+        ),
+        description=describe_attr("resources", __doc__),
     )
 
     ports: list[PortConfig] = Field(
@@ -135,6 +180,11 @@ class StreamsBootstrapValues(HelmAppValues):
     files: dict[str, str] = Field(
         default_factory=dict,
         description=describe_attr("files", __doc__),
+    )
+
+    java_options: JavaOptions = Field(
+        default_factory=JavaOptions,
+        description=describe_attr("java_options", __doc__),
     )
 
 
