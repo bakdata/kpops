@@ -492,6 +492,56 @@
             "title": "PersistenceConfig",
             "type": "object"
         },
+        "PortConfig": {
+            "description": "Base class for the port configuration of the Kafka Streams application.",
+            "properties": {
+                "containerPort": {
+                    "description": "",
+                    "title": "Containerport",
+                    "type": "integer"
+                },
+                "name": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Services can reference port by name (optional).",
+                    "title": "Name"
+                },
+                "schema": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/ProtocolSchema"
+                        }
+                    ],
+                    "default": "TCP",
+                    "description": "Protocol for port. Must be UDP, TCP, or SCTP."
+                },
+                "servicePort": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Number of the port of the service (optional)",
+                    "title": "Serviceport"
+                }
+            },
+            "required": [
+                "containerPort"
+            ],
+            "title": "PortConfig",
+            "type": "object"
+        },
         "ProducerApp": {
             "additionalProperties": true,
             "description": "Producer component.\nThis producer holds configuration to use as values for the streams-bootstrap producer Helm chart. Note that the producer does not support error topics.",
@@ -714,6 +764,33 @@
             "additionalProperties": true,
             "description": "Settings specific to producers.",
             "properties": {
+                "commandLine": {
+                    "description": "Map of command line arguments passed to the streams app.",
+                    "title": "Commandline",
+                    "type": "object"
+                },
+                "configurationEnvPrefix": {
+                    "default": "APP",
+                    "description": "Prefix for environment variables to use that should be parsed as command line arguments.",
+                    "title": "Configurationenvprefix",
+                    "type": "string"
+                },
+                "env": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Custom environment variables.",
+                    "title": "Env",
+                    "type": "object"
+                },
+                "files": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Map of files to mount for the app. File will be mounted as $value.mountPath/$key. $value.content denotes file content (recommended to be used with --set-file).",
+                    "title": "Files",
+                    "type": "object"
+                },
                 "imageTag": {
                     "default": "latest",
                     "description": "Docker image tag of the streams-bootstrap app.",
@@ -742,6 +819,46 @@
                     "default": null,
                     "description": "Helm chart name override, assigned automatically",
                     "title": "Nameoverride"
+                },
+                "ports": {
+                    "description": "",
+                    "items": {
+                        "$ref": "#/$defs/PortConfig"
+                    },
+                    "title": "Ports",
+                    "type": "array"
+                },
+                "secretFilesRefs": {
+                    "description": "Mount existing secrets as volumes",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Secretfilesrefs",
+                    "type": "array"
+                },
+                "secretRefs": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Inject existing secrets as environment variables. Map key is used as environment variable name. Value consists of secret name and key.",
+                    "title": "Secretrefs",
+                    "type": "object"
+                },
+                "secrets": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Custom secret environment variables. Prefix with configurationEnvPrefix in order to pass secrets to command line or prefix with KAFKA_ to pass secrets to Kafka Streams configuration.",
+                    "title": "Secrets",
+                    "type": "object"
+                },
+                "service": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/ServiceConfig"
+                        }
+                    ],
+                    "description": ""
                 }
             },
             "required": [
@@ -850,6 +967,16 @@
             "title": "ProducerStreamsConfig",
             "type": "object"
         },
+        "ProtocolSchema": {
+            "description": "Represents the different Kubernetes protocols.\n\nhttps://kubernetes.io/docs/reference/networking/service-protocols/",
+            "enum": [
+                "TCP",
+                "UDP",
+                "SCTP"
+            ],
+            "title": "ProtocolSchema",
+            "type": "string"
+        },
         "RepoAuthFlags": {
             "description": "Authorisation-related flags for `helm repo`.",
             "properties": {
@@ -916,6 +1043,47 @@
             },
             "title": "RepoAuthFlags",
             "type": "object"
+        },
+        "ServiceConfig": {
+            "description": "Base model for configuring a service for the Kafka Streams application.",
+            "properties": {
+                "enabled": {
+                    "default": false,
+                    "description": "Whether to create a service.",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
+                "labels": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Additional service labels.",
+                    "title": "Labels",
+                    "type": "object"
+                },
+                "type": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/ServiceType"
+                        }
+                    ],
+                    "default": "ClusterIP",
+                    "description": "Service type."
+                }
+            },
+            "title": "ServiceConfig",
+            "type": "object"
+        },
+        "ServiceType": {
+            "description": "Represents the different Kubernetes service types.\n\nhttps://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types",
+            "enum": [
+                "ClusterIP",
+                "NodePort",
+                "LoadBalancer",
+                "ExternalName"
+            ],
+            "title": "ServiceType",
+            "type": "string"
         },
         "StreamsApp": {
             "additionalProperties": true,
@@ -1196,6 +1364,33 @@
                     "default": null,
                     "description": "Kubernetes event-driven autoscaling config"
                 },
+                "commandLine": {
+                    "description": "Map of command line arguments passed to the streams app.",
+                    "title": "Commandline",
+                    "type": "object"
+                },
+                "configurationEnvPrefix": {
+                    "default": "APP",
+                    "description": "Prefix for environment variables to use that should be parsed as command line arguments.",
+                    "title": "Configurationenvprefix",
+                    "type": "string"
+                },
+                "env": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Custom environment variables.",
+                    "title": "Env",
+                    "type": "object"
+                },
+                "files": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Map of files to mount for the app. File will be mounted as $value.mountPath/$key. $value.content denotes file content (recommended to be used with --set-file).",
+                    "title": "Files",
+                    "type": "object"
+                },
                 "imageTag": {
                     "default": "latest",
                     "description": "Docker image tag of the streams-bootstrap app.",
@@ -1236,6 +1431,46 @@
                         "size": null,
                         "storage_class": null
                     },
+                    "description": ""
+                },
+                "ports": {
+                    "description": "",
+                    "items": {
+                        "$ref": "#/$defs/PortConfig"
+                    },
+                    "title": "Ports",
+                    "type": "array"
+                },
+                "secretFilesRefs": {
+                    "description": "Mount existing secrets as volumes",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Secretfilesrefs",
+                    "type": "array"
+                },
+                "secretRefs": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Inject existing secrets as environment variables. Map key is used as environment variable name. Value consists of secret name and key.",
+                    "title": "Secretrefs",
+                    "type": "object"
+                },
+                "secrets": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Custom secret environment variables. Prefix with configurationEnvPrefix in order to pass secrets to command line or prefix with KAFKA_ to pass secrets to Kafka Streams configuration.",
+                    "title": "Secrets",
+                    "type": "object"
+                },
+                "service": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/ServiceConfig"
+                        }
+                    ],
                     "description": ""
                 },
                 "statefulSet": {

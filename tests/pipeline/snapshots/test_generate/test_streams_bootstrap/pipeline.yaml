@@ -12,6 +12,9 @@
     values:
       commandLine:
         FAKE_ARG: fake-arg-value
+      configurationEnvPrefix: APP
+      env: {}
+      files: {}
       image: my-registry/my-producer-image
       imageTag: 1.0.0
       kafka:
@@ -20,6 +23,14 @@
           my-producer-app-output-topic-label: my-labeled-producer-app-topic-output
         outputTopic: my-producer-app-output-topic
         schemaRegistryUrl: http://localhost:8081/
+      ports: []
+      secretFilesRefs: []
+      secretRefs: {}
+      secrets: {}
+      service:
+        enabled: false
+        labels: {}
+        type: ClusterIP
     version: 3.0.1
   name: my-producer-app
   namespace: example-namespace
@@ -42,6 +53,9 @@
   values:
     commandLine:
       FAKE_ARG: fake-arg-value
+    configurationEnvPrefix: APP
+    env: {}
+    files: {}
     image: my-registry/my-producer-image
     imageTag: 1.0.0
     kafka:
@@ -50,6 +64,14 @@
         my-producer-app-output-topic-label: my-labeled-producer-app-topic-output
       outputTopic: my-producer-app-output-topic
       schemaRegistryUrl: http://localhost:8081/
+    ports: []
+    secretFilesRefs: []
+    secretRefs: {}
+    secrets: {}
+    service:
+      enabled: false
+      labels: {}
+      type: ClusterIP
   version: 3.0.1
 - _cleaner:
     name: my-streams-app
@@ -65,6 +87,9 @@
     values:
       commandLine:
         CONVERT_XML: true
+      configurationEnvPrefix: APP
+      env: {}
+      files: {}
       image: my-registry/my-streams-app-image
       imageTag: 1.0.0
       kafka:
@@ -87,6 +112,14 @@
         schemaRegistryUrl: http://localhost:8081/
       persistence:
         enabled: false
+      ports: []
+      secretFilesRefs: []
+      secretRefs: {}
+      secrets: {}
+      service:
+        enabled: false
+        labels: {}
+        type: ClusterIP
       statefulSet: false
     version: 3.0.1
   from:
@@ -131,6 +164,9 @@
   values:
     commandLine:
       CONVERT_XML: true
+    configurationEnvPrefix: APP
+    env: {}
+    files: {}
     image: my-registry/my-streams-app-image
     imageTag: 1.0.0
     kafka:
@@ -153,6 +189,14 @@
       schemaRegistryUrl: http://localhost:8081/
     persistence:
       enabled: false
+    ports: []
+    secretFilesRefs: []
+    secretRefs: {}
+    secrets: {}
+    service:
+      enabled: false
+      labels: {}
+      type: ClusterIP
     statefulSet: false
   version: 3.0.1
 

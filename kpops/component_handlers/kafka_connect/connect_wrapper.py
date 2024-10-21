@@ -138,7 +138,7 @@ class ConnectWrapper:
         """Validate connector config using the given configuration.
 
         :param connector_config: Configuration parameters for the connector.
-        :raises KafkaConnectError: Kafka Konnect error
+        :raises KafkaConnectError: Kafka Connect error
         :return: List of all found errors
         """
         response = await self._client.put(

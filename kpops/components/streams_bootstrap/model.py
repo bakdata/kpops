@@ -6,6 +6,7 @@ import pydantic
 from pydantic import AliasChoices, ConfigDict, Field
 
 from kpops.components.base_components.helm_app import HelmAppValues
+from kpops.components.common.kubernetes_model import ProtocolSchema, ServiceType
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
@@ -19,11 +20,66 @@ from kpops.utils.pydantic import (
 IMAGE_TAG_PATTERN = r"^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$"
 
 
+class PortConfig(CamelCaseConfigModel, DescConfigModel):
+    """Base class for the port configuration of the Kafka Streams application.
+
+    :param container_port: Number of the port to expose.
+    :param name: Services can reference port by name (optional).
+    :param schema: Protocol for port. Must be UDP, TCP, or SCTP.
+    :param service_port: Number of the port of the service (optional)
+    """
+
+    container_port: int = Field(
+        description=describe_attr("ports", __doc__),
+    )
+    name: str | None = Field(
+        default=None,
+        description=describe_attr("name", __doc__),
+    )
+    schema: ProtocolSchema = Field(
+        default=ProtocolSchema.TCP,
+        description=describe_attr("schema", __doc__),
+    )
+    service_port: int | None = Field(
+        default=None,
+        description=describe_attr("service_port", __doc__),
+    )
+
+
+class ServiceConfig(CamelCaseConfigModel, DescConfigModel):
+    """Base model for configuring a service for the Kafka Streams application.
+
+    :param enabled: Whether to create a service.
+    :param labels: Additional service labels.
+    :param type: Service type.
+    """
+
+    enabled: bool = Field(
+        default=False,
+        description=describe_attr("enabled", __doc__),
+    )
+    labels: dict[str, str] = Field(
+        default_factory=dict,
+        description=describe_attr("labels", __doc__),
+    )
+    type: ServiceType = Field(
+        default=ServiceType.CLUSTER_IP,
+        description=describe_attr("type", __doc__),
+    )
+
+
 class StreamsBootstrapValues(HelmAppValues):
     """Base value class for all streams bootstrap related components.
 
     :param image_tag: Docker image tag of the streams-bootstrap app.
     :param kafka: Kafka configuration for the streams-bootstrap app.
+    :param configuration_env_prefix: Prefix for environment variables to use that should be parsed as command line arguments.
+    :param command_line: Map of command line arguments passed to the streams app.
+    :param env: Custom environment variables.
+    :param secrets: Custom secret environment variables. Prefix with configurationEnvPrefix in order to pass secrets to command line or prefix with KAFKA_ to pass secrets to Kafka Streams configuration.
+    :param secret_refs: Inject existing secrets as environment variables. Map key is used as environment variable name. Value consists of secret name and key.
+    :param secret_files_refs: Mount existing secrets as volumes
+    :param files: Map of files to mount for the app. File will be mounted as $value.mountPath/$key. $value.content denotes file content (recommended to be used with --set-file).
     """
 
     image_tag: str = Field(
@@ -34,6 +90,51 @@ class StreamsBootstrapValues(HelmAppValues):
 
     kafka: KafkaConfig = Field(
         description=describe_attr("kafka", __doc__),
+    )
+
+    ports: list[PortConfig] = Field(
+        default_factory=list,
+        description=describe_attr("ports", __doc__),
+    )
+
+    service: ServiceConfig = Field(
+        default_factory=ServiceConfig,
+        description=describe_attr("service", __doc__),
+    )
+
+    configuration_env_prefix: str = Field(
+        default="APP",
+        description=describe_attr("configuration_env_prefix", __doc__),
+    )
+
+    command_line: dict[str, Any] = Field(
+        default_factory=dict,
+        description=describe_attr("command_line", __doc__),
+    )
+
+    env: dict[str, str] = Field(
+        default_factory=dict,
+        description=describe_attr("env", __doc__),
+    )
+
+    secrets: dict[str, str] = Field(
+        default_factory=dict,
+        description=describe_attr("secrets", __doc__),
+    )
+
+    secret_refs: dict[str, str] = Field(
+        default_factory=dict,
+        description=describe_attr("secret_refs", __doc__),
+    )
+
+    secret_files_refs: list[str] = Field(
+        default_factory=list,
+        description=describe_attr("secret_files_refs", __doc__),
+    )
+
+    files: dict[str, str] = Field(
+        default_factory=dict,
+        description=describe_attr("files", __doc__),
     )
 
 
