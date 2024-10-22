@@ -29,7 +29,10 @@ class ProtocolSchema(enum.Enum):
 
 
 class ImagePullPolicy(enum.Enum):
-    """Represents the different Kubernetes image pull policies."""
+    """Represents the different Kubernetes image pull policies.
+
+    https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
+    """
 
     ALWAYS = "Always"
     IF_NOT_PRESENT = "IfNotPresent"

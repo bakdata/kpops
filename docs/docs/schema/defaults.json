@@ -210,7 +210,7 @@
             "type": "object"
         },
         "ImagePullPolicy": {
-            "description": "Represents the different Kubernetes image pull policies.",
+            "description": "Represents the different Kubernetes image pull policies.\n\nhttps://kubernetes.io/docs/concepts/containers/images/#image-pull-policy",
             "enum": [
                 "Always",
                 "IfNotPresent",
