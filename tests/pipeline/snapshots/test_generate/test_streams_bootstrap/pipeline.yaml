@@ -22,6 +22,7 @@
       files: {}
       image: my-registry/my-producer-image
       imagePullPolicy: Always
+      imagePullSecret: []
       imageTag: 1.0.0
       javaOptions:
         maxRAMPercentage: 75
@@ -54,6 +55,7 @@
         type: ClusterIP
       successfulJobsHistoryLimit: 1
       suspend: false
+      tolerations: []
       ttlSecondsAfterFinished: 100
     version: 3.0.1
   image: producerApp
@@ -87,6 +89,7 @@
     files: {}
     image: my-registry/my-producer-image
     imagePullPolicy: Always
+    imagePullSecret: []
     imageTag: 1.0.0
     javaOptions:
       maxRAMPercentage: 75
@@ -119,6 +122,7 @@
       type: ClusterIP
     successfulJobsHistoryLimit: 1
     suspend: false
+    tolerations: []
     ttlSecondsAfterFinished: 100
   version: 3.0.1
 - _cleaner:
@@ -142,6 +146,7 @@
       files: {}
       image: my-registry/my-streams-app-image
       imagePullPolicy: Always
+      imagePullSecret: []
       imageTag: 1.0.0
       javaOptions:
         maxRAMPercentage: 75
@@ -205,6 +210,7 @@
         type: ClusterIP
       statefulSet: false
       terminationGracePeriodSeconds: 300
+      tolerations: []
     version: 3.0.1
   from:
     components: {}
@@ -255,6 +261,7 @@
     files: {}
     image: my-registry/my-streams-app-image
     imagePullPolicy: Always
+    imagePullSecret: []
     imageTag: 1.0.0
     javaOptions:
       maxRAMPercentage: 75
@@ -318,5 +325,6 @@
       type: ClusterIP
     statefulSet: false
     terminationGracePeriodSeconds: 300
+    tolerations: []
   version: 3.0.1
 

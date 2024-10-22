@@ -1,5 +1,14 @@
 {
     "$defs": {
+        "Effects": {
+            "enum": [
+                "NoExecute",
+                "NoSchedule",
+                "PreferNoSchedule"
+            ],
+            "title": "Effects",
+            "type": "string"
+        },
         "FromSection": {
             "additionalProperties": false,
             "description": "Holds multiple input topics.",
@@ -792,6 +801,14 @@
             "title": "KubernetesAppValues",
             "type": "object"
         },
+        "Operation": {
+            "enum": [
+                "Exists",
+                "Equal"
+            ],
+            "title": "Operation",
+            "type": "string"
+        },
         "OutputTopicTypes": {
             "description": "Types of output topic.\n\n- OUTPUT: output topic\n- ERROR: error topic",
             "enum": [
@@ -1223,6 +1240,17 @@
                     "default": "Always",
                     "description": "Docker image pull policy."
                 },
+                "imagePullSecret": {
+                    "description": "Secrets to be used for private registries.",
+                    "items": {
+                        "additionalProperties": {
+                            "type": "string"
+                        },
+                        "type": "object"
+                    },
+                    "title": "Imagepullsecret",
+                    "type": "array"
+                },
                 "imageTag": {
                     "default": "latest",
                     "description": "Docker image tag of the streams-bootstrap app.",
@@ -1374,6 +1402,14 @@
                     "description": "Whether to suspend the execution of the cron job.",
                     "title": "Suspend",
                     "type": "boolean"
+                },
+                "tolerations": {
+                    "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
+                    "items": {
+                        "$ref": "#/$defs/Tolerations"
+                    },
+                    "title": "Tolerations",
+                    "type": "array"
                 },
                 "ttlSecondsAfterFinished": {
                     "default": 100,
@@ -2087,6 +2123,17 @@
                     "default": "Always",
                     "description": "Docker image pull policy."
                 },
+                "imagePullSecret": {
+                    "description": "Secrets to be used for private registries.",
+                    "items": {
+                        "additionalProperties": {
+                            "type": "string"
+                        },
+                        "type": "object"
+                    },
+                    "title": "Imagepullsecret",
+                    "type": "array"
+                },
                 "imageTag": {
                     "default": "latest",
                     "description": "Docker image tag of the streams-bootstrap app.",
@@ -2245,6 +2292,14 @@
                     "description": "Delay for graceful application shutdown in seconds: https://pracucci.com/graceful-shutdown-of-kubernetes-pods.html",
                     "title": "Terminationgraceperiodseconds",
                     "type": "integer"
+                },
+                "tolerations": {
+                    "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
+                    "items": {
+                        "$ref": "#/$defs/Tolerations"
+                    },
+                    "title": "Tolerations",
+                    "type": "array"
                 }
             },
             "required": [
@@ -2526,6 +2581,17 @@
                     "default": "Always",
                     "description": "Docker image pull policy."
                 },
+                "imagePullSecret": {
+                    "description": "Secrets to be used for private registries.",
+                    "items": {
+                        "additionalProperties": {
+                            "type": "string"
+                        },
+                        "type": "object"
+                    },
+                    "title": "Imagepullsecret",
+                    "type": "array"
+                },
                 "imageTag": {
                     "default": "latest",
                     "description": "Docker image tag of the streams-bootstrap app.",
@@ -2643,6 +2709,14 @@
                         }
                     ],
                     "description": ""
+                },
+                "tolerations": {
+                    "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
+                    "items": {
+                        "$ref": "#/$defs/Tolerations"
+                    },
+                    "title": "Tolerations",
+                    "type": "array"
                 }
             },
             "required": [
@@ -2676,6 +2750,60 @@
                 }
             },
             "title": "ToSection",
+            "type": "object"
+        },
+        "Tolerations": {
+            "description": "Represents the different Kubernetes tolerations.\n\nhttps://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/\n\n:param key: The key that the toleration applies to.\n:param operator: The operator ('Exists' or 'Equal').\n:param value: The value to match for the key.\n:param effect: The effect to tolerate.\n:param toleration_seconds: The duration for which the toleration is valid.",
+            "properties": {
+                "effect": {
+                    "$ref": "#/$defs/Effects"
+                },
+                "key": {
+                    "description": "The key that the toleration applies to.",
+                    "title": "Key",
+                    "type": "string"
+                },
+                "operator": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/Operation"
+                        }
+                    ],
+                    "default": "Equal",
+                    "description": "The operator ('Exists' or 'Equal')."
+                },
+                "toleration_seconds": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The duration for which the toleration is valid.",
+                    "title": "Toleration Seconds"
+                },
+                "value": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The value to match for the key.",
+                    "title": "Value"
+                }
+            },
+            "required": [
+                "key",
+                "effect"
+            ],
+            "title": "Tolerations",
             "type": "object"
         },
         "TopicConfig": {

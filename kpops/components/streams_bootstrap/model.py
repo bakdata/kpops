@@ -13,6 +13,7 @@ from kpops.components.common.kubernetes_model import (
     ResourceRequests,
     Resources,
     ServiceType,
+    Tolerations,
 )
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
 from kpops.utils.docstring import describe_attr
@@ -98,6 +99,7 @@ class StreamsBootstrapValues(HelmAppValues):
     :param image: Docker image of the Kafka producer app.
     :param image_tag: Docker image tag of the streams-bootstrap app.
     :param image_pull_policy: Docker image pull policy.
+    :param image_pull_secret: Secrets to be used for private registries.
     :param kafka: Kafka configuration for the streams-bootstrap app.
     :param resources: See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
     :param configuration_env_prefix: Prefix for environment variables to use that should be parsed as command line arguments.
@@ -112,6 +114,7 @@ class StreamsBootstrapValues(HelmAppValues):
     :param liveness_probe: See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core
     :param readiness_probe: See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core
     :param affinity: Map to configure pod affinities https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity.
+    :param tolerations: Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.
     """
 
     image: str = Field(
@@ -127,6 +130,11 @@ class StreamsBootstrapValues(HelmAppValues):
     image_pull_policy: ImagePullPolicy = Field(
         default=ImagePullPolicy.ALWAYS,
         description=describe_attr("image_pull_policy", __doc__),
+    )
+
+    image_pull_secret: list[dict[str, str]] = Field(
+        default_factory=list,
+        description=describe_attr("image_pull_secret", __doc__),
     )
 
     kafka: KafkaConfig = Field(
@@ -214,6 +222,11 @@ class StreamsBootstrapValues(HelmAppValues):
     affinity: dict[str, Any] = Field(
         default_factory=dict,
         description=describe_attr("affinity", __doc__),
+    )
+
+    tolerations: list[Tolerations] = Field(
+        default_factory=list,
+        description=describe_attr("tolerations", __doc__),
     )
 
 

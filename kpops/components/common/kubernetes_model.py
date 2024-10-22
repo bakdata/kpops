@@ -39,6 +39,44 @@ class ImagePullPolicy(enum.Enum):
     NEVER = "Never"
 
 
+class Operation(enum.Enum):
+    EXISTS = "Exists"
+    EQUAL = "Equal"
+
+
+class Effects(enum.Enum):
+    NO_EXECUTE = "NoExecute"
+    NO_SCHEDULE = "NoSchedule"
+    PREFER_NO_SCHEDULE = "PreferNoSchedule"
+
+
+class Tolerations(BaseModel):
+    """Represents the different Kubernetes tolerations.
+
+    https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+
+    :param key: The key that the toleration applies to.
+    :param operator: The operator ('Exists' or 'Equal').
+    :param value: The value to match for the key.
+    :param effect: The effect to tolerate.
+    :param toleration_seconds: The duration for which the toleration is valid.
+    """
+
+    key: str = Field(default=..., description=describe_attr("key", __doc__))
+
+    operator: Operation = Field(
+        default=Operation.EQUAL, description=describe_attr("operator", __doc__)
+    )
+
+    effect: Effects = Field(default=...)
+
+    value: str | None = Field(default=None, description=describe_attr("value", __doc__))
+
+    toleration_seconds: int | None = Field(
+        default=None, description=describe_attr("toleration_seconds", __doc__)
+    )
+
+
 class ResourceLimits(BaseModel):
     """Model representing the 'limits' section of Kubernetes resource specifications.
 
