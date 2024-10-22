@@ -13,7 +13,7 @@ from kpops.components.common.kubernetes_model import (
     ResourceRequests,
     Resources,
     ServiceType,
-    Tolerations,
+    Toleration,
 )
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
 from kpops.utils.docstring import describe_attr
@@ -224,7 +224,7 @@ class StreamsBootstrapValues(HelmAppValues):
         description=describe_attr("affinity", __doc__),
     )
 
-    tolerations: list[Tolerations] = Field(
+    tolerations: list[Toleration] = Field(
         default_factory=list,
         description=describe_attr("tolerations", __doc__),
     )

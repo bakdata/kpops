@@ -50,7 +50,7 @@ class Effects(enum.Enum):
     PREFER_NO_SCHEDULE = "PreferNoSchedule"
 
 
-class Tolerations(BaseModel):
+class Toleration(BaseModel):
     """Represents the different Kubernetes tolerations.
 
     https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/

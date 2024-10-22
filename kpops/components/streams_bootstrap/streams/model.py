@@ -307,7 +307,7 @@ class StreamsAppValues(StreamsBootstrapValues):
 
     :param kafka: streams-bootstrap kafka section
     :param autoscaling: Kubernetes event-driven autoscaling config, defaults to None
-    :param stateful_set: Whether to use a Statefulset instead of a Deployment to deploy the streams app.
+    :param stateful_set: Whether to use a StatefulSet instead of a Deployment to deploy the streams app.
     :param persistence: Configuration for persistent volume to store the state of the streams app.
     :param prometheus: Configuration for Prometheus JMX Exporter.
     :param jmx: Configuration for JMX Exporter.
