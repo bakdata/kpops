@@ -1,5 +1,4 @@
 - _cleaner:
-    image: producerApp
     name: my-producer-app
     namespace: example-namespace
     prefix: resources-streams-bootstrap-
@@ -58,7 +57,6 @@
       tolerations: []
       ttlSecondsAfterFinished: 100
     version: 3.0.1
-  image: producerApp
   name: my-producer-app
   namespace: example-namespace
   prefix: resources-streams-bootstrap-
@@ -126,7 +124,6 @@
     ttlSecondsAfterFinished: 100
   version: 3.0.1
 - _cleaner:
-    image: streamsApp
     name: my-streams-app
     namespace: example-namespace
     prefix: resources-streams-bootstrap-
@@ -224,7 +221,6 @@
         type: pattern
       my-labeled-input-topic:
         label: my-input-topic-label
-  image: streamsApp
   name: my-streams-app
   namespace: example-namespace
   prefix: resources-streams-bootstrap-

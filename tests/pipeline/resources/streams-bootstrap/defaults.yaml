@@ -5,12 +5,9 @@ streams-bootstrap:
       schemaRegistryUrl: ${config.schema_registry.url}
   version: "3.0.1"
 
-producer-app: {
-  image: "producerApp"
-} # inherits from streams-bootstrap
+producer-app: {} # inherits from streams-bootstrap
 
 streams-app: # inherits from streams-bootstrap
-  image: "streamsApp"
   values:
     kafka:
       config:
