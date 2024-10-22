@@ -1066,7 +1066,7 @@
                 "tolerations": {
                     "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
                     "items": {
-                        "$ref": "#/$defs/Tolerations"
+                        "$ref": "#/$defs/Toleration"
                     },
                     "title": "Tolerations",
                     "type": "array"
@@ -1943,7 +1943,7 @@
                 },
                 "statefulSet": {
                     "default": false,
-                    "description": "Whether to use a Statefulset instead of a Deployment to deploy the streams app.",
+                    "description": "Whether to use a StatefulSet instead of a Deployment to deploy the streams app.",
                     "title": "Statefulset",
                     "type": "boolean"
                 },
@@ -1956,7 +1956,7 @@
                 "tolerations": {
                     "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
                     "items": {
-                        "$ref": "#/$defs/Tolerations"
+                        "$ref": "#/$defs/Toleration"
                     },
                     "title": "Tolerations",
                     "type": "array"
@@ -1995,7 +1995,7 @@
             "title": "ToSection",
             "type": "object"
         },
-        "Tolerations": {
+        "Toleration": {
             "description": "Represents the different Kubernetes tolerations.\n\nhttps://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/\n\n:param key: The key that the toleration applies to.\n:param operator: The operator ('Exists' or 'Equal').\n:param value: The value to match for the key.\n:param effect: The effect to tolerate.\n:param toleration_seconds: The duration for which the toleration is valid.",
             "properties": {
                 "effect": {
@@ -2046,7 +2046,7 @@
                 "key",
                 "effect"
             ],
-            "title": "Tolerations",
+            "title": "Toleration",
             "type": "object"
         },
         "TopicConfig": {
