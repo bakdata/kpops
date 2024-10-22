@@ -80,7 +80,6 @@ class JavaOptions(CamelCaseConfigModel, DescConfigModel):
 
     :param max_RAM_percentage: Sets the maximum amount of memory that the JVM may use for the Java heap before applying ergonomics heuristics as a percentage of the maximum amount determined as described in the -XX:MaxRAM option
     :param others: List of Java VM options passed to the streams app.
-
     """
 
     max_RAM_percentage: int = Field(
@@ -110,6 +109,9 @@ class StreamsBootstrapValues(HelmAppValues):
     :param files: Map of files to mount for the app. File will be mounted as $value.mountPath/$key. $value.content denotes file content (recommended to be used with --set-file).
     :param pod_annotations: Map of custom annotations to attach to the pod spec.
     :param pod_labels: Map of custom labels to attach to the pod spec.
+    :param liveness_probe: See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core
+    :param readiness_probe: See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core
+    :param affinity: Map to configure pod affinities https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity.
     """
 
     image: str = Field(
@@ -169,7 +171,7 @@ class StreamsBootstrapValues(HelmAppValues):
         description=describe_attr("secrets", __doc__),
     )
 
-    secret_refs: dict[str, str] = Field(
+    secret_refs: dict[str, Any] = Field(
         default_factory=dict,
         description=describe_attr("secret_refs", __doc__),
     )
@@ -197,6 +199,21 @@ class StreamsBootstrapValues(HelmAppValues):
     pod_labels: dict[str, str] = Field(
         default_factory=dict,
         description=describe_attr("pod_labels", __doc__),
+    )
+
+    liveness_probe: dict[str, Any] = Field(
+        default_factory=dict,
+        description=describe_attr("liveness_probe", __doc__),
+    )
+
+    readiness_probe: dict[str, Any] = Field(
+        default_factory=dict,
+        description=describe_attr("readiness_probe", __doc__),
+    )
+
+    affinity: dict[str, Any] = Field(
+        default_factory=dict,
+        description=describe_attr("affinity", __doc__),
     )
 
 

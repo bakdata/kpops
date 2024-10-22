@@ -282,6 +282,24 @@ class PrometheusConfig(CamelCaseConfigModel, DescConfigModel):
     )
 
 
+class JMXConfig(CamelCaseConfigModel, DescConfigModel):
+    """JMX configuration options.
+
+    :param port: The jmx port which JMX style metrics are exposed.
+    :param metric_rules: List of JMX metric rules.
+    """
+
+    port: int = Field(
+        default=5555,
+        description=describe_attr("port", __doc__),
+    )
+
+    metric_rules: list[str] = Field(
+        default=[".*"],
+        description=describe_attr("metric_rules", __doc__),
+    )
+
+
 class StreamsAppValues(StreamsBootstrapValues):
     """streams-bootstrap app configurations.
 
@@ -289,26 +307,45 @@ class StreamsAppValues(StreamsBootstrapValues):
 
     :param kafka: streams-bootstrap kafka section
     :param autoscaling: Kubernetes event-driven autoscaling config, defaults to None
+    :param stateful_set: Whether to use a Statefulset instead of a Deployment to deploy the streams app.
+    :param persistence: Configuration for persistent volume to store the state of the streams app.
+    :param prometheus: Configuration for Prometheus JMX Exporter.
+    :param jmx: Configuration for JMX Exporter.
+    :param termination_grace_period_seconds: Delay for graceful application shutdown in seconds: https://pracucci.com/graceful-shutdown-of-kubernetes-pods.html
     """
 
     kafka: StreamsConfig = Field(
         description=describe_attr("kafka", __doc__),
     )
+
     autoscaling: StreamsAppAutoScaling | None = Field(
         default=None,
         description=describe_attr("autoscaling", __doc__),
     )
+
     stateful_set: bool = Field(
         default=False,
-        description="Whether to use a Statefulset instead of a Deployment to deploy the streams app.",
+        description=describe_attr("stateful_set", __doc__),
     )
+
     persistence: PersistenceConfig = Field(
         default=PersistenceConfig(),
         description=describe_attr("persistence", __doc__),
     )
+
     prometheus: PrometheusConfig = Field(
         default_factory=PrometheusConfig,
         description=describe_attr("prometheus", __doc__),
+    )
+
+    jmx: JMXConfig = Field(
+        default_factory=JMXConfig,
+        description=describe_attr("jmx", __doc__),
+    )
+
+    termination_grace_period_seconds: int = Field(
+        default=300,
+        description=describe_attr("termination_grace_period_seconds", __doc__),
     )
 
     model_config = ConfigDict(extra="allow")

@@ -11,10 +11,14 @@
     suffix: -clean
     type: producer-app-cleaner
     values:
+      affinity: {}
+      backoffLimit: 6
       commandLine:
         FAKE_ARG: fake-arg-value
       configurationEnvPrefix: APP
+      deployment: false
       env: {}
+      failedJobsHistoryLimit: 1
       files: {}
       image: my-registry/my-producer-image
       imagePullPolicy: Always
@@ -28,7 +32,11 @@
           my-producer-app-output-topic-label: my-labeled-producer-app-topic-output
         outputTopic: my-producer-app-output-topic
         schemaRegistryUrl: http://localhost:8081/
+      livenessProbe: {}
+      podAnnotations: {}
+      podLabels: {}
       ports: []
+      readinessProbe: {}
       resources:
         limits:
           cpu: 300m
@@ -36,6 +44,7 @@
         requests:
           cpu: 100m
           memory: 500Mi
+      restartPolicy: OnFailure
       secretFilesRefs: []
       secretRefs: {}
       secrets: {}
@@ -43,6 +52,9 @@
         enabled: false
         labels: {}
         type: ClusterIP
+      successfulJobsHistoryLimit: 1
+      suspend: false
+      ttlSecondsAfterFinished: 100
     version: 3.0.1
   image: producerApp
   name: my-producer-app
@@ -64,10 +76,14 @@
         type: output
   type: my-producer-app
   values:
+    affinity: {}
+    backoffLimit: 6
     commandLine:
       FAKE_ARG: fake-arg-value
     configurationEnvPrefix: APP
+    deployment: false
     env: {}
+    failedJobsHistoryLimit: 1
     files: {}
     image: my-registry/my-producer-image
     imagePullPolicy: Always
@@ -81,7 +97,11 @@
         my-producer-app-output-topic-label: my-labeled-producer-app-topic-output
       outputTopic: my-producer-app-output-topic
       schemaRegistryUrl: http://localhost:8081/
+    livenessProbe: {}
+    podAnnotations: {}
+    podLabels: {}
     ports: []
+    readinessProbe: {}
     resources:
       limits:
         cpu: 300m
@@ -89,6 +109,7 @@
       requests:
         cpu: 100m
         memory: 500Mi
+    restartPolicy: OnFailure
     secretFilesRefs: []
     secretRefs: {}
     secrets: {}
@@ -96,6 +117,9 @@
       enabled: false
       labels: {}
       type: ClusterIP
+    successfulJobsHistoryLimit: 1
+    suspend: false
+    ttlSecondsAfterFinished: 100
   version: 3.0.1
 - _cleaner:
     image: streamsApp
@@ -110,6 +134,7 @@
     suffix: -clean
     type: streams-app-cleaner
     values:
+      affinity: {}
       commandLine:
         CONVERT_XML: true
       configurationEnvPrefix: APP
@@ -121,6 +146,10 @@
       javaOptions:
         maxRAMPercentage: 75
         others: []
+      jmx:
+        metricRules:
+        - .*
+        port: 5555
       kafka:
         applicationId: my-streams-app-id
         bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
@@ -139,8 +168,11 @@
           my-output-topic-label: my-labeled-topic-output
         outputTopic: my-output-topic
         schemaRegistryUrl: http://localhost:8081/
+      livenessProbe: {}
       persistence:
         enabled: false
+      podAnnotations: {}
+      podLabels: {}
       ports: []
       prometheus:
         jmx:
@@ -156,6 +188,7 @@
             requests:
               cpu: 100m
               memory: 500Mi
+      readinessProbe: {}
       resources:
         limits:
           cpu: 300m
@@ -171,6 +204,7 @@
         labels: {}
         type: ClusterIP
       statefulSet: false
+      terminationGracePeriodSeconds: 300
     version: 3.0.1
   from:
     components: {}
@@ -213,6 +247,7 @@
         value_schema: com.bakdata.kafka.DeadLetter
   type: my-streams-app
   values:
+    affinity: {}
     commandLine:
       CONVERT_XML: true
     configurationEnvPrefix: APP
@@ -224,6 +259,10 @@
     javaOptions:
       maxRAMPercentage: 75
       others: []
+    jmx:
+      metricRules:
+      - .*
+      port: 5555
     kafka:
       applicationId: my-streams-app-id
       bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
@@ -242,8 +281,11 @@
         my-output-topic-label: my-labeled-topic-output
       outputTopic: my-output-topic
       schemaRegistryUrl: http://localhost:8081/
+    livenessProbe: {}
     persistence:
       enabled: false
+    podAnnotations: {}
+    podLabels: {}
     ports: []
     prometheus:
       jmx:
@@ -259,6 +301,7 @@
           requests:
             cpu: 100m
             memory: 500Mi
+    readinessProbe: {}
     resources:
       limits:
         cpu: 300m
@@ -274,5 +317,6 @@
       labels: {}
       type: ClusterIP
     statefulSet: false
+    terminationGracePeriodSeconds: 300
   version: 3.0.1
 

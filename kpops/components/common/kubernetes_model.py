@@ -71,3 +71,9 @@ class Resources(BaseModel):
 
     requests: ResourceRequests = Field(description=describe_attr("requests", __doc__))
     limits: ResourceLimits = Field(description=describe_attr("limits", __doc__))
+
+
+class RestartPolicy(enum.Enum):
+    ALWAYS = "Always"
+    ON_FAILURE = "OnFailure"
+    NEVER = "Never"
