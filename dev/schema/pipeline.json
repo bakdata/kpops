@@ -228,6 +228,30 @@
             "title": "InputTopicTypes",
             "type": "string"
         },
+        "JMXConfig": {
+            "description": "JMX configuration options.",
+            "properties": {
+                "metricRules": {
+                    "default": [
+                        ".*"
+                    ],
+                    "description": "List of JMX metric rules.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Metricrules",
+                    "type": "array"
+                },
+                "port": {
+                    "default": 5555,
+                    "description": "The jmx port which JMX style metrics are exposed.",
+                    "title": "Port",
+                    "type": "integer"
+                }
+            },
+            "title": "JMXConfig",
+            "type": "object"
+        },
         "JavaOptions": {
             "description": "JVM configuration options.",
             "properties": {
@@ -795,6 +819,17 @@
             "additionalProperties": true,
             "description": "Settings specific to producers.",
             "properties": {
+                "affinity": {
+                    "description": "Map to configure pod affinities https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity.",
+                    "title": "Affinity",
+                    "type": "object"
+                },
+                "backoffLimit": {
+                    "default": 6,
+                    "description": "The number of times to restart an unsuccessful job.",
+                    "title": "Backofflimit",
+                    "type": "integer"
+                },
                 "commandLine": {
                     "description": "Map of command line arguments passed to the streams app.",
                     "title": "Commandline",
@@ -806,6 +841,12 @@
                     "title": "Configurationenvprefix",
                     "type": "string"
                 },
+                "deployment": {
+                    "default": false,
+                    "description": "Deploy the producer as a Kubernetes Deployment (thereby ignoring Job-related configurations)",
+                    "title": "Deployment",
+                    "type": "boolean"
+                },
                 "env": {
                     "additionalProperties": {
                         "type": "string"
@@ -813,6 +854,12 @@
                     "description": "Custom environment variables.",
                     "title": "Env",
                     "type": "object"
+                },
+                "failedJobsHistoryLimit": {
+                    "default": 1,
+                    "description": "The number of unsuccessful jobs to retain.",
+                    "title": "Failedjobshistorylimit",
+                    "type": "integer"
                 },
                 "files": {
                     "additionalProperties": {
@@ -859,6 +906,11 @@
                     ],
                     "description": "Kafka Streams settings"
                 },
+                "livenessProbe": {
+                    "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
+                    "title": "Livenessprobe",
+                    "type": "object"
+                },
                 "nameOverride": {
                     "anyOf": [
                         {
@@ -873,6 +925,22 @@
                     "description": "Helm chart name override, assigned automatically",
                     "title": "Nameoverride"
                 },
+                "podAnnotations": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Map of custom annotations to attach to the pod spec.",
+                    "title": "Podannotations",
+                    "type": "object"
+                },
+                "podLabels": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Map of custom labels to attach to the pod spec.",
+                    "title": "Podlabels",
+                    "type": "object"
+                },
                 "ports": {
                     "description": "",
                     "items": {
@@ -880,6 +948,11 @@
                     },
                     "title": "Ports",
                     "type": "array"
+                },
+                "readinessProbe": {
+                    "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
+                    "title": "Readinessprobe",
+                    "type": "object"
                 },
                 "resources": {
                     "allOf": [
@@ -899,6 +972,28 @@
                     },
                     "description": "See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
                 },
+                "restartPolicy": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/RestartPolicy"
+                        }
+                    ],
+                    "default": "OnFailure",
+                    "description": "See https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy"
+                },
+                "schedule": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Cron expression to denote a schedule this producer app should be run on. It will then be deployed as a CronJob instead of a Job.",
+                    "title": "Schedule"
+                },
                 "secretFilesRefs": {
                     "description": "Mount existing secrets as volumes",
                     "items": {
@@ -908,9 +1003,6 @@
                     "type": "array"
                 },
                 "secretRefs": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
                     "description": "Inject existing secrets as environment variables. Map key is used as environment variable name. Value consists of secret name and key.",
                     "title": "Secretrefs",
                     "type": "object"
@@ -930,6 +1022,24 @@
                         }
                     ],
                     "description": ""
+                },
+                "successfulJobsHistoryLimit": {
+                    "default": 1,
+                    "description": "The number of successful jobs to retain.",
+                    "title": "Successfuljobshistorylimit",
+                    "type": "integer"
+                },
+                "suspend": {
+                    "default": false,
+                    "description": "Whether to suspend the execution of the cron job.",
+                    "title": "Suspend",
+                    "type": "boolean"
+                },
+                "ttlSecondsAfterFinished": {
+                    "default": 100,
+                    "description": "See https://kubernetes.io/docs/concepts/workloads/controllers/ttlafterfinished/#ttl-after-finished-controller",
+                    "title": "Ttlsecondsafterfinished",
+                    "type": "integer"
                 }
             },
             "required": [
@@ -1262,6 +1372,15 @@
             "title": "Resources",
             "type": "object"
         },
+        "RestartPolicy": {
+            "enum": [
+                "Always",
+                "OnFailure",
+                "Never"
+            ],
+            "title": "RestartPolicy",
+            "type": "string"
+        },
         "ServiceConfig": {
             "description": "Base model for configuring a service for the Kafka Streams application.",
             "properties": {
@@ -1570,6 +1689,11 @@
             "additionalProperties": true,
             "description": "streams-bootstrap app configurations.\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
             "properties": {
+                "affinity": {
+                    "description": "Map to configure pod affinities https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity.",
+                    "title": "Affinity",
+                    "type": "object"
+                },
                 "autoscaling": {
                     "anyOf": [
                         {
@@ -1638,6 +1762,14 @@
                     ],
                     "description": ""
                 },
+                "jmx": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/JMXConfig"
+                        }
+                    ],
+                    "description": "Configuration for JMX Exporter."
+                },
                 "kafka": {
                     "allOf": [
                         {
@@ -1645,6 +1777,11 @@
                         }
                     ],
                     "description": "streams-bootstrap kafka section"
+                },
+                "livenessProbe": {
+                    "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
+                    "title": "Livenessprobe",
+                    "type": "object"
                 },
                 "nameOverride": {
                     "anyOf": [
@@ -1671,7 +1808,23 @@
                         "size": null,
                         "storage_class": null
                     },
-                    "description": ""
+                    "description": "Configuration for persistent volume to store the state of the streams app."
+                },
+                "podAnnotations": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Map of custom annotations to attach to the pod spec.",
+                    "title": "Podannotations",
+                    "type": "object"
+                },
+                "podLabels": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Map of custom labels to attach to the pod spec.",
+                    "title": "Podlabels",
+                    "type": "object"
                 },
                 "ports": {
                     "description": "",
@@ -1687,7 +1840,12 @@
                             "$ref": "#/$defs/PrometheusConfig"
                         }
                     ],
-                    "description": ""
+                    "description": "Configuration for Prometheus JMX Exporter."
+                },
+                "readinessProbe": {
+                    "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
+                    "title": "Readinessprobe",
+                    "type": "object"
                 },
                 "resources": {
                     "allOf": [
@@ -1716,9 +1874,6 @@
                     "type": "array"
                 },
                 "secretRefs": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
                     "description": "Inject existing secrets as environment variables. Map key is used as environment variable name. Value consists of secret name and key.",
                     "title": "Secretrefs",
                     "type": "object"
@@ -1744,6 +1899,12 @@
                     "description": "Whether to use a Statefulset instead of a Deployment to deploy the streams app.",
                     "title": "Statefulset",
                     "type": "boolean"
+                },
+                "terminationGracePeriodSeconds": {
+                    "default": 300,
+                    "description": "Delay for graceful application shutdown in seconds: https://pracucci.com/graceful-shutdown-of-kubernetes-pods.html",
+                    "title": "Terminationgraceperiodseconds",
+                    "type": "integer"
                 }
             },
             "required": [
