@@ -44,6 +44,36 @@ spec:
       restartPolicy: OnFailure
 
 ---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    app.kubernetes.io/instance: resources-streams-bootstrap-my-producer-app
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kafka-topics
+    helm.sh/chart: kafka-topics-0.1.0
+    strimzi.io/cluster: example-cluster
+  name: my-producer-app-output-topic
+spec:
+  partitions: 1
+  replicas: 1
+
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    app.kubernetes.io/instance: resources-streams-bootstrap-my-producer-app
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kafka-topics
+    helm.sh/chart: kafka-topics-0.1.0
+    strimzi.io/cluster: example-cluster
+  name: my-labeled-producer-app-topic-output
+spec:
+  partitions: 1
+  replicas: 1
+
+---
 apiVersion: v1
 data:
   jmx-kafka-streams-app-prometheus.yml: "jmxUrl: service:jmx:rmi:///jndi/rmi://localhost:5555/jmxrmi\n\
@@ -161,4 +191,66 @@ spec:
       - configMap:
           name: resources-streams-bootstrap-my-streams-app-jmx-configmap
         name: jmx-config
+
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    app.kubernetes.io/instance: resources-streams-bootstrap-my-streams-app
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kafka-topics
+    helm.sh/chart: kafka-topics-0.1.0
+    strimzi.io/cluster: example-cluster
+  name: my-output-topic
+spec:
+  partitions: 1
+  replicas: 1
+
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    app.kubernetes.io/instance: resources-streams-bootstrap-my-streams-app
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kafka-topics
+    helm.sh/chart: kafka-topics-0.1.0
+    strimzi.io/cluster: example-cluster
+  name: my-error-topic
+spec:
+  partitions: 1
+  replicas: 1
+
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    app.kubernetes.io/instance: resources-streams-bootstrap-my-streams-app
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kafka-topics
+    helm.sh/chart: kafka-topics-0.1.0
+    strimzi.io/cluster: example-cluster
+  name: my-labeled-topic-output
+spec:
+  partitions: 1
+  replicas: 1
+
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    app.kubernetes.io/instance: resources-streams-bootstrap-my-streams-app
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kafka-topics
+    helm.sh/chart: kafka-topics-0.1.0
+    strimzi.io/cluster: example-cluster
+  name: resources-streams-bootstrap-my-streams-app-error
+spec:
+  config:
+    cleanup.policy: compact,delete
+  partitions: 1
+  replicas: 1
 
