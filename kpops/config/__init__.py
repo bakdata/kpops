@@ -121,6 +121,12 @@ class KpopsConfig(BaseSettings):
         description="Whether to retain clean up jobs in the cluster or uninstall the, after completion.",
     )
 
+    # TODO: Maybe feature flag this at first...
+    # manifest_strimzi_topics: bool = Field(
+    #     default=False,
+    #     description="Whether to manifest Strimzi topics or not.",
+    # )
+
     model_config = SettingsConfigDict(env_prefix=ENV_PREFIX, env_nested_delimiter="__")
 
     @classmethod
