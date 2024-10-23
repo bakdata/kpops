@@ -7,11 +7,14 @@ from typing import TYPE_CHECKING
 
 import pydantic
 from pydantic import Field
+from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
 from kpops.components.base_components import KafkaApp
 from kpops.components.base_components.helm_app import HelmApp
+from kpops.components.base_components.models.resource import Resource
 from kpops.components.streams_bootstrap.model import StreamsBootstrapValues
+from kpops.components.streams_bootstrap.strimzi_model import StrimziTopic
 from kpops.utils.docstring import describe_attr
 
 if TYPE_CHECKING:
@@ -55,6 +58,35 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
         pattern=STREAMS_BOOTSTRAP_VERSION_PATTERN,
         description=describe_attr("version", __doc__),
     )
+
+    @override
+    def manifest(self) -> Resource:
+        resource = super().manifest()
+        topics = []
+        if self.to:
+            for topic in self.to.kafka_topics:
+                strimzi_topic = StrimziTopic(
+                    **{
+                        "name": topic.name,
+                        "spec": {
+                            "partitions": topic.config.partitions_count,
+                            "replicas": topic.config.replication_factor,
+                            "config": topic.config.configs,
+                        },
+                    }
+                )
+                topics.append(strimzi_topic.model_dump(mode="json"))
+
+        templated_topics = self.helm.template(
+            self.helm_release_name,
+            "kpops/components/streams_bootstrap/charts/kafka-topics",
+            self.namespace,
+            {"topics": topics},
+        )
+
+        resource.extend(templated_topics)
+
+        return resource
 
     @pydantic.field_validator("version", mode="after")
     @classmethod
