@@ -1188,6 +1188,22 @@
                     "type": "integer"
                 },
                 "commandLine": {
+                    "additionalProperties": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "number"
+                            }
+                        ]
+                    },
                     "description": "Map of command line arguments passed to the streams app.",
                     "title": "Commandline",
                     "type": "object"
@@ -1240,15 +1256,15 @@
                     "default": "Always",
                     "description": "Docker image pull policy."
                 },
-                "imagePullSecret": {
-                    "description": "Secrets to be used for private registries.",
+                "imagePullSecrets": {
+                    "description": "",
                     "items": {
                         "additionalProperties": {
                             "type": "string"
                         },
                         "type": "object"
                     },
-                    "title": "Imagepullsecret",
+                    "title": "Imagepullsecrets",
                     "type": "array"
                 },
                 "imageTag": {
@@ -1525,22 +1541,22 @@
             "title": "ProducerStreamsConfig",
             "type": "object"
         },
-        "PrometheusConfig": {
+        "PrometheusExporterConfig": {
             "description": "Prometheus JMX exporter configuration.",
             "properties": {
                 "jmx": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/PrometheusJMXConfig"
+                            "$ref": "#/$defs/PrometheusJMXExporterConfig"
                         }
                     ],
                     "description": "The prometheus JMX exporter configuration."
                 }
             },
-            "title": "PrometheusConfig",
+            "title": "PrometheusExporterConfig",
             "type": "object"
         },
-        "PrometheusJMXConfig": {
+        "PrometheusJMXExporterConfig": {
             "description": "Prometheus JMX exporter configuration.",
             "properties": {
                 "enabled": {
@@ -1595,7 +1611,7 @@
                     "description": "JMX Exporter resources configuration."
                 }
             },
-            "title": "PrometheusJMXConfig",
+            "title": "PrometheusJMXExporterConfig",
             "type": "object"
         },
         "ProtocolSchema": {
@@ -1676,17 +1692,23 @@
             "type": "object"
         },
         "ResourceLimits": {
-            "description": "Model representing the 'limits' section of Kubernetes resource specifications.\n\n:param cpu: The maximum amount of CPU a container can use, expressed in milli CPUs (e.g., '300m').\n:param memory: The maximum amount of memory a container can use, with valid units such as 'Mi' or 'Gi' (e.g., '2G').",
+            "description": "Model representing the 'limits' section of Kubernetes resource specifications.",
             "properties": {
                 "cpu": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "integer"
+                        }
+                    ],
                     "description": "The maximum amount of CPU a container can use, expressed in milli CPUs (e.g., '300m').",
-                    "pattern": "^\\d+m$",
-                    "title": "Cpu",
-                    "type": "string"
+                    "title": "Cpu"
                 },
                 "memory": {
                     "description": "The maximum amount of memory a container can use, with valid units such as 'Mi' or 'Gi' (e.g., '2G').",
-                    "pattern": "^\\d+[KMGi]+$",
+                    "pattern": "^\\d+([EPTGMk]|Ei|Pi|Ti|Gi|Mi|Ki)?$",
                     "title": "Memory",
                     "type": "string"
                 }
@@ -1699,7 +1721,7 @@
             "type": "object"
         },
         "ResourceRequests": {
-            "description": "Model representing the 'requests' section of Kubernetes resource specifications.\n\n:param cpu: The minimum amount of CPU requested for the container, expressed in milli CPUs (e.g., '100m').\n:param memory: The minimum amount of memory requested for the container, with valid units such as 'Mi' or 'Gi' (e.g., '500Mi').",
+            "description": "Model representing the 'requests' section of Kubernetes resource specifications.",
             "properties": {
                 "cpu": {
                     "description": "The minimum amount of CPU requested for the container, expressed in milli CPUs (e.g., '100m').",
@@ -1722,7 +1744,7 @@
             "type": "object"
         },
         "Resources": {
-            "description": "Model representing the resource specifications for a Kubernetes container.\n\n:param requests: The minimum resource requirements for the container.\n:param limits: The maximum resource limits for the container.",
+            "description": "Model representing the resource specifications for a Kubernetes container.",
             "properties": {
                 "limits": {
                     "allOf": [
@@ -2083,6 +2105,22 @@
                     "description": "Kubernetes event-driven autoscaling config"
                 },
                 "commandLine": {
+                    "additionalProperties": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "number"
+                            }
+                        ]
+                    },
                     "description": "Map of command line arguments passed to the streams app.",
                     "title": "Commandline",
                     "type": "object"
@@ -2123,15 +2161,15 @@
                     "default": "Always",
                     "description": "Docker image pull policy."
                 },
-                "imagePullSecret": {
-                    "description": "Secrets to be used for private registries.",
+                "imagePullSecrets": {
+                    "description": "",
                     "items": {
                         "additionalProperties": {
                             "type": "string"
                         },
                         "type": "object"
                     },
-                    "title": "Imagepullsecret",
+                    "title": "Imagepullsecrets",
                     "type": "array"
                 },
                 "imageTag": {
@@ -2224,7 +2262,7 @@
                 "prometheus": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/PrometheusConfig"
+                            "$ref": "#/$defs/PrometheusExporterConfig"
                         }
                     ],
                     "description": "Configuration for Prometheus JMX Exporter."
@@ -2541,6 +2579,22 @@
                     "type": "object"
                 },
                 "commandLine": {
+                    "additionalProperties": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "number"
+                            }
+                        ]
+                    },
                     "description": "Map of command line arguments passed to the streams app.",
                     "title": "Commandline",
                     "type": "object"
@@ -2581,15 +2635,15 @@
                     "default": "Always",
                     "description": "Docker image pull policy."
                 },
-                "imagePullSecret": {
-                    "description": "Secrets to be used for private registries.",
+                "imagePullSecrets": {
+                    "description": "",
                     "items": {
                         "additionalProperties": {
                             "type": "string"
                         },
                         "type": "object"
                     },
-                    "title": "Imagepullsecret",
+                    "title": "Imagepullsecrets",
                     "type": "array"
                 },
                 "imageTag": {
@@ -2753,10 +2807,15 @@
             "type": "object"
         },
         "Toleration": {
-            "description": "Represents the different Kubernetes tolerations.\n\nhttps://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/\n\n:param key: The key that the toleration applies to.\n:param operator: The operator ('Exists' or 'Equal').\n:param value: The value to match for the key.\n:param effect: The effect to tolerate.\n:param toleration_seconds: The duration for which the toleration is valid.",
+            "description": "Represents the different Kubernetes tolerations.\nhttps://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
             "properties": {
                 "effect": {
-                    "$ref": "#/$defs/Effects"
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/Effects"
+                        }
+                    ],
+                    "description": "The effect to tolerate."
                 },
                 "key": {
                     "description": "The key that the toleration applies to.",

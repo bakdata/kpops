@@ -1,8 +1,12 @@
 import enum
 
-from pydantic import BaseModel, Field
+from pydantic import Field
 
 from kpops.utils.docstring import describe_attr
+from kpops.utils.pydantic import DescConfigModel
+
+# Matches plain integer or numbers with valid suffixes: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory
+MEMORY_PATTERN = r"^\d+([EPTGMk]|Ei|Pi|Ti|Gi|Mi|Ki)?$"
 
 
 class ServiceType(enum.Enum):
@@ -50,7 +54,13 @@ class Effects(enum.Enum):
     PREFER_NO_SCHEDULE = "PreferNoSchedule"
 
 
-class Toleration(BaseModel):
+class RestartPolicy(enum.Enum):
+    ALWAYS = "Always"
+    ON_FAILURE = "OnFailure"
+    NEVER = "Never"
+
+
+class Toleration(DescConfigModel):
     """Represents the different Kubernetes tolerations.
 
     https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
@@ -68,7 +78,7 @@ class Toleration(BaseModel):
         default=Operation.EQUAL, description=describe_attr("operator", __doc__)
     )
 
-    effect: Effects = Field(default=...)
+    effect: Effects = Field(default=..., description=describe_attr("effect", __doc__))
 
     value: str | None = Field(default=None, description=describe_attr("value", __doc__))
 
@@ -77,20 +87,20 @@ class Toleration(BaseModel):
     )
 
 
-class ResourceLimits(BaseModel):
+class ResourceLimits(DescConfigModel):
     """Model representing the 'limits' section of Kubernetes resource specifications.
 
     :param cpu: The maximum amount of CPU a container can use, expressed in milli CPUs (e.g., '300m').
     :param memory: The maximum amount of memory a container can use, with valid units such as 'Mi' or 'Gi' (e.g., '2G').
     """
 
-    cpu: str = Field(pattern=r"^\d+m$", description=describe_attr("cpu", __doc__))
+    cpu: str | int = Field(pattern=r"^\d+m$", description=describe_attr("cpu", __doc__))
     memory: str = Field(
-        pattern=r"^\d+[KMGi]+$", description=describe_attr("memory", __doc__)
+        pattern=MEMORY_PATTERN, description=describe_attr("memory", __doc__)
     )
 
 
-class ResourceRequests(BaseModel):
+class ResourceRequests(DescConfigModel):
     """Model representing the 'requests' section of Kubernetes resource specifications.
 
     :param cpu: The minimum amount of CPU requested for the container, expressed in milli CPUs (e.g., '100m').
@@ -103,7 +113,7 @@ class ResourceRequests(BaseModel):
     )
 
 
-class Resources(BaseModel):
+class Resources(DescConfigModel):
     """Model representing the resource specifications for a Kubernetes container.
 
     :param requests: The minimum resource requirements for the container.
@@ -112,9 +122,3 @@ class Resources(BaseModel):
 
     requests: ResourceRequests = Field(description=describe_attr("requests", __doc__))
     limits: ResourceLimits = Field(description=describe_attr("limits", __doc__))
-
-
-class RestartPolicy(enum.Enum):
-    ALWAYS = "Always"
-    ON_FAILURE = "OnFailure"
-    NEVER = "Never"

@@ -1,5 +1,8 @@
-from pydantic import ConfigDict, Field
+from croniter import croniter
+from pydantic import ConfigDict, Field, model_validator
+from typing_extensions import Any
 
+from kpops.api.exception import ValidationError
 from kpops.components.common.kubernetes_model import RestartPolicy
 from kpops.components.streams_bootstrap.model import (
     KafkaConfig,
@@ -61,3 +64,13 @@ class ProducerAppValues(StreamsBootstrapValues):
     )
 
     model_config = ConfigDict(extra="allow")
+
+    @model_validator(mode="after")
+    def schedule_validator(self) -> Any:
+        """Ensure that the defined schedule value is valid."""
+        if self.schedule and not croniter.is_valid(self.schedule):
+            msg = (
+                f"The schedule field '{self.schedule}' must be a valid cron expression."
+            )
+            raise ValidationError(msg)
+        return self

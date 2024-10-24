@@ -230,14 +230,14 @@ class PersistenceConfig(BaseModel):
     )
 
 
-class PrometheusConfig(CamelCaseConfigModel, DescConfigModel):
+class PrometheusExporterConfig(CamelCaseConfigModel, DescConfigModel):
     """Prometheus JMX exporter configuration.
 
     :param jmx: The prometheus JMX exporter configuration.
 
     """
 
-    class PrometheusJMXConfig(CamelCaseConfigModel, DescConfigModel):
+    class PrometheusJMXExporterConfig(CamelCaseConfigModel, DescConfigModel):
         """Prometheus JMX exporter configuration.
 
         :param enabled: Whether to install Prometheus JMX Exporter as a sidecar container and expose JMX metrics to Prometheus.
@@ -276,8 +276,8 @@ class PrometheusConfig(CamelCaseConfigModel, DescConfigModel):
             description=describe_attr("resources", __doc__),
         )
 
-    jmx: PrometheusJMXConfig = Field(
-        default_factory=PrometheusJMXConfig,
+    jmx: PrometheusJMXExporterConfig = Field(
+        default_factory=PrometheusJMXExporterConfig,
         description=describe_attr("jmx", __doc__),
     )
 
@@ -333,8 +333,8 @@ class StreamsAppValues(StreamsBootstrapValues):
         description=describe_attr("persistence", __doc__),
     )
 
-    prometheus: PrometheusConfig = Field(
-        default_factory=PrometheusConfig,
+    prometheus: PrometheusExporterConfig = Field(
+        default_factory=PrometheusExporterConfig,
         description=describe_attr("prometheus", __doc__),
     )
 

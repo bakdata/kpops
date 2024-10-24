@@ -21,7 +21,7 @@
       files: {}
       image: my-registry/my-producer-image
       imagePullPolicy: Always
-      imagePullSecret: []
+      imagePullSecrets: []
       imageTag: 1.0.0
       javaOptions:
         maxRAMPercentage: 75
@@ -45,6 +45,7 @@
           cpu: 100m
           memory: 500Mi
       restartPolicy: OnFailure
+      schedule: 30 3/8 * * *
       secretFilesRefs: []
       secretRefs: {}
       secrets: {}
@@ -87,7 +88,7 @@
     files: {}
     image: my-registry/my-producer-image
     imagePullPolicy: Always
-    imagePullSecret: []
+    imagePullSecrets: []
     imageTag: 1.0.0
     javaOptions:
       maxRAMPercentage: 75
@@ -111,6 +112,7 @@
         cpu: 100m
         memory: 500Mi
     restartPolicy: OnFailure
+    schedule: 30 3/8 * * *
     secretFilesRefs: []
     secretRefs: {}
     secrets: {}
@@ -143,7 +145,7 @@
       files: {}
       image: my-registry/my-streams-app-image
       imagePullPolicy: Always
-      imagePullSecret: []
+      imagePullSecrets: []
       imageTag: 1.0.0
       javaOptions:
         maxRAMPercentage: 75
@@ -257,7 +259,7 @@
     files: {}
     image: my-registry/my-streams-app-image
     imagePullPolicy: Always
-    imagePullSecret: []
+    imagePullSecrets: []
     imageTag: 1.0.0
     javaOptions:
       maxRAMPercentage: 75

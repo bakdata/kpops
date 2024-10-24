@@ -99,7 +99,7 @@ class StreamsBootstrapValues(HelmAppValues):
     :param image: Docker image of the Kafka producer app.
     :param image_tag: Docker image tag of the streams-bootstrap app.
     :param image_pull_policy: Docker image pull policy.
-    :param image_pull_secret: Secrets to be used for private registries.
+    :param image_pull_secrets: Secrets to be used for private registries.
     :param kafka: Kafka configuration for the streams-bootstrap app.
     :param resources: See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
     :param configuration_env_prefix: Prefix for environment variables to use that should be parsed as command line arguments.
@@ -132,7 +132,7 @@ class StreamsBootstrapValues(HelmAppValues):
         description=describe_attr("image_pull_policy", __doc__),
     )
 
-    image_pull_secret: list[dict[str, str]] = Field(
+    image_pull_secrets: list[dict[str, str]] = Field(
         default_factory=list,
         description=describe_attr("image_pull_secret", __doc__),
     )
@@ -164,7 +164,7 @@ class StreamsBootstrapValues(HelmAppValues):
         description=describe_attr("configuration_env_prefix", __doc__),
     )
 
-    command_line: dict[str, Any] = Field(
+    command_line: dict[str, str | bool | int | float] = Field(
         default_factory=dict,
         description=describe_attr("command_line", __doc__),
     )

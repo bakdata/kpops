@@ -4,6 +4,7 @@
     imageTag: "1.0.0"
     commandLine:
       FAKE_ARG: "fake-arg-value"
+    schedule: "30 3/8 * * *"
 
   to:
     topics:
