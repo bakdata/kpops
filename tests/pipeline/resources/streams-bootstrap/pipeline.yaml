@@ -4,6 +4,7 @@
     imageTag: "1.0.0"
     commandLine:
       FAKE_ARG: "fake-arg-value"
+    schedule: "30 3/8 * * *"
 
   to:
     topics:
@@ -21,6 +22,8 @@
       applicationId: "my-streams-app-id"
     commandLine:
       CONVERT_XML: true
+    javaOptions:
+      maxRAMPercentage: 85
 
   from:
     topics:

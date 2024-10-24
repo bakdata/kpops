@@ -36,6 +36,7 @@ python-schema-registry-client = "^2.4.1"
 httpx = "^0 >=0.24.1"
 networkx = "^3.1"
 lightkube = "^0.15.3"
+croniter = "^3.0.3"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.2"

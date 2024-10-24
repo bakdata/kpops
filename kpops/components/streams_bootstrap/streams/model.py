@@ -5,6 +5,11 @@ from typing import Any
 import pydantic
 from pydantic import BaseModel, ConfigDict, Field
 
+from kpops.components.common.kubernetes_model import (
+    ImagePullPolicy,
+    ResourceDefinition,
+    Resources,
+)
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
 from kpops.components.streams_bootstrap.model import (
     KafkaConfig,
@@ -224,6 +229,76 @@ class PersistenceConfig(BaseModel):
     )
 
 
+class PrometheusExporterConfig(CamelCaseConfigModel, DescConfigModel):
+    """Prometheus JMX exporter configuration.
+
+    :param jmx: The prometheus JMX exporter configuration.
+
+    """
+
+    class PrometheusJMXExporterConfig(CamelCaseConfigModel, DescConfigModel):
+        """Prometheus JMX exporter configuration.
+
+        :param enabled: Whether to install Prometheus JMX Exporter as a sidecar container and expose JMX metrics to Prometheus.
+        :param image: Docker Image for Prometheus JMX Exporter container.
+        :param image_tag: Docker Image Tag for Prometheus JMX Exporter container.
+        :param image_pull_policy: Docker Image Pull Policy for Prometheus JMX Exporter container.
+        :param port: JMX Exporter Port which exposes metrics in Prometheus format for scraping.
+        :param resources: JMX Exporter resources configuration.
+        """
+
+        enabled: bool = Field(
+            default=True,
+            description=describe_attr("enabled", __doc__),
+        )
+        image: str = Field(
+            default="solsson/kafka-prometheus-jmx-exporter@sha256",
+            description=describe_attr("image", __doc__),
+        )
+        image_tag: str = Field(
+            default="6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e78946143",
+            description=describe_attr("image_tag", __doc__),
+        )
+        image_pull_policy: ImagePullPolicy = Field(
+            default=ImagePullPolicy.IF_NOT_PRESENT,
+            description=describe_attr("image_pull_policy", __doc__),
+        )
+        port: int = Field(
+            default=5556,
+            description=describe_attr("port", __doc__),
+        )
+        resources: Resources = Field(
+            default=Resources(
+                requests=ResourceDefinition(cpu="100m", memory="500Mi"),
+                limits=ResourceDefinition(cpu="300m", memory="2G"),
+            ),
+            description=describe_attr("resources", __doc__),
+        )
+
+    jmx: PrometheusJMXExporterConfig = Field(
+        default_factory=PrometheusJMXExporterConfig,
+        description=describe_attr("jmx", __doc__),
+    )
+
+
+class JMXConfig(CamelCaseConfigModel, DescConfigModel):
+    """JMX configuration options.
+
+    :param port: The jmx port which JMX style metrics are exposed.
+    :param metric_rules: List of JMX metric rules.
+    """
+
+    port: int = Field(
+        default=5555,
+        description=describe_attr("port", __doc__),
+    )
+
+    metric_rules: list[str] = Field(
+        default=[".*"],
+        description=describe_attr("metric_rules", __doc__),
+    )
+
+
 class StreamsAppValues(StreamsBootstrapValues):
     """streams-bootstrap app configurations.
 
@@ -231,21 +306,45 @@ class StreamsAppValues(StreamsBootstrapValues):
 
     :param kafka: streams-bootstrap kafka section
     :param autoscaling: Kubernetes event-driven autoscaling config, defaults to None
+    :param stateful_set: Whether to use a StatefulSet instead of a Deployment to deploy the streams app.
+    :param persistence: Configuration for persistent volume to store the state of the streams app.
+    :param prometheus: Configuration for Prometheus JMX Exporter.
+    :param jmx: Configuration for JMX Exporter.
+    :param termination_grace_period_seconds: Delay for graceful application shutdown in seconds: https://pracucci.com/graceful-shutdown-of-kubernetes-pods.html
     """
 
     kafka: StreamsConfig = Field(
         description=describe_attr("kafka", __doc__),
     )
+
     autoscaling: StreamsAppAutoScaling | None = Field(
         default=None,
         description=describe_attr("autoscaling", __doc__),
     )
+
     stateful_set: bool = Field(
         default=False,
-        description="Whether to use a Statefulset instead of a Deployment to deploy the streams app.",
+        description=describe_attr("stateful_set", __doc__),
     )
+
     persistence: PersistenceConfig = Field(
         default=PersistenceConfig(),
         description=describe_attr("persistence", __doc__),
     )
+
+    prometheus: PrometheusExporterConfig = Field(
+        default_factory=PrometheusExporterConfig,
+        description=describe_attr("prometheus", __doc__),
+    )
+
+    jmx: JMXConfig = Field(
+        default_factory=JMXConfig,
+        description=describe_attr("jmx", __doc__),
+    )
+
+    termination_grace_period_seconds: int = Field(
+        default=300,
+        description=describe_attr("termination_grace_period_seconds", __doc__),
+    )
+
     model_config = ConfigDict(extra="allow")

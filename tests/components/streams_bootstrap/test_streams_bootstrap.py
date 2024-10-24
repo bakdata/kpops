@@ -21,9 +21,10 @@ class TestStreamsBootstrap:
             **{
                 "namespace": "test-namespace",
                 "values": {
+                    "image": "streamsBootstrap",
                     "kafka": {
                         "bootstrapServers": "localhost:9092",
-                    }
+                    },
                 },
             },
         )
@@ -42,6 +43,7 @@ class TestStreamsBootstrap:
             **{
                 "namespace": "test-namespace",
                 "values": {
+                    "image": "streamsBootstrap",
                     "imageTag": "1.0.0",
                     "kafka": {
                         "outputTopic": "test",
@@ -74,6 +76,7 @@ class TestStreamsBootstrap:
             "test-namespace",
             {
                 "nameOverride": "${pipeline.name}-example-name",
+                "image": "streamsBootstrap",
                 "imageTag": "1.0.0",
                 "kafka": {
                     "bootstrapServers": "fake-broker:9092",
@@ -93,6 +96,7 @@ class TestStreamsBootstrap:
         ):
             StreamsBootstrapValues(
                 **{
+                    "image": "streamsBootstrap",
                     "imageTag": "invalid image tag!",
                     "kafka": {
                         "bootstrapServers": "fake-broker:9092",

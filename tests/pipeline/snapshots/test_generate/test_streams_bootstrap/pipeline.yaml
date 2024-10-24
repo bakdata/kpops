@@ -10,16 +10,53 @@
     suffix: -clean
     type: producer-app-cleaner
     values:
+      affinity: {}
+      backoffLimit: 6
       commandLine:
         FAKE_ARG: fake-arg-value
+      configurationEnvPrefix: APP
+      deployment: false
+      env: {}
+      failedJobsHistoryLimit: 1
+      files: {}
       image: my-registry/my-producer-image
+      imagePullPolicy: Always
+      imagePullSecrets: []
       imageTag: 1.0.0
+      javaOptions:
+        maxRAMPercentage: 75
+        others: []
       kafka:
         bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         labeledOutputTopics:
           my-producer-app-output-topic-label: my-labeled-producer-app-topic-output
         outputTopic: my-producer-app-output-topic
         schemaRegistryUrl: http://localhost:8081/
+      livenessProbe: {}
+      podAnnotations: {}
+      podLabels: {}
+      ports: []
+      readinessProbe: {}
+      resources:
+        limits:
+          cpu: 300m
+          memory: 2G
+        requests:
+          cpu: 100m
+          memory: 500Mi
+      restartPolicy: OnFailure
+      schedule: 30 3/8 * * *
+      secretFilesRefs: []
+      secretRefs: {}
+      secrets: {}
+      service:
+        enabled: false
+        labels: {}
+        type: ClusterIP
+      successfulJobsHistoryLimit: 1
+      suspend: false
+      tolerations: []
+      ttlSecondsAfterFinished: 100
     version: 3.0.1
   name: my-producer-app
   namespace: example-namespace
@@ -40,16 +77,53 @@
         type: output
   type: my-producer-app
   values:
+    affinity: {}
+    backoffLimit: 6
     commandLine:
       FAKE_ARG: fake-arg-value
+    configurationEnvPrefix: APP
+    deployment: false
+    env: {}
+    failedJobsHistoryLimit: 1
+    files: {}
     image: my-registry/my-producer-image
+    imagePullPolicy: Always
+    imagePullSecrets: []
     imageTag: 1.0.0
+    javaOptions:
+      maxRAMPercentage: 75
+      others: []
     kafka:
       bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       labeledOutputTopics:
         my-producer-app-output-topic-label: my-labeled-producer-app-topic-output
       outputTopic: my-producer-app-output-topic
       schemaRegistryUrl: http://localhost:8081/
+    livenessProbe: {}
+    podAnnotations: {}
+    podLabels: {}
+    ports: []
+    readinessProbe: {}
+    resources:
+      limits:
+        cpu: 300m
+        memory: 2G
+      requests:
+        cpu: 100m
+        memory: 500Mi
+    restartPolicy: OnFailure
+    schedule: 30 3/8 * * *
+    secretFilesRefs: []
+    secretRefs: {}
+    secrets: {}
+    service:
+      enabled: false
+      labels: {}
+      type: ClusterIP
+    successfulJobsHistoryLimit: 1
+    suspend: false
+    tolerations: []
+    ttlSecondsAfterFinished: 100
   version: 3.0.1
 - _cleaner:
     name: my-streams-app
@@ -63,10 +137,23 @@
     suffix: -clean
     type: streams-app-cleaner
     values:
+      affinity: {}
       commandLine:
         CONVERT_XML: true
+      configurationEnvPrefix: APP
+      env: {}
+      files: {}
       image: my-registry/my-streams-app-image
+      imagePullPolicy: Always
+      imagePullSecrets: []
       imageTag: 1.0.0
+      javaOptions:
+        maxRAMPercentage: 85
+        others: []
+      jmx:
+        metricRules:
+        - .*
+        port: 5555
       kafka:
         applicationId: my-streams-app-id
         bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
@@ -85,9 +172,44 @@
           my-output-topic-label: my-labeled-topic-output
         outputTopic: my-output-topic
         schemaRegistryUrl: http://localhost:8081/
+      livenessProbe: {}
       persistence:
         enabled: false
+      podAnnotations: {}
+      podLabels: {}
+      ports: []
+      prometheus:
+        jmx:
+          enabled: true
+          image: solsson/kafka-prometheus-jmx-exporter@sha256
+          imagePullPolicy: IfNotPresent
+          imageTag: 6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e78946143
+          port: 5556
+          resources:
+            limits:
+              cpu: 300m
+              memory: 2G
+            requests:
+              cpu: 100m
+              memory: 500Mi
+      readinessProbe: {}
+      resources:
+        limits:
+          cpu: 300m
+          memory: 2G
+        requests:
+          cpu: 100m
+          memory: 500Mi
+      secretFilesRefs: []
+      secretRefs: {}
+      secrets: {}
+      service:
+        enabled: false
+        labels: {}
+        type: ClusterIP
       statefulSet: false
+      terminationGracePeriodSeconds: 300
+      tolerations: []
     version: 3.0.1
   from:
     components: {}
@@ -129,10 +251,23 @@
         value_schema: com.bakdata.kafka.DeadLetter
   type: my-streams-app
   values:
+    affinity: {}
     commandLine:
       CONVERT_XML: true
+    configurationEnvPrefix: APP
+    env: {}
+    files: {}
     image: my-registry/my-streams-app-image
+    imagePullPolicy: Always
+    imagePullSecrets: []
     imageTag: 1.0.0
+    javaOptions:
+      maxRAMPercentage: 85
+      others: []
+    jmx:
+      metricRules:
+      - .*
+      port: 5555
     kafka:
       applicationId: my-streams-app-id
       bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
@@ -151,8 +286,43 @@
         my-output-topic-label: my-labeled-topic-output
       outputTopic: my-output-topic
       schemaRegistryUrl: http://localhost:8081/
+    livenessProbe: {}
     persistence:
       enabled: false
+    podAnnotations: {}
+    podLabels: {}
+    ports: []
+    prometheus:
+      jmx:
+        enabled: true
+        image: solsson/kafka-prometheus-jmx-exporter@sha256
+        imagePullPolicy: IfNotPresent
+        imageTag: 6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e78946143
+        port: 5556
+        resources:
+          limits:
+            cpu: 300m
+            memory: 2G
+          requests:
+            cpu: 100m
+            memory: 500Mi
+    readinessProbe: {}
+    resources:
+      limits:
+        cpu: 300m
+        memory: 2G
+      requests:
+        cpu: 100m
+        memory: 500Mi
+    secretFilesRefs: []
+    secretRefs: {}
+    secrets: {}
+    service:
+      enabled: false
+      labels: {}
+      type: ClusterIP
     statefulSet: false
+    terminationGracePeriodSeconds: 300
+    tolerations: []
   version: 3.0.1
 
