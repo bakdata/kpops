@@ -1,6 +1,7 @@
+from typing import Any
+
 from croniter import croniter
 from pydantic import ConfigDict, Field, model_validator
-from typing_extensions import Any
 
 from kpops.api.exception import ValidationError
 from kpops.components.common.kubernetes_model import RestartPolicy

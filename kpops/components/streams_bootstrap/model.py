@@ -164,7 +164,7 @@ class StreamsBootstrapValues(HelmAppValues):
         description=describe_attr("configuration_env_prefix", __doc__),
     )
 
-    command_line: dict[str, str | bool | int | float] = Field(
+    command_line: dict[str, str | bool | int] = Field(
         default_factory=dict,
         description=describe_attr("command_line", __doc__),
     )
