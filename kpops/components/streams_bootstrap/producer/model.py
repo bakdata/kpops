@@ -1,7 +1,5 @@
-from typing import Any
-
 from croniter import croniter
-from pydantic import ConfigDict, Field, model_validator
+from pydantic import ConfigDict, Field, field_validator
 
 from kpops.api.exception import ValidationError
 from kpops.components.common.kubernetes_model import RestartPolicy
@@ -41,7 +39,6 @@ class ProducerAppValues(StreamsBootstrapValues):
         description=describe_attr("restart_policy", __doc__),
     )
 
-    # TODO: we can do validation of the cron expression with https://github.com/kaka2507/cron-validator
     schedule: str | None = Field(
         default=None, description=describe_attr("schedule", __doc__)
     )
@@ -66,12 +63,11 @@ class ProducerAppValues(StreamsBootstrapValues):
 
     model_config = ConfigDict(extra="allow")
 
-    @model_validator(mode="after")
-    def schedule_validator(self) -> Any:
+    @field_validator("schedule")
+    @classmethod
+    def schedule_cron_validator(cls, schedule: str) -> str:
         """Ensure that the defined schedule value is valid."""
-        if self.schedule and not croniter.is_valid(self.schedule):
-            msg = (
-                f"The schedule field '{self.schedule}' must be a valid cron expression."
-            )
+        if schedule and not croniter.is_valid(schedule):
+            msg = f"The schedule field '{schedule}' must be a valid cron expression."
             raise ValidationError(msg)
-        return self
+        return schedule

@@ -148,7 +148,7 @@
       imagePullSecrets: []
       imageTag: 1.0.0
       javaOptions:
-        maxRAMPercentage: 75
+        maxRAMPercentage: 85
         others: []
       jmx:
         metricRules:
@@ -262,7 +262,7 @@
     imagePullSecrets: []
     imageTag: 1.0.0
     javaOptions:
-      maxRAMPercentage: 75
+      maxRAMPercentage: 85
       others: []
     jmx:
       metricRules:

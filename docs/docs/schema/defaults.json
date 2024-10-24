@@ -1688,8 +1688,8 @@
             "title": "RepoAuthFlags",
             "type": "object"
         },
-        "ResourceLimits": {
-            "description": "Model representing the 'limits' section of Kubernetes resource specifications.",
+        "ResourceDefinition": {
+            "description": "Model representing the 'limits' or `request` section of Kubernetes resource specifications.",
             "properties": {
                 "cpu": {
                     "anyOf": [
@@ -1714,30 +1714,7 @@
                 "cpu",
                 "memory"
             ],
-            "title": "ResourceLimits",
-            "type": "object"
-        },
-        "ResourceRequests": {
-            "description": "Model representing the 'requests' section of Kubernetes resource specifications.",
-            "properties": {
-                "cpu": {
-                    "description": "The minimum amount of CPU requested for the container, expressed in milli CPUs (e.g., '100m').",
-                    "pattern": "^\\d+m$",
-                    "title": "Cpu",
-                    "type": "string"
-                },
-                "memory": {
-                    "description": "The minimum amount of memory requested for the container, with valid units such as 'Mi' or 'Gi' (e.g., '500Mi').",
-                    "pattern": "^\\d+[KMGi]+$",
-                    "title": "Memory",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "cpu",
-                "memory"
-            ],
-            "title": "ResourceRequests",
+            "title": "ResourceDefinition",
             "type": "object"
         },
         "Resources": {
@@ -1746,7 +1723,7 @@
                 "limits": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/ResourceLimits"
+                            "$ref": "#/$defs/ResourceDefinition"
                         }
                     ],
                     "description": "The maximum resource limits for the container."
@@ -1754,7 +1731,7 @@
                 "requests": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/ResourceRequests"
+                            "$ref": "#/$defs/ResourceDefinition"
                         }
                     ],
                     "description": "The minimum resource requirements for the container."

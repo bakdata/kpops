@@ -125,7 +125,7 @@ spec:
           value: 'true'
         - name: JAVA_TOOL_OPTIONS
           value: '-Dcom.sun.management.jmxremote.port=5555 -Dcom.sun.management.jmxremote.authenticate=false
-            -Dcom.sun.management.jmxremote.ssl=false -XX:MaxRAMPercentage=75.0 '
+            -Dcom.sun.management.jmxremote.ssl=false -XX:MaxRAMPercentage=85.0 '
         image: my-registry/my-streams-app-image:1.0.0
         imagePullPolicy: Always
         name: resources-streams-bootstrap-my-streams-app

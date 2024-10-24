@@ -22,6 +22,8 @@
       applicationId: "my-streams-app-id"
     commandLine:
       CONVERT_XML: true
+    javaOptions:
+      maxRAMPercentage: 85
 
   from:
     topics:

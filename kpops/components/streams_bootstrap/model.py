@@ -9,8 +9,7 @@ from kpops.components.base_components.helm_app import HelmAppValues
 from kpops.components.common.kubernetes_model import (
     ImagePullPolicy,
     ProtocolSchema,
-    ResourceLimits,
-    ResourceRequests,
+    ResourceDefinition,
     Resources,
     ServiceType,
     Toleration,
@@ -143,8 +142,8 @@ class StreamsBootstrapValues(HelmAppValues):
 
     resources: Resources = Field(
         default=Resources(
-            requests=ResourceRequests(cpu="100m", memory="500Mi"),
-            limits=ResourceLimits(cpu="300m", memory="2G"),
+            requests=ResourceDefinition(cpu="100m", memory="500Mi"),
+            limits=ResourceDefinition(cpu="300m", memory="2G"),
         ),
         description=describe_attr("resources", __doc__),
     )

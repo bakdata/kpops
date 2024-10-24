@@ -7,8 +7,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from kpops.components.common.kubernetes_model import (
     ImagePullPolicy,
-    ResourceLimits,
-    ResourceRequests,
+    ResourceDefinition,
     Resources,
 )
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
@@ -270,8 +269,8 @@ class PrometheusExporterConfig(CamelCaseConfigModel, DescConfigModel):
         )
         resources: Resources = Field(
             default=Resources(
-                requests=ResourceRequests(cpu="100m", memory="500Mi"),
-                limits=ResourceLimits(cpu="300m", memory="2G"),
+                requests=ResourceDefinition(cpu="100m", memory="500Mi"),
+                limits=ResourceDefinition(cpu="300m", memory="2G"),
             ),
             description=describe_attr("resources", __doc__),
         )

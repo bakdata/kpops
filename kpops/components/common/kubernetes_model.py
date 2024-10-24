@@ -87,8 +87,8 @@ class Toleration(DescConfigModel):
     )
 
 
-class ResourceLimits(DescConfigModel):
-    """Model representing the 'limits' section of Kubernetes resource specifications.
+class ResourceDefinition(DescConfigModel):
+    """Model representing the 'limits' or `request` section of Kubernetes resource specifications.
 
     :param cpu: The maximum amount of CPU a container can use, expressed in milli CPUs (e.g., '300m').
     :param memory: The maximum amount of memory a container can use, with valid units such as 'Mi' or 'Gi' (e.g., '2G').
@@ -100,19 +100,6 @@ class ResourceLimits(DescConfigModel):
     )
 
 
-class ResourceRequests(DescConfigModel):
-    """Model representing the 'requests' section of Kubernetes resource specifications.
-
-    :param cpu: The minimum amount of CPU requested for the container, expressed in milli CPUs (e.g., '100m').
-    :param memory: The minimum amount of memory requested for the container, with valid units such as 'Mi' or 'Gi' (e.g., '500Mi').
-    """
-
-    cpu: str = Field(pattern=r"^\d+m$", description=describe_attr("cpu", __doc__))
-    memory: str = Field(
-        pattern=r"^\d+[KMGi]+$", description=describe_attr("memory", __doc__)
-    )
-
-
 class Resources(DescConfigModel):
     """Model representing the resource specifications for a Kubernetes container.
 
@@ -120,5 +107,5 @@ class Resources(DescConfigModel):
     :param limits: The maximum resource limits for the container.
     """
 
-    requests: ResourceRequests = Field(description=describe_attr("requests", __doc__))
-    limits: ResourceLimits = Field(description=describe_attr("limits", __doc__))
+    requests: ResourceDefinition = Field(description=describe_attr("requests", __doc__))
+    limits: ResourceDefinition = Field(description=describe_attr("limits", __doc__))
