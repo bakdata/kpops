@@ -4,6 +4,7 @@ from unittest.mock import ANY, MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
+from kpops.api.exception import ValidationError
 from kpops.component_handlers import get_handlers
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
@@ -46,6 +47,7 @@ class TestProducerApp:
                 "version": "3.2.1",
                 "namespace": "test-namespace",
                 "values": {
+                    "image": "ProducerApp",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "clean_schemas": True,
@@ -90,6 +92,7 @@ class TestProducerApp:
                 "namespace": "test-namespace",
                 "values": {
                     "namespace": "test-namespace",
+                    "image": "ProducerApp",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "to": {
@@ -145,6 +148,7 @@ class TestProducerApp:
                 "test-namespace",
                 {
                     "nameOverride": PRODUCER_APP_HELM_NAME_OVERRIDE,
+                    "image": "ProducerApp",
                     "kafka": {
                         "bootstrapServers": "fake-broker:9092",
                         "outputTopic": "producer-app-output-topic",
@@ -232,6 +236,7 @@ class TestProducerApp:
                     "test-namespace",
                     {
                         "nameOverride": PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE,
+                        "image": "ProducerApp",
                         "kafka": {
                             "bootstrapServers": "fake-broker:9092",
                             "outputTopic": "producer-app-output-topic",
@@ -306,6 +311,7 @@ class TestProducerApp:
                     "test-namespace",
                     {
                         "nameOverride": PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE,
+                        "image": "ProducerApp",
                         "kafka": {
                             "bootstrapServers": "fake-broker:9092",
                             "outputTopic": "producer-app-output-topic",
@@ -331,6 +337,7 @@ class TestProducerApp:
             **{
                 "namespace": "test-namespace",
                 "values": {
+                    "image": "producer-app",
                     "namespace": "test-namespace",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
@@ -383,6 +390,7 @@ class TestProducerApp:
             **{
                 "namespace": "test-namespace",
                 "values": {
+                    "image": "registry/producer-app",
                     "imageTag": "2.2.2",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
@@ -433,6 +441,7 @@ class TestProducerApp:
             **{
                 "namespace": "test-namespace",
                 "values": {
+                    "image": "registry/producer-app",
                     "imageTag": "2.2.2",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
@@ -543,3 +552,23 @@ class TestProducerApp:
             },
             HelmUpgradeInstallFlags(version="3.0.1", wait=True, wait_for_jobs=True),
         )
+
+    def test_validate_cron_expression(self):
+        with pytest.raises(ValidationError):
+            ProducerApp(
+                name=PRODUCER_APP_NAME,
+                **{
+                    "namespace": "test-namespace",
+                    "values": {
+                        "image": "registry/producer-app",
+                        "imageTag": "2.2.2",
+                        "kafka": {"bootstrapServers": "fake-broker:9092"},
+                        "schedule": "0 wrong_value 1 * *",  # Invalid Cron Expression
+                    },
+                    "to": {
+                        "topics": {
+                            "test-output-topic": {"type": "output"},
+                        }
+                    },
+                },
+            )
