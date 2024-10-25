@@ -1,0 +1,53 @@
+helm-app.yaml:
+- prefix.yaml
+- from_.yaml
+- to.yaml
+- namespace.yaml
+- values-helm-app.yaml
+- repo_config-helm-app.yaml
+- version.yaml
+kafka-app.yaml:
+- prefix.yaml
+- from_.yaml
+- to.yaml
+kafka-connector.yaml:
+- prefix.yaml
+- from_.yaml
+- to.yaml
+- config-kafka-connector.yaml
+- resetter_values.yaml
+kafka-sink-connector.yaml:
+- prefix.yaml
+- from_.yaml
+- to.yaml
+- config-kafka-connector.yaml
+- resetter_values.yaml
+kafka-source-connector.yaml:
+- prefix.yaml
+- from_-kafka-source-connector.yaml
+- to.yaml
+- config-kafka-connector.yaml
+- resetter_values.yaml
+- offset_topic-kafka-source-connector.yaml
+kubernetes-app.yaml:
+- prefix.yaml
+- from_.yaml
+- to.yaml
+- namespace.yaml
+- values-kubernetes-app.yaml
+producer-app.yaml:
+- prefix.yaml
+- from_-producer-app.yaml
+- to.yaml
+- namespace.yaml
+- values-producer-app.yaml
+- repo_config-helm-app.yaml
+- version-kafka-app.yaml
+streams-app.yaml:
+- prefix.yaml
+- from_.yaml
+- to.yaml
+- namespace.yaml
+- values-streams-app.yaml
+- repo_config-helm-app.yaml
+- version-kafka-app.yaml
