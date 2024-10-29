@@ -113,6 +113,12 @@
                     "default": null,
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
                 },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
+                },
                 "to": {
                     "anyOf": [
                         {
@@ -310,6 +316,12 @@
                     "title": "Prefix",
                     "type": "string"
                 },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
+                },
                 "to": {
                     "anyOf": [
                         {
@@ -435,6 +447,12 @@
                         }
                     ],
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
+                },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
                 },
                 "to": {
                     "anyOf": [
@@ -562,6 +580,12 @@
                     ],
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
                 },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
+                },
                 "to": {
                     "anyOf": [
                         {
@@ -656,6 +680,12 @@
                         }
                     ],
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
+                },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
                 },
                 "to": {
                     "anyOf": [
@@ -764,6 +794,12 @@
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "title": "Prefix",
                     "type": "string"
+                },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
                 },
                 "to": {
                     "anyOf": [
@@ -885,6 +921,12 @@
                     "title": "Prefix",
                     "type": "string"
                 },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
+                },
                 "to": {
                     "anyOf": [
                         {
@@ -999,6 +1041,12 @@
                     },
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
                 },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
+                },
                 "to": {
                     "anyOf": [
                         {
@@ -1084,6 +1132,12 @@
                         "url": "https://bakdata.github.io/streams-bootstrap/"
                     },
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
+                },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
                 },
                 "to": {
                     "anyOf": [
@@ -1846,6 +1900,12 @@
                     },
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
                 },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
+                },
                 "to": {
                     "anyOf": [
                         {
@@ -1938,6 +1998,12 @@
                         "url": "https://bakdata.github.io/streams-bootstrap/"
                     },
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
+                },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
                 },
                 "to": {
                     "anyOf": [
@@ -2370,6 +2436,12 @@
                     },
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
                 },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
+                },
                 "to": {
                     "anyOf": [
                         {
@@ -2457,6 +2529,12 @@
                         "url": "https://bakdata.github.io/streams-bootstrap/"
                     },
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
+                },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
                 },
                 "to": {
                     "anyOf": [
@@ -2760,6 +2838,12 @@
                     "description": "Data models",
                     "title": "Models",
                     "type": "object"
+                },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
                 },
                 "topics": {
                     "additionalProperties": {

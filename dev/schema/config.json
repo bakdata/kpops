@@ -118,6 +118,14 @@
             "title": "KafkaRestConfig",
             "type": "object"
         },
+        "OperationMode": {
+            "enum": [
+                "Argo",
+                "Helm"
+            ],
+            "title": "OperationMode",
+            "type": "string"
+        },
         "SchemaRegistryConfig": {
             "additionalProperties": false,
             "description": "Configuration for Schema Registry.",
@@ -238,6 +246,15 @@
                 "url": "http://localhost:8082/"
             },
             "description": "Configuration for Kafka REST Proxy."
+        },
+        "operation_mode": {
+            "allOf": [
+                {
+                    "$ref": "#/$defs/OperationMode"
+                }
+            ],
+            "default": "Helm",
+            "description": "The operation mode of KPOps"
         },
         "pipeline_base_dir": {
             "default": ".",
