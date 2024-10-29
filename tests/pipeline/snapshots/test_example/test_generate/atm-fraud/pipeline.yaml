@@ -9,12 +9,14 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
+    sync_wave: 1
     type: producer-app-cleaner
     values:
       image: ${DOCKER_REGISTRY}/atm-demo-accountproducer
       imageTag: 1.0.0
       labels:
         pipeline: atm-fraud
+      metadata: {}
       prometheus:
         jmx:
           enabled: false
@@ -36,8 +38,10 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
+  sync_wave: 1
   to:
     models: {}
+    sync_wave: 1
     topics:
       atm-fraud-account-producer-topic:
         configs: {}
@@ -48,6 +52,7 @@
     imageTag: 1.0.0
     labels:
       pipeline: atm-fraud
+    metadata: {}
     prometheus:
       jmx:
         enabled: false
@@ -71,6 +76,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
+    sync_wave: 1
     type: producer-app-cleaner
     values:
       commandLine:
@@ -80,6 +86,7 @@
       imageTag: 1.0.0
       labels:
         pipeline: atm-fraud
+      metadata: {}
       prometheus:
         jmx:
           enabled: false
@@ -101,8 +108,10 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
+  sync_wave: 1
   to:
     models: {}
+    sync_wave: 1
     topics:
       atm-fraud-transaction-avro-producer-topic:
         configs: {}
@@ -116,6 +125,7 @@
     imageTag: 1.0.0
     labels:
       pipeline: atm-fraud
+    metadata: {}
     prometheus:
       jmx:
         enabled: false
@@ -139,6 +149,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
+    sync_wave: 3
     type: streams-app-cleaner
     values:
       annotations:
@@ -149,6 +160,7 @@
       imageTag: 1.0.0
       labels:
         pipeline: atm-fraud
+      metadata: {}
       persistence:
         enabled: false
       prometheus:
@@ -174,8 +186,10 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
+  sync_wave: 3
   to:
     models: {}
+    sync_wave: 3
     topics:
       atm-fraud-transaction-joiner-dead-letter-topic:
         configs: {}
@@ -194,6 +208,7 @@
     imageTag: 1.0.0
     labels:
       pipeline: atm-fraud
+    metadata: {}
     persistence:
       enabled: false
     prometheus:
@@ -221,6 +236,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
+    sync_wave: 5
     type: streams-app-cleaner
     values:
       annotations:
@@ -231,6 +247,7 @@
       imageTag: 1.0.0
       labels:
         pipeline: atm-fraud
+      metadata: {}
       persistence:
         enabled: false
       prometheus:
@@ -256,8 +273,10 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
+  sync_wave: 5
   to:
     models: {}
+    sync_wave: 5
     topics:
       atm-fraud-fraud-detector-dead-letter-topic:
         configs: {}
@@ -276,6 +295,7 @@
     imageTag: 1.0.0
     labels:
       pipeline: atm-fraud
+    metadata: {}
     persistence:
       enabled: false
     prometheus:
@@ -303,6 +323,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
+    sync_wave: 7
     type: streams-app-cleaner
     values:
       annotations:
@@ -313,6 +334,7 @@
       imageTag: 1.0.0
       labels:
         pipeline: atm-fraud
+      metadata: {}
       persistence:
         enabled: false
       prometheus:
@@ -348,8 +370,10 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
+  sync_wave: 7
   to:
     models: {}
+    sync_wave: 7
     topics:
       atm-fraud-account-linker-dead-letter-topic:
         configs: {}
@@ -368,6 +392,7 @@
     imageTag: 1.0.0
     labels:
       pipeline: atm-fraud
+    metadata: {}
     persistence:
       enabled: false
     prometheus:
@@ -397,12 +422,14 @@
       repository_name: bakdata-kafka-connect-resetter
       url: https://bakdata.github.io/kafka-connect-resetter/
     suffix: -clean
+    sync_wave: 9
     type: kafka-connector-resetter
     values:
       config:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         connector: atm-fraud-postgresql-connector
       connectorType: sink
+      metadata: {}
     version: 1.0.4
   config:
     auto.create: true
@@ -429,5 +456,7 @@
     value.converter.schema.registry.url: http://k8kafka-cp-schema-registry.${NAMESPACE}.svc.cluster.local:8081
   name: postgresql-connector
   prefix: atm-fraud-
-  resetter_values: {}
+  resetter_values:
+    metadata: {}
+  sync_wave: 9
   type: kafka-sink-connector

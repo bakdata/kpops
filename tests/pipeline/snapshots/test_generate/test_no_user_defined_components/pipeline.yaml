@@ -8,10 +8,12 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
+    sync_wave: 2
     type: streams-app-cleaner
     values:
       image: fake-image
       imageTag: latest
+      metadata: {}
       persistence:
         enabled: false
       statefulSet: false
@@ -38,8 +40,10 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
+  sync_wave: 2
   to:
     models: {}
+    sync_wave: 2
     topics:
       example-output:
         configs: {}
@@ -54,6 +58,7 @@
   values:
     image: fake-image
     imageTag: latest
+    metadata: {}
     persistence:
       enabled: false
     statefulSet: false

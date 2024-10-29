@@ -8,12 +8,14 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
+    sync_wave: 1
     type: producer-app-cleaner
     values:
       commandLine:
         FAKE_ARG: override-arg
       image: example-registry/fake-image
       imageTag: 0.0.1
+      metadata: {}
       schedule: 20 3/8 * * *
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
@@ -28,9 +30,11 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
+  sync_wave: 1
   to:
     models:
       com/bakdata/kafka/fake: 1.0.0
+    sync_wave: 1
     topics:
       resources-pipeline-with-envs-input-producer:
         configs:
@@ -44,6 +48,7 @@
       FAKE_ARG: override-arg
     image: example-registry/fake-image
     imageTag: 0.0.1
+    metadata: {}
     schedule: 20 3/8 * * *
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
@@ -60,6 +65,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
+    sync_wave: 3
     type: streams-app-cleaner
     values:
       autoscaling:
@@ -75,6 +81,7 @@
       commandLine:
         CONVERT_XML: true
       imageTag: latest
+      metadata: {}
       persistence:
         enabled: false
       resources:
@@ -101,8 +108,10 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
+  sync_wave: 3
   to:
     models: {}
+    sync_wave: 3
     topics:
       resources-pipeline-with-envs-converter:
         configs:
@@ -131,6 +140,7 @@
     commandLine:
       CONVERT_XML: true
     imageTag: latest
+    metadata: {}
     persistence:
       enabled: false
     resources:
@@ -159,6 +169,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
+    sync_wave: 5
     type: streams-app-cleaner
     values:
       autoscaling:
@@ -176,6 +187,7 @@
         TYPE: nothing
       image: fake-registry/filter
       imageTag: 2.4.1
+      metadata: {}
       persistence:
         enabled: false
       replicaCount: 4
@@ -201,8 +213,10 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
+  sync_wave: 5
   to:
     models: {}
+    sync_wave: 5
     topics:
       resources-pipeline-with-envs-filter:
         configs:
@@ -232,6 +246,7 @@
       TYPE: nothing
     image: fake-registry/filter
     imageTag: 2.4.1
+    metadata: {}
     persistence:
       enabled: false
     replicaCount: 4

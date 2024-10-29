@@ -8,6 +8,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
+    sync_wave: 1
     type: producer-app-cleaner
     values:
       commandLine:
@@ -20,6 +21,7 @@
           my-producer-app-output-topic-label: my-labeled-producer-app-topic-output
         outputTopic: my-producer-app-output-topic
         schemaRegistryUrl: http://localhost:8081/
+      metadata: {}
     version: 3.0.1
   name: my-producer-app
   namespace: example-namespace
@@ -29,8 +31,10 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
+  sync_wave: 1
   to:
     models: {}
+    sync_wave: 1
     topics:
       my-labeled-producer-app-topic-output:
         configs: {}
@@ -50,6 +54,7 @@
         my-producer-app-output-topic-label: my-labeled-producer-app-topic-output
       outputTopic: my-producer-app-output-topic
       schemaRegistryUrl: http://localhost:8081/
+    metadata: {}
   version: 3.0.1
 - _cleaner:
     name: my-streams-app
@@ -61,6 +66,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
+    sync_wave: 2
     type: streams-app-cleaner
     values:
       commandLine:
@@ -85,6 +91,7 @@
           my-output-topic-label: my-labeled-topic-output
         outputTopic: my-output-topic
         schemaRegistryUrl: http://localhost:8081/
+      metadata: {}
       persistence:
         enabled: false
       statefulSet: false
@@ -109,8 +116,10 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
+  sync_wave: 2
   to:
     models: {}
+    sync_wave: 2
     topics:
       my-error-topic:
         configs: {}
@@ -151,6 +160,7 @@
         my-output-topic-label: my-labeled-topic-output
       outputTopic: my-output-topic
       schemaRegistryUrl: http://localhost:8081/
+    metadata: {}
     persistence:
       enabled: false
     statefulSet: false

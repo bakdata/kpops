@@ -9,6 +9,8 @@ from kpops.api.options import FilterType
 from kpops.cli.utils import (
     collect_pipeline_paths,
 )
+from kpops.components.base_components import PipelineComponent
+from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
 from kpops.config import ENV_PREFIX
 from kpops.const import KPOPS, __version__
 from kpops.const.file_type import (
@@ -154,6 +156,10 @@ def schema(
             gen_config_schema()
 
 
+def predicate(pipeline: PipelineComponent) -> bool:
+    return isinstance(pipeline, StreamsApp | ProducerApp)
+
+
 @app.command(
     short_help="Generate enriched pipeline representation",
     help="Enrich pipeline steps with defaults. The enriched pipeline is used for all KPOps operations (deploy, destroy, ...).",
@@ -221,7 +227,7 @@ def deploy(
     parallel: bool = PARALLEL,
 ):
     for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
-        kpops.deploy(
+        resources = kpops.deploy(
             pipeline_path=pipeline_file_path,
             dotenv=dotenv,
             config=config,
@@ -232,6 +238,11 @@ def deploy(
             verbose=verbose,
             parallel=parallel,
         )
+
+        if resources:
+            for resource in resources:
+                for rendered_manifest in resource:
+                    print_yaml(rendered_manifest)
 
 
 @app.command(help="Destroy pipeline steps")
@@ -247,7 +258,7 @@ def destroy(
     parallel: bool = PARALLEL,
 ):
     for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
-        kpops.destroy(
+        resources = kpops.destroy(
             pipeline_path=pipeline_file_path,
             dotenv=dotenv,
             config=config,
@@ -258,6 +269,11 @@ def destroy(
             verbose=verbose,
             parallel=parallel,
         )
+
+        if resources:
+            for resource in resources:
+                for rendered_manifest in resource:
+                    print_yaml(rendered_manifest)
 
 
 @app.command(help="Reset pipeline steps")
@@ -273,7 +289,7 @@ def reset(
     parallel: bool = PARALLEL,
 ):
     for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
-        kpops.reset(
+        resources = kpops.reset(
             pipeline_path=pipeline_file_path,
             dotenv=dotenv,
             config=config,
@@ -284,6 +300,11 @@ def reset(
             verbose=verbose,
             parallel=parallel,
         )
+
+        if resources:
+            for resource in resources:
+                for rendered_manifest in resource:
+                    print_yaml(rendered_manifest)
 
 
 @app.command(help="Clean pipeline steps")
@@ -299,7 +320,7 @@ def clean(
     parallel: bool = PARALLEL,
 ):
     for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
-        kpops.clean(
+        resources = kpops.clean(
             pipeline_path=pipeline_file_path,
             dotenv=dotenv,
             config=config,
@@ -310,6 +331,11 @@ def clean(
             verbose=verbose,
             parallel=parallel,
         )
+
+        if resources:
+            for resource in resources:
+                for rendered_manifest in resource:
+                    print_yaml(rendered_manifest)
 
 
 def version_callback(show_version: bool) -> None:

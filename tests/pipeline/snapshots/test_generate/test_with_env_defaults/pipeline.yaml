@@ -8,10 +8,12 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
+    sync_wave: 2
     type: streams-app-cleaner
     values:
       image: fake-image
       imageTag: latest
+      metadata: {}
       persistence:
         enabled: false
       statefulSet: false
@@ -38,8 +40,10 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
+  sync_wave: 2
   to:
     models: {}
+    sync_wave: 2
     topics:
       example-output:
         configs: {}
@@ -54,6 +58,7 @@
   values:
     image: fake-image
     imageTag: latest
+    metadata: {}
     persistence:
       enabled: false
     statefulSet: false
@@ -77,12 +82,14 @@
       repository_name: bakdata-kafka-connect-resetter
       url: https://bakdata.github.io/kafka-connect-resetter/
     suffix: -clean
+    sync_wave: 4
     type: kafka-connector-resetter
     values:
       config:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         connector: resources-pipeline-with-env-defaults-es-sink-connector
       connectorType: sink
+      metadata: {}
     version: 1.0.4
   config:
     batch.size: '2000'
@@ -99,6 +106,8 @@
     topics: example-output
   name: es-sink-connector
   prefix: resources-pipeline-with-env-defaults-
-  resetter_values: {}
+  resetter_values:
+    metadata: {}
+  sync_wave: 4
   type: kafka-sink-connector
 

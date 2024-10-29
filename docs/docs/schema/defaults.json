@@ -104,6 +104,12 @@
                     "default": null,
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
                 },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
+                },
                 "to": {
                     "anyOf": [
                         {
@@ -155,6 +161,10 @@
             "additionalProperties": true,
             "description": "Helm app values.",
             "properties": {
+                "metadata": {
+                    "title": "Metadata",
+                    "type": "object"
+                },
                 "nameOverride": {
                     "anyOf": [
                         {
@@ -245,6 +255,12 @@
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "title": "Prefix",
                     "type": "string"
+                },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
                 },
                 "to": {
                     "anyOf": [
@@ -372,6 +388,12 @@
                     ],
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
                 },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
+                },
                 "to": {
                     "anyOf": [
                         {
@@ -498,6 +520,12 @@
                     ],
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
                 },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
+                },
                 "to": {
                     "anyOf": [
                         {
@@ -592,6 +620,12 @@
                         }
                     ],
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
+                },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
                 },
                 "to": {
                     "anyOf": [
@@ -701,6 +735,12 @@
                     "title": "Prefix",
                     "type": "string"
                 },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
+                },
                 "to": {
                     "anyOf": [
                         {
@@ -733,7 +773,12 @@
         "KubernetesAppValues": {
             "additionalProperties": true,
             "description": "Settings specific to Kubernetes apps.",
-            "properties": {},
+            "properties": {
+                "metadata": {
+                    "title": "Metadata",
+                    "type": "object"
+                }
+            },
             "title": "KubernetesAppValues",
             "type": "object"
         },
@@ -813,6 +858,12 @@
                     "title": "Prefix",
                     "type": "string"
                 },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
+                },
                 "to": {
                     "anyOf": [
                         {
@@ -876,6 +927,12 @@
                         "url": "https://bakdata.github.io/streams-bootstrap/"
                     },
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
+                },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
                 },
                 "to": {
                     "anyOf": [
@@ -963,6 +1020,12 @@
                     },
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
                 },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
+                },
                 "to": {
                     "anyOf": [
                         {
@@ -1021,6 +1084,10 @@
                     "title": "Imagetag",
                     "type": "string"
                 },
+                "metadata": {
+                    "title": "Metadata",
+                    "type": "object"
+                },
                 "nameOverride": {
                     "anyOf": [
                         {
@@ -1068,6 +1135,10 @@
                         }
                     ],
                     "description": "Kafka Streams settings"
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "type": "object"
                 },
                 "nameOverride": {
                     "anyOf": [
@@ -1309,6 +1380,12 @@
                     },
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
                 },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
+                },
                 "to": {
                     "anyOf": [
                         {
@@ -1402,6 +1479,12 @@
                     },
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
                 },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
+                },
                 "to": {
                     "anyOf": [
                         {
@@ -1471,6 +1554,10 @@
                     "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
                     "title": "Imagetag",
                     "type": "string"
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "type": "object"
                 },
                 "nameOverride": {
                     "anyOf": [
@@ -1550,6 +1637,10 @@
                         }
                     ],
                     "description": "streams-bootstrap kafka section"
+                },
+                "metadata": {
+                    "title": "Metadata",
+                    "type": "object"
                 },
                 "nameOverride": {
                     "anyOf": [
@@ -1643,6 +1734,12 @@
                     },
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
                 },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
+                },
                 "to": {
                     "anyOf": [
                         {
@@ -1731,6 +1828,12 @@
                     },
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
                 },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
+                },
                 "to": {
                     "anyOf": [
                         {
@@ -1784,6 +1887,10 @@
                     "title": "Imagetag",
                     "type": "string"
                 },
+                "metadata": {
+                    "title": "Metadata",
+                    "type": "object"
+                },
                 "nameOverride": {
                     "anyOf": [
                         {
@@ -1832,6 +1939,10 @@
                     ],
                     "description": "Kafka configuration for the streams-bootstrap app."
                 },
+                "metadata": {
+                    "title": "Metadata",
+                    "type": "object"
+                },
                 "nameOverride": {
                     "anyOf": [
                         {
@@ -1865,6 +1976,12 @@
                     "description": "Data models",
                     "title": "Models",
                     "type": "object"
+                },
+                "sync_wave": {
+                    "default": 0,
+                    "description": "",
+                    "title": "Sync Wave",
+                    "type": "integer"
                 },
                 "topics": {
                     "additionalProperties": {

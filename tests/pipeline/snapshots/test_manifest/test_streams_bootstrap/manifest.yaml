@@ -2,6 +2,8 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: '1'
   labels:
     app: resources-streams-bootstrap-my-producer-app
     chart: producer-app-3.0.1
@@ -48,13 +50,10 @@ apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
   labels:
-    app.kubernetes.io/instance: resources-streams-bootstrap-my-producer-app
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: kafka-topics
-    helm.sh/chart: kafka-topics-0.1.0
-    strimzi.io/cluster: example-cluster
+    strimzi.io/cluster: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
   name: my-producer-app-output-topic
 spec:
+  config: {}
   partitions: 1
   replicas: 1
 
@@ -63,13 +62,10 @@ apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
   labels:
-    app.kubernetes.io/instance: resources-streams-bootstrap-my-producer-app
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: kafka-topics
-    helm.sh/chart: kafka-topics-0.1.0
-    strimzi.io/cluster: example-cluster
+    strimzi.io/cluster: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
   name: my-labeled-producer-app-topic-output
 spec:
+  config: {}
   partitions: 1
   replicas: 1
 
@@ -93,6 +89,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
+    argocd.argoproj.io/sync-wave: '2'
     consumerGroup: my-streams-app-id
   labels:
     app: resources-streams-bootstrap-my-streams-app
@@ -197,13 +194,10 @@ apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
   labels:
-    app.kubernetes.io/instance: resources-streams-bootstrap-my-streams-app
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: kafka-topics
-    helm.sh/chart: kafka-topics-0.1.0
-    strimzi.io/cluster: example-cluster
+    strimzi.io/cluster: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
   name: my-output-topic
 spec:
+  config: {}
   partitions: 1
   replicas: 1
 
@@ -212,13 +206,10 @@ apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
   labels:
-    app.kubernetes.io/instance: resources-streams-bootstrap-my-streams-app
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: kafka-topics
-    helm.sh/chart: kafka-topics-0.1.0
-    strimzi.io/cluster: example-cluster
+    strimzi.io/cluster: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
   name: my-error-topic
 spec:
+  config: {}
   partitions: 1
   replicas: 1
 
@@ -227,13 +218,10 @@ apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
   labels:
-    app.kubernetes.io/instance: resources-streams-bootstrap-my-streams-app
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: kafka-topics
-    helm.sh/chart: kafka-topics-0.1.0
-    strimzi.io/cluster: example-cluster
+    strimzi.io/cluster: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
   name: my-labeled-topic-output
 spec:
+  config: {}
   partitions: 1
   replicas: 1
 
@@ -242,11 +230,7 @@ apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
   labels:
-    app.kubernetes.io/instance: resources-streams-bootstrap-my-streams-app
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: kafka-topics
-    helm.sh/chart: kafka-topics-0.1.0
-    strimzi.io/cluster: example-cluster
+    strimzi.io/cluster: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
   name: resources-streams-bootstrap-my-streams-app-error
 spec:
   config:

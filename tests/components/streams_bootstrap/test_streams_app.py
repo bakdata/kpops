@@ -606,6 +606,7 @@ class TestStreamsApp:
                 "statefulSet": False,
                 "kafka": {
                     "bootstrapServers": "fake-broker:9092",
+                    "deleteOutput": False,
                     "inputTopics": ["test-input-topic"],
                     "outputTopic": "streams-app-output-topic",
                     "schemaRegistryUrl": "http://localhost:8081",

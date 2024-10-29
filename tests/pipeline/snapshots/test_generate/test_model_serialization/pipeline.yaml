@@ -11,9 +11,11 @@
       repository_name: masked
       url: masked
     suffix: -clean
+    sync_wave: 1
     type: producer-app-cleaner
     values:
       imageTag: latest
+      metadata: {}
       streams:
         brokers: test
         outputTopic: out
@@ -30,9 +32,11 @@
       username: masked
     repository_name: masked
     url: masked
+  sync_wave: 1
   type: producer-app-v2
   values:
     imageTag: latest
+    metadata: {}
     streams:
       brokers: test
       outputTopic: out

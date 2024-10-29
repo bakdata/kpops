@@ -8,9 +8,11 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
+    sync_wave: 1
     type: producer-app-cleaner
     values:
       imageTag: latest
+      metadata: {}
       resources:
         limits:
           memory: 2G
@@ -29,8 +31,10 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
+  sync_wave: 1
   to:
     models: {}
+    sync_wave: 1
     topics:
       resources-custom-config-app1:
         configs: {}
@@ -39,6 +43,7 @@
   type: producer-app-v2
   values:
     imageTag: latest
+    metadata: {}
     resources:
       limits:
         memory: 2G
@@ -59,12 +64,14 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
+    sync_wave: 3
     type: streams-app-cleaner
     values:
       image: some-image
       imageTag: latest
       labels:
         pipeline: resources-custom-config
+      metadata: {}
       persistence:
         enabled: false
       statefulSet: false
@@ -86,8 +93,10 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
+  sync_wave: 3
   to:
     models: {}
+    sync_wave: 3
     topics:
       resources-custom-config-app2:
         configs: {}
@@ -105,6 +114,7 @@
     imageTag: latest
     labels:
       pipeline: resources-custom-config
+    metadata: {}
     persistence:
       enabled: false
     statefulSet: false

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import enum
 import logging
 from pathlib import Path
 from typing import ClassVar
@@ -72,6 +73,11 @@ class KafkaConnectConfig(BaseSettings):
     )
 
 
+class OperationMode(str, enum.Enum):
+    ARGO = "Argo"
+    HELM = "Helm"
+
+
 class KpopsConfig(BaseSettings):
     """Global configuration for KPOps project."""
 
@@ -121,11 +127,9 @@ class KpopsConfig(BaseSettings):
         description="Whether to retain clean up jobs in the cluster or uninstall the, after completion.",
     )
 
-    # TODO: Maybe feature flag this at first...
-    # manifest_strimzi_topics: bool = Field(
-    #     default=False,
-    #     description="Whether to manifest Strimzi topics or not.",
-    # )
+    operation_mode: OperationMode = Field(
+        default=OperationMode.HELM, description="The operation mode of KPOps"
+    )
 
     model_config = SettingsConfigDict(env_prefix=ENV_PREFIX, env_nested_delimiter="__")
 

@@ -55,6 +55,11 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         description=describe_attr("to", __doc__),
     )
 
+    sync_wave: int = Field(
+        default=0,
+        description=describe_attr("sync_wave", __doc__),
+    )
+
     model_config = ConfigDict(extra="allow")
 
     def __init__(self, **kwargs) -> None:
@@ -229,7 +234,19 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         """
         return [self]
 
-    def manifest(self) -> Resource:
+    def manifest_deploy(self) -> Resource:
+        """Render final component resources, e.g. Kubernetes manifests."""
+        return []
+
+    def manifest_destroy(self) -> Resource:
+        """Render final component resources, e.g. Kubernetes manifests."""
+        return []
+
+    def manifest_reset(self) -> Resource:
+        """Render final component resources, e.g. Kubernetes manifests."""
+        return []
+
+    def manifest_clean(self) -> Resource:
         """Render final component resources, e.g. Kubernetes manifests."""
         return []
 

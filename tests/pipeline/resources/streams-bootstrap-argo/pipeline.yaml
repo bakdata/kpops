@@ -1,0 +1,49 @@
+- type: my-producer-app
+  values:
+    image: "my-registry/my-producer-image"
+    imageTag: "1.0.0"
+    commandLine:
+      FAKE_ARG: "fake-arg-value"
+
+  to:
+    topics:
+      producer-1-output-topic:
+        type: output
+      producer-1-labeled-topic-output:
+        label: producer-1-labeled-topic-output
+
+
+- type: my-streams-app
+  values:
+    image: "my-registry/my-streams-app-image"
+    imageTag: "1.0.0"
+    kafka:
+      applicationId: "my-streams-app-id"
+    commandLine:
+      CONVERT_XML: true
+
+  from:
+    topics:
+      producer-1-output-topic:
+        type: input
+      producer-1-labeled-topic-output:
+        label: producer-1-labeled-topic-output
+      my-input-pattern:
+        type: pattern
+      my-labeled-input-pattern:
+        type: pattern
+        label: my-input-topic-labeled-pattern
+
+  to:
+    topics:
+      streams-app-1-output-topic:
+        type: output
+      streams-app-1-error-topic:
+        type: error
+        value_schema: com.bakdata.kafka.DeadLetter
+        partitions_count: 1
+        configs:
+          cleanup.policy: compact,delete
+      streams-app-1-labeled-output-topic:
+        label: my-output-topic-label
+

@@ -11,6 +11,8 @@ spec:
   backoffLimit: 6
   template:
     metadata:
+      annotations:
+        argocd.argoproj.io/sync-wave: '1'
       labels:
         app: resources-custom-config-app1
         release: resources-custom-config-app1
@@ -61,6 +63,8 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: '3'
   labels:
     app: resources-custom-config-app2
     chart: streams-app-2.9.0
@@ -76,6 +80,7 @@ spec:
   template:
     metadata:
       annotations:
+        argocd.argoproj.io/sync-wave: '3'
         prometheus.io/port: '5556'
         prometheus.io/scrape: 'true'
       labels:

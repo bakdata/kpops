@@ -8,6 +8,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
+    sync_wave: 1
     type: producer-app-cleaner
     values:
       commandLine:
@@ -18,6 +19,7 @@
         app_name: scheduled-producer
         app_schedule: 30 3/8 * * *
         app_type: scheduled-producer
+      metadata: {}
       schedule: 30 3/8 * * *
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
@@ -32,9 +34,11 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
+  sync_wave: 1
   to:
     models:
       com/bakdata/kafka/fake: 1.0.0
+    sync_wave: 1
     topics:
       resources-component-type-substitution-scheduled-producer:
         configs:
@@ -52,6 +56,7 @@
       app_name: scheduled-producer
       app_schedule: 30 3/8 * * *
       app_type: scheduled-producer
+    metadata: {}
     schedule: 30 3/8 * * *
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
@@ -68,6 +73,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
+    sync_wave: 3
     type: streams-app-cleaner
     values:
       autoscaling:
@@ -83,6 +89,7 @@
       commandLine:
         CONVERT_XML: true
       imageTag: latest
+      metadata: {}
       persistence:
         enabled: false
       resources:
@@ -109,8 +116,10 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
+  sync_wave: 3
   to:
     models: {}
+    sync_wave: 3
     topics:
       resources-component-type-substitution-converter:
         configs:
@@ -139,6 +148,7 @@
     commandLine:
       CONVERT_XML: true
     imageTag: latest
+    metadata: {}
     persistence:
       enabled: false
     resources:
@@ -167,6 +177,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
+    sync_wave: 5
     type: streams-app-cleaner
     values:
       autoscaling:
@@ -190,6 +201,7 @@
         app_type: filter
         filter: filter-app-filter
         test_placeholder_in_placeholder: filter-app-filter
+      metadata: {}
       persistence:
         enabled: false
       replicaCount: 4
@@ -215,8 +227,10 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
+  sync_wave: 5
   to:
     models: {}
+    sync_wave: 5
     topics:
       resources-component-type-substitution-filter-app:
         configs:
@@ -252,6 +266,7 @@
       app_type: filter
       filter: filter-app-filter
       test_placeholder_in_placeholder: filter-app-filter
+    metadata: {}
     persistence:
       enabled: false
     replicaCount: 4

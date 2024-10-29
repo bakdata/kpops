@@ -9,12 +9,14 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
+    sync_wave: 1
     type: producer-app-cleaner
     values:
       image: bakdata/kpops-demo-sentence-producer
       imageTag: 1.0.0
       labels:
         pipeline: word-count
+      metadata: {}
       prometheus:
         jmx:
           enabled: false
@@ -34,8 +36,10 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
+  sync_wave: 1
   to:
     models: {}
+    sync_wave: 1
     topics:
       word-count-data-producer-topic:
         configs: {}
@@ -46,6 +50,7 @@
     imageTag: 1.0.0
     labels:
       pipeline: word-count
+    metadata: {}
     prometheus:
       jmx:
         enabled: false
@@ -67,6 +72,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
+    sync_wave: 3
     type: streams-app-cleaner
     values:
       commandLine:
@@ -75,6 +81,7 @@
       imageTag: 1.0.0
       labels:
         pipeline: word-count
+      metadata: {}
       persistence:
         enabled: false
       prometheus:
@@ -100,8 +107,10 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
+  sync_wave: 3
   to:
     models: {}
+    sync_wave: 3
     topics:
       word-count-word-counter-dead-letter-topic:
         configs: {}
@@ -120,6 +129,7 @@
     imageTag: 1.0.0
     labels:
       pipeline: word-count
+    metadata: {}
     persistence:
       enabled: false
     prometheus:
@@ -146,12 +156,14 @@
       repository_name: bakdata-kafka-connect-resetter
       url: https://bakdata.github.io/kafka-connect-resetter/
     suffix: -clean
+    sync_wave: 5
     type: kafka-connector-resetter
     values:
       config:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         connector: word-count-redis-sink-connector
       connectorType: sink
+      metadata: {}
     version: 1.0.4
   config:
     connector.class: com.github.jcustenborder.kafka.connect.redis.RedisSinkConnector
@@ -164,5 +176,7 @@
     value.converter: org.apache.kafka.connect.storage.StringConverter
   name: redis-sink-connector
   prefix: word-count-
-  resetter_values: {}
+  resetter_values:
+    metadata: {}
+  sync_wave: 5
   type: kafka-sink-connector

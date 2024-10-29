@@ -5,6 +5,7 @@ from pydantic import Field, ValidationError, computed_field
 from typing_extensions import override
 
 from kpops.components.base_components.kafka_app import KafkaAppCleaner
+from kpops.components.base_components.models.resource import Resource
 from kpops.components.common.app_type import AppType
 from kpops.components.common.topic import (
     KafkaTopic,
@@ -123,3 +124,32 @@ class ProducerApp(StreamsBootstrap):
         """Destroy and clean."""
         await super().clean(dry_run)
         await self._cleaner.clean(dry_run)
+
+    @override
+    def manifest_reset(self) -> Resource:
+        resource = super().manifest_reset()
+
+        cleaner = self._cleaner
+        values = cleaner.to_helm_values()
+        values["annotations"] = {"argocd.argoproj.io/sync-wave": self.sync_wave}
+
+        template = self.helm.template(
+            cleaner.helm_release_name,
+            cleaner.helm_chart,
+            self.namespace,
+            values,
+        )
+        resource.extend(template)
+        return resource
+
+    @override
+    def manifest_clean(self) -> Resource:
+        cleaner = self._cleaner
+        values = cleaner.to_helm_values()
+        values["annotations"] = {"argocd.argoproj.io/sync-wave": self.sync_wave}
+        return self.helm.template(
+            cleaner.helm_release_name,
+            cleaner.helm_chart,
+            self.namespace,
+            values,
+        )

@@ -136,3 +136,59 @@ class TestManifest:
         )
         assert result.exit_code == 0, result.stdout
         snapshot.assert_match(result.stdout, MANIFEST_YAML)
+
+    def test_streams_bootstrap_deploy(self, snapshot: Snapshot):
+        result = runner.invoke(
+            app,
+            [
+                "deploy",
+                str(RESOURCE_PATH / "streams-bootstrap-argo" / PIPELINE_YAML),
+                "--config",
+                str(RESOURCE_PATH / "streams-bootstrap-argo"),
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+        snapshot.assert_match(result.stdout, MANIFEST_YAML)
+
+    def test_streams_bootstrap_manifest_destroy(self, snapshot: Snapshot):
+        result = runner.invoke(
+            app,
+            [
+                "destroy",
+                str(RESOURCE_PATH / "streams-bootstrap-argo" / PIPELINE_YAML),
+                "--config",
+                str(RESOURCE_PATH / "streams-bootstrap-argo"),
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+        snapshot.assert_match(result.stdout, MANIFEST_YAML)
+
+    def test_streams_bootstrap_manifest_reset(self, snapshot: Snapshot):
+        result = runner.invoke(
+            app,
+            [
+                "reset",
+                str(RESOURCE_PATH / "streams-bootstrap-argo" / PIPELINE_YAML),
+                "--config",
+                str(RESOURCE_PATH / "streams-bootstrap-argo"),
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+        snapshot.assert_match(result.stdout, MANIFEST_YAML)
+
+    def test_streams_bootstrap_manifest_clean(self, snapshot: Snapshot):
+        result = runner.invoke(
+            app,
+            [
+                "clean",
+                str(RESOURCE_PATH / "streams-bootstrap-argo" / PIPELINE_YAML),
+                "--config",
+                str(RESOURCE_PATH / "streams-bootstrap-argo"),
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+        snapshot.assert_match(result.stdout, MANIFEST_YAML)
