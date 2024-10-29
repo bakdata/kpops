@@ -3,7 +3,6 @@ from __future__ import annotations
 import logging
 import re
 from abc import ABC
-from typing import Any
 
 from pydantic import ConfigDict, Field
 from typing_extensions import override
@@ -21,8 +20,6 @@ KUBERNETES_NAME_CHECK_PATTERN = re.compile(
 
 class KubernetesAppValues(CamelCaseConfigModel, DescConfigModel):
     """Settings specific to Kubernetes apps."""
-
-    metadata: dict[str, Any] = Field(default_factory=dict)
 
     model_config = ConfigDict(
         extra="allow",

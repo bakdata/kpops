@@ -15,7 +15,6 @@
     type: producer-app-cleaner
     values:
       imageTag: latest
-      metadata: {}
       streams:
         brokers: test
         outputTopic: out
@@ -36,7 +35,6 @@
   type: producer-app-v2
   values:
     imageTag: latest
-    metadata: {}
     streams:
       brokers: test
       outputTopic: out

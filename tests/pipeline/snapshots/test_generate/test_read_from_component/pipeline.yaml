@@ -12,7 +12,6 @@
     type: producer-app-cleaner
     values:
       imageTag: latest
-      metadata: {}
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         outputTopic: resources-read-from-component-producer1
@@ -37,7 +36,6 @@
   type: producer-app-v2
   values:
     imageTag: latest
-    metadata: {}
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       outputTopic: resources-read-from-component-producer1
@@ -57,7 +55,6 @@
     type: producer-app-cleaner
     values:
       imageTag: latest
-      metadata: {}
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         outputTopic: resources-read-from-component-producer2
@@ -82,7 +79,6 @@
   type: producer-app-v2
   values:
     imageTag: latest
-    metadata: {}
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       outputTopic: resources-read-from-component-producer2
@@ -114,7 +110,6 @@
         - resources-read-from-component-inflate-step
       image: fake-registry/filter
       imageTag: 2.4.1
-      metadata: {}
       persistence:
         enabled: false
       statefulSet: false
@@ -167,7 +162,6 @@
       - resources-read-from-component-inflate-step
     image: fake-registry/filter
     imageTag: 2.4.1
-    metadata: {}
     persistence:
       enabled: false
     statefulSet: false
@@ -198,7 +192,6 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         connector: resources-read-from-component-inflate-step-inflated-sink-connector
       connectorType: sink
-      metadata: {}
     version: 1.0.4
   config:
     batch.size: '2000'
@@ -216,8 +209,7 @@
     transforms.changeTopic.replacement: resources-read-from-component-inflate-step-index-v1
   name: inflate-step-inflated-sink-connector
   prefix: resources-read-from-component-
-  resetter_values:
-    metadata: {}
+  resetter_values: {}
   sync_wave: 5
   to:
     models: {}
@@ -244,7 +236,6 @@
     type: streams-app-cleaner
     values:
       imageTag: latest
-      metadata: {}
       persistence:
         enabled: false
       statefulSet: false
@@ -283,7 +274,6 @@
   type: streams-app-v2
   values:
     imageTag: latest
-    metadata: {}
     persistence:
       enabled: false
     statefulSet: false
@@ -323,7 +313,6 @@
         - resources-read-from-component-inflate-step-without-prefix
       image: fake-registry/filter
       imageTag: 2.4.1
-      metadata: {}
       persistence:
         enabled: false
       statefulSet: false
@@ -376,7 +365,6 @@
       - resources-read-from-component-inflate-step-without-prefix
     image: fake-registry/filter
     imageTag: 2.4.1
-    metadata: {}
     persistence:
       enabled: false
     statefulSet: false
@@ -407,7 +395,6 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         connector: resources-read-from-component-inflate-step-without-prefix-inflated-sink-connector
       connectorType: sink
-      metadata: {}
     version: 1.0.4
   config:
     batch.size: '2000'
@@ -425,8 +412,7 @@
     transforms.changeTopic.replacement: resources-read-from-component-inflate-step-without-prefix-index-v1
   name: inflate-step-without-prefix-inflated-sink-connector
   prefix: resources-read-from-component-
-  resetter_values:
-    metadata: {}
+  resetter_values: {}
   sync_wave: 6
   to:
     models: {}
@@ -453,7 +439,6 @@
     type: streams-app-cleaner
     values:
       imageTag: latest
-      metadata: {}
       persistence:
         enabled: false
       statefulSet: false
@@ -492,7 +477,6 @@
   type: streams-app-v2
   values:
     imageTag: latest
-    metadata: {}
     persistence:
       enabled: false
     statefulSet: false
@@ -520,7 +504,6 @@
     type: streams-app-cleaner
     values:
       imageTag: latest
-      metadata: {}
       persistence:
         enabled: false
       statefulSet: false
@@ -564,7 +547,6 @@
   type: streams-app-v2
   values:
     imageTag: latest
-    metadata: {}
     persistence:
       enabled: false
     statefulSet: false
@@ -592,7 +574,6 @@
     type: streams-app-cleaner
     values:
       imageTag: latest
-      metadata: {}
       persistence:
         enabled: false
       statefulSet: false
@@ -635,7 +616,6 @@
   type: streams-app-v2
   values:
     imageTag: latest
-    metadata: {}
     persistence:
       enabled: false
     statefulSet: false
@@ -663,7 +643,6 @@
     type: streams-app-cleaner
     values:
       imageTag: latest
-      metadata: {}
       persistence:
         enabled: false
       statefulSet: false
@@ -706,7 +685,6 @@
   type: streams-app-v2
   values:
     imageTag: latest
-    metadata: {}
     persistence:
       enabled: false
     statefulSet: false
@@ -734,7 +712,6 @@
     type: streams-app-cleaner
     values:
       imageTag: latest
-      metadata: {}
       persistence:
         enabled: false
       statefulSet: false
@@ -774,7 +751,6 @@
   type: streams-app-v2
   values:
     imageTag: latest
-    metadata: {}
     persistence:
       enabled: false
     statefulSet: false
@@ -801,7 +777,6 @@
     type: streams-app-cleaner
     values:
       imageTag: latest
-      metadata: {}
       persistence:
         enabled: false
       statefulSet: false
@@ -841,7 +816,6 @@
   type: streams-app-v2
   values:
     imageTag: latest
-    metadata: {}
     persistence:
       enabled: false
     statefulSet: false

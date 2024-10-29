@@ -14,7 +14,6 @@
       debug: true
       image: ${DOCKER_REGISTRY}/atm-demo-accountproducer
       imageTag: 1.0.0
-      metadata: {}
       prometheus:
         jmx:
           enabled: false
@@ -39,7 +38,6 @@
     debug: true
     image: ${DOCKER_REGISTRY}/atm-demo-accountproducer
     imageTag: 1.0.0
-    metadata: {}
     prometheus:
       jmx:
         enabled: false

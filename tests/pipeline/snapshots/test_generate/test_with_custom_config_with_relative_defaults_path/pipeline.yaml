@@ -12,7 +12,6 @@
     type: producer-app-cleaner
     values:
       imageTag: latest
-      metadata: {}
       resources:
         limits:
           memory: 2G
@@ -43,7 +42,6 @@
   type: producer-app-v2
   values:
     imageTag: latest
-    metadata: {}
     resources:
       limits:
         memory: 2G
@@ -71,7 +69,6 @@
       imageTag: latest
       labels:
         pipeline: resources-custom-config
-      metadata: {}
       persistence:
         enabled: false
       statefulSet: false
@@ -114,7 +111,6 @@
     imageTag: latest
     labels:
       pipeline: resources-custom-config
-    metadata: {}
     persistence:
       enabled: false
     statefulSet: false

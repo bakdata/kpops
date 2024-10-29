@@ -14,7 +14,6 @@
       commandLine:
         CONVERT_XML: true
       imageTag: latest
-      metadata: {}
       persistence:
         enabled: false
       resources:
@@ -64,7 +63,6 @@
     commandLine:
       CONVERT_XML: true
     imageTag: latest
-    metadata: {}
     persistence:
       enabled: false
     resources:
@@ -96,7 +94,6 @@
     type: streams-app-cleaner
     values:
       imageTag: latest
-      metadata: {}
       persistence:
         enabled: false
       statefulSet: false
@@ -140,7 +137,6 @@
   type: streams-app-v2
   values:
     imageTag: latest
-    metadata: {}
     persistence:
       enabled: false
     statefulSet: false

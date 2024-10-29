@@ -15,7 +15,6 @@
         FAKE_ARG: fake-arg-value
       image: example-registry/fake-image
       imageTag: 0.0.1
-      metadata: {}
       schedule: 30 3/8 * * *
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
@@ -48,7 +47,6 @@
       FAKE_ARG: fake-arg-value
     image: example-registry/fake-image
     imageTag: 0.0.1
-    metadata: {}
     schedule: 30 3/8 * * *
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
@@ -81,7 +79,6 @@
       commandLine:
         CONVERT_XML: true
       imageTag: latest
-      metadata: {}
       persistence:
         enabled: false
       resources:
@@ -140,7 +137,6 @@
     commandLine:
       CONVERT_XML: true
     imageTag: latest
-    metadata: {}
     persistence:
       enabled: false
     resources:
@@ -187,7 +183,6 @@
         TYPE: nothing
       image: fake-registry/filter
       imageTag: 2.4.1
-      metadata: {}
       persistence:
         enabled: false
       replicaCount: 4
@@ -246,7 +241,6 @@
       TYPE: nothing
     image: fake-registry/filter
     imageTag: 2.4.1
-    metadata: {}
     persistence:
       enabled: false
     replicaCount: 4

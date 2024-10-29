@@ -34,7 +34,6 @@
         outputTopic: my-producer-app-output-topic
         schemaRegistryUrl: http://localhost:8081/
       livenessProbe: {}
-      metadata: {}
       podAnnotations: {}
       podLabels: {}
       ports: []
@@ -104,7 +103,6 @@
       outputTopic: my-producer-app-output-topic
       schemaRegistryUrl: http://localhost:8081/
     livenessProbe: {}
-    metadata: {}
     podAnnotations: {}
     podLabels: {}
     ports: []
@@ -179,7 +177,6 @@
         outputTopic: my-output-topic
         schemaRegistryUrl: http://localhost:8081/
       livenessProbe: {}
-      metadata: {}
       persistence:
         enabled: false
       podAnnotations: {}
@@ -296,7 +293,6 @@
       outputTopic: my-output-topic
       schemaRegistryUrl: http://localhost:8081/
     livenessProbe: {}
-    metadata: {}
     persistence:
       enabled: false
     podAnnotations: {}

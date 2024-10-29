@@ -13,7 +13,6 @@
     values:
       image: fake-image
       imageTag: latest
-      metadata: {}
       persistence:
         enabled: false
       statefulSet: false
@@ -58,7 +57,6 @@
   values:
     image: fake-image
     imageTag: latest
-    metadata: {}
     persistence:
       enabled: false
     statefulSet: false
@@ -89,7 +87,6 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         connector: resources-pipeline-with-env-defaults-es-sink-connector
       connectorType: sink
-      metadata: {}
     version: 1.0.4
   config:
     batch.size: '2000'
@@ -106,8 +103,7 @@
     topics: example-output
   name: es-sink-connector
   prefix: resources-pipeline-with-env-defaults-
-  resetter_values:
-    metadata: {}
+  resetter_values: {}
   sync_wave: 4
   type: kafka-sink-connector
 

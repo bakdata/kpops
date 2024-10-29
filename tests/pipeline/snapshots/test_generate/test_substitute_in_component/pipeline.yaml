@@ -19,7 +19,6 @@
         app_name: scheduled-producer
         app_schedule: 30 3/8 * * *
         app_type: scheduled-producer
-      metadata: {}
       schedule: 30 3/8 * * *
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
@@ -56,7 +55,6 @@
       app_name: scheduled-producer
       app_schedule: 30 3/8 * * *
       app_type: scheduled-producer
-    metadata: {}
     schedule: 30 3/8 * * *
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
@@ -89,7 +87,6 @@
       commandLine:
         CONVERT_XML: true
       imageTag: latest
-      metadata: {}
       persistence:
         enabled: false
       resources:
@@ -148,7 +145,6 @@
     commandLine:
       CONVERT_XML: true
     imageTag: latest
-    metadata: {}
     persistence:
       enabled: false
     resources:
@@ -201,7 +197,6 @@
         app_type: filter
         filter: filter-app-filter
         test_placeholder_in_placeholder: filter-app-filter
-      metadata: {}
       persistence:
         enabled: false
       replicaCount: 4
@@ -266,7 +261,6 @@
       app_type: filter
       filter: filter-app-filter
       test_placeholder_in_placeholder: filter-app-filter
-    metadata: {}
     persistence:
       enabled: false
     replicaCount: 4

@@ -170,10 +170,6 @@
             "additionalProperties": true,
             "description": "Helm app values.",
             "properties": {
-                "metadata": {
-                    "title": "Metadata",
-                    "type": "object"
-                },
                 "nameOverride": {
                     "anyOf": [
                         {
@@ -837,12 +833,7 @@
         "KubernetesAppValues": {
             "additionalProperties": true,
             "description": "Settings specific to Kubernetes apps.",
-            "properties": {
-                "metadata": {
-                    "title": "Metadata",
-                    "type": "object"
-                }
-            },
+            "properties": {},
             "title": "KubernetesAppValues",
             "type": "object"
         },
@@ -1206,10 +1197,6 @@
                     "title": "Imagetag",
                     "type": "string"
                 },
-                "metadata": {
-                    "title": "Metadata",
-                    "type": "object"
-                },
                 "nameOverride": {
                     "anyOf": [
                         {
@@ -1357,10 +1344,6 @@
                 "livenessProbe": {
                     "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
                     "title": "Livenessprobe",
-                    "type": "object"
-                },
-                "metadata": {
-                    "title": "Metadata",
                     "type": "object"
                 },
                 "nameOverride": {
@@ -2092,10 +2075,6 @@
                     "title": "Imagetag",
                     "type": "string"
                 },
-                "metadata": {
-                    "title": "Metadata",
-                    "type": "object"
-                },
                 "nameOverride": {
                     "anyOf": [
                         {
@@ -2264,10 +2243,6 @@
                 "livenessProbe": {
                     "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
                     "title": "Livenessprobe",
-                    "type": "object"
-                },
-                "metadata": {
-                    "title": "Metadata",
                     "type": "object"
                 },
                 "nameOverride": {
@@ -2614,10 +2589,6 @@
                     "title": "Imagetag",
                     "type": "string"
                 },
-                "metadata": {
-                    "title": "Metadata",
-                    "type": "object"
-                },
                 "nameOverride": {
                     "anyOf": [
                         {
@@ -2747,10 +2718,6 @@
                 "livenessProbe": {
                     "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
                     "title": "Livenessprobe",
-                    "type": "object"
-                },
-                "metadata": {
-                    "title": "Metadata",
                     "type": "object"
                 },
                 "nameOverride": {
