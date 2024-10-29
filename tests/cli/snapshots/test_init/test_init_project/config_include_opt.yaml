@@ -16,9 +16,6 @@ kafka_connect:
 kafka_rest:
   timeout: 30
   url: http://localhost:8082/
-operation_mode: !!python/object/apply:builtins.getattr
-- !!python/name:kpops.config.OperationMode ''
-- HELM
 pipeline_base_dir: .
 retain_clean_jobs: false
 schema_registry:

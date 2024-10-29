@@ -111,7 +111,6 @@ class Pipeline(BaseModel):
                     )
                     + 1
                 )
-        for node in nx.topological_sort(self._graph):
             p = self._component_index.get(node)
             if p:
                 p.sync_wave = self._graph.nodes[node][sync_wave]
