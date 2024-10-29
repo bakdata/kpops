@@ -67,6 +67,7 @@ class TestStreamsApp:
             **{
                 "namespace": "test-namespace",
                 "values": {
+                    "image": "streamsApp",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "to": {
@@ -86,6 +87,7 @@ class TestStreamsApp:
             **{
                 "namespace": "test-namespace",
                 "values": {
+                    "image": "streamsApp",
                     "statefulSet": True,
                     "persistence": {"enabled": True, "size": "5Gi"},
                     "kafka": {
@@ -144,6 +146,7 @@ class TestStreamsApp:
             **{
                 "namespace": "test-namespace",
                 "values": {
+                    "image": "streamsApp",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "from": {
@@ -190,6 +193,7 @@ class TestStreamsApp:
             **{
                 "namespace": "test-namespace",
                 "values": {
+                    "image": "streamsApp",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "from": {
@@ -262,6 +266,7 @@ class TestStreamsApp:
             **{
                 "namespace": "test-namespace",
                 "values": {
+                    "image": "streamsApp",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "to": {
@@ -301,6 +306,7 @@ class TestStreamsApp:
             **{
                 "namespace": "test-namespace",
                 "values": {
+                    "image": "streamsApp",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
             },
@@ -338,6 +344,7 @@ class TestStreamsApp:
             **{
                 "namespace": "test-namespace",
                 "values": {
+                    "image": "streamsApp",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "to": {
@@ -417,6 +424,7 @@ class TestStreamsApp:
                 "test-namespace",
                 {
                     "nameOverride": STREAMS_APP_HELM_NAME_OVERRIDE,
+                    "image": "streamsApp",
                     "kafka": {
                         "bootstrapServers": "fake-broker:9092",
                         "labeledOutputTopics": {
@@ -505,6 +513,7 @@ class TestStreamsApp:
                     "test-namespace",
                     {
                         "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                        "image": "streamsApp",
                         "kafka": {
                             "bootstrapServers": "fake-broker:9092",
                             "outputTopic": "streams-app-output-topic",
@@ -571,6 +580,7 @@ class TestStreamsApp:
                     "test-namespace",
                     {
                         "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                        "image": "streamsApp",
                         "kafka": {
                             "bootstrapServers": "fake-broker:9092",
                             "outputTopic": "streams-app-output-topic",
@@ -618,6 +628,7 @@ class TestStreamsApp:
             **{
                 "namespace": "test-namespace",
                 "values": {
+                    "image": "registry/streams-app",
                     "imageTag": "2.2.2",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
@@ -697,6 +708,7 @@ class TestStreamsApp:
             **{
                 "namespace": "test-namespace",
                 "values": {
+                    "image": "registry/streams-app",
                     "imageTag": "2.2.2",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
@@ -755,6 +767,7 @@ class TestStreamsApp:
             **{
                 "namespace": "test-namespace",
                 "values": {
+                    "image": "registry/streams-app",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "from": {
@@ -905,6 +918,7 @@ class TestStreamsApp:
                     "test-namespace",
                     {
                         "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                        "image": "streamsApp",
                         "kafka": {
                             "bootstrapServers": "fake-broker:9092",
                             "outputTopic": "streams-app-output-topic",

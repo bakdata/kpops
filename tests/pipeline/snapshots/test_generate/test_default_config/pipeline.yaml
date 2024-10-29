@@ -34,7 +34,7 @@
   sync_wave: 1
   to:
     models: {}
-    sync_wave: 1
+    sync_wave: 0
     topics:
       resources-custom-config-app1:
         configs: {}
@@ -96,7 +96,7 @@
   sync_wave: 3
   to:
     models: {}
-    sync_wave: 3
+    sync_wave: 0
     topics:
       resources-custom-config-app2:
         configs: {}

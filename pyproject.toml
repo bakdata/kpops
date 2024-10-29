@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kpops"
-version = "8.0.1"
+version = "8.1.0"
 description = "KPOps is a tool to deploy Kafka pipelines to Kubernetes"
 authors = ["bakdata <opensource@bakdata.com>"]
 license = "MIT"
@@ -36,6 +36,7 @@ python-schema-registry-client = "^2.4.1"
 httpx = "^0 >=0.24.1"
 networkx = "^3.1"
 lightkube = "^0.15.3"
+croniter = "^3.0.3"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.2"

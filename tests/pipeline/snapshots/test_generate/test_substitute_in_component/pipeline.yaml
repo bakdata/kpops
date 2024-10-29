@@ -38,7 +38,7 @@
   to:
     models:
       com/bakdata/kafka/fake: 1.0.0
-    sync_wave: 1
+    sync_wave: 0
     topics:
       resources-component-type-substitution-scheduled-producer:
         configs:
@@ -119,7 +119,7 @@
   sync_wave: 3
   to:
     models: {}
-    sync_wave: 3
+    sync_wave: 0
     topics:
       resources-component-type-substitution-converter:
         configs:
@@ -230,7 +230,7 @@
   sync_wave: 5
   to:
     models: {}
-    sync_wave: 5
+    sync_wave: 0
     topics:
       resources-component-type-substitution-filter-app:
         configs:

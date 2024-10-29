@@ -34,7 +34,7 @@
   to:
     models:
       com/bakdata/kafka/fake: 1.0.0
-    sync_wave: 1
+    sync_wave: 0
     topics:
       resources-pipeline-folders-pipeline-1-scheduled-producer:
         configs:
@@ -110,7 +110,7 @@
   sync_wave: 1
   to:
     models: {}
-    sync_wave: 1
+    sync_wave: 0
     topics:
       resources-pipeline-folders-pipeline-2-converter:
         configs:
@@ -212,7 +212,7 @@
   sync_wave: 1
   to:
     models: {}
-    sync_wave: 1
+    sync_wave: 0
     topics:
       ? resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
       : configs:

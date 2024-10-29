@@ -1,4 +1,20 @@
 # Changelog
+## [8.1.0](https://github.com/bakdata/kpops/releases/tag/8.1.0) - Release Date: [2024-10-25]
+
+### 🧪 Dependencies
+
+- Upgrade typer to support union types - [#533](https://github.com/bakdata/kpops/pull/533)
+
+
+### 🌀 Miscellaneous
+
+- Extend StreamsBootstrap model - [#534](https://github.com/bakdata/kpops/pull/534)
+
+
+
+
+
+
 ## [8.0.1](https://github.com/bakdata/kpops/releases/tag/8.0.1) - Release Date: [2024-08-22]
 
 ### 📝 Documentation

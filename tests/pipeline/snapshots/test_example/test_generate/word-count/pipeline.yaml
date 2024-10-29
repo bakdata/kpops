@@ -39,7 +39,7 @@
   sync_wave: 1
   to:
     models: {}
-    sync_wave: 1
+    sync_wave: 0
     topics:
       word-count-data-producer-topic:
         configs: {}
@@ -110,7 +110,7 @@
   sync_wave: 3
   to:
     models: {}
-    sync_wave: 3
+    sync_wave: 0
     topics:
       word-count-word-counter-dead-letter-topic:
         configs: {}

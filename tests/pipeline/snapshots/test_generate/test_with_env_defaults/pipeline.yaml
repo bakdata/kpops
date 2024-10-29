@@ -43,7 +43,7 @@
   sync_wave: 2
   to:
     models: {}
-    sync_wave: 2
+    sync_wave: 0
     topics:
       example-output:
         configs: {}

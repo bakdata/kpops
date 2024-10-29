@@ -34,7 +34,7 @@
   to:
     models:
       com/bakdata/kafka/fake: 1.0.0
-    sync_wave: 1
+    sync_wave: 0
     topics:
       resources-pipeline-with-inflate-scheduled-producer:
         configs:
@@ -111,7 +111,7 @@
   sync_wave: 3
   to:
     models: {}
-    sync_wave: 3
+    sync_wave: 0
     topics:
       resources-pipeline-with-inflate-converter:
         configs:
@@ -216,7 +216,7 @@
   sync_wave: 5
   to:
     models: {}
-    sync_wave: 5
+    sync_wave: 0
     topics:
       resources-pipeline-with-inflate-should-inflate:
         configs:
@@ -304,7 +304,7 @@
   sync_wave: 7
   to:
     models: {}
-    sync_wave: 7
+    sync_wave: 0
     topics:
       kafka-sink-connector:
         configs: {}
@@ -352,7 +352,7 @@
   sync_wave: 2
   to:
     models: {}
-    sync_wave: 2
+    sync_wave: 0
     topics:
       resources-pipeline-with-inflate-should-inflate-inflated-streams-app-error:
         configs:

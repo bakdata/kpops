@@ -29,7 +29,7 @@
   sync_wave: 1
   to:
     models: {}
-    sync_wave: 1
+    sync_wave: 0
     topics:
       resources-read-from-component-producer1:
         configs: {}
@@ -74,7 +74,7 @@
   sync_wave: 1
   to:
     models: {}
-    sync_wave: 1
+    sync_wave: 0
     topics:
       resources-read-from-component-producer2:
         configs: {}
@@ -139,7 +139,7 @@
   sync_wave: 3
   to:
     models: {}
-    sync_wave: 3
+    sync_wave: 0
     topics:
       resources-read-from-component-inflate-step:
         configs:
@@ -221,7 +221,7 @@
   sync_wave: 5
   to:
     models: {}
-    sync_wave: 5
+    sync_wave: 0
     topics:
       inflate-step-inflated-sink-connector:
         configs: {}
@@ -269,7 +269,7 @@
   sync_wave: 2
   to:
     models: {}
-    sync_wave: 2
+    sync_wave: 0
     topics:
       resources-read-from-component-inflate-step-inflate-step-inflated-streams-app:
         configs: {}
@@ -348,7 +348,7 @@
   sync_wave: 4
   to:
     models: {}
-    sync_wave: 4
+    sync_wave: 0
     topics:
       resources-read-from-component-inflate-step-without-prefix:
         configs:
@@ -430,7 +430,7 @@
   sync_wave: 6
   to:
     models: {}
-    sync_wave: 6
+    sync_wave: 0
     topics:
       inflate-step-without-prefix-inflated-sink-connector:
         configs: {}
@@ -478,7 +478,7 @@
   sync_wave: 2
   to:
     models: {}
-    sync_wave: 2
+    sync_wave: 0
     topics:
       inflate-step-without-prefix-inflate-step-without-prefix-inflated-streams-app:
         configs: {}
@@ -550,7 +550,7 @@
   sync_wave: 3
   to:
     models: {}
-    sync_wave: 3
+    sync_wave: 0
     topics:
       resources-read-from-component-consumer1:
         configs: {}
@@ -624,7 +624,7 @@
   sync_wave: 5
   to:
     models: {}
-    sync_wave: 5
+    sync_wave: 0
     topics:
       resources-read-from-component-consumer2-error:
         configs:
@@ -695,7 +695,7 @@
   sync_wave: 3
   to:
     models: {}
-    sync_wave: 3
+    sync_wave: 0
     topics:
       resources-read-from-component-consumer3-error:
         configs:
@@ -763,7 +763,7 @@
   sync_wave: 4
   to:
     models: {}
-    sync_wave: 4
+    sync_wave: 0
     topics:
       resources-read-from-component-consumer4-error:
         configs:
@@ -830,7 +830,7 @@
   sync_wave: 4
   to:
     models: {}
-    sync_wave: 4
+    sync_wave: 0
     topics:
       resources-read-from-component-consumer5-error:
         configs:
