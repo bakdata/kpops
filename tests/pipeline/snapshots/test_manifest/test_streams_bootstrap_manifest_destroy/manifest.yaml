@@ -1,0 +1,61 @@
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+  name: producer-1-output-topic
+spec:
+  config: {}
+  partitions: 1
+  replicas: 1
+
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+  name: producer-1-labeled-topic-output
+spec:
+  config: {}
+  partitions: 1
+  replicas: 1
+
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+  name: streams-app-1-output-topic
+spec:
+  config: {}
+  partitions: 1
+  replicas: 1
+
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+  name: streams-app-1-error-topic
+spec:
+  config:
+    cleanup.policy: compact,delete
+  partitions: 1
+  replicas: 1
+
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+  name: streams-app-1-labeled-output-topic
+spec:
+  config: {}
+  partitions: 1
+  replicas: 1
+
