@@ -1,11 +1,17 @@
 from __future__ import annotations
 
-from typing import Optional, Self
+from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, Field, model_validator
 from typing_extensions import Any, override
 
 from kpops.components.common.topic import KafkaTopic
+
+if TYPE_CHECKING:
+    try:
+        from typing import Self  # pyright: ignore[reportAttributeAccessIssue]
+    except ImportError:
+        from typing_extensions import Self
 
 
 # Define the Pydantic model for the spec and metadata
@@ -26,7 +32,7 @@ class Spec(BaseModel):
 
 class Metadata(BaseModel):
     name: str
-    namespace: Optional[str] = None
+    namespace: str | None = None
     labels: dict[str, str]
 
 

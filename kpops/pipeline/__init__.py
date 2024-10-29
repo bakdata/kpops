@@ -111,8 +111,7 @@ class Pipeline(BaseModel):
                     )
                     + 1
                 )
-            p = self._component_index.get(node)
-            if p:
+            if p := self._component_index.get(node):
                 p.sync_wave = self._graph.nodes[node][sync_wave]
 
     def to_yaml(self) -> str:
