@@ -146,7 +146,7 @@ def deploy(
     if kpops_config.operation_mode is OperationMode.ARGO:
         resources: list[Resource] = []
         for component in pipeline.components:
-            resource = component.manifest_destroy()
+            resource = component.manifest_deploy()
             resources.append(resource)
         return resources
 

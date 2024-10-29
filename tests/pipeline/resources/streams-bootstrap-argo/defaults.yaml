@@ -12,6 +12,3 @@ streams-app: # inherits from streams-bootstrap
     kafka:
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-  to:
-    topics:
-

@@ -12,7 +12,6 @@
       producer-1-labeled-topic-output:
         label: producer-1-labeled-topic-output
 
-
 - type: my-streams-app
   values:
     image: "my-registry/my-streams-app-image"
