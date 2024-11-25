@@ -250,6 +250,10 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         """Render final component resources, e.g. Kubernetes manifests."""
         return []
 
+    def manifest_pause(self) -> Resource:
+        """Render final component resources, e.g. Kubernetes manifests."""
+        return []
+
     async def deploy(self, dry_run: bool) -> None:
         """Deploy component, e.g. to Kubernetes cluster.
 

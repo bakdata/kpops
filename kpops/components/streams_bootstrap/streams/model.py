@@ -304,6 +304,7 @@ class StreamsAppValues(StreamsBootstrapValues):
 
     The attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.
 
+    :param replica_count: The number of Kafka Streams replicas.
     :param kafka: streams-bootstrap kafka section
     :param autoscaling: Kubernetes event-driven autoscaling config, defaults to None
     :param stateful_set: Whether to use a StatefulSet instead of a Deployment to deploy the streams app.
@@ -312,6 +313,11 @@ class StreamsAppValues(StreamsBootstrapValues):
     :param jmx: Configuration for JMX Exporter.
     :param termination_grace_period_seconds: Delay for graceful application shutdown in seconds: https://pracucci.com/graceful-shutdown-of-kubernetes-pods.html
     """
+
+    replica_count: int | None = Field(
+        default=None,
+        description=describe_attr("replica_count", __doc__),
+    )
 
     kafka: StreamsConfig = Field(
         description=describe_attr("kafka", __doc__),

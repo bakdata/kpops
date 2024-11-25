@@ -386,7 +386,7 @@ def init(
     init_project(path, config_include_opt)
 
 
-def patch(
+def sync(
     pipeline_path: Path,
     dotenv: list[Path] | None = None,
     config: Path = Path(),
@@ -404,6 +404,28 @@ def patch(
 
     for component in pipeline.components:
         resource = component.manifest_deploy()
+        resources.append(resource)
+    return resources
+
+
+def pause(
+    pipeline_path: Path,
+    dotenv: list[Path] | None = None,
+    config: Path = Path(),
+    environment: str | None = None,
+    verbose: bool = True,
+) -> list[Resource]:
+    pipeline = generate(
+        pipeline_path=pipeline_path,
+        dotenv=dotenv,
+        config=config,
+        environment=environment,
+        verbose=verbose,
+    )
+    resources: list[Resource] = []
+
+    for component in pipeline.components:
+        resource = component.manifest_pause()
         resources.append(resource)
     return resources
 

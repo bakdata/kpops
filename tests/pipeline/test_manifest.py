@@ -193,11 +193,25 @@ class TestManifest:
         assert result.exit_code == 0, result.stdout
         snapshot.assert_match(result.stdout, MANIFEST_YAML)
 
-    def test_patch(self, snapshot: Snapshot):
+    def test_sync(self, snapshot: Snapshot):
         result = runner.invoke(
             app,
             [
-                "patch",
+                "sync",
+                str(RESOURCE_PATH / "streams-bootstrap-argo" / PIPELINE_YAML),
+                "--config",
+                str(RESOURCE_PATH / "streams-bootstrap-argo"),
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+        snapshot.assert_match(result.stdout, MANIFEST_YAML)
+
+    def test_pause(self, snapshot: Snapshot):
+        result = runner.invoke(
+            app,
+            [
+                "pause",
                 str(RESOURCE_PATH / "streams-bootstrap-argo" / PIPELINE_YAML),
                 "--config",
                 str(RESOURCE_PATH / "streams-bootstrap-argo"),

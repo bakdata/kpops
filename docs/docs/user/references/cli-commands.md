@@ -21,9 +21,10 @@ $ kpops [OPTIONS] COMMAND [ARGS]...
 * `generate`: Generate enriched pipeline representation
 * `init`: Initialize a new KPOps project.
 * `manifest`: Render final resource representation
-* `patch`: Render final resource representation
+* `pause`: Pauses the pipeline
 * `reset`: Reset pipeline steps
 * `schema`: Generate JSON schema.
+* `sync`: Render final resource representation
 
 ## `kpops clean`
 
@@ -170,14 +171,14 @@ $ kpops manifest [OPTIONS] PIPELINE_PATHS...
 * `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
 * `--help`: Show this message and exit.
 
-## `kpops patch`
+## `kpops pause`
 
 In addition to generate, render final resource representation for each pipeline step, e.g. Kubernetes manifests.
 
 **Usage**:
 
 ```console
-$ kpops patch [OPTIONS] PIPELINE_PATHS...
+$ kpops pause [OPTIONS] PIPELINE_PATHS...
 ```
 
 **Arguments**:
@@ -250,4 +251,26 @@ $ kpops schema [OPTIONS] SCOPE:{pipeline|defaults|config}
 
 **Options**:
 
+* `--help`: Show this message and exit.
+
+## `kpops sync`
+
+In addition to generate, render final resource representation for each pipeline step, e.g. Kubernetes manifests.
+
+**Usage**:
+
+```console
+$ kpops sync [OPTIONS] PIPELINE_PATHS...
+```
+
+**Arguments**:
+
+* `PIPELINE_PATHS...`: Paths to dir containing 'pipeline.yaml' or files named 'pipeline.yaml'.  [env var: KPOPS_PIPELINE_PATHS;required]
+
+**Options**:
+
+* `--dotenv FILE`: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]
+* `--config DIRECTORY`: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]
+* `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]
+* `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
 * `--help`: Show this message and exit.

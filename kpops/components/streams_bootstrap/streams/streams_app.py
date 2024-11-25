@@ -200,3 +200,11 @@ class StreamsApp(StreamsBootstrap):
             self.namespace,
             values,
         )
+
+    def manifest_pause(self) -> Resource:
+        autoscaling = self.values.autoscaling
+        if autoscaling and autoscaling.enabled:
+            autoscaling.max_replicas = 0
+        else:
+            self.values.replica_count = 0
+        return self.manifest_deploy()
