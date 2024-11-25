@@ -1945,6 +1945,19 @@
                     "title": "Readinessprobe",
                     "type": "object"
                 },
+                "replicaCount": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The number of Kafka Streams replicas.",
+                    "title": "Replicacount"
+                },
                 "resources": {
                     "allOf": [
                         {
