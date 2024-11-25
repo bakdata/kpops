@@ -8,7 +8,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
-    sync_wave: 1
+    sync_wave: 0
     type: producer-app-cleaner
     values:
       imageTag: latest
@@ -25,7 +25,7 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
-  sync_wave: 1
+  sync_wave: 0
   to:
     models: {}
     sync_wave: 0
@@ -51,7 +51,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
-    sync_wave: 1
+    sync_wave: 0
     type: producer-app-cleaner
     values:
       imageTag: latest
@@ -68,7 +68,7 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
-  sync_wave: 1
+  sync_wave: 0
   to:
     models: {}
     sync_wave: 0
@@ -94,7 +94,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
-    sync_wave: 3
+    sync_wave: 0
     type: streams-app-cleaner
     values:
       autoscaling:
@@ -131,7 +131,7 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
-  sync_wave: 3
+  sync_wave: 0
   to:
     models: {}
     sync_wave: 0
@@ -185,7 +185,7 @@
       repository_name: bakdata-kafka-connect-resetter
       url: https://bakdata.github.io/kafka-connect-resetter/
     suffix: -clean
-    sync_wave: 5
+    sync_wave: 0
     type: kafka-connector-resetter
     values:
       config:
@@ -210,7 +210,7 @@
   name: inflate-step-inflated-sink-connector
   prefix: resources-read-from-component-
   resetter_values: {}
-  sync_wave: 5
+  sync_wave: 0
   to:
     models: {}
     sync_wave: 0
@@ -232,7 +232,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
-    sync_wave: 2
+    sync_wave: 0
     type: streams-app-cleaner
     values:
       imageTag: latest
@@ -257,7 +257,7 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
-  sync_wave: 2
+  sync_wave: 0
   to:
     models: {}
     sync_wave: 0
@@ -297,7 +297,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
-    sync_wave: 4
+    sync_wave: 0
     type: streams-app-cleaner
     values:
       autoscaling:
@@ -334,7 +334,7 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
-  sync_wave: 4
+  sync_wave: 0
   to:
     models: {}
     sync_wave: 0
@@ -388,7 +388,7 @@
       repository_name: bakdata-kafka-connect-resetter
       url: https://bakdata.github.io/kafka-connect-resetter/
     suffix: -clean
-    sync_wave: 6
+    sync_wave: 0
     type: kafka-connector-resetter
     values:
       config:
@@ -413,7 +413,7 @@
   name: inflate-step-without-prefix-inflated-sink-connector
   prefix: resources-read-from-component-
   resetter_values: {}
-  sync_wave: 6
+  sync_wave: 0
   to:
     models: {}
     sync_wave: 0
@@ -435,7 +435,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
-    sync_wave: 2
+    sync_wave: 0
     type: streams-app-cleaner
     values:
       imageTag: latest
@@ -460,7 +460,7 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
-  sync_wave: 2
+  sync_wave: 0
   to:
     models: {}
     sync_wave: 0
@@ -500,7 +500,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
-    sync_wave: 3
+    sync_wave: 0
     type: streams-app-cleaner
     values:
       imageTag: latest
@@ -530,7 +530,7 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
-  sync_wave: 3
+  sync_wave: 0
   to:
     models: {}
     sync_wave: 0
@@ -570,7 +570,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
-    sync_wave: 5
+    sync_wave: 0
     type: streams-app-cleaner
     values:
       imageTag: latest
@@ -602,7 +602,7 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
-  sync_wave: 5
+  sync_wave: 0
   to:
     models: {}
     sync_wave: 0
@@ -639,7 +639,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
-    sync_wave: 3
+    sync_wave: 0
     type: streams-app-cleaner
     values:
       imageTag: latest
@@ -671,7 +671,7 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
-  sync_wave: 3
+  sync_wave: 0
   to:
     models: {}
     sync_wave: 0
@@ -708,7 +708,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
-    sync_wave: 4
+    sync_wave: 0
     type: streams-app-cleaner
     values:
       imageTag: latest
@@ -737,7 +737,7 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
-  sync_wave: 4
+  sync_wave: 0
   to:
     models: {}
     sync_wave: 0
@@ -773,7 +773,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
-    sync_wave: 4
+    sync_wave: 0
     type: streams-app-cleaner
     values:
       imageTag: latest
@@ -802,7 +802,7 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
-  sync_wave: 4
+  sync_wave: 0
   to:
     models: {}
     sync_wave: 0

@@ -3,10 +3,10 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   annotations:
-    argocd.argoproj.io/sync-wave: '3'
+    argocd.argoproj.io/hook: PostDelete
   labels:
     app: resources-streams-bootstrap-argo-my-streams-app-clean
-    chart: streams-app-cleanup-job-3.0.1
+    chart: streams-app-cleanup-job-3.0.2
     release: resources-streams-bootstrap-argo-my-streams-app-clean
   name: resources-streams-bootstrap-argo-my-streams-app-clean
 spec:
@@ -66,11 +66,9 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  annotations:
-    argocd.argoproj.io/sync-wave: '1'
   labels:
     app: resources-streams-bootstrap-argo-my-producer-app-clean
-    chart: producer-app-cleanup-job-3.0.1
+    chart: producer-app-cleanup-job-3.0.2
     release: resources-streams-bootstrap-argo-my-produ-90b22-clean
   name: resources-streams-bootstrap-argo-my-producer-app-clean
 spec:

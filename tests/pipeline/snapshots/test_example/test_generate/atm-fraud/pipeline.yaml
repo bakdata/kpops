@@ -9,7 +9,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
-    sync_wave: 1
+    sync_wave: 0
     type: producer-app-cleaner
     values:
       image: ${DOCKER_REGISTRY}/atm-demo-accountproducer
@@ -37,7 +37,7 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
-  sync_wave: 1
+  sync_wave: 0
   to:
     models: {}
     sync_wave: 0
@@ -74,7 +74,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
-    sync_wave: 1
+    sync_wave: 0
     type: producer-app-cleaner
     values:
       commandLine:
@@ -105,7 +105,7 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
-  sync_wave: 1
+  sync_wave: 0
   to:
     models: {}
     sync_wave: 0
@@ -145,7 +145,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
-    sync_wave: 3
+    sync_wave: 0
     type: streams-app-cleaner
     values:
       annotations:
@@ -181,7 +181,7 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
-  sync_wave: 3
+  sync_wave: 0
   to:
     models: {}
     sync_wave: 0
@@ -230,7 +230,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
-    sync_wave: 5
+    sync_wave: 0
     type: streams-app-cleaner
     values:
       annotations:
@@ -266,7 +266,7 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
-  sync_wave: 5
+  sync_wave: 0
   to:
     models: {}
     sync_wave: 0
@@ -315,7 +315,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
-    sync_wave: 7
+    sync_wave: 0
     type: streams-app-cleaner
     values:
       annotations:
@@ -361,7 +361,7 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
-  sync_wave: 7
+  sync_wave: 0
   to:
     models: {}
     sync_wave: 0
@@ -412,7 +412,7 @@
       repository_name: bakdata-kafka-connect-resetter
       url: https://bakdata.github.io/kafka-connect-resetter/
     suffix: -clean
-    sync_wave: 9
+    sync_wave: 0
     type: kafka-connector-resetter
     values:
       config:
@@ -446,5 +446,5 @@
   name: postgresql-connector
   prefix: atm-fraud-
   resetter_values: {}
-  sync_wave: 9
+  sync_wave: 0
   type: kafka-sink-connector

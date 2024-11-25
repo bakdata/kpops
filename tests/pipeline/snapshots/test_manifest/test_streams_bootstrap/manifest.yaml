@@ -96,7 +96,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    argocd.argoproj.io/sync-wave: '2'
+    argocd.argoproj.io/sync-wave: '1'
     consumerGroup: my-streams-app-id
   labels:
     app: resources-streams-bootstrap-my-streams-app
@@ -244,4 +244,68 @@ spec:
     cleanup.policy: compact,delete
   partitions: 1
   replicas: 1
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    argocd.argoproj.io/hook: PostDelete
+  labels:
+    app: resources-streams-bootstrap-my-streams-app
+    chart: streams-app-cleanup-job-3.0.2
+    release: resources-streams-bootstrap-my-streams-app-clean
+  name: resources-streams-bootstrap-my-streams-app
+spec:
+  backoffLimit: 6
+  template:
+    metadata:
+      labels:
+        app: resources-streams-bootstrap-my-streams-app
+        release: resources-streams-bootstrap-my-streams-app-clean
+    spec:
+      containers:
+      - args:
+        - reset
+        env:
+        - name: ENV_PREFIX
+          value: APP_
+        - name: KAFKA_LARGE_MESSAGE_ID_GENERATOR
+          value: com.bakdata.kafka.MurmurHashIdGenerator
+        - name: APP_BOOTSTRAP_SERVERS
+          value: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+        - name: APP_SCHEMA_REGISTRY_URL
+          value: http://localhost:8081/
+        - name: APP_INPUT_TOPICS
+          value: my-input-topic
+        - name: APP_INPUT_PATTERN
+          value: my-input-pattern
+        - name: APP_OUTPUT_TOPIC
+          value: my-output-topic
+        - name: APP_ERROR_TOPIC
+          value: resources-streams-bootstrap-my-streams-app-error
+        - name: APP_LABELED_OUTPUT_TOPICS
+          value: my-output-topic-label=my-labeled-topic-output,
+        - name: APP_LABELED_INPUT_TOPICS
+          value: my-input-topic-label=my-labeled-input-topic,
+        - name: APP_LABELED_INPUT_PATTERNS
+          value: my-input-topic-labeled-pattern=my-labeled-input-pattern,
+        - name: APP_APPLICATION_ID
+          value: my-streams-app-id
+        - name: APP_CONVERT_XML
+          value: 'true'
+        - name: JAVA_TOOL_OPTIONS
+          value: '-XX:MaxRAMPercentage=85.0 '
+        image: my-registry/my-streams-app-image:1.0.0
+        imagePullPolicy: Always
+        name: resources-streams-bootstrap-my-streams-app
+        resources:
+          limits:
+            cpu: 500m
+            memory: 2G
+          requests:
+            cpu: 200m
+            memory: 300Mi
+      restartPolicy: OnFailure
+  ttlSecondsAfterFinished: 30
 

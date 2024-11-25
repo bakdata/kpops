@@ -97,22 +97,26 @@ class Pipeline(BaseModel):
             msg = "Pipeline is not a valid DAG."
             raise ValueError(msg)
 
-    def add_levels(self):
-        sync_wave = "sync-wave"
-        for node in nx.topological_sort(self._graph):
-            node_ = self._graph.nodes[node]
-            if not len(list(self._graph.predecessors(node))):
-                node_[sync_wave] = 1
-            else:
-                node_[sync_wave] = (
-                    max(
-                        self._graph.nodes[n][sync_wave]
-                        for n in self._graph.predecessors(node)
-                    )
-                    + 1
-                )
-            if p := self._component_index.get(node):
-                p.sync_wave = self._graph.nodes[node][sync_wave]
+    # class ArgoResource(BaseModel):
+    #     sync_wave: int
+    #     resource: Resource
+
+    # def add_levels(self):
+    #     sync_wave = "sync-wave"
+    #     for node in nx.topological_sort(self._graph):
+    #         node_ = self._graph.nodes[node]
+    #         if not len(list(self._graph.predecessors(node))):
+    #             node_[sync_wave] = 1
+    #         else:
+    #             node_[sync_wave] = (
+    #                 max(
+    #                     self._graph.nodes[n][sync_wave]
+    #                     for n in self._graph.predecessors(node)
+    #                 )
+    #                 + 1
+    #             )
+    #         if p := self._component_index.get(node):
+    #             p.sync_wave = self._graph.nodes[node][sync_wave]
 
     def to_yaml(self) -> str:
         return yaml.dump(
@@ -246,7 +250,7 @@ class PipelineGenerator:
         self.env_components_index = create_env_components_index(environment_components)
         self.parse_components(components)
         self.pipeline.validate()
-        self.pipeline.add_levels()
+        # self.pipeline.add_levels()
         return self.pipeline
 
     def load_yaml(self, path: Path, environment: str | None) -> Pipeline:

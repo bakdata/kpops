@@ -144,7 +144,7 @@ class HelmApp(KubernetesApp):
     @override
     def manifest_deploy(self) -> Resource:
         values = self.to_helm_values()
-        values["annotations"] = {"argocd.argoproj.io/sync-wave": self.sync_wave}
+        values["annotations"] = {"argocd.argoproj.io/sync-wave": 1}
         return self.helm.template(
             self.helm_release_name,
             self.helm_chart,

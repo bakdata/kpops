@@ -131,7 +131,6 @@ class ProducerApp(StreamsBootstrap):
 
         cleaner = self._cleaner
         values = cleaner.to_helm_values()
-        values["annotations"] = {"argocd.argoproj.io/sync-wave": self.sync_wave}
 
         template = self.helm.template(
             cleaner.helm_release_name,
@@ -146,7 +145,6 @@ class ProducerApp(StreamsBootstrap):
     def manifest_clean(self) -> Resource:
         cleaner = self._cleaner
         values = cleaner.to_helm_values()
-        values["annotations"] = {"argocd.argoproj.io/sync-wave": self.sync_wave}
         return self.helm.template(
             cleaner.helm_release_name,
             cleaner.helm_chart,

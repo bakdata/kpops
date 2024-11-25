@@ -338,6 +338,30 @@ def clean(
                     print_yaml(rendered_manifest)
 
 
+@app.command(
+    short_help="Render final resource representation",
+    help="In addition to generate, render final resource representation for each pipeline step, e.g. Kubernetes manifests.",
+)
+def patch(
+    pipeline_paths: list[Path] = PIPELINE_PATHS_ARG,
+    dotenv: list[Path] | None = DOTENV_PATH_OPTION,
+    config: Path = CONFIG_PATH_OPTION,
+    environment: str | None = ENVIRONMENT,
+    verbose: bool = VERBOSE_OPTION,
+):
+    for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
+        resources = kpops.patch(
+            pipeline_path=pipeline_file_path,
+            dotenv=dotenv,
+            config=config,
+            environment=environment,
+            verbose=verbose,
+        )
+        for resource in resources:
+            for rendered_manifest in resource:
+                print_yaml(rendered_manifest)
+
+
 def version_callback(show_version: bool) -> None:
     if show_version:
         typer.echo(f"{KPOPS} {__version__}")

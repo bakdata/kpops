@@ -8,7 +8,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
-    sync_wave: 1
+    sync_wave: 0
     type: producer-app-cleaner
     values:
       debug: true
@@ -32,7 +32,7 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
-  sync_wave: 1
+  sync_wave: 0
   type: producer-app-v2
   values:
     debug: true

@@ -155,12 +155,19 @@ class StreamsApp(StreamsBootstrap):
         await self._cleaner.clean(dry_run)
 
     @override
+    def manifest_deploy(self) -> Resource:
+        resource = super().manifest_deploy()
+        # TODO: We can do this separately
+        clean_resource = self.manifest_clean()
+        resource.extend(clean_resource)
+        return resource
+
+    @override
     def manifest_reset(self) -> Resource:
         resource = super().manifest_reset()
 
         cleaner = self._cleaner
         values = cleaner.to_helm_values()
-        values["annotations"] = {"argocd.argoproj.io/sync-wave": self.sync_wave}
 
         template = self.helm.template(
             cleaner.helm_release_name,
@@ -174,8 +181,19 @@ class StreamsApp(StreamsBootstrap):
     @override
     def manifest_clean(self) -> Resource:
         cleaner = self._cleaner
+
+        # TODO: Fetch image tag from cluster if exists.
+
+        # fetcher = DeploymentFetcher(self.namespace)
+        # deployment_values = fetcher.get_deployment_values("app3-deployemnt")
+        #
+        # if deployment_values:
+        #     image = deployment_values.spec.template.spec.containers[0].image
+        #     image_tag = image.split(":")[1]
+        #     cleaner.values.image_tag = image_tag
+
         values = cleaner.to_helm_values()
-        values["annotations"] = {"argocd.argoproj.io/sync-wave": self.sync_wave}
+        values["annotations"] = {"argocd.argoproj.io/hook": "PostDelete"}
         return self.helm.template(
             cleaner.helm_release_name,
             cleaner.helm_chart,

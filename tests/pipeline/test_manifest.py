@@ -192,3 +192,17 @@ class TestManifest:
         )
         assert result.exit_code == 0, result.stdout
         snapshot.assert_match(result.stdout, MANIFEST_YAML)
+
+    def test_patch(self, snapshot: Snapshot):
+        result = runner.invoke(
+            app,
+            [
+                "patch",
+                str(RESOURCE_PATH / "streams-bootstrap-argo" / PIPELINE_YAML),
+                "--config",
+                str(RESOURCE_PATH / "streams-bootstrap-argo"),
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+        snapshot.assert_match(result.stdout, MANIFEST_YAML)

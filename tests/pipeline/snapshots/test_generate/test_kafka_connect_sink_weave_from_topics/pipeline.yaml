@@ -8,7 +8,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
-    sync_wave: 2
+    sync_wave: 0
     type: streams-app-cleaner
     values:
       image: fake-image
@@ -39,7 +39,7 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
-  sync_wave: 2
+  sync_wave: 0
   to:
     models: {}
     sync_wave: 0
@@ -80,7 +80,7 @@
       repository_name: bakdata-kafka-connect-resetter
       url: https://bakdata.github.io/kafka-connect-resetter/
     suffix: -clean
-    sync_wave: 4
+    sync_wave: 0
     type: kafka-connector-resetter
     values:
       config:
@@ -104,6 +104,6 @@
   name: es-sink-connector
   prefix: resources-kafka-connect-sink-
   resetter_values: {}
-  sync_wave: 4
+  sync_wave: 0
   type: kafka-sink-connector
 

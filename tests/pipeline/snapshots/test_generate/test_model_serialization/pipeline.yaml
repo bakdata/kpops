@@ -11,7 +11,7 @@
       repository_name: masked
       url: masked
     suffix: -clean
-    sync_wave: 1
+    sync_wave: 0
     type: producer-app-cleaner
     values:
       imageTag: latest
@@ -31,7 +31,7 @@
       username: masked
     repository_name: masked
     url: masked
-  sync_wave: 1
+  sync_wave: 0
   type: producer-app-v2
   values:
     imageTag: latest
