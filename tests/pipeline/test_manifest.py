@@ -197,10 +197,11 @@ class TestManifest:
         result = runner.invoke(
             app,
             [
-                "sync",
+                "deploy",
                 str(RESOURCE_PATH / "streams-bootstrap-argo" / PIPELINE_YAML),
                 "--config",
                 str(RESOURCE_PATH / "streams-bootstrap-argo"),
+                "--manifest",
             ],
             catch_exceptions=False,
         )

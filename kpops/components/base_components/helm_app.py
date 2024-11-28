@@ -144,6 +144,8 @@ class HelmApp(KubernetesApp):
     @override
     def manifest_deploy(self) -> Resource:
         values = self.to_helm_values()
+        # factroy = Factory(get_config().operation_mode)
+        # factroy.enrich(values)
         values["annotations"] = {"argocd.argoproj.io/sync-wave": 1}
         return self.helm.template(
             self.helm_release_name,

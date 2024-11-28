@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import typer
+import yaml
 
 import kpops.api as kpops
 from kpops.api.options import FilterType
@@ -92,6 +93,13 @@ PARALLEL: bool = typer.Option(
     "--parallel/--no-parallel",
     rich_help_panel="EXPERIMENTAL: features in preview, not production-ready",
     help="Enable or disable parallel execution of pipeline steps. If enabled, multiple steps can be processed concurrently. If disabled, steps will be processed sequentially.",
+)
+
+MANIFEST: bool = typer.Option(
+    False,
+    "--manifest/--no-manifest",
+    rich_help_panel="EXPERIMENTAL: ",
+    help="",
 )
 
 
@@ -225,24 +233,49 @@ def deploy(
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
+    manifest: bool = MANIFEST,
 ):
-    for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
-        resources = kpops.deploy(
-            pipeline_path=pipeline_file_path,
-            dotenv=dotenv,
-            config=config,
-            steps=parse_steps(steps),
-            filter_type=filter_type,
-            environment=environment,
-            dry_run=dry_run,
-            verbose=verbose,
-            parallel=parallel,
-        )
-
-        if resources:
+    if manifest:
+        for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
+            resources = kpops.manifest_deployment(
+                pipeline_file_path,
+                dotenv,
+                config,
+                parse_steps(steps),
+                filter_type,
+                environment,
+                verbose,
+            )
             for resource in resources:
                 for rendered_manifest in resource:
                     print_yaml(rendered_manifest)
+    else:
+        for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
+            kpops.deploy(
+                pipeline_path=pipeline_file_path,
+                dotenv=dotenv,
+                config=config,
+                steps=parse_steps(steps),
+                filter_type=filter_type,
+                environment=environment,
+                dry_run=dry_run,
+                verbose=verbose,
+                parallel=parallel,
+            )
+
+
+def save_yaml_to_file(data: list[dict], output_dir: Path, step_name: str) -> None:
+    """Save a list of YAML objects to a file.
+
+    :param data: List of rendered YAML manifests.
+    :param output_dir: Directory to save the YAML files.
+    :param step_name: Name of the step (used for the file name).
+    """
+    output_dir.mkdir(parents=True, exist_ok=True)  # Ensure the directory exists
+    file_path = output_dir / f"{step_name}.yaml"
+
+    with file_path.open("w") as yaml_file:
+        yaml.dump_all(data, yaml_file, default_flow_style=False)
 
 
 @app.command(help="Destroy pipeline steps")

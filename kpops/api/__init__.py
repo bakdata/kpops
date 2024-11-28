@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Iterator
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -105,6 +106,35 @@ def manifest(
     return resources
 
 
+def manifest_deployment(
+    pipeline_path: Path,
+    dotenv: list[Path] | None = None,
+    config: Path = Path(),
+    steps: set[str] | None = None,
+    filter_type: FilterType = FilterType.INCLUDE,
+    environment: str | None = None,
+    verbose: bool = True,
+) -> Iterator[Resource]:
+    pipeline = generate(
+        pipeline_path=pipeline_path,
+        dotenv=dotenv,
+        config=config,
+        steps=steps,
+        filter_type=filter_type,
+        environment=environment,
+        verbose=verbose,
+    )
+    KpopsConfig.create(
+        config,
+        dotenv,
+        environment,
+        verbose,
+    )
+    for component in pipeline.components:
+        resource = component.manifest_deploy()
+        yield resource
+
+
 def deploy(
     pipeline_path: Path,
     dotenv: list[Path] | None = None,
@@ -115,7 +145,8 @@ def deploy(
     dry_run: bool = True,
     verbose: bool = True,
     parallel: bool = False,
-) -> list[Resource]:
+    manifest: bool = False,
+):
     """Deploy pipeline steps.
 
     :param pipeline_path: Path to pipeline definition yaml file.
@@ -137,36 +168,20 @@ def deploy(
         environment=environment,
         verbose=verbose,
     )
-    kpops_config = KpopsConfig.create(
-        config,
-        dotenv,
-        environment,
-        verbose,
-    )
-    if kpops_config.operation_mode is OperationMode.ARGO:
-        resources: list[Resource] = []
-        for component in pipeline.components:
-            resource = component.manifest_deploy()
-            resources.append(resource)
-        return resources
 
-    if kpops_config.operation_mode is OperationMode.HELM:
+    async def deploy_runner(component: PipelineComponent):
+        log_action("Deploy", component)
+        await component.deploy(dry_run)
 
-        async def deploy_runner(component: PipelineComponent):
-            log_action("Deploy", component)
-            await component.deploy(dry_run)
-
-        async def async_deploy():
-            if parallel:
-                pipeline_tasks = pipeline.build_execution_graph(deploy_runner)
-                await pipeline_tasks
-            else:
-                for component in pipeline.components:
-                    await deploy_runner(component)
+    async def async_deploy():
+        if parallel:
+            pipeline_tasks = pipeline.build_execution_graph(deploy_runner)
+            await pipeline_tasks
+        else:
+            for component in pipeline.components:
+                await deploy_runner(component)
 
         asyncio.run(async_deploy())
-
-    return []
 
 
 def destroy(

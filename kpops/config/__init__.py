@@ -77,6 +77,13 @@ class OperationMode(str, enum.Enum):
     ARGO = "Argo"
     HELM = "Helm"
 
+    # def factory(self) -> Manager:
+    #     match self.name:
+    #         case "ARGO":
+    #             return ArgoManager()
+    #         case "HELM":
+    #             return HelmManger()
+
 
 class KpopsConfig(BaseSettings):
     """Global configuration for KPOps project."""
