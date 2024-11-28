@@ -5,6 +5,7 @@ from pathlib import Path
 import typer
 
 import kpops.api as kpops
+from kpops.api.operation import OperationMode
 from kpops.api.options import FilterType
 from kpops.cli.utils import (
     collect_pipeline_paths,
@@ -109,6 +110,12 @@ ENVIRONMENT: str | None = typer.Option(
         "The environment you want to generate and deploy the pipeline to. "
         "Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development). "
     ),
+)
+OPERATION_MODE_OPTION: OperationMode = typer.Option(
+    default=OperationMode.STANDARD,
+    envvar=f"{ENV_PREFIX}OPERATION_MODE",
+    # TODO: better help?
+    help="How KPOps should operate.",
 )
 
 
@@ -219,19 +226,37 @@ def deploy(
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
+    operation_mode: OperationMode = OPERATION_MODE_OPTION,
 ):
-    for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
-        kpops.deploy(
-            pipeline_path=pipeline_file_path,
-            dotenv=dotenv,
-            config=config,
-            steps=parse_steps(steps),
-            filter_type=filter_type,
-            environment=environment,
-            dry_run=dry_run,
-            verbose=verbose,
-            parallel=parallel,
-        )
+    match operation_mode:
+        case OperationMode.STANDARD:
+            for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
+                kpops.deploy(
+                    pipeline_path=pipeline_file_path,
+                    dotenv=dotenv,
+                    config=config,
+                    steps=parse_steps(steps),
+                    filter_type=filter_type,
+                    environment=environment,
+                    dry_run=dry_run,
+                    verbose=verbose,
+                    parallel=parallel,
+                )
+        case _:
+            for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
+                resources = kpops.manifest_deployment(
+                    pipeline_file_path,
+                    dotenv,
+                    config,
+                    parse_steps(steps),
+                    filter_type,
+                    environment,
+                    verbose,
+                    operation_mode,
+                )
+                for resource in resources:
+                    for rendered_manifest in resource:
+                        print_yaml(rendered_manifest)
 
 
 @app.command(help="Destroy pipeline steps")

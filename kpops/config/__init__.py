@@ -12,6 +12,7 @@ from pydantic_settings import (
 )
 from typing_extensions import override
 
+from kpops.api.operation import OperationMode
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
 from kpops.utils.docstring import describe_object
 from kpops.utils.pydantic import YamlConfigSettingsSource
@@ -120,6 +121,10 @@ class KpopsConfig(BaseSettings):
         default=False,
         description="Whether to retain clean up jobs in the cluster or uninstall the, after completion.",
     )
+    operation_mode: OperationMode = Field(
+        default=OperationMode.STANDARD,
+        description="The operation mode of KPOps (standard, manifest, argo).",
+    )
 
     model_config = SettingsConfigDict(env_prefix=ENV_PREFIX, env_nested_delimiter="__")
 
@@ -130,6 +135,7 @@ class KpopsConfig(BaseSettings):
         dotenv: list[Path] | None = None,
         environment: str | None = None,
         verbose: bool = False,
+        operation_mode: OperationMode | None = None,
     ) -> KpopsConfig:
         cls.setup_logging_level(verbose)
         YamlConfigSettingsSource.config_dir = config_dir
@@ -137,6 +143,8 @@ class KpopsConfig(BaseSettings):
         cls._instance = KpopsConfig(
             _env_file=dotenv  # pyright: ignore[reportCallIssue]
         )
+        if operation_mode:
+            cls._instance.operation_mode = operation_mode
         return cls._instance
 
     @staticmethod

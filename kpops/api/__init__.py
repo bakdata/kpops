@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Iterator
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 from kpops.api.logs import log, log_action
+from kpops.api.operation import OperationMode
 from kpops.api.options import FilterType
 from kpops.api.registry import Registry
 from kpops.component_handlers import ComponentHandlers
@@ -103,6 +105,32 @@ def manifest(
         resource = component.manifest()
         resources.append(resource)
     return resources
+
+
+def manifest_deployment(
+    pipeline_path: Path,
+    dotenv: list[Path] | None = None,
+    config: Path = Path(),
+    steps: set[str] | None = None,
+    filter_type: FilterType = FilterType.INCLUDE,
+    environment: str | None = None,
+    verbose: bool = True,
+    operation_mode: OperationMode = OperationMode.MANIFEST,
+) -> Iterator[Resource]:
+    pipeline = generate(
+        pipeline_path=pipeline_path,
+        dotenv=dotenv,
+        config=config,
+        steps=steps,
+        filter_type=filter_type,
+        environment=environment,
+        verbose=verbose,
+    )
+    # TODO: KPOps config is created twice. Once in generate and once here. change it!
+    KpopsConfig.create(config, dotenv, environment, verbose, operation_mode)
+    for component in pipeline.components:
+        resource = component.manifest_deploy()
+        yield resource
 
 
 def deploy(

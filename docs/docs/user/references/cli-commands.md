@@ -74,6 +74,7 @@ $ kpops deploy [OPTIONS] PIPELINE_PATHS...
 * `--dry-run / --execute`: Whether to dry run the command or execute it  [default: dry-run]
 * `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
 * `--parallel / --no-parallel`: Enable or disable parallel execution of pipeline steps. If enabled, multiple steps can be processed concurrently. If disabled, steps will be processed sequentially.  [default: no-parallel]
+* `--operation-mode [argo|manifest|standard]`: How KPOps should operate.  [env var: KPOPS_OPERATION_MODE; default: standard]
 * `--help`: Show this message and exit.
 
 ## `kpops destroy`

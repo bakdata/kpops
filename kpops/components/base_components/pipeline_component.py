@@ -233,6 +233,22 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         """Render final component resources, e.g. Kubernetes manifests."""
         return []
 
+    def manifest_deploy(self) -> Resource:
+        """Render final component resources for deployment, e.g. Kubernetes manifests."""
+        return []
+
+    def manifest_destroy(self) -> Resource:
+        """Render final component resources for destroy, e.g. Kubernetes manifests."""
+        return []
+
+    def manifest_reset(self) -> Resource:
+        """Render final component resources for reset, e.g. Kubernetes manifests."""
+        return []
+
+    def manifest_clean(self) -> Resource:
+        """Render final component resources for clean, e.g. Kubernetes manifests."""
+        return []
+
     async def deploy(self, dry_run: bool) -> None:
         """Deploy component, e.g. to Kubernetes cluster.
 

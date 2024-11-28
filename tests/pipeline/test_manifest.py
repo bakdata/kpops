@@ -136,3 +136,31 @@ class TestManifest:
         )
         assert result.exit_code == 0, result.stdout
         snapshot.assert_match(result.stdout, MANIFEST_YAML)
+
+    def test_deploy_manifest_mode(self, snapshot: Snapshot):
+        result = runner.invoke(
+            app,
+            [
+                "deploy",
+                str(RESOURCE_PATH / "streams-bootstrap" / PIPELINE_YAML),
+                "--operation-mode",
+                "manifest",
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+        snapshot.assert_match(result.stdout, MANIFEST_YAML)
+
+    def test_deploy_argo_mode(self, snapshot: Snapshot):
+        result = runner.invoke(
+            app,
+            [
+                "deploy",
+                str(RESOURCE_PATH / "streams-bootstrap" / PIPELINE_YAML),
+                "--operation-mode",
+                "argo",
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+        snapshot.assert_match(result.stdout, MANIFEST_YAML)

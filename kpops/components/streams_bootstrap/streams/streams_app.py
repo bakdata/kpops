@@ -4,9 +4,11 @@ from functools import cached_property
 from pydantic import Field, ValidationError, computed_field
 from typing_extensions import override
 
+from kpops.api.operation import OperationMode
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
 from kpops.components.base_components.helm_app import HelmApp
 from kpops.components.base_components.kafka_app import KafkaAppCleaner
+from kpops.components.base_components.models.resource import Resource
 from kpops.components.common.app_type import AppType
 from kpops.components.common.topic import KafkaTopic
 from kpops.components.streams_bootstrap.base import (
@@ -15,7 +17,9 @@ from kpops.components.streams_bootstrap.base import (
 from kpops.components.streams_bootstrap.streams.model import (
     StreamsAppValues,
 )
+from kpops.config import get_config
 from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
+from kpops.manifestors.streams_app_manifestor import StreamsAppCleanerManifestor
 from kpops.utils.docstring import describe_attr
 
 log = logging.getLogger("StreamsApp")
@@ -152,3 +156,19 @@ class StreamsApp(StreamsBootstrap):
         """Destroy and clean."""
         await super().clean(dry_run)
         await self._cleaner.clean(dry_run)
+
+    @override
+    def manifest_deploy(self) -> Resource:
+        manifest = super().manifest_deploy()
+        operation_mode = get_config().operation_mode
+
+        if operation_mode is OperationMode.ARGO:
+            clean_manifestor = StreamsAppCleanerManifestor()
+            clean_manifest = clean_manifestor.generate_manifest(self._cleaner)
+            manifest.extend(clean_manifest)
+
+        return manifest
+
+    @override
+    def manifest_clean(self) -> Resource:
+        return []

@@ -28,6 +28,7 @@ from kpops.components.base_components.kubernetes_app import (
 )
 from kpops.components.base_components.models.resource import Resource
 from kpops.config import get_config
+from kpops.manifestors.helm_app_manifestor import HelmAppManifestor
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import exclude_by_name
@@ -150,6 +151,11 @@ class HelmApp(KubernetesApp):
             self.to_helm_values(),
             self.template_flags,
         )
+
+    @override
+    def manifest_deploy(self) -> Resource:
+        helm_app_manifestor = HelmAppManifestor()
+        return helm_app_manifestor.generate_manifest(self)
 
     @property
     def deploy_flags(self) -> HelmUpgradeInstallFlags:
