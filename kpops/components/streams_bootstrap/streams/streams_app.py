@@ -8,7 +8,6 @@ from kpops.api.operation import OperationMode
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
 from kpops.components.base_components.helm_app import HelmApp
 from kpops.components.base_components.kafka_app import KafkaAppCleaner
-from kpops.components.base_components.models.resource import Resource
 from kpops.components.common.app_type import AppType
 from kpops.components.common.topic import KafkaTopic
 from kpops.components.streams_bootstrap.base import (
@@ -19,7 +18,8 @@ from kpops.components.streams_bootstrap.streams.model import (
 )
 from kpops.config import get_config
 from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
-from kpops.manifestors.streams_app_manifestor import StreamsAppCleanerManifestor
+from kpops.manifests.argo import ArgoHook
+from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.utils.docstring import describe_attr
 
 log = logging.getLogger("StreamsApp")
@@ -47,6 +47,15 @@ class StreamsAppCleaner(KafkaAppCleaner, StreamsBootstrap):
 
         if self.values.stateful_set and self.values.persistence.enabled:
             await self.clean_pvcs(dry_run)
+
+    @override
+    def manifest(self) -> list[KubernetesManifest]:
+        resources = super().manifest()
+        operation_mode = get_config().operation_mode
+        if operation_mode is OperationMode.ARGO:
+            # add Argo PostDelete hook
+            ArgoHook.POST_DELETE.enrich(resources[0])
+        return resources
 
     async def clean_pvcs(self, dry_run: bool) -> None:
         app_full_name = super(HelmApp, self).full_name
@@ -158,17 +167,14 @@ class StreamsApp(StreamsBootstrap):
         await self._cleaner.clean(dry_run)
 
     @override
-    def manifest_deploy(self) -> Resource:
-        manifest = super().manifest_deploy()
+    def manifest_deploy(self) -> list[KubernetesManifest]:
+        manifests = super().manifest_deploy()
         operation_mode = get_config().operation_mode
-
         if operation_mode is OperationMode.ARGO:
-            clean_manifestor = StreamsAppCleanerManifestor()
-            clean_manifest = clean_manifestor.generate_manifest(self._cleaner)
-            manifest.extend(clean_manifest)
+            manifests.extend(self._cleaner.manifest())
 
-        return manifest
+        return manifests
 
     @override
-    def manifest_clean(self) -> Resource:
+    def manifest_clean(self) -> list[KubernetesManifest]:
         return []
