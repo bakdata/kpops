@@ -187,34 +187,6 @@ def generate(
         print_yaml(pipeline.to_yaml())
 
 
-@app.command(
-    short_help="Render final resource representation",
-    help="In addition to generate, render final resource representation for each pipeline step, e.g. Kubernetes manifests.",
-)
-def manifest(
-    pipeline_paths: list[Path] = PIPELINE_PATHS_ARG,
-    dotenv: list[Path] | None = DOTENV_PATH_OPTION,
-    config: Path = CONFIG_PATH_OPTION,
-    steps: str | None = PIPELINE_STEPS,
-    filter_type: FilterType = FILTER_TYPE,
-    environment: str | None = ENVIRONMENT,
-    verbose: bool = VERBOSE_OPTION,
-):
-    for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
-        resources = kpops.manifest(
-            pipeline_path=pipeline_file_path,
-            dotenv=dotenv,
-            config=config,
-            steps=parse_steps(steps),
-            filter_type=filter_type,
-            environment=environment,
-            verbose=verbose,
-        )
-        for resource in resources:
-            for rendered_manifest in resource:
-                print_yaml(rendered_manifest)
-
-
 @app.command(help="Deploy pipeline steps")
 def deploy(
     pipeline_paths: list[Path] = PIPELINE_PATHS_ARG,
@@ -244,7 +216,7 @@ def deploy(
                 )
         case _:
             for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
-                resources = kpops.manifest_deployment(
+                resources = kpops.manifest_deploy(
                     pipeline_file_path,
                     dotenv,
                     config,

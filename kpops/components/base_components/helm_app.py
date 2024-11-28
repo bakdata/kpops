@@ -142,7 +142,7 @@ class HelmApp(KubernetesApp):
         )
 
     @override
-    def manifest(self) -> list[KubernetesManifest]:
+    def manifest_deploy(self) -> list[KubernetesManifest]:
         return self.helm.template(
             self.helm_release_name,
             self.helm_chart,
@@ -150,10 +150,6 @@ class HelmApp(KubernetesApp):
             self.to_helm_values(),
             self.template_flags,
         )
-
-    @override
-    def manifest_deploy(self) -> list[KubernetesManifest]:
-        return self.manifest()
 
     @property
     def deploy_flags(self) -> HelmUpgradeInstallFlags:

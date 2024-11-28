@@ -49,8 +49,8 @@ class StreamsAppCleaner(KafkaAppCleaner, StreamsBootstrap):
             await self.clean_pvcs(dry_run)
 
     @override
-    def manifest(self) -> list[KubernetesManifest]:
-        resources = super().manifest()
+    def manifest_deploy(self) -> list[KubernetesManifest]:
+        resources = super().manifest_deploy()
         operation_mode = get_config().operation_mode
         if operation_mode is OperationMode.ARGO:
             # add Argo PostDelete hook
@@ -171,7 +171,7 @@ class StreamsApp(StreamsBootstrap):
         manifests = super().manifest_deploy()
         operation_mode = get_config().operation_mode
         if operation_mode is OperationMode.ARGO:
-            manifests.extend(self._cleaner.manifest())
+            manifests.extend(self._cleaner.manifest_deploy())
 
         return manifests
 
