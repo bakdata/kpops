@@ -1,6 +1,5 @@
 streams-bootstrap:
-  #TODO: update when released
-  version: "3.0.3-SNAPSHOT"
+  version: "3.0.3"
   values:
     files:
       log4j2.xml:

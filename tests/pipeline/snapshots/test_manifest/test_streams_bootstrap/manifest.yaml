@@ -16,7 +16,7 @@ kind: CronJob
 metadata:
   labels:
     app: resources-streams-bootstrap-my-producer-app
-    chart: producer-app-3.0.3-SNAPSHOT
+    chart: producer-app-3.0.3
     release: resources-streams-bootstrap-my-producer-app
   name: resources-streams-bootstrap-my-producer-app
 spec:
@@ -92,7 +92,7 @@ kind: ConfigMap
 metadata:
   labels:
     app: resources-streams-bootstrap-my-streams-app
-    chart: streams-app-3.0.3-SNAPSHOT
+    chart: streams-app-3.0.3
     heritage: Helm
     release: resources-streams-bootstrap-my-streams-app
   name: resources-streams-bootstrap-my-streams-app-jmx-configmap
@@ -105,7 +105,7 @@ metadata:
     consumerGroup: my-streams-app-id
   labels:
     app: resources-streams-bootstrap-my-streams-app
-    chart: streams-app-3.0.3-SNAPSHOT
+    chart: streams-app-3.0.3
     release: resources-streams-bootstrap-my-streams-app
   name: resources-streams-bootstrap-my-streams-app
 spec:

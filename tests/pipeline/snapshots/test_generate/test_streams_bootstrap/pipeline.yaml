@@ -65,7 +65,7 @@
       suspend: false
       tolerations: []
       ttlSecondsAfterFinished: 100
-    version: 3.0.3-SNAPSHOT
+    version: 3.0.3
   name: my-producer-app
   namespace: example-namespace
   prefix: resources-streams-bootstrap-
@@ -140,7 +140,7 @@
     suspend: false
     tolerations: []
     ttlSecondsAfterFinished: 100
-  version: 3.0.3-SNAPSHOT
+  version: 3.0.3
 - _cleaner:
     name: my-streams-app
     namespace: example-namespace
@@ -234,7 +234,7 @@
       statefulSet: false
       terminationGracePeriodSeconds: 300
       tolerations: []
-    version: 3.0.3-SNAPSHOT
+    version: 3.0.3
   from:
     components: {}
     topics:
@@ -356,5 +356,5 @@
     statefulSet: false
     terminationGracePeriodSeconds: 300
     tolerations: []
-  version: 3.0.3-SNAPSHOT
+  version: 3.0.3
 
