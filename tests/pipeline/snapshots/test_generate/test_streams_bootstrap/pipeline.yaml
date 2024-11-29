@@ -57,7 +57,7 @@
       suspend: false
       tolerations: []
       ttlSecondsAfterFinished: 100
-    version: 3.0.1
+    version: 3.0.2
   name: my-producer-app
   namespace: example-namespace
   prefix: resources-streams-bootstrap-
@@ -124,7 +124,7 @@
     suspend: false
     tolerations: []
     ttlSecondsAfterFinished: 100
-  version: 3.0.1
+  version: 3.0.2
 - _cleaner:
     name: my-streams-app
     namespace: example-namespace
@@ -142,7 +142,15 @@
         CONVERT_XML: true
       configurationEnvPrefix: APP
       env: {}
-      files: {}
+      files:
+        log4j2.xml:
+          content: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Configuration>\n\
+            \    <Appenders>\n        <Console name=\"Console\" target=\"SYSTEM_OUT\"\
+            >\n            <PatternLayout pattern=\"%d{HH:mm:ss.SSS} %-5level %logger{36}\
+            \ - %msg%n\"/>\n        </Console>\n    </Appenders>\n    <Loggers>\n\
+            \        <Root level=\"info\">\n            <AppenderRef ref=\"Console\"\
+            />\n        </Root>\n    </Loggers>\n</Configuration>\n"
+          mountPath: app/resources
       image: my-registry/my-streams-app-image
       imagePullPolicy: Always
       imagePullSecrets: []
@@ -210,7 +218,7 @@
       statefulSet: false
       terminationGracePeriodSeconds: 300
       tolerations: []
-    version: 3.0.1
+    version: 3.0.2
   from:
     components: {}
     topics:
@@ -256,7 +264,15 @@
       CONVERT_XML: true
     configurationEnvPrefix: APP
     env: {}
-    files: {}
+    files:
+      log4j2.xml:
+        content: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Configuration>\n  \
+          \  <Appenders>\n        <Console name=\"Console\" target=\"SYSTEM_OUT\"\
+          >\n            <PatternLayout pattern=\"%d{HH:mm:ss.SSS} %-5level %logger{36}\
+          \ - %msg%n\"/>\n        </Console>\n    </Appenders>\n    <Loggers>\n  \
+          \      <Root level=\"info\">\n            <AppenderRef ref=\"Console\"/>\n\
+          \        </Root>\n    </Loggers>\n</Configuration>\n"
+        mountPath: app/resources
     image: my-registry/my-streams-app-image
     imagePullPolicy: Always
     imagePullSecrets: []
@@ -324,5 +340,5 @@
     statefulSet: false
     terminationGracePeriodSeconds: 300
     tolerations: []
-  version: 3.0.1
+  version: 3.0.2
 

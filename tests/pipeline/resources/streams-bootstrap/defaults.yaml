@@ -1,9 +1,26 @@
 streams-bootstrap:
+  version: "3.0.2"
   values:
+    files:
+      log4j2.xml:
+        mountPath: app/resources
+        content: |
+          <?xml version="1.0" encoding="UTF-8"?>
+          <Configuration>
+              <Appenders>
+                  <Console name="Console" target="SYSTEM_OUT">
+                      <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n"/>
+                  </Console>
+              </Appenders>
+              <Loggers>
+                  <Root level="info">
+                      <AppenderRef ref="Console"/>
+                  </Root>
+              </Loggers>
+          </Configuration>
     kafka:
       bootstrapServers: ${config.kafka_brokers}
       schemaRegistryUrl: ${config.schema_registry.url}
-  version: "3.0.1"
 
 producer-app: {} # inherits from streams-bootstrap
 

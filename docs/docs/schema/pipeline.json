@@ -892,9 +892,6 @@
                     "type": "integer"
                 },
                 "files": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
                     "description": "Map of files to mount for the app. File will be mounted as $value.mountPath/$key. $value.content denotes file content (recommended to be used with --set-file).",
                     "title": "Files",
                     "type": "object"
@@ -1771,9 +1768,6 @@
                     "type": "object"
                 },
                 "files": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
                     "description": "Map of files to mount for the app. File will be mounted as $value.mountPath/$key. $value.content denotes file content (recommended to be used with --set-file).",
                     "title": "Files",
                     "type": "object"
