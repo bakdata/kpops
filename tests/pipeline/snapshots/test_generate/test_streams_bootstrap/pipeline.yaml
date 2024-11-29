@@ -18,7 +18,15 @@
       deployment: false
       env: {}
       failedJobsHistoryLimit: 1
-      files: {}
+      files:
+        log4j2.xml:
+          content: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Configuration>\n\
+            \    <Appenders>\n        <Console name=\"Console\" target=\"SYSTEM_OUT\"\
+            >\n            <PatternLayout pattern=\"%d{HH:mm:ss.SSS} %-5level %logger{36}\
+            \ - %msg%n\"/>\n        </Console>\n    </Appenders>\n    <Loggers>\n\
+            \        <Root level=\"info\">\n            <AppenderRef ref=\"Console\"\
+            />\n        </Root>\n    </Loggers>\n</Configuration>\n"
+          mountPath: app/resources
       image: my-registry/my-producer-image
       imagePullPolicy: Always
       imagePullSecrets: []
@@ -57,7 +65,7 @@
       suspend: false
       tolerations: []
       ttlSecondsAfterFinished: 100
-    version: 3.0.2
+    version: 3.0.3-SNAPSHOT
   name: my-producer-app
   namespace: example-namespace
   prefix: resources-streams-bootstrap-
@@ -85,7 +93,15 @@
     deployment: false
     env: {}
     failedJobsHistoryLimit: 1
-    files: {}
+    files:
+      log4j2.xml:
+        content: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Configuration>\n  \
+          \  <Appenders>\n        <Console name=\"Console\" target=\"SYSTEM_OUT\"\
+          >\n            <PatternLayout pattern=\"%d{HH:mm:ss.SSS} %-5level %logger{36}\
+          \ - %msg%n\"/>\n        </Console>\n    </Appenders>\n    <Loggers>\n  \
+          \      <Root level=\"info\">\n            <AppenderRef ref=\"Console\"/>\n\
+          \        </Root>\n    </Loggers>\n</Configuration>\n"
+        mountPath: app/resources
     image: my-registry/my-producer-image
     imagePullPolicy: Always
     imagePullSecrets: []
@@ -124,7 +140,7 @@
     suspend: false
     tolerations: []
     ttlSecondsAfterFinished: 100
-  version: 3.0.2
+  version: 3.0.3-SNAPSHOT
 - _cleaner:
     name: my-streams-app
     namespace: example-namespace
@@ -218,7 +234,7 @@
       statefulSet: false
       terminationGracePeriodSeconds: 300
       tolerations: []
-    version: 3.0.2
+    version: 3.0.3-SNAPSHOT
   from:
     components: {}
     topics:
@@ -340,5 +356,5 @@
     statefulSet: false
     terminationGracePeriodSeconds: 300
     tolerations: []
-  version: 3.0.2
+  version: 3.0.3-SNAPSHOT
 
