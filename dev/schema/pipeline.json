@@ -113,12 +113,6 @@
                     "default": null,
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
                 },
-                "sync_wave": {
-                    "default": 0,
-                    "description": "",
-                    "title": "Sync Wave",
-                    "type": "integer"
-                },
                 "to": {
                     "anyOf": [
                         {
@@ -394,12 +388,6 @@
                     ],
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
                 },
-                "sync_wave": {
-                    "default": 0,
-                    "description": "",
-                    "title": "Sync Wave",
-                    "type": "integer"
-                },
                 "to": {
                     "anyOf": [
                         {
@@ -494,12 +482,6 @@
                         }
                     ],
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
-                },
-                "sync_wave": {
-                    "default": 0,
-                    "description": "",
-                    "title": "Sync Wave",
-                    "type": "integer"
                 },
                 "to": {
                     "anyOf": [
@@ -677,12 +659,6 @@
                     },
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
                 },
-                "sync_wave": {
-                    "default": 0,
-                    "description": "",
-                    "title": "Sync Wave",
-                    "type": "integer"
-                },
                 "to": {
                     "anyOf": [
                         {
@@ -768,12 +744,6 @@
                         "url": "https://bakdata.github.io/streams-bootstrap/"
                     },
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
-                },
-                "sync_wave": {
-                    "default": 0,
-                    "description": "",
-                    "title": "Sync Wave",
-                    "type": "integer"
                 },
                 "to": {
                     "anyOf": [
@@ -922,9 +892,6 @@
                     "type": "integer"
                 },
                 "files": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
                     "description": "Map of files to mount for the app. File will be mounted as $value.mountPath/$key. $value.content denotes file content (recommended to be used with --set-file).",
                     "title": "Files",
                     "type": "object"
@@ -1536,12 +1503,6 @@
                     },
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
                 },
-                "sync_wave": {
-                    "default": 0,
-                    "description": "",
-                    "title": "Sync Wave",
-                    "type": "integer"
-                },
                 "to": {
                     "anyOf": [
                         {
@@ -1634,12 +1595,6 @@
                         "url": "https://bakdata.github.io/streams-bootstrap/"
                     },
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
-                },
-                "sync_wave": {
-                    "default": 0,
-                    "description": "",
-                    "title": "Sync Wave",
-                    "type": "integer"
                 },
                 "to": {
                     "anyOf": [
@@ -1813,9 +1768,6 @@
                     "type": "object"
                 },
                 "files": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
                     "description": "Map of files to mount for the app. File will be mounted as $value.mountPath/$key. $value.content denotes file content (recommended to be used with --set-file).",
                     "title": "Files",
                     "type": "object"
@@ -1945,19 +1897,6 @@
                     "title": "Readinessprobe",
                     "type": "object"
                 },
-                "replicaCount": {
-                    "anyOf": [
-                        {
-                            "type": "integer"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "The number of Kafka Streams replicas.",
-                    "title": "Replicacount"
-                },
                 "resources": {
                     "allOf": [
                         {
@@ -2045,12 +1984,6 @@
                     "description": "Data models",
                     "title": "Models",
                     "type": "object"
-                },
-                "sync_wave": {
-                    "default": 0,
-                    "description": "",
-                    "title": "Sync Wave",
-                    "type": "integer"
                 },
                 "topics": {
                     "additionalProperties": {
