@@ -1,10 +1,22 @@
 ---
+apiVersion: v1
+data:
+  log4j2.xml: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Configuration>\n    <Appenders>\n\
+    \        <Console name=\"Console\" target=\"SYSTEM_OUT\">\n            <PatternLayout\
+    \ pattern=\"%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n\"/>\n        </Console>\n\
+    \    </Appenders>\n    <Loggers>\n        <Root level=\"info\">\n            <AppenderRef\
+    \ ref=\"Console\"/>\n        </Root>\n    </Loggers>\n</Configuration>\n"
+kind: ConfigMap
+metadata:
+  name: resources-streams-bootstrap-my-producer-app
+
+---
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
   labels:
     app: resources-streams-bootstrap-my-producer-app
-    chart: producer-app-3.0.1
+    chart: producer-app-3.0.3
     release: resources-streams-bootstrap-my-producer-app
   name: resources-streams-bootstrap-my-producer-app
 spec:
@@ -45,10 +57,30 @@ spec:
               requests:
                 cpu: 200m
                 memory: 300Mi
+            volumeMounts:
+            - mountPath: app/resources/log4j2.xml
+              name: config
+              subPath: log4j2.xml
           restartPolicy: OnFailure
+          volumes:
+          - configMap:
+              name: resources-streams-bootstrap-my-producer-app
+            name: config
   schedule: 30 3/8 * * *
   successfulJobsHistoryLimit: 1
   suspend: false
+
+---
+apiVersion: v1
+data:
+  log4j2.xml: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Configuration>\n    <Appenders>\n\
+    \        <Console name=\"Console\" target=\"SYSTEM_OUT\">\n            <PatternLayout\
+    \ pattern=\"%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n\"/>\n        </Console>\n\
+    \    </Appenders>\n    <Loggers>\n        <Root level=\"info\">\n            <AppenderRef\
+    \ ref=\"Console\"/>\n        </Root>\n    </Loggers>\n</Configuration>\n"
+kind: ConfigMap
+metadata:
+  name: resources-streams-bootstrap-my-streams-app
 
 ---
 apiVersion: v1
@@ -60,7 +92,7 @@ kind: ConfigMap
 metadata:
   labels:
     app: resources-streams-bootstrap-my-streams-app
-    chart: streams-app-3.0.1
+    chart: streams-app-3.0.3
     heritage: Helm
     release: resources-streams-bootstrap-my-streams-app
   name: resources-streams-bootstrap-my-streams-app-jmx-configmap
@@ -73,7 +105,7 @@ metadata:
     consumerGroup: my-streams-app-id
   labels:
     app: resources-streams-bootstrap-my-streams-app
-    chart: streams-app-3.0.1
+    chart: streams-app-3.0.3
     release: resources-streams-bootstrap-my-streams-app
   name: resources-streams-bootstrap-my-streams-app
 spec:
@@ -85,6 +117,7 @@ spec:
   template:
     metadata:
       annotations:
+        checksum/config: 7fa55f62bffb69b723535187aa4e5ee14a91be308d56f5a8ca49c3159bf80aef
         prometheus.io/port: '5556'
         prometheus.io/scrape: 'true'
       labels:
@@ -139,6 +172,10 @@ spec:
           requests:
             cpu: 200m
             memory: 300Mi
+        volumeMounts:
+        - mountPath: app/resources/log4j2.xml
+          name: config
+          subPath: log4j2.xml
       - command:
         - java
         - -XX:+UnlockExperimentalVMOptions
@@ -168,4 +205,7 @@ spec:
       - configMap:
           name: resources-streams-bootstrap-my-streams-app-jmx-configmap
         name: jmx-config
+      - configMap:
+          name: resources-streams-bootstrap-my-streams-app
+        name: config
 

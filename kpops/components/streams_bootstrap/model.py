@@ -188,7 +188,7 @@ class StreamsBootstrapValues(HelmAppValues):
         description=describe_attr("secret_files_refs", __doc__),
     )
 
-    files: dict[str, str] = Field(
+    files: dict[str, Any] = Field(
         default_factory=dict,
         description=describe_attr("files", __doc__),
     )
