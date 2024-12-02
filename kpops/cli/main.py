@@ -128,7 +128,7 @@ def init(
     path: Path = PROJECT_PATH,
     config_include_opt: bool = CONFIG_INCLUDE_OPTIONAL,
 ):
-    kpops.init(path, config_include_opt=config_include_opt)
+    kpops.init(path, config_include_optional=config_include_opt)
 
 
 @app.command(

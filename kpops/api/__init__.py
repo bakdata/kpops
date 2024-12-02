@@ -293,12 +293,12 @@ def clean(
 
 def init(
     path: Path,
-    config_include_opt: bool = False,
+    config_include_optional: bool = False,
 ):
     """Initiate a default empty project.
 
     :param path: Directory in which the project should be initiated.
-    :param conf_incl_opt: Whether to include non-required settings
+    :param config_include_optional: Whether to include non-required settings
         in the generated config file.
     """
     if not path.exists():
@@ -306,7 +306,7 @@ def init(
     elif next(path.iterdir(), False):
         log.warning("Please provide a path to an empty directory.")
         return
-    init_project(path, config_include_opt)
+    init_project(path, config_include_optional)
 
 
 def _create_pipeline(

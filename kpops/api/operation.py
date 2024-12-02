@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 
 
-class OperationMode(str, Enum):
+class OperationMode(StrEnum):
     ARGO = "argo"
     MANIFEST = "manifest"
     STANDARD = "standard"

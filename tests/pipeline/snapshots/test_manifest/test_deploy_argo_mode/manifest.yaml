@@ -50,16 +50,16 @@ metadata:
   annotations:
     argocd.argoproj.io/hook: PostDelete
   labels:
-    app: resources-manifest-pipeline-my-producer-app
+    app: resources-manifest-pipeline-my-producer-app-clean
     chart: producer-app-cleanup-job-3.0.3
     release: resources-manifest-pipeline-my-producer-app-clean
-  name: resources-manifest-pipeline-my-producer-app
+  name: resources-manifest-pipeline-my-producer-app-clean
 spec:
   backoffLimit: 6
   template:
     metadata:
       labels:
-        app: resources-manifest-pipeline-my-producer-app
+        app: resources-manifest-pipeline-my-producer-app-clean
         release: resources-manifest-pipeline-my-producer-app-clean
     spec:
       containers:
@@ -80,7 +80,7 @@ spec:
           value: '-XX:MaxRAMPercentage=75.0 '
         image: my-registry/my-producer-image:1.0.0
         imagePullPolicy: Always
-        name: resources-manifest-pipeline-my-producer-app
+        name: resources-manifest-pipeline-my-producer-app-clean
         resources:
           limits:
             cpu: 500m
@@ -165,16 +165,16 @@ metadata:
   annotations:
     argocd.argoproj.io/hook: PostDelete
   labels:
-    app: resources-manifest-pipeline-my-streams-app
+    app: resources-manifest-pipeline-my-streams-app-clean
     chart: streams-app-cleanup-job-3.0.3
     release: resources-manifest-pipeline-my-streams-app-clean
-  name: resources-manifest-pipeline-my-streams-app
+  name: resources-manifest-pipeline-my-streams-app-clean
 spec:
   backoffLimit: 6
   template:
     metadata:
       labels:
-        app: resources-manifest-pipeline-my-streams-app
+        app: resources-manifest-pipeline-my-streams-app-clean
         release: resources-manifest-pipeline-my-streams-app-clean
     spec:
       containers:
@@ -209,7 +209,7 @@ spec:
           value: '-XX:MaxRAMPercentage=75.0 '
         image: my-registry/my-streams-app-image:1.0.0
         imagePullPolicy: Always
-        name: resources-manifest-pipeline-my-streams-app
+        name: resources-manifest-pipeline-my-streams-app-clean
         resources:
           limits:
             cpu: 500m
