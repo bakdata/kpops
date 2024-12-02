@@ -117,7 +117,7 @@ class TestManifest:
         snapshot.assert_match(result.stdout, MANIFEST_YAML)
 
     def test_python_api(self, snapshot: Snapshot):
-        resources = kpops.manifest(
+        resources = kpops.manifest_deploy(
             RESOURCE_PATH / "custom-config/pipeline.yaml",
             environment="development",
         )

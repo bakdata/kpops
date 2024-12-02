@@ -17,6 +17,7 @@ from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.config import KpopsConfig
+from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.pipeline import (
     Pipeline,
     PipelineGenerator,
@@ -24,7 +25,6 @@ from kpops.pipeline import (
 from kpops.utils.cli_commands import init_project
 
 if TYPE_CHECKING:
-    from kpops.components.base_components.models.resource import Resource
     from kpops.components.base_components.pipeline_component import PipelineComponent
     from kpops.config import KpopsConfig
 
@@ -71,43 +71,7 @@ def generate(
     return pipeline
 
 
-def manifest(
-    pipeline_path: Path,
-    dotenv: list[Path] | None = None,
-    config: Path = Path(),
-    steps: set[str] | None = None,
-    filter_type: FilterType = FilterType.INCLUDE,
-    environment: str | None = None,
-    verbose: bool = False,
-) -> list[Resource]:
-    """Generate pipeline, return final resource representations for each step.
-
-    :param pipeline_path: Path to pipeline definition yaml file.
-    :param dotenv: Paths to dotenv files.
-    :param config: Path to the dir containing config.yaml files.
-    :param steps: Set of steps (components) to apply the command on.
-    :param filter_type: Whether `steps` should include/exclude the steps.
-    :param environment: The environment to generate and deploy the pipeline to.
-    :param verbose: Enable verbose printing.
-    :return: Resources.
-    """
-    pipeline = generate(
-        pipeline_path=pipeline_path,
-        dotenv=dotenv,
-        config=config,
-        steps=steps,
-        filter_type=filter_type,
-        environment=environment,
-        verbose=verbose,
-    )
-    resources: list[Resource] = []
-    for component in pipeline.components:
-        resource = component.manifest()
-        resources.append(resource)
-    return resources
-
-
-def manifest_deployment(
+def manifest_deploy(
     pipeline_path: Path,
     dotenv: list[Path] | None = None,
     config: Path = Path(),
@@ -116,7 +80,7 @@ def manifest_deployment(
     environment: str | None = None,
     verbose: bool = True,
     operation_mode: OperationMode = OperationMode.MANIFEST,
-) -> Iterator[Resource]:
+) -> Iterator[list[KubernetesManifest]]:
     pipeline = generate(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
