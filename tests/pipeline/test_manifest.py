@@ -125,7 +125,7 @@ class TestManifest:
 
     def test_python_api(self, snapshot: Snapshot):
         generator = kpops.manifest_deploy(
-            RESOURCE_PATH / "streams-bootstrap" / PIPELINE_YAML,
+            RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML,
             environment="development",
         )
         assert isinstance(generator, Iterator)

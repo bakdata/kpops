@@ -126,7 +126,9 @@ class KpopsConfig(BaseSettings):
         description="The operation mode of KPOps (standard, manifest, argo).",
     )
 
-    model_config = SettingsConfigDict(env_prefix=ENV_PREFIX, env_nested_delimiter="__")
+    model_config = SettingsConfigDict(
+        env_prefix=ENV_PREFIX, env_nested_delimiter="__", use_enum_values=True
+    )
 
     @classmethod
     def create(
