@@ -1,4 +1,17 @@
 # Changelog
+## [8.1.1](https://github.com/bakdata/kpops/releases/tag/8.1.1) - Release Date: [2024-12-02]
+
+### 🐛 Fixes
+
+- Fix `files` field value type in Streamsboostrap component - [#542](https://github.com/bakdata/kpops/pull/542)
+
+- Fix: Use enum values when dumping models - [#543](https://github.com/bakdata/kpops/pull/543)
+
+
+
+
+
+
 ## [8.1.0](https://github.com/bakdata/kpops/releases/tag/8.1.0) - Release Date: [2024-10-25]
 
 ### 🧪 Dependencies
