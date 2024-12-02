@@ -48,6 +48,7 @@ def generate(
     :param filter_type: Whether `steps` should include/exclude the steps.
     :param environment: The environment to generate and deploy the pipeline to.
     :param verbose: Enable verbose printing.
+    :param operation_mode: How KPOps should operate.
     :return: Generated `Pipeline` object.
     """
     kpops_config = KpopsConfig.create(
