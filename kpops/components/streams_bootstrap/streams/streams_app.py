@@ -50,9 +50,9 @@ class StreamsAppCleaner(KafkaAppCleaner, StreamsBootstrap):
 
     @override
     def manifest_deploy(self) -> Resource:
-        operation_mode = get_config().operation_mode
+        self.values.name_override = None
         values = self.to_helm_values()
-        if operation_mode is OperationMode.ARGO:
+        if get_config().operation_mode is OperationMode.ARGO:
             values = ArgoHook.POST_DELETE.enrich(values)
         return self.helm.template(
             self.helm_release_name,
@@ -174,9 +174,7 @@ class StreamsApp(StreamsBootstrap):
     @override
     def manifest_deploy(self) -> Resource:
         manifests = super().manifest_deploy()
-        operation_mode = get_config().operation_mode
-
-        if operation_mode is OperationMode.ARGO:
+        if get_config().operation_mode is OperationMode.ARGO:
             manifests.extend(self._cleaner.manifest_deploy())
 
         return manifests

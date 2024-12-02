@@ -37,9 +37,9 @@ class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrap):
 
     @override
     def manifest_deploy(self) -> Resource:
-        operation_mode = get_config().operation_mode
-        values = self.values.model_dump()
-        if operation_mode is OperationMode.ARGO:
+        self.values.name_override = None
+        values = self.to_helm_values()
+        if get_config().operation_mode is OperationMode.ARGO:
             values = ArgoHook.POST_DELETE.enrich(values)
         return self.helm.template(
             self.helm_release_name,
