@@ -15,7 +15,7 @@ class ArgoEnricher(enum.Enum):
         return helm_values
 
 
-class ArgoHook(ArgoEnricher, enum.StrEnum):
+class ArgoHook(ArgoEnricher, str, enum.Enum):
     POST_DELETE = "PostDelete"
 
     @property
@@ -24,7 +24,7 @@ class ArgoHook(ArgoEnricher, enum.StrEnum):
         return "argocd.argoproj.io/hook"
 
 
-class ArgoSyncWave(ArgoEnricher, enum.StrEnum):
+class ArgoSyncWave(ArgoEnricher, str, enum.Enum):
     SYNC_WAVE = "1"
 
     @property
