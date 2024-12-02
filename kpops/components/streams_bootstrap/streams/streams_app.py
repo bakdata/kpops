@@ -50,7 +50,7 @@ class StreamsAppCleaner(KafkaAppCleaner, StreamsBootstrap):
 
     @override
     def manifest_deploy(self) -> Resource:
-        self.values.name_override = None
+        self.values.name_override = self.helm_release_name
         values = self.to_helm_values()
         if get_config().operation_mode is OperationMode.ARGO:
             values = ArgoHook.POST_DELETE.enrich(values)
