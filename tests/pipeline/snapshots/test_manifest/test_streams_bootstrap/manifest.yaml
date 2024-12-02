@@ -48,7 +48,7 @@ spec:
             - name: JAVA_TOOL_OPTIONS
               value: '-XX:MaxRAMPercentage=75.0 '
             image: my-registry/my-producer-image:1.0.0
-            imagePullPolicy: Always
+            imagePullPolicy: IfNotPresent
             name: resources-streams-bootstrap-my-producer-app
             resources:
               limits:
@@ -160,7 +160,7 @@ spec:
           value: '-Dcom.sun.management.jmxremote.port=5555 -Dcom.sun.management.jmxremote.authenticate=false
             -Dcom.sun.management.jmxremote.ssl=false -XX:MaxRAMPercentage=85.0 '
         image: my-registry/my-streams-app-image:1.0.0
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         name: resources-streams-bootstrap-my-streams-app
         ports:
         - containerPort: 5555

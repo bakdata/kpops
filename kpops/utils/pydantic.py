@@ -148,7 +148,7 @@ class DescConfigModel(BaseModel):
     def json_schema_extra(schema: dict[str, Any], model: type[BaseModel]) -> None:
         schema["description"] = describe_object(model.__doc__)
 
-    model_config = ConfigDict(json_schema_extra=json_schema_extra)
+    model_config = ConfigDict(json_schema_extra=json_schema_extra, use_enum_values=True)
 
 
 class YamlConfigSettingsSource(PydanticBaseSettingsSource):

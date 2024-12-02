@@ -9,7 +9,7 @@ from kpops.utils.pydantic import DescConfigModel
 MEMORY_PATTERN = r"^\d+([EPTGMk]|Ei|Pi|Ti|Gi|Mi|Ki)?$"
 
 
-class ServiceType(enum.Enum):
+class ServiceType(str, enum.Enum):
     """Represents the different Kubernetes service types.
 
     https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
@@ -21,7 +21,7 @@ class ServiceType(enum.Enum):
     EXTERNAL_NAME = "ExternalName"
 
 
-class ProtocolSchema(enum.Enum):
+class ProtocolSchema(str, enum.Enum):
     """Represents the different Kubernetes protocols.
 
     https://kubernetes.io/docs/reference/networking/service-protocols/
@@ -32,7 +32,7 @@ class ProtocolSchema(enum.Enum):
     SCTP = "SCTP"
 
 
-class ImagePullPolicy(enum.Enum):
+class ImagePullPolicy(str, enum.Enum):
     """Represents the different Kubernetes image pull policies.
 
     https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
@@ -43,18 +43,18 @@ class ImagePullPolicy(enum.Enum):
     NEVER = "Never"
 
 
-class Operation(enum.Enum):
+class Operation(str, enum.Enum):
     EXISTS = "Exists"
     EQUAL = "Equal"
 
 
-class Effects(enum.Enum):
+class Effects(str, enum.Enum):
     NO_EXECUTE = "NoExecute"
     NO_SCHEDULE = "NoSchedule"
     PREFER_NO_SCHEDULE = "PreferNoSchedule"
 
 
-class RestartPolicy(enum.Enum):
+class RestartPolicy(str, enum.Enum):
     ALWAYS = "Always"
     ON_FAILURE = "OnFailure"
     NEVER = "Never"
