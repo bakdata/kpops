@@ -9,6 +9,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
+    sync_wave: 0
     type: producer-app-cleaner
     values:
       image: bakdata/kpops-demo-sentence-producer
@@ -34,8 +35,10 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
+  sync_wave: 0
   to:
     models: {}
+    sync_wave: 0
     topics:
       word-count-data-producer-topic:
         configs: {}
@@ -67,6 +70,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
+    sync_wave: 0
     type: streams-app-cleaner
     values:
       commandLine:
@@ -100,8 +104,10 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
+  sync_wave: 0
   to:
     models: {}
+    sync_wave: 0
     topics:
       word-count-word-counter-dead-letter-topic:
         configs: {}
@@ -146,6 +152,7 @@
       repository_name: bakdata-kafka-connect-resetter
       url: https://bakdata.github.io/kafka-connect-resetter/
     suffix: -clean
+    sync_wave: 0
     type: kafka-connector-resetter
     values:
       config:
@@ -165,4 +172,5 @@
   name: redis-sink-connector
   prefix: word-count-
   resetter_values: {}
+  sync_wave: 0
   type: kafka-sink-connector

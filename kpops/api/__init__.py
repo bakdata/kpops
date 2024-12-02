@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Iterator
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -14,7 +15,7 @@ from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
-from kpops.config import KpopsConfig
+from kpops.config import KpopsConfig, OperationMode
 from kpops.pipeline import (
     Pipeline,
     PipelineGenerator,
@@ -100,9 +101,38 @@ def manifest(
     )
     resources: list[Resource] = []
     for component in pipeline.components:
-        resource = component.manifest()
+        resource = component.manifest_deploy()
         resources.append(resource)
     return resources
+
+
+def manifest_deployment(
+    pipeline_path: Path,
+    dotenv: list[Path] | None = None,
+    config: Path = Path(),
+    steps: set[str] | None = None,
+    filter_type: FilterType = FilterType.INCLUDE,
+    environment: str | None = None,
+    verbose: bool = True,
+) -> Iterator[Resource]:
+    pipeline = generate(
+        pipeline_path=pipeline_path,
+        dotenv=dotenv,
+        config=config,
+        steps=steps,
+        filter_type=filter_type,
+        environment=environment,
+        verbose=verbose,
+    )
+    KpopsConfig.create(
+        config,
+        dotenv,
+        environment,
+        verbose,
+    )
+    for component in pipeline.components:
+        resource = component.manifest_deploy()
+        yield resource
 
 
 def deploy(
@@ -115,6 +145,7 @@ def deploy(
     dry_run: bool = True,
     verbose: bool = True,
     parallel: bool = False,
+    manifest: bool = False,
 ):
     """Deploy pipeline steps.
 
@@ -150,7 +181,7 @@ def deploy(
             for component in pipeline.components:
                 await deploy_runner(component)
 
-    asyncio.run(async_deploy())
+        asyncio.run(async_deploy())
 
 
 def destroy(
@@ -163,7 +194,7 @@ def destroy(
     dry_run: bool = True,
     verbose: bool = True,
     parallel: bool = False,
-):
+) -> list[Resource] | None:
     """Destroy pipeline steps.
 
     :param pipeline_path: Path to pipeline definition yaml file.
@@ -185,22 +216,38 @@ def destroy(
         environment=environment,
         verbose=verbose,
     )
+    kpops_config = KpopsConfig.create(
+        config,
+        dotenv,
+        environment,
+        verbose,
+    )
 
-    async def destroy_runner(component: PipelineComponent):
-        log_action("Destroy", component)
-        await component.destroy(dry_run)
+    if kpops_config.operation_mode is OperationMode.ARGO:
+        resources: list[Resource] = []
+        for component in pipeline.components:
+            resource = component.manifest_destroy()
+            resources.append(resource)
+        return resources
 
-    async def async_destroy():
-        if parallel:
-            pipeline_tasks = pipeline.build_execution_graph(
-                destroy_runner, reverse=True
-            )
-            await pipeline_tasks
-        else:
-            for component in reversed(pipeline.components):
-                await destroy_runner(component)
+    if kpops_config.operation_mode is OperationMode.HELM:
 
-    asyncio.run(async_destroy())
+        async def destroy_runner(component: PipelineComponent):
+            log_action("Destroy", component)
+            await component.destroy(dry_run)
+
+        async def async_destroy():
+            if parallel:
+                pipeline_tasks = pipeline.build_execution_graph(
+                    destroy_runner, reverse=True
+                )
+                await pipeline_tasks
+            else:
+                for component in reversed(pipeline.components):
+                    await destroy_runner(component)
+
+        asyncio.run(async_destroy())
+    return []
 
 
 def reset(
@@ -213,7 +260,7 @@ def reset(
     dry_run: bool = True,
     verbose: bool = True,
     parallel: bool = False,
-):
+) -> list[Resource]:
     """Reset pipeline steps.
 
     :param pipeline_path: Path to pipeline definition yaml file.
@@ -226,6 +273,12 @@ def reset(
     :param verbose: Enable verbose printing.
     :param parallel: Enable or disable parallel execution of pipeline steps.
     """
+    kpops_config = KpopsConfig.create(
+        config,
+        dotenv,
+        environment,
+        verbose,
+    )
     pipeline = generate(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
@@ -236,19 +289,32 @@ def reset(
         verbose=verbose,
     )
 
-    async def reset_runner(component: PipelineComponent):
-        log_action("Reset", component)
-        await component.reset(dry_run)
+    if kpops_config.operation_mode is OperationMode.ARGO:
+        resources: list[Resource] = []
+        for component in pipeline.components:
+            resource = component.manifest_reset()
+            resources.append(resource)
+        return resources
 
-    async def async_reset():
-        if parallel:
-            pipeline_tasks = pipeline.build_execution_graph(reset_runner, reverse=True)
-            await pipeline_tasks
-        else:
-            for component in reversed(pipeline.components):
-                await reset_runner(component)
+    if kpops_config.operation_mode is OperationMode.HELM:
 
-    asyncio.run(async_reset())
+        async def reset_runner(component: PipelineComponent):
+            log_action("Reset", component)
+            await component.reset(dry_run)
+
+        async def async_reset():
+            if parallel:
+                pipeline_tasks = pipeline.build_execution_graph(
+                    reset_runner, reverse=True
+                )
+                await pipeline_tasks
+            else:
+                for component in reversed(pipeline.components):
+                    await reset_runner(component)
+
+        asyncio.run(async_reset())
+
+    return []
 
 
 def clean(
@@ -261,7 +327,7 @@ def clean(
     dry_run: bool = True,
     verbose: bool = True,
     parallel: bool = False,
-):
+) -> list[Resource] | None:
     """Clean pipeline steps.
 
     :param pipeline_path: Path to pipeline definition yaml file.
@@ -283,20 +349,38 @@ def clean(
         environment=environment,
         verbose=verbose,
     )
+    kpops_config = KpopsConfig.create(
+        config,
+        dotenv,
+        environment,
+        verbose,
+    )
 
-    async def clean_runner(component: PipelineComponent):
-        log_action("Clean", component)
-        await component.clean(dry_run)
+    list: list[Resource] = []
+    if kpops_config.operation_mode is OperationMode.ARGO:
+        for component in reversed(pipeline.components):
+            clean = component.manifest_clean()
+            list.append(clean)
 
-    async def async_clean():
-        if parallel:
-            pipeline_tasks = pipeline.build_execution_graph(clean_runner, reverse=True)
-            await pipeline_tasks
-        else:
-            for component in reversed(pipeline.components):
-                await clean_runner(component)
+        return list
+    if kpops_config.operation_mode is OperationMode.HELM:
 
-    asyncio.run(async_clean())
+        async def clean_runner(component: PipelineComponent):
+            log_action("Clean", component)
+            await component.clean(dry_run)
+
+        async def async_clean():
+            if parallel:
+                pipeline_tasks = pipeline.build_execution_graph(
+                    clean_runner, reverse=True
+                )
+                await pipeline_tasks
+            else:
+                for component in reversed(pipeline.components):
+                    await clean_runner(component)
+
+        asyncio.run(async_clean())
+    return []
 
 
 def init(
@@ -315,6 +399,50 @@ def init(
         log.warning("Please provide a path to an empty directory.")
         return
     init_project(path, config_include_opt)
+
+
+def sync(
+    pipeline_path: Path,
+    dotenv: list[Path] | None = None,
+    config: Path = Path(),
+    environment: str | None = None,
+    verbose: bool = True,
+) -> list[Resource]:
+    pipeline = generate(
+        pipeline_path=pipeline_path,
+        dotenv=dotenv,
+        config=config,
+        environment=environment,
+        verbose=verbose,
+    )
+    resources: list[Resource] = []
+
+    for component in pipeline.components:
+        resource = component.manifest_deploy()
+        resources.append(resource)
+    return resources
+
+
+def pause(
+    pipeline_path: Path,
+    dotenv: list[Path] | None = None,
+    config: Path = Path(),
+    environment: str | None = None,
+    verbose: bool = True,
+) -> list[Resource]:
+    pipeline = generate(
+        pipeline_path=pipeline_path,
+        dotenv=dotenv,
+        config=config,
+        environment=environment,
+        verbose=verbose,
+    )
+    resources: list[Resource] = []
+
+    for component in pipeline.components:
+        resource = component.manifest_pause()
+        resources.append(resource)
+    return resources
 
 
 def _create_pipeline(

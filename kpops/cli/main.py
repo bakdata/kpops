@@ -3,12 +3,15 @@ from __future__ import annotations
 from pathlib import Path
 
 import typer
+import yaml
 
 import kpops.api as kpops
 from kpops.api.options import FilterType
 from kpops.cli.utils import (
     collect_pipeline_paths,
 )
+from kpops.components.base_components import PipelineComponent
+from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
 from kpops.config import ENV_PREFIX
 from kpops.const import KPOPS, __version__
 from kpops.const.file_type import (
@@ -92,6 +95,13 @@ PARALLEL: bool = typer.Option(
     help="Enable or disable parallel execution of pipeline steps. If enabled, multiple steps can be processed concurrently. If disabled, steps will be processed sequentially.",
 )
 
+MANIFEST: bool = typer.Option(
+    False,
+    "--manifest/--no-manifest",
+    rich_help_panel="EXPERIMENTAL: ",
+    help="",
+)
+
 
 FILTER_TYPE: FilterType = typer.Option(
     default=FilterType.INCLUDE,
@@ -152,6 +162,10 @@ def schema(
             gen_defaults_schema()
         case KpopsFileType.CONFIG:
             gen_config_schema()
+
+
+def predicate(pipeline: PipelineComponent) -> bool:
+    return isinstance(pipeline, StreamsApp | ProducerApp)
 
 
 @app.command(
@@ -219,19 +233,49 @@ def deploy(
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
+    manifest: bool = MANIFEST,
 ):
-    for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
-        kpops.deploy(
-            pipeline_path=pipeline_file_path,
-            dotenv=dotenv,
-            config=config,
-            steps=parse_steps(steps),
-            filter_type=filter_type,
-            environment=environment,
-            dry_run=dry_run,
-            verbose=verbose,
-            parallel=parallel,
-        )
+    if manifest:
+        for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
+            resources = kpops.manifest_deployment(
+                pipeline_file_path,
+                dotenv,
+                config,
+                parse_steps(steps),
+                filter_type,
+                environment,
+                verbose,
+            )
+            for resource in resources:
+                for rendered_manifest in resource:
+                    print_yaml(rendered_manifest)
+    else:
+        for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
+            kpops.deploy(
+                pipeline_path=pipeline_file_path,
+                dotenv=dotenv,
+                config=config,
+                steps=parse_steps(steps),
+                filter_type=filter_type,
+                environment=environment,
+                dry_run=dry_run,
+                verbose=verbose,
+                parallel=parallel,
+            )
+
+
+def save_yaml_to_file(data: list[dict], output_dir: Path, step_name: str) -> None:
+    """Save a list of YAML objects to a file.
+
+    :param data: List of rendered YAML manifests.
+    :param output_dir: Directory to save the YAML files.
+    :param step_name: Name of the step (used for the file name).
+    """
+    output_dir.mkdir(parents=True, exist_ok=True)  # Ensure the directory exists
+    file_path = output_dir / f"{step_name}.yaml"
+
+    with file_path.open("w") as yaml_file:
+        yaml.dump_all(data, yaml_file, default_flow_style=False)
 
 
 @app.command(help="Destroy pipeline steps")
@@ -247,7 +291,7 @@ def destroy(
     parallel: bool = PARALLEL,
 ):
     for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
-        kpops.destroy(
+        resources = kpops.destroy(
             pipeline_path=pipeline_file_path,
             dotenv=dotenv,
             config=config,
@@ -258,6 +302,11 @@ def destroy(
             verbose=verbose,
             parallel=parallel,
         )
+
+        if resources:
+            for resource in resources:
+                for rendered_manifest in resource:
+                    print_yaml(rendered_manifest)
 
 
 @app.command(help="Reset pipeline steps")
@@ -273,7 +322,7 @@ def reset(
     parallel: bool = PARALLEL,
 ):
     for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
-        kpops.reset(
+        resources = kpops.reset(
             pipeline_path=pipeline_file_path,
             dotenv=dotenv,
             config=config,
@@ -284,6 +333,11 @@ def reset(
             verbose=verbose,
             parallel=parallel,
         )
+
+        if resources:
+            for resource in resources:
+                for rendered_manifest in resource:
+                    print_yaml(rendered_manifest)
 
 
 @app.command(help="Clean pipeline steps")
@@ -299,7 +353,7 @@ def clean(
     parallel: bool = PARALLEL,
 ):
     for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
-        kpops.clean(
+        resources = kpops.clean(
             pipeline_path=pipeline_file_path,
             dotenv=dotenv,
             config=config,
@@ -310,6 +364,59 @@ def clean(
             verbose=verbose,
             parallel=parallel,
         )
+
+        if resources:
+            for resource in resources:
+                for rendered_manifest in resource:
+                    print_yaml(rendered_manifest)
+
+
+@app.command(
+    short_help="Render final resource representation",
+    help="In addition to generate, render final resource representation for each pipeline step, e.g. Kubernetes manifests.",
+)
+def sync(
+    pipeline_paths: list[Path] = PIPELINE_PATHS_ARG,
+    dotenv: list[Path] | None = DOTENV_PATH_OPTION,
+    config: Path = CONFIG_PATH_OPTION,
+    environment: str | None = ENVIRONMENT,
+    verbose: bool = VERBOSE_OPTION,
+):
+    for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
+        resources = kpops.sync(
+            pipeline_path=pipeline_file_path,
+            dotenv=dotenv,
+            config=config,
+            environment=environment,
+            verbose=verbose,
+        )
+        for resource in resources:
+            for rendered_manifest in resource:
+                print_yaml(rendered_manifest)
+
+
+@app.command(
+    short_help="Pauses the pipeline",
+    help="In addition to generate, render final resource representation for each pipeline step, e.g. Kubernetes manifests.",
+)
+def pause(
+    pipeline_paths: list[Path] = PIPELINE_PATHS_ARG,
+    dotenv: list[Path] | None = DOTENV_PATH_OPTION,
+    config: Path = CONFIG_PATH_OPTION,
+    environment: str | None = ENVIRONMENT,
+    verbose: bool = VERBOSE_OPTION,
+):
+    for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
+        resources = kpops.pause(
+            pipeline_path=pipeline_file_path,
+            dotenv=dotenv,
+            config=config,
+            environment=environment,
+            verbose=verbose,
+        )
+        for resource in resources:
+            for rendered_manifest in resource:
+                print_yaml(rendered_manifest)
 
 
 def version_callback(show_version: bool) -> None:

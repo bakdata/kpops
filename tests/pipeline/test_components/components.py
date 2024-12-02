@@ -17,6 +17,12 @@ from kpops.components.streams_bootstrap_v2.producer.producer_app import Producer
 from kpops.components.streams_bootstrap_v2.streams.streams_app import StreamsAppV2
 
 
+class ProducerApp1(ProducerApp): ...
+
+
+class StreamsApp1(StreamsApp): ...
+
+
 class MyProducerApp(ProducerApp): ...
 
 

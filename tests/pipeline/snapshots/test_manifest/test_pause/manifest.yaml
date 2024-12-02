@@ -1,0 +1,221 @@
+---
+apiVersion: v1
+data:
+  jmx-kafka-streams-app-prometheus.yml: "jmxUrl: service:jmx:rmi:///jndi/rmi://localhost:5555/jmxrmi\n\
+    lowercaseOutputName: true\nlowercaseOutputLabelNames: true\nssl: false\nrules:\n\
+    \  - pattern: \".*\"\n"
+kind: ConfigMap
+metadata:
+  labels:
+    app: resources-streams-bootstrap-argo-my-streams-app
+    chart: streams-app-3.0.1
+    heritage: Helm
+    release: resources-streams-bootstrap-argo-my-streams-app
+  name: resources-streams-bootstrap-argo-my-streams-app-jmx-configmap
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: '1'
+    consumerGroup: my-streams-app-id
+  labels:
+    app: resources-streams-bootstrap-argo-my-streams-app
+    chart: streams-app-3.0.1
+    release: resources-streams-bootstrap-argo-my-streams-app
+  name: resources-streams-bootstrap-argo-my-streams-app
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: resources-streams-bootstrap-argo-my-streams-app
+      release: resources-streams-bootstrap-argo-my-streams-app
+  template:
+    metadata:
+      annotations:
+        prometheus.io/port: '5556'
+        prometheus.io/scrape: 'true'
+      labels:
+        app: resources-streams-bootstrap-argo-my-streams-app
+        release: resources-streams-bootstrap-argo-my-streams-app
+    spec:
+      containers:
+      - env:
+        - name: ENV_PREFIX
+          value: APP_
+        - name: KAFKA_LARGE_MESSAGE_ID_GENERATOR
+          value: com.bakdata.kafka.MurmurHashIdGenerator
+        - name: KAFKA_JMX_PORT
+          value: '5555'
+        - name: APP_VOLATILE_GROUP_INSTANCE_ID
+          value: 'true'
+        - name: APP_BOOTSTRAP_SERVERS
+          value: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+        - name: APP_SCHEMA_REGISTRY_URL
+          value: http://localhost:8081/
+        - name: APP_INPUT_TOPICS
+          value: producer-1-output-topic
+        - name: APP_INPUT_PATTERN
+          value: my-input-pattern
+        - name: APP_OUTPUT_TOPIC
+          value: streams-app-1-output-topic
+        - name: APP_ERROR_TOPIC
+          value: streams-app-1-error-topic
+        - name: APP_LABELED_OUTPUT_TOPICS
+          value: my-output-topic-label=streams-app-1-labeled-output-topic,
+        - name: APP_LABELED_INPUT_TOPICS
+          value: producer-1-labeled-topic-output=producer-1-labeled-topic-output,
+        - name: APP_LABELED_INPUT_PATTERNS
+          value: my-input-topic-labeled-pattern=my-labeled-input-pattern,
+        - name: APP_APPLICATION_ID
+          value: my-streams-app-id
+        - name: APP_CONVERT_XML
+          value: 'true'
+        - name: JAVA_TOOL_OPTIONS
+          value: '-Dcom.sun.management.jmxremote.port=5555 -Dcom.sun.management.jmxremote.authenticate=false
+            -Dcom.sun.management.jmxremote.ssl=false -XX:MaxRAMPercentage=75.0 '
+        image: my-registry/my-streams-app-image:1.0.0
+        imagePullPolicy: Always
+        name: resources-streams-bootstrap-argo-my-streams-app
+        ports:
+        - containerPort: 5555
+          name: jmx
+        resources:
+          limits:
+            cpu: 500m
+            memory: 2G
+          requests:
+            cpu: 200m
+            memory: 300Mi
+      - command:
+        - java
+        - -XX:+UnlockExperimentalVMOptions
+        - -XX:+UseCGroupMemoryLimitForHeap
+        - -XX:MaxRAMFraction=1
+        - -XshowSettings:vm
+        - -jar
+        - jmx_prometheus_httpserver.jar
+        - '5556'
+        - /etc/jmx-streams-app/jmx-kafka-streams-app-prometheus.yml
+        image: solsson/kafka-prometheus-jmx-exporter@sha256:6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e78946143
+        name: prometheus-jmx-exporter
+        ports:
+        - containerPort: 5556
+        resources:
+          limits:
+            cpu: 300m
+            memory: 2G
+          requests:
+            cpu: 100m
+            memory: 500Mi
+        volumeMounts:
+        - mountPath: /etc/jmx-streams-app
+          name: jmx-config
+      terminationGracePeriodSeconds: 300
+      volumes:
+      - configMap:
+          name: resources-streams-bootstrap-argo-my-streams-app-jmx-configmap
+        name: jmx-config
+
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+  name: streams-app-1-output-topic
+spec:
+  config: {}
+  partitions: 1
+  replicas: 1
+
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+  name: streams-app-1-error-topic
+spec:
+  config:
+    cleanup.policy: compact,delete
+  partitions: 1
+  replicas: 1
+
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+  name: streams-app-1-labeled-output-topic
+spec:
+  config: {}
+  partitions: 1
+  replicas: 1
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    argocd.argoproj.io/hook: PostDelete
+  labels:
+    app: resources-streams-bootstrap-argo-my-streams-app
+    chart: streams-app-cleanup-job-3.0.2
+    release: resources-streams-bootstrap-argo-my-streams-app-clean
+  name: resources-streams-bootstrap-argo-my-streams-app
+spec:
+  backoffLimit: 6
+  template:
+    metadata:
+      labels:
+        app: resources-streams-bootstrap-argo-my-streams-app
+        release: resources-streams-bootstrap-argo-my-streams-app-clean
+    spec:
+      containers:
+      - args:
+        - reset
+        env:
+        - name: ENV_PREFIX
+          value: APP_
+        - name: KAFKA_LARGE_MESSAGE_ID_GENERATOR
+          value: com.bakdata.kafka.MurmurHashIdGenerator
+        - name: APP_BOOTSTRAP_SERVERS
+          value: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+        - name: APP_SCHEMA_REGISTRY_URL
+          value: http://localhost:8081/
+        - name: APP_INPUT_TOPICS
+          value: producer-1-output-topic
+        - name: APP_INPUT_PATTERN
+          value: my-input-pattern
+        - name: APP_OUTPUT_TOPIC
+          value: streams-app-1-output-topic
+        - name: APP_ERROR_TOPIC
+          value: streams-app-1-error-topic
+        - name: APP_LABELED_OUTPUT_TOPICS
+          value: my-output-topic-label=streams-app-1-labeled-output-topic,
+        - name: APP_LABELED_INPUT_TOPICS
+          value: producer-1-labeled-topic-output=producer-1-labeled-topic-output,
+        - name: APP_LABELED_INPUT_PATTERNS
+          value: my-input-topic-labeled-pattern=my-labeled-input-pattern,
+        - name: APP_APPLICATION_ID
+          value: my-streams-app-id
+        - name: APP_CONVERT_XML
+          value: 'true'
+        - name: JAVA_TOOL_OPTIONS
+          value: '-XX:MaxRAMPercentage=75.0 '
+        image: my-registry/my-streams-app-image:1.0.0
+        imagePullPolicy: Always
+        name: resources-streams-bootstrap-argo-my-streams-app
+        resources:
+          limits:
+            cpu: 500m
+            memory: 2G
+          requests:
+            cpu: 200m
+            memory: 300Mi
+      restartPolicy: OnFailure
+  ttlSecondsAfterFinished: 30
+

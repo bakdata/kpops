@@ -8,6 +8,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
+    sync_wave: 0
     type: producer-app-cleaner
     values:
       imageTag: latest
@@ -29,8 +30,10 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
+  sync_wave: 0
   to:
     models: {}
+    sync_wave: 0
     topics:
       app1-test-topic:
         configs: {}
@@ -59,6 +62,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
+    sync_wave: 0
     type: streams-app-cleaner
     values:
       image: some-image
@@ -86,8 +90,10 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
+  sync_wave: 0
   to:
     models: {}
+    sync_wave: 0
     topics:
       app2-dead-letter-topic:
         configs:

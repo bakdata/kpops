@@ -21,6 +21,7 @@ class ToSection(DescConfigModel):
     models: dict[ModelName, ModelVersion] = Field(
         default={}, description=describe_attr("models", __doc__)
     )
+    sync_wave: int = Field(default=0, description=describe_attr("sync_wave", __doc__))
 
     model_config = ConfigDict(extra="forbid")
 

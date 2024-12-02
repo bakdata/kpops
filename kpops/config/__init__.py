@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import enum
 import logging
 from pathlib import Path
 from typing import ClassVar
@@ -72,6 +73,18 @@ class KafkaConnectConfig(BaseSettings):
     )
 
 
+class OperationMode(str, enum.Enum):
+    ARGO = "Argo"
+    HELM = "Helm"
+
+    # def factory(self) -> Manager:
+    #     match self.name:
+    #         case "ARGO":
+    #             return ArgoManager()
+    #         case "HELM":
+    #             return HelmManger()
+
+
 class KpopsConfig(BaseSettings):
     """Global configuration for KPOps project."""
 
@@ -119,6 +132,10 @@ class KpopsConfig(BaseSettings):
     retain_clean_jobs: bool = Field(
         default=False,
         description="Whether to retain clean up jobs in the cluster or uninstall the, after completion.",
+    )
+
+    operation_mode: OperationMode = Field(
+        default=OperationMode.HELM, description="The operation mode of KPOps"
     )
 
     model_config = SettingsConfigDict(env_prefix=ENV_PREFIX, env_nested_delimiter="__")

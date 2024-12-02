@@ -7,6 +7,7 @@ from typing_extensions import override
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
 from kpops.components.base_components.helm_app import HelmApp
 from kpops.components.base_components.kafka_app import KafkaAppCleaner
+from kpops.components.base_components.models.resource import Resource
 from kpops.components.common.app_type import AppType
 from kpops.components.common.topic import KafkaTopic
 from kpops.components.streams_bootstrap.base import (
@@ -152,3 +153,58 @@ class StreamsApp(StreamsBootstrap):
         """Destroy and clean."""
         await super().clean(dry_run)
         await self._cleaner.clean(dry_run)
+
+    @override
+    def manifest_deploy(self) -> Resource:
+        resource = super().manifest_deploy()
+        # TODO: We can do this separately
+        clean_resource = self.manifest_clean()
+        resource.extend(clean_resource)
+        return resource
+
+    @override
+    def manifest_reset(self) -> Resource:
+        resource = super().manifest_reset()
+
+        cleaner = self._cleaner
+        values = cleaner.to_helm_values()
+
+        template = self.helm.template(
+            cleaner.helm_release_name,
+            cleaner.helm_chart,
+            self.namespace,
+            values,
+        )
+        resource.extend(template)
+        return resource
+
+    @override
+    def manifest_clean(self) -> Resource:
+        cleaner = self._cleaner
+
+        # TODO: Fetch image tag from cluster if exists.
+
+        # fetcher = DeploymentFetcher(self.namespace)
+        # deployment_values = fetcher.get_deployment_values("app3-deployemnt")
+        #
+        # if deployment_values:
+        #     image = deployment_values.spec.template.spec.containers[0].image
+        #     image_tag = image.split(":")[1]
+        #     cleaner.values.image_tag = image_tag
+
+        values = cleaner.to_helm_values()
+        values["annotations"] = {"argocd.argoproj.io/hook": "PostDelete"}
+        return self.helm.template(
+            cleaner.helm_release_name,
+            cleaner.helm_chart,
+            self.namespace,
+            values,
+        )
+
+    def manifest_pause(self) -> Resource:
+        autoscaling = self.values.autoscaling
+        if autoscaling and autoscaling.enabled:
+            autoscaling.max_replicas = 0
+        else:
+            self.values.replica_count = 0
+        return self.manifest_deploy()

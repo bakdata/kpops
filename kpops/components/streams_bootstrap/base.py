@@ -7,11 +7,16 @@ from typing import TYPE_CHECKING
 
 import pydantic
 from pydantic import Field
+from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
 from kpops.components.base_components import KafkaApp
 from kpops.components.base_components.helm_app import HelmApp
+from kpops.components.base_components.models.resource import Resource
 from kpops.components.streams_bootstrap.model import StreamsBootstrapValues
+from kpops.components.streams_bootstrap.strimzi_model import (
+    StrimziKafkaTopic,
+)
 from kpops.utils.docstring import describe_attr
 
 if TYPE_CHECKING:
@@ -55,6 +60,45 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
         pattern=STREAMS_BOOTSTRAP_VERSION_PATTERN,
         description=describe_attr("version", __doc__),
     )
+
+    @override
+    def manifest_deploy(self) -> Resource:
+        resource = super().manifest_deploy()
+        topics = []
+        if self.to:
+            for topic in self.to.kafka_topics:
+                strimzi_topic = StrimziKafkaTopic.create_strimzi_topic(
+                    topic, self.values.kafka.bootstrap_servers
+                )
+                topics.append(strimzi_topic.model_dump())
+
+        resource.extend(topics)
+
+        return resource
+
+    @override
+    def manifest_destroy(self) -> Resource:
+        topics: Resource = []
+        if self.to:
+            for topic in self.to.kafka_topics:
+                strimzi_topic = StrimziKafkaTopic.create_strimzi_topic(
+                    topic, self.values.kafka.bootstrap_servers
+                )
+                topics.append(strimzi_topic.model_dump())
+
+        return topics
+
+    @override
+    def manifest_reset(self) -> Resource:
+        topics = []
+        if self.to:
+            for topic in self.to.kafka_topics:
+                strimzi_topic = StrimziKafkaTopic.create_strimzi_topic(
+                    topic, self.values.kafka.bootstrap_servers
+                )
+                topics.append(strimzi_topic.model_dump())
+
+        return topics
 
     @pydantic.field_validator("version", mode="after")
     @classmethod
