@@ -1,5 +1,4 @@
-from kpops.component_handlers.kubernetes.model import K8S_LABEL_MAX_LEN
-from kpops.component_handlers.kubernetes.utils import trim
+from kpops.component_handlers.kubernetes.utils import K8S_LABEL_MAX_LEN, trim
 
 RELEASE_NAME_MAX_LEN = 53
 

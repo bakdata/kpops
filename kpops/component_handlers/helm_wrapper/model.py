@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.exception import ParseError
-from kpops.manifests.kubernetes import KubernetesManifest
+from kpops.component_handlers.kubernetes.model import KubernetesManifest
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import DescConfigModel
 

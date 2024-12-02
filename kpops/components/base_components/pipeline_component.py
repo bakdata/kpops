@@ -13,6 +13,7 @@ from kpops.components.base_components.models.from_section import (
     FromTopic,
     InputTopicTypes,
 )
+from kpops.components.base_components.models.resource import Resource
 from kpops.components.base_components.models.to_section import (
     ToSection,
 )
@@ -21,7 +22,6 @@ from kpops.components.common.topic import (
     OutputTopicTypes,
     TopicConfig,
 )
-from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.utils.docstring import describe_attr
 
 
@@ -229,19 +229,19 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         """
         return [self]
 
-    def manifest_deploy(self) -> list[KubernetesManifest]:
+    def manifest_deploy(self) -> Resource:
         """Render Kubernetes manifests for deploy."""
         return []
 
-    def manifest_destroy(self) -> list[KubernetesManifest]:
+    def manifest_destroy(self) -> Resource:
         """Render Kubernetes manifests resources for destroy."""
         return []
 
-    def manifest_reset(self) -> list[KubernetesManifest]:
+    def manifest_reset(self) -> Resource:
         """Render Kubernetes manifests resources for reset."""
         return []
 
-    def manifest_clean(self) -> list[KubernetesManifest]:
+    def manifest_clean(self) -> Resource:
         """Render Kubernetes manifests resources for clean."""
         return []
 

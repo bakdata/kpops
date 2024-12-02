@@ -8,6 +8,7 @@ from kpops.api.operation import OperationMode
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
 from kpops.components.base_components.helm_app import HelmApp
 from kpops.components.base_components.kafka_app import KafkaAppCleaner
+from kpops.components.base_components.models.resource import Resource
 from kpops.components.common.app_type import AppType
 from kpops.components.common.topic import KafkaTopic
 from kpops.components.streams_bootstrap.base import (
@@ -19,7 +20,6 @@ from kpops.components.streams_bootstrap.streams.model import (
 from kpops.config import get_config
 from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
 from kpops.manifests.argo import ArgoHook
-from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.utils.docstring import describe_attr
 
 log = logging.getLogger("StreamsApp")
@@ -49,13 +49,18 @@ class StreamsAppCleaner(KafkaAppCleaner, StreamsBootstrap):
             await self.clean_pvcs(dry_run)
 
     @override
-    def manifest_deploy(self) -> list[KubernetesManifest]:
-        resources = super().manifest_deploy()
+    def manifest_deploy(self) -> Resource:
         operation_mode = get_config().operation_mode
+        values = self.to_helm_values()
         if operation_mode is OperationMode.ARGO:
-            # add Argo PostDelete hook
-            ArgoHook.POST_DELETE.enrich(resources[0])
-        return resources
+            values = ArgoHook.POST_DELETE.enrich(values)
+        return self.helm.template(
+            self.helm_release_name,
+            self.helm_chart,
+            self.namespace,
+            values,
+            self.template_flags,
+        )
 
     async def clean_pvcs(self, dry_run: bool) -> None:
         app_full_name = super(HelmApp, self).full_name
@@ -167,14 +172,15 @@ class StreamsApp(StreamsBootstrap):
         await self._cleaner.clean(dry_run)
 
     @override
-    def manifest_deploy(self) -> list[KubernetesManifest]:
+    def manifest_deploy(self) -> Resource:
         manifests = super().manifest_deploy()
         operation_mode = get_config().operation_mode
+
         if operation_mode is OperationMode.ARGO:
             manifests.extend(self._cleaner.manifest_deploy())
 
         return manifests
 
     @override
-    def manifest_clean(self) -> list[KubernetesManifest]:
+    def manifest_clean(self) -> Resource:
         return []

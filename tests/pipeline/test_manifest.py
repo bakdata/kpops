@@ -1,3 +1,4 @@
+from collections.abc import Iterator
 from pathlib import Path
 from unittest.mock import ANY, MagicMock
 
@@ -42,10 +43,12 @@ class TestManifest:
         result = runner.invoke(
             app,
             [
-                "manifest",
+                "deploy",
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--environment",
                 "development",
+                "--operation-mode",
+                "manifest",
             ],
             catch_exceptions=False,
         )
@@ -72,12 +75,14 @@ class TestManifest:
         result = runner.invoke(
             app,
             [
-                "manifest",
+                "deploy",
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--config",
                 str(RESOURCE_PATH / "custom-config"),
                 "--environment",
                 "development",
+                "--operation-mode",
+                "manifest",
             ],
             catch_exceptions=False,
         )
@@ -106,10 +111,12 @@ class TestManifest:
         result = runner.invoke(
             app,
             [
-                "manifest",
+                "deploy",
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--environment",
                 "development",
+                "--operation-mode",
+                "manifest",
             ],
             catch_exceptions=False,
         )
@@ -117,11 +124,12 @@ class TestManifest:
         snapshot.assert_match(result.stdout, MANIFEST_YAML)
 
     def test_python_api(self, snapshot: Snapshot):
-        resources = kpops.manifest_deploy(
-            RESOURCE_PATH / "custom-config/pipeline.yaml",
+        generator = kpops.manifest_deploy(
+            RESOURCE_PATH / "streams-bootstrap" / PIPELINE_YAML,
             environment="development",
         )
-        assert isinstance(resources, list)
+        assert isinstance(generator, Iterator)
+        resources = list(generator)
         assert len(resources) == 2
         snapshot.assert_match(yaml.dump_all(resources), "resources")
 
@@ -129,8 +137,10 @@ class TestManifest:
         result = runner.invoke(
             app,
             [
-                "manifest",
+                "deploy",
                 str(RESOURCE_PATH / "streams-bootstrap" / PIPELINE_YAML),
+                "--operation-mode",
+                "manifest",
             ],
             catch_exceptions=False,
         )
