@@ -73,7 +73,7 @@ class KafkaConnectConfig(BaseSettings):
     )
 
 
-class KpopsConfig(BaseSettings, use_enum_values=True):
+class KpopsConfig(BaseSettings):
     """Global configuration for KPOps project."""
 
     _instance: ClassVar[KpopsConfig | None] = PrivateAttr(None)
@@ -129,6 +129,7 @@ class KpopsConfig(BaseSettings, use_enum_values=True):
     model_config = SettingsConfigDict(
         env_prefix=ENV_PREFIX,
         env_nested_delimiter="__",
+        use_enum_values=True,
     )
 
     @classmethod
