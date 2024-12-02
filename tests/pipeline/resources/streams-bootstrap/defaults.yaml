@@ -1,6 +1,7 @@
 streams-bootstrap:
   version: "3.0.3"
   values:
+    imagePullPolicy: IfNotPresent
     files:
       log4j2.xml:
         mountPath: app/resources

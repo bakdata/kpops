@@ -28,7 +28,7 @@
             />\n        </Root>\n    </Loggers>\n</Configuration>\n"
           mountPath: app/resources
       image: my-registry/my-producer-image
-      imagePullPolicy: Always
+      imagePullPolicy: IfNotPresent
       imagePullSecrets: []
       imageTag: 1.0.0
       javaOptions:
@@ -103,7 +103,7 @@
           \        </Root>\n    </Loggers>\n</Configuration>\n"
         mountPath: app/resources
     image: my-registry/my-producer-image
-    imagePullPolicy: Always
+    imagePullPolicy: IfNotPresent
     imagePullSecrets: []
     imageTag: 1.0.0
     javaOptions:
@@ -168,7 +168,7 @@
             />\n        </Root>\n    </Loggers>\n</Configuration>\n"
           mountPath: app/resources
       image: my-registry/my-streams-app-image
-      imagePullPolicy: Always
+      imagePullPolicy: IfNotPresent
       imagePullSecrets: []
       imageTag: 1.0.0
       javaOptions:
@@ -290,7 +290,7 @@
           \        </Root>\n    </Loggers>\n</Configuration>\n"
         mountPath: app/resources
     image: my-registry/my-streams-app-image
-    imagePullPolicy: Always
+    imagePullPolicy: IfNotPresent
     imagePullSecrets: []
     imageTag: 1.0.0
     javaOptions:
