@@ -152,7 +152,7 @@ class TestManifest:
             app,
             [
                 "deploy",
-                str(RESOURCE_PATH / "streams-bootstrap" / PIPELINE_YAML),
+                str(RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML),
                 "--operation-mode",
                 "manifest",
             ],
@@ -166,7 +166,7 @@ class TestManifest:
             app,
             [
                 "deploy",
-                str(RESOURCE_PATH / "streams-bootstrap" / PIPELINE_YAML),
+                str(RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML),
                 "--operation-mode",
                 "argo",
             ],

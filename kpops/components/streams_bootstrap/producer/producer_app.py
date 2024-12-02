@@ -4,7 +4,9 @@ from functools import cached_property
 from pydantic import Field, ValidationError, computed_field
 from typing_extensions import override
 
+from kpops.api import OperationMode
 from kpops.components.base_components.kafka_app import KafkaAppCleaner
+from kpops.components.base_components.models.resource import Resource
 from kpops.components.common.app_type import AppType
 from kpops.components.common.topic import (
     KafkaTopic,
@@ -15,7 +17,9 @@ from kpops.components.streams_bootstrap.base import (
     StreamsBootstrap,
 )
 from kpops.components.streams_bootstrap.producer.model import ProducerAppValues
+from kpops.config import get_config
 from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
+from kpops.manifests.argo import ArgoHook
 from kpops.utils.docstring import describe_attr
 
 log = logging.getLogger("ProducerApp")
@@ -29,6 +33,20 @@ class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrap):
     def helm_chart(self) -> str:
         return (
             f"{self.repo_config.repository_name}/{AppType.CLEANUP_PRODUCER_APP.value}"
+        )
+
+    @override
+    def manifest_deploy(self) -> Resource:
+        operation_mode = get_config().operation_mode
+        values = self.values.model_dump()
+        if operation_mode is OperationMode.ARGO:
+            values = ArgoHook.POST_DELETE.enrich(values)
+        return self.helm.template(
+            self.helm_release_name,
+            self.helm_chart,
+            self.namespace,
+            values,
+            self.template_flags,
         )
 
 
@@ -123,3 +141,12 @@ class ProducerApp(StreamsBootstrap):
         """Destroy and clean."""
         await super().clean(dry_run)
         await self._cleaner.clean(dry_run)
+
+    def manifest_deploy(self) -> Resource:
+        manifests = super().manifest_deploy()
+        operation_mode = get_config().operation_mode
+
+        if operation_mode is OperationMode.ARGO:
+            manifests.extend(self._cleaner.manifest_deploy())
+
+        return manifests

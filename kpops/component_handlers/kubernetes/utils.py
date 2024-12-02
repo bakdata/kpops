@@ -2,7 +2,6 @@ import hashlib
 import logging
 
 log = logging.getLogger("K8sUtils")
-K8S_LABEL_MAX_LEN = 63
 
 
 def trim(max_len: int, name: str, suffix: str) -> str:

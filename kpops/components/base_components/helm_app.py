@@ -22,7 +22,7 @@ from kpops.component_handlers.helm_wrapper.utils import (
     create_helm_name_override,
     create_helm_release_name,
 )
-from kpops.component_handlers.kubernetes.utils import K8S_LABEL_MAX_LEN
+from kpops.component_handlers.kubernetes.model import K8S_LABEL_MAX_LEN
 from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
     KubernetesAppValues,
