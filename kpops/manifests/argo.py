@@ -2,6 +2,8 @@ import enum
 from enum import Enum
 from typing import Any
 
+from typing_extensions import override
+
 
 class ArgoEnricher(enum.Enum):
     @property
@@ -18,6 +20,7 @@ class ArgoHook(ArgoEnricher, str, Enum):
     POST_DELETE = "PostDelete"
 
     @property
+    @override
     def key(self) -> str:
         return "argocd.argoproj.io/hook"
 
@@ -26,5 +29,6 @@ class ArgoSyncWave(ArgoEnricher, str, Enum):
     SYNC_WAVE = "1"
 
     @property
+    @override
     def key(self) -> str:
         return "argocd.argoproj.io/sync-wave"
