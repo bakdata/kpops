@@ -6,4 +6,4 @@ from enum import StrEnum
 class OperationMode(StrEnum):
     ARGO = "argo"
     MANIFEST = "manifest"
-    STANDARD = "standard"
+    MANAGED = "managed"

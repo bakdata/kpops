@@ -112,9 +112,8 @@ ENVIRONMENT: str | None = typer.Option(
     ),
 )
 OPERATION_MODE_OPTION: OperationMode = typer.Option(
-    default=OperationMode.STANDARD,
+    default=OperationMode.MANAGED,
     envvar=f"{ENV_PREFIX}OPERATION_MODE",
-    # TODO: better help?
     help="How KPOps should operate.",
 )
 
@@ -201,7 +200,7 @@ def deploy(
     operation_mode: OperationMode = OPERATION_MODE_OPTION,
 ):
     match operation_mode:
-        case OperationMode.STANDARD:
+        case OperationMode.MANAGED:
             for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
                 kpops.deploy(
                     pipeline_path=pipeline_file_path,

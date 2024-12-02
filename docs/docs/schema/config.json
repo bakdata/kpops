@@ -122,7 +122,7 @@
             "enum": [
                 "argo",
                 "manifest",
-                "standard"
+                "managed"
             ],
             "title": "OperationMode",
             "type": "string"
@@ -254,8 +254,8 @@
                     "$ref": "#/$defs/OperationMode"
                 }
             ],
-            "default": "standard",
-            "description": "The operation mode of KPOps (standard, manifest, argo)."
+            "default": "managed",
+            "description": "The operation mode of KPOps (managed, manifest, argo)."
         },
         "pipeline_base_dir": {
             "default": ".",

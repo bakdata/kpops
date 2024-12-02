@@ -122,8 +122,8 @@ class KpopsConfig(BaseSettings, use_enum_values=True):
         description="Whether to retain clean up jobs in the cluster or uninstall the, after completion.",
     )
     operation_mode: OperationMode = Field(
-        default=OperationMode.STANDARD,
-        description="The operation mode of KPOps (standard, manifest, argo).",
+        default=OperationMode.MANAGED,
+        description="The operation mode of KPOps (managed, manifest, argo).",
     )
 
     model_config = SettingsConfigDict(

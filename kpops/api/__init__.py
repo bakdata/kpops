@@ -37,6 +37,7 @@ def generate(
     filter_type: FilterType = FilterType.INCLUDE,
     environment: str | None = None,
     verbose: bool = False,
+    operation_mode: OperationMode = OperationMode.MANAGED,
 ) -> Pipeline:
     """Generate enriched pipeline representation.
 
@@ -50,10 +51,7 @@ def generate(
     :return: Generated `Pipeline` object.
     """
     kpops_config = KpopsConfig.create(
-        config,
-        dotenv,
-        environment,
-        verbose,
+        config, dotenv, environment, verbose, operation_mode
     )
     pipeline = _create_pipeline(pipeline_path, kpops_config, environment)
     log.info(f"Picked up pipeline '{pipeline_path.parent.name}'")
@@ -89,9 +87,8 @@ def manifest_deploy(
         filter_type=filter_type,
         environment=environment,
         verbose=verbose,
+        operation_mode=operation_mode,
     )
-    # TODO: KPOps config is created twice. Once in generate and once here. change it!
-    KpopsConfig.create(config, dotenv, environment, verbose, operation_mode)
     for component in pipeline.components:
         resource = component.manifest_deploy()
         yield resource
