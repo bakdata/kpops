@@ -50,7 +50,7 @@ class TestConnectorApiWrapper:
                 "max.buffered.records": 500,
                 "connection.password": "fake-password",
                 "store.kafka.keys": True,
-                "retention.ms": -1,
+                "receive.buffer.bytes": -1,
                 "topic.tracking.allow.reset": False,
             }
         ).model_dump() == {
@@ -60,7 +60,7 @@ class TestConnectorApiWrapper:
             "max.buffered.records": "500",
             "connection.password": "fake-password",
             "store.kafka.keys": "true",
-            "retention.ms": "-1",
+            "receive.buffer.bytes": "-1",
             "topic.tracking.allow.reset": "false",
         }
 
