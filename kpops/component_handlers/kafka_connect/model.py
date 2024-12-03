@@ -1,3 +1,4 @@
+import json
 from enum import Enum
 from typing import Any
 
@@ -85,9 +86,9 @@ class KafkaConnectorConfig(DescConfigModel):
 
     @staticmethod
     def serialize_to_str(value: Any) -> str:
-        if isinstance(value, bool):
-            return "true" if value else "false"
-        return str(value)
+        if isinstance(value, str):
+            return value
+        return json.dumps(value)
 
     # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
     @model_serializer(mode="wrap", when_used="always")
