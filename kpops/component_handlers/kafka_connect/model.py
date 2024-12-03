@@ -80,9 +80,9 @@ class KafkaConnectorConfig(DescConfigModel):
         self,
         default_serialize_handler: pydantic.SerializerFunctionWrapHandler,
         info: pydantic.SerializationInfo,
-    ) -> dict[str, Any]:
+    ) -> dict[str, str]:
         result = exclude_by_value(default_serialize_handler(self), None)
-        return {by_alias(self, name): value for name, value in result.items()}
+        return {by_alias(self, name): str(value) for name, value in result.items()}
 
 
 class ConnectorTask(BaseModel):
