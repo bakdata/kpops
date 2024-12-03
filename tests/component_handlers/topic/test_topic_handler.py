@@ -91,6 +91,28 @@ class TestTopicHandler:
         wrapper.get_broker_config.return_value = BrokerConfigResponse(**broker_response)
         return wrapper
 
+    def test_convert_config_values_to_str(self):
+        assert TopicConfig(
+            partitions_count=1,
+            configs={
+                "retention.ms": -1,
+                "cleanup.policy": "delete",
+                "delete.retention.ms": 123456789,
+            },
+        ).model_dump() == {
+            "configs": {
+                "retention.ms": "-1",
+                "cleanup.policy": "delete",
+                "delete.retention.ms": "123456789",
+            },
+            "key_schema": None,
+            "label": None,
+            "partitions_count": 1,
+            "replication_factor": None,
+            "type": None,
+            "value_schema": None,
+        }
+
     @pytest.mark.asyncio()
     async def test_should_call_create_topic_with_dry_run_false(self):
         wrapper = AsyncMock()

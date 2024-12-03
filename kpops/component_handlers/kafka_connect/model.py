@@ -1,4 +1,3 @@
-import json
 from enum import Enum
 from typing import Any
 
@@ -18,6 +17,7 @@ from kpops.utils.pydantic import (
     by_alias,
     exclude_by_value,
     to_dot,
+    to_str,
 )
 
 
@@ -84,12 +84,6 @@ class KafkaConnectorConfig(DescConfigModel):
             return None
         return ",".join(topic.name for topic in topics)
 
-    @staticmethod
-    def serialize_to_str(value: Any) -> str:
-        if isinstance(value, str):
-            return value
-        return json.dumps(value)
-
     # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
     @model_serializer(mode="wrap", when_used="always")
     def serialize_model(
@@ -98,10 +92,7 @@ class KafkaConnectorConfig(DescConfigModel):
         info: pydantic.SerializationInfo,
     ) -> dict[str, str]:
         result = exclude_by_value(default_serialize_handler(self), None)
-        return {
-            by_alias(self, name): self.serialize_to_str(value)
-            for name, value in result.items()
-        }
+        return {by_alias(self, name): to_str(value) for name, value in result.items()}
 
 
 class ConnectorTask(BaseModel):
