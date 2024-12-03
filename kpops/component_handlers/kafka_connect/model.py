@@ -40,7 +40,16 @@ class KafkaConnectorConfig(DescConfigModel):
         super(KafkaConnectorConfig, KafkaConnectorConfig).json_schema_extra(
             schema, model
         )
-        schema["additional_properties"] = {"type": "string"}
+        schema["additional_properties"] = {
+            "type": {
+                "anyOf": [
+                    {"type": "string"},
+                    {"type": "boolean"},
+                    {"type": "integer"},
+                    {"type": "number"},
+                ],
+            }
+        }
 
     model_config = ConfigDict(
         extra="allow",
