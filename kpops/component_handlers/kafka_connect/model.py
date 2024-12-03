@@ -85,10 +85,8 @@ class KafkaConnectorConfig(DescConfigModel):
 
     @staticmethod
     def serialize_to_str(value: Any) -> str:
-        if value is True:
-            return "true"
-        if value is False:
-            return "false"
+        if isinstance(value, bool):
+            return "true" if value else "false"
         return str(value)
 
     # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
