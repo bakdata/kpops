@@ -125,9 +125,9 @@ def parse_steps(steps: str | None) -> set[str] | None:
 @app.command(help="Initialize a new KPOps project.")
 def init(
     path: Path = PROJECT_PATH,
-    config_include_opt: bool = CONFIG_INCLUDE_OPTIONAL,
+    config_include_optional: bool = CONFIG_INCLUDE_OPTIONAL,
 ):
-    kpops.init(path, config_include_optional=config_include_opt)
+    kpops.init(path, config_include_optional=config_include_optional)
 
 
 @app.command(

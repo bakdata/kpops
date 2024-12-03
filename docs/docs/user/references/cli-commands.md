@@ -142,7 +142,7 @@ $ kpops init [OPTIONS] PATH
 
 **Options**:
 
-* `--config-include-opt / --no-config-include-opt`: Whether to include non-required settings in the generated 'config.yaml'  [default: no-config-include-opt]
+* `--config-include-optional / --no-config-include-optional`: Whether to include non-required settings in the generated 'config.yaml'  [default: no-config-include-optional]
 * `--help`: Show this message and exit.
 
 ## `kpops reset`

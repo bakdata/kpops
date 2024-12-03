@@ -70,8 +70,6 @@
           - env:
             - name: ENV_PREFIX
               value: APP_
-            - name: KAFKA_LARGE_MESSAGE_ID_GENERATOR
-              value: com.bakdata.kafka.MurmurHashIdGenerator
             - name: APP_VOLATILE_GROUP_INSTANCE_ID
               value: 'true'
             - name: APP_BOOTSTRAP_SERVERS

@@ -12,9 +12,6 @@ streams-app: # inherits from streams-bootstrap
     prometheus:
       jmx:
         enabled: false
-    kafka:
-      config:
-        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
   to:
     topics:
       ${error_topic_name}:
