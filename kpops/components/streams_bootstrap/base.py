@@ -7,11 +7,15 @@ from typing import TYPE_CHECKING
 
 import pydantic
 from pydantic import Field
+from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
 from kpops.components.base_components import KafkaApp
 from kpops.components.base_components.helm_app import HelmApp
+from kpops.components.base_components.models.resource import Resource
+from kpops.components.common.topic import KafkaTopic
 from kpops.components.streams_bootstrap.model import StreamsBootstrapValues
+from kpops.components.streams_bootstrap.strimzi.kafka_topic import StrimziKafkaTopic
 from kpops.utils.docstring import describe_attr
 
 if TYPE_CHECKING:
@@ -81,3 +85,20 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
                 f"The image tag for component '{self.name}' is set or defaulted to 'latest'. Please, consider providing a stable image tag."
             )
         return self
+
+    @override
+    def manifest_deploy(self) -> Resource:
+        resource = super().manifest_deploy()
+        if self.to:
+            self.extend_with_topics(self.to.kafka_topics, resource)
+
+        return resource
+
+    def extend_with_topics(self, kafka_topics: list[KafkaTopic], resource: Resource):
+        topics = []
+        for topic in kafka_topics:
+            strimzi_topic = StrimziKafkaTopic.create_strimzi_topic(
+                topic, self.values.kafka.bootstrap_servers
+            )
+            topics.append(strimzi_topic.model_dump())
+        resource.extend(topics)

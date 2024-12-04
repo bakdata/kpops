@@ -41,6 +41,26 @@
                 cpu: 200m
                 memory: 300Mi
           restartPolicy: OnFailure
+- apiVersion: kafka.strimzi.io/v1beta2
+  kind: KafkaTopic
+  metadata:
+    labels:
+      strimzi.io/cluster: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+    name: my-producer-app-output-topic
+  spec:
+    config: {}
+    partitions: 1
+    replicas: 1
+- apiVersion: kafka.strimzi.io/v1beta2
+  kind: KafkaTopic
+  metadata:
+    labels:
+      strimzi.io/cluster: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+    name: my-labeled-producer-app-topic-output
+  spec:
+    config: {}
+    partitions: 1
+    replicas: 1
 ---
 - !!python/object:kpops.component_handlers.kubernetes.model.KubernetesManifest
   data:
@@ -106,3 +126,44 @@
                 cpu: 200m
                 memory: 300Mi
           terminationGracePeriodSeconds: 300
+- apiVersion: kafka.strimzi.io/v1beta2
+  kind: KafkaTopic
+  metadata:
+    labels:
+      strimzi.io/cluster: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+    name: my-output-topic
+  spec:
+    config: {}
+    partitions: 1
+    replicas: 1
+- apiVersion: kafka.strimzi.io/v1beta2
+  kind: KafkaTopic
+  metadata:
+    labels:
+      strimzi.io/cluster: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+    name: my-error-topic
+  spec:
+    config: {}
+    partitions: 1
+    replicas: 1
+- apiVersion: kafka.strimzi.io/v1beta2
+  kind: KafkaTopic
+  metadata:
+    labels:
+      strimzi.io/cluster: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+    name: my-labeled-topic-output
+  spec:
+    config: {}
+    partitions: 1
+    replicas: 1
+- apiVersion: kafka.strimzi.io/v1beta2
+  kind: KafkaTopic
+  metadata:
+    labels:
+      strimzi.io/cluster: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+    name: resources-manifest-pipeline-my-streams-app-error
+  spec:
+    config:
+      cleanup.policy: compact,delete
+    partitions: 1
+    replicas: 1
