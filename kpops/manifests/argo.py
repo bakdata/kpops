@@ -1,13 +1,9 @@
 from __future__ import annotations
 
 import enum
+from typing import Any
 
-from pydantic import BaseModel, Field
-
-try:
-    from typing import Any, Self  # pyright: ignore[reportAttributeAccessIssue]
-except ImportError:
-    from typing_extensions import Self
+from pydantic import BaseModel
 
 
 def enrich_annotations(
@@ -27,7 +23,7 @@ class ArgoHook(str, enum.Enum):
 
 
 class ArgoSyncWave(BaseModel):
-    sync_wave: int = Field(default=0, serialization_alias="SyncWave")
+    sync_wave: int = 0
 
     @property
     def key(self) -> str:
@@ -36,7 +32,3 @@ class ArgoSyncWave(BaseModel):
     @property
     def value(self) -> str:
         return str(self.sync_wave)
-
-    @classmethod
-    def create(cls, sync_wave: int) -> Self:
-        return cls(**{"SyncWave": sync_wave})
