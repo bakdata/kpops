@@ -7,59 +7,59 @@ from pydantic import ConfigDict, Field
 from typing_extensions import override
 
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import DescConfigModel
+from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel
 
 # Matches plain integer or numbers with valid suffixes: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory
 MEMORY_PATTERN = r"^\d+([EPTGMk]|Ei|Pi|Ti|Gi|Mi|Ki)?$"
 K8S_LABEL_MAX_LEN = 63
 
 
-class ManagedFieldsEntry(DescConfigModel):
+class ManagedFieldsEntry(CamelCaseConfigModel):
     # Define this class based on its actual structure
     fields: dict[str, Any] | None = None
 
 
-class OwnerReference(DescConfigModel):
+class OwnerReference(CamelCaseConfigModel):
     # Define this class based on its actual structure
     apiVersion: str
     kind: str
     name: str
     uid: str
     controller: bool | None = None
-    blockOwnerDeletion: bool | None = None
+    block_owner_deletion: bool | None = None
 
 
-class ObjectMeta(DescConfigModel):
+class ObjectMeta(CamelCaseConfigModel):
     """Metadata for all Kubernetes objects."""
 
     annotations: dict[str, str] | None = None
-    creationTimestamp: str | None = Field(
+    creation_timestamp: str | None = Field(
         None, description="Timestamp in RFC3339 format"
     )
-    deletionGracePeriodSeconds: int | None = None
-    deletionTimestamp: str | None = Field(
+    deletion_grace_period_seconds: int | None = None
+    deletion_timestamp: str | None = Field(
         None, description="Timestamp in RFC3339 format"
     )
     finalizers: list[str] | None = None
-    generateName: str | None = None
+    generate_name: str | None = None
     generation: int | None = None
     labels: dict[str, str] | None = None
-    managedFields: list[ManagedFieldsEntry] | None = None
+    managed_fields: list[ManagedFieldsEntry] | None = None
     name: str | None = None
     namespace: str | None = None
-    ownerReferences: list[OwnerReference] | None = None
-    resourceVersion: str | None = None
-    selfLink: str | None = Field(
+    owner_references: list[OwnerReference] | None = None
+    resource_version: str | None = None
+    self_link: str | None = Field(
         None,
         description="Deprecated field, not populated by Kubernetes in modern versions",
     )
     uid: str | None = None
+
     model_config = ConfigDict(extra="allow")
 
 
-class KubernetesManifest(DescConfigModel):
-    # TODO: this is not working without the 'alias'
-    api_version: str = Field(alias="apiVersion")
+class KubernetesManifest(CamelCaseConfigModel):
+    api_version: str
     kind: str
     metadata: ObjectMeta
 
