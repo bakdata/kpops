@@ -136,4 +136,17 @@ class TestStreamsBootstrap:
         with pytest.raises(ValidationError):
             ResourceDefinition(cpu="100foo")
         with pytest.raises(ValidationError):
+            ResourceDefinition(cpu=0)
+        with pytest.raises(ValidationError):
             ResourceDefinition(cpu=-1)
+
+        assert ResourceDefinition(memory=1)
+        assert ResourceDefinition(memory="1")
+        assert ResourceDefinition(memory="10Gi")
+        assert ResourceDefinition(memory="10G")
+        assert ResourceDefinition(memory="10Mi")
+        assert ResourceDefinition(memory="10M")
+        with pytest.raises(ValidationError):
+            ResourceDefinition(memory=0)
+        with pytest.raises(ValidationError):
+            ResourceDefinition(memory=-1)
