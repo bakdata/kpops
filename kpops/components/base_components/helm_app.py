@@ -147,7 +147,7 @@ class HelmApp(KubernetesApp):
     def manifest_deploy(self) -> Resource:
         values = self.to_helm_values()
         if get_config().operation_mode is OperationMode.ARGO:
-            values = ArgoSyncWave(1).enrich(values)
+            values = ArgoSyncWave(**{"SyncWave": 1}).enrich(values)
 
         return self.helm.template(
             self.helm_release_name,

@@ -1,17 +1,18 @@
 import enum
 from typing import Any
 
+from pydantic import BaseModel, Field
 from typing_extensions import override
 
 
 class ArgoEnricher:
     @property
     def key(self) -> str:
-        return NotImplemented
+        raise NotImplementedError
 
     @property
     def value(self) -> str:
-        return NotImplemented
+        raise NotImplementedError
 
     def enrich(self, helm_values: dict[str, Any]) -> dict[str, Any]:
         annotations = helm_values.setdefault("annotations", {})
@@ -33,11 +34,8 @@ class ArgoHook(ArgoEnricher, str, enum.Enum):
         return self.POST_DELETE._value_
 
 
-class ArgoSyncWave(ArgoEnricher):
-    sync_wave: int
-
-    def __init__(self, sync_wave: int) -> None:
-        self.sync_wave = sync_wave
+class ArgoSyncWave(BaseModel, ArgoEnricher):
+    sync_wave: int = Field(default=0, alias="SyncWave")
 
     @property
     @override
