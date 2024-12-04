@@ -1,6 +1,8 @@
+from typing import Any
+
 import pytest
 
-from kpops.utils.pydantic import to_dash, to_dot, to_snake
+from kpops.utils.pydantic import to_dash, to_dot, to_snake, to_str
 
 
 @pytest.mark.parametrize(
@@ -46,3 +48,19 @@ def test_to_snake(input: str, expected: str):
 )
 def test_to_dot(input: str, expected: str):
     assert to_dot(input) == expected
+
+
+@pytest.mark.parametrize(
+    ("input", "expected"),
+    [
+        ("foo", "foo"),
+        ("1", "1"),
+        (1, "1"),
+        (-1, "-1"),
+        (1.9, "1.9"),
+        (True, "true"),
+        (False, "false"),
+    ],
+)
+def test_to_str(input: Any, expected: str):
+    assert to_str(input) == expected

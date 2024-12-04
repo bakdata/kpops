@@ -405,23 +405,23 @@
       connectorType: sink
     version: 1.0.4
   config:
-    auto.create: true
-    connection.ds.pool.size: 5
+    auto.create: 'true'
+    connection.ds.pool.size: '5'
     connection.password: AppPassword
     connection.url: jdbc:postgresql://postgresql-dev.${NAMESPACE}.svc.cluster.local:5432/app_db
     connection.user: app1
     connector.class: io.confluent.connect.jdbc.JdbcSinkConnector
-    errors.deadletterqueue.context.headers.enable: true
+    errors.deadletterqueue.context.headers.enable: 'true'
     errors.deadletterqueue.topic.name: postgres-request-sink-dead-letters
-    errors.deadletterqueue.topic.replication.factor: 1
+    errors.deadletterqueue.topic.replication.factor: '1'
     errors.tolerance: all
     insert.mode: insert
-    insert.mode.databaselevel: true
+    insert.mode.databaselevel: 'true'
     key.converter: org.apache.kafka.connect.storage.StringConverter
     name: atm-fraud-postgresql-connector
     pk.mode: record_value
     table.name.format: fraud_transactions
-    tasks.max: 1
+    tasks.max: '1'
     topics: atm-fraud-account-linker-topic
     transforms: flatten
     transforms.flatten.type: org.apache.kafka.connect.transforms.Flatten$Value
