@@ -265,10 +265,17 @@
             "description": "JVM configuration options.",
             "properties": {
                 "maxRAMPercentage": {
-                    "default": 75,
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Sets the maximum amount of memory that the JVM may use for the Java heap before applying ergonomics heuristics as a percentage of the maximum amount determined as described in the -XX:MaxRAM option",
-                    "title": "Maxrampercentage",
-                    "type": "integer"
+                    "title": "Maxrampercentage"
                 },
                 "others": {
                     "description": "List of Java VM options passed to the streams app.",
@@ -1206,10 +1213,17 @@
                     "type": "object"
                 },
                 "configurationEnvPrefix": {
-                    "default": "APP",
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Prefix for environment variables to use that should be parsed as command line arguments.",
-                    "title": "Configurationenvprefix",
-                    "type": "string"
+                    "title": "Configurationenvprefix"
                 },
                 "deployment": {
                     "default": false,
@@ -1242,12 +1256,15 @@
                     "type": "string"
                 },
                 "imagePullPolicy": {
-                    "allOf": [
+                    "anyOf": [
                         {
                             "$ref": "#/$defs/ImagePullPolicy"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "default": "Always",
+                    "default": null,
                     "description": "Docker image pull policy."
                 },
                 "imagePullSecrets": {
@@ -1262,18 +1279,29 @@
                     "type": "array"
                 },
                 "imageTag": {
-                    "default": "latest",
-                    "description": "Docker image tag of the streams-bootstrap app.",
-                    "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
-                    "title": "Imagetag",
-                    "type": "string"
-                },
-                "javaOptions": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/$defs/JavaOptions"
+                            "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
+                    "description": "Docker image tag of the streams-bootstrap app.",
+                    "title": "Imagetag"
+                },
+                "javaOptions": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/JavaOptions"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": ""
                 },
                 "kafka": {
@@ -1333,21 +1361,15 @@
                     "type": "object"
                 },
                 "resources": {
-                    "allOf": [
+                    "anyOf": [
                         {
                             "$ref": "#/$defs/Resources"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "default": {
-                        "limits": {
-                            "cpu": "300m",
-                            "memory": "2G"
-                        },
-                        "requests": {
-                            "cpu": "100m",
-                            "memory": "500Mi"
-                        }
-                    },
+                    "default": null,
                     "description": "See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
                 },
                 "restartPolicy": {
@@ -1394,11 +1416,15 @@
                     "type": "object"
                 },
                 "service": {
-                    "allOf": [
+                    "anyOf": [
                         {
                             "$ref": "#/$defs/ServiceConfig"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
                     "description": ""
                 },
                 "successfulJobsHistoryLimit": {
@@ -1768,12 +1794,15 @@
                     "type": "object"
                 },
                 "type": {
-                    "allOf": [
+                    "anyOf": [
                         {
                             "$ref": "#/$defs/ServiceType"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "default": "ClusterIP",
+                    "default": null,
                     "description": "Service type."
                 }
             },
@@ -2094,10 +2123,17 @@
                     "type": "object"
                 },
                 "configurationEnvPrefix": {
-                    "default": "APP",
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Prefix for environment variables to use that should be parsed as command line arguments.",
-                    "title": "Configurationenvprefix",
-                    "type": "string"
+                    "title": "Configurationenvprefix"
                 },
                 "env": {
                     "additionalProperties": {
@@ -2118,12 +2154,15 @@
                     "type": "string"
                 },
                 "imagePullPolicy": {
-                    "allOf": [
+                    "anyOf": [
                         {
                             "$ref": "#/$defs/ImagePullPolicy"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "default": "Always",
+                    "default": null,
                     "description": "Docker image pull policy."
                 },
                 "imagePullSecrets": {
@@ -2138,18 +2177,29 @@
                     "type": "array"
                 },
                 "imageTag": {
-                    "default": "latest",
-                    "description": "Docker image tag of the streams-bootstrap app.",
-                    "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
-                    "title": "Imagetag",
-                    "type": "string"
-                },
-                "javaOptions": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/$defs/JavaOptions"
+                            "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
+                    "description": "Docker image tag of the streams-bootstrap app.",
+                    "title": "Imagetag"
+                },
+                "javaOptions": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/JavaOptions"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": ""
                 },
                 "jmx": {
@@ -2238,21 +2288,15 @@
                     "type": "object"
                 },
                 "resources": {
-                    "allOf": [
+                    "anyOf": [
                         {
                             "$ref": "#/$defs/Resources"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "default": {
-                        "limits": {
-                            "cpu": "300m",
-                            "memory": "2G"
-                        },
-                        "requests": {
-                            "cpu": "100m",
-                            "memory": "500Mi"
-                        }
-                    },
+                    "default": null,
                     "description": "See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
                 },
                 "secretFilesRefs": {
@@ -2277,11 +2321,15 @@
                     "type": "object"
                 },
                 "service": {
-                    "allOf": [
+                    "anyOf": [
                         {
                             "$ref": "#/$defs/ServiceConfig"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
                     "description": ""
                 },
                 "statefulSet": {
@@ -2562,10 +2610,17 @@
                     "type": "object"
                 },
                 "configurationEnvPrefix": {
-                    "default": "APP",
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Prefix for environment variables to use that should be parsed as command line arguments.",
-                    "title": "Configurationenvprefix",
-                    "type": "string"
+                    "title": "Configurationenvprefix"
                 },
                 "env": {
                     "additionalProperties": {
@@ -2586,12 +2641,15 @@
                     "type": "string"
                 },
                 "imagePullPolicy": {
-                    "allOf": [
+                    "anyOf": [
                         {
                             "$ref": "#/$defs/ImagePullPolicy"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "default": "Always",
+                    "default": null,
                     "description": "Docker image pull policy."
                 },
                 "imagePullSecrets": {
@@ -2606,18 +2664,29 @@
                     "type": "array"
                 },
                 "imageTag": {
-                    "default": "latest",
-                    "description": "Docker image tag of the streams-bootstrap app.",
-                    "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
-                    "title": "Imagetag",
-                    "type": "string"
-                },
-                "javaOptions": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/$defs/JavaOptions"
+                            "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
+                    "description": "Docker image tag of the streams-bootstrap app.",
+                    "title": "Imagetag"
+                },
+                "javaOptions": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/JavaOptions"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": ""
                 },
                 "kafka": {
@@ -2677,21 +2746,15 @@
                     "type": "object"
                 },
                 "resources": {
-                    "allOf": [
+                    "anyOf": [
                         {
                             "$ref": "#/$defs/Resources"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "default": {
-                        "limits": {
-                            "cpu": "300m",
-                            "memory": "2G"
-                        },
-                        "requests": {
-                            "cpu": "100m",
-                            "memory": "500Mi"
-                        }
-                    },
+                    "default": null,
                     "description": "See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
                 },
                 "secretFilesRefs": {
@@ -2716,11 +2779,15 @@
                     "type": "object"
                 },
                 "service": {
-                    "allOf": [
+                    "anyOf": [
                         {
                             "$ref": "#/$defs/ServiceConfig"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
                     "description": ""
                 },
                 "tolerations": {
@@ -2787,7 +2854,6 @@
                             "$ref": "#/$defs/Operation"
                         }
                     ],
-                    "default": "Equal",
                     "description": "The operator ('Exists' or 'Equal')."
                 },
                 "toleration_seconds": {
@@ -2819,6 +2885,7 @@
             },
             "required": [
                 "key",
+                "operator",
                 "effect"
             ],
             "title": "Toleration",

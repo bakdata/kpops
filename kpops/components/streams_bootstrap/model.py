@@ -9,7 +9,6 @@ from kpops.components.base_components.helm_app import HelmAppValues
 from kpops.components.common.kubernetes_model import (
     ImagePullPolicy,
     ProtocolSchema,
-    ResourceDefinition,
     Resources,
     ServiceType,
     Toleration,
@@ -69,8 +68,8 @@ class ServiceConfig(CamelCaseConfigModel, DescConfigModel):
         default_factory=dict,
         description=describe_attr("labels", __doc__),
     )
-    type: ServiceType = Field(
-        default=ServiceType.CLUSTER_IP,
+    type: ServiceType | None = Field(
+        default=None,
         description=describe_attr("type", __doc__),
     )
 
@@ -82,8 +81,8 @@ class JavaOptions(CamelCaseConfigModel, DescConfigModel):
     :param others: List of Java VM options passed to the streams app.
     """
 
-    max_RAM_percentage: int = Field(
-        default=75,
+    max_RAM_percentage: int | None = Field(
+        default=None,
         description=describe_attr("max_RAM_percentage", __doc__),
     )
     others: list[str] = Field(
@@ -120,14 +119,14 @@ class StreamsBootstrapValues(HelmAppValues):
         description=describe_attr("image", __doc__),
     )
 
-    image_tag: str = Field(
-        default="latest",
+    image_tag: str | None = Field(
+        default=None,
         pattern=IMAGE_TAG_PATTERN,
         description=describe_attr("image_tag", __doc__),
     )
 
-    image_pull_policy: ImagePullPolicy = Field(
-        default=ImagePullPolicy.ALWAYS,
+    image_pull_policy: ImagePullPolicy | None = Field(
+        default=None,
         description=describe_attr("image_pull_policy", __doc__),
     )
 
@@ -140,11 +139,8 @@ class StreamsBootstrapValues(HelmAppValues):
         description=describe_attr("kafka", __doc__),
     )
 
-    resources: Resources = Field(
-        default=Resources(
-            requests=ResourceDefinition(cpu="100m", memory="500Mi"),
-            limits=ResourceDefinition(cpu="300m", memory="2G"),
-        ),
+    resources: Resources | None = Field(
+        default=None,
         description=describe_attr("resources", __doc__),
     )
 
@@ -153,13 +149,13 @@ class StreamsBootstrapValues(HelmAppValues):
         description=describe_attr("ports", __doc__),
     )
 
-    service: ServiceConfig = Field(
-        default_factory=ServiceConfig,
+    service: ServiceConfig | None = Field(
+        default=None,
         description=describe_attr("service", __doc__),
     )
 
-    configuration_env_prefix: str = Field(
-        default="APP",
+    configuration_env_prefix: str | None = Field(
+        default=None,
         description=describe_attr("configuration_env_prefix", __doc__),
     )
 
@@ -193,8 +189,8 @@ class StreamsBootstrapValues(HelmAppValues):
         description=describe_attr("files", __doc__),
     )
 
-    java_options: JavaOptions = Field(
-        default_factory=JavaOptions,
+    java_options: JavaOptions | None = Field(
+        default=None,
         description=describe_attr("java_options", __doc__),
     )
 

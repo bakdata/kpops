@@ -72,13 +72,11 @@ class Toleration(DescConfigModel):
     :param toleration_seconds: The duration for which the toleration is valid.
     """
 
-    key: str = Field(default=..., description=describe_attr("key", __doc__))
+    key: str = Field(description=describe_attr("key", __doc__))
 
-    operator: Operation = Field(
-        default=Operation.EQUAL, description=describe_attr("operator", __doc__)
-    )
+    operator: Operation = Field(description=describe_attr("operator", __doc__))
 
-    effect: Effects = Field(default=..., description=describe_attr("effect", __doc__))
+    effect: Effects = Field(description=describe_attr("effect", __doc__))
 
     value: str | None = Field(default=None, description=describe_attr("value", __doc__))
 
