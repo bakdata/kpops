@@ -78,8 +78,6 @@ class KubernetesManifest(CamelCaseConfigModel):
         return super().model_dump(
             mode="json",
             by_alias=True,
-            exclude_none=True,
-            exclude_defaults=True,
             exclude_unset=True,
         )
 

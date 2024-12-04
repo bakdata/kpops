@@ -32,16 +32,20 @@ class TestHelmDiff:
         ]
         assert list(helm_diff.calculate_changes(templates, templates)) == [
             Change(
-                old_value={
-                    "apiVersion": "v1",
-                    "kind": "Deployment",
-                    "metadata": {},
-                },
-                new_value={
-                    "apiVersion": "v1",
-                    "kind": "Deployment",
-                    "metadata": {},
-                },
+                old_value=KubernetesManifest(
+                    **{
+                        "apiVersion": "v1",
+                        "kind": "Deployment",
+                        "metadata": {},
+                    }
+                ),
+                new_value=KubernetesManifest(
+                    **{
+                        "apiVersion": "v1",
+                        "kind": "Deployment",
+                        "metadata": {},
+                    }
+                ),
             ),
         ]
 
@@ -96,32 +100,40 @@ class TestHelmDiff:
             )
         ) == [
             Change(
-                old_value={
-                    "apiVersion": "v1",
-                    "kind": "Deployment",
-                    "metadata": {"a": "1"},
-                },
-                new_value={
-                    "apiVersion": "v1",
-                    "kind": "Deployment",
-                    "metadata": {"a": "2"},
-                },
+                old_value=KubernetesManifest(
+                    **{
+                        "apiVersion": "v1",
+                        "kind": "Deployment",
+                        "metadata": {"a": "1"},
+                    }
+                ),
+                new_value=KubernetesManifest(
+                    **{
+                        "apiVersion": "v1",
+                        "kind": "Deployment",
+                        "metadata": {"a": "2"},
+                    }
+                ),
             ),
             Change(
-                old_value={
-                    "apiVersion": "v1",
-                    "kind": "Deployment",
-                    "metadata": {"b": "1"},
-                },
-                new_value={},
+                old_value=KubernetesManifest(
+                    **{
+                        "apiVersion": "v1",
+                        "kind": "Deployment",
+                        "metadata": {"b": "1"},
+                    }
+                ),
+                new_value=None,
             ),
             Change(
-                old_value={},
-                new_value={
-                    "apiVersion": "v1",
-                    "kind": "Deployment",
-                    "metadata": {"c": "1"},
-                },
+                old_value=None,
+                new_value=KubernetesManifest(
+                    **{
+                        "apiVersion": "v1",
+                        "kind": "Deployment",
+                        "metadata": {"c": "1"},
+                    }
+                ),
             ),
         ]
 
