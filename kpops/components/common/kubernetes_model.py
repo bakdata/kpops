@@ -9,10 +9,6 @@ from typing_extensions import override
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import DescConfigModel
 
-try:
-    from typing import Self  # pyright: ignore[reportAttributeAccessIssue]
-except ImportError:
-    from typing_extensions import Self
 # Matches plain integer or numbers with valid suffixes: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory
 MEMORY_PATTERN = r"^\d+([EPTGMk]|Ei|Pi|Ti|Gi|Mi|Ki)?$"
 K8S_LABEL_MAX_LEN = 63
@@ -72,7 +68,7 @@ class KubernetesManifest(DescConfigModel):
     @classmethod
     def from_yaml(
         cls, /, content: str
-    ) -> Iterator[Self]:  # TODO: typing.Self for Python 3.11+
+    ) -> Iterator["KubernetesManifest"]:  # TODO: typing.Self for Python 3.11+
         manifests: Iterator[dict[str, Any]] = yaml.load_all(content, yaml.Loader)
         for manifest in manifests:
             yield cls(**manifest)
