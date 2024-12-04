@@ -1,8 +1,14 @@
+from __future__ import annotations
+
 import enum
-from typing import Any
 
 from pydantic import BaseModel, Field
 from typing_extensions import override
+
+try:
+    from typing import Any, Self  # pyright: ignore[reportAttributeAccessIssue]
+except ImportError:
+    from typing_extensions import Self
 
 
 class ArgoEnricher:
@@ -46,3 +52,7 @@ class ArgoSyncWave(BaseModel, ArgoEnricher):
     @override
     def value(self) -> str:
         return str(self.sync_wave)
+
+    @classmethod
+    def create(cls, sync_wave: int) -> Self:
+        return cls(**{"SyncWave": sync_wave})
