@@ -1392,6 +1392,7 @@
                 "cpu": {
                     "anyOf": [
                         {
+                            "pattern": "^\\d+m$",
                             "type": "string"
                         },
                         {
