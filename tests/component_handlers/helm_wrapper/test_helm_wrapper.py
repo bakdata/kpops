@@ -293,7 +293,7 @@ class TestHelmWrapper:
     def test_helm_template(self):
         path = Path("test2.yaml")
         manifest = KubernetesManifest(
-            {
+            **{
                 "apiVersion": "v1",
                 "kind": "ServiceAccount",
                 "metadata": {"labels": {"foo": "bar"}},
@@ -309,12 +309,16 @@ class TestHelmWrapper:
             MANIFEST:
             ---
             # Source: chart/templates/test3a.yaml
-            data:
-                - a: 1
-                - b: 2
+            apiVersion: v1
+            kind: Pod
+            metadata:
+              name: test-3a
             ---
             # Source: chart/templates/test3b.yaml
-            foo: bar
+            apiVersion: v1
+            kind: Pod
+            metadata:
+              name: test-3b
             """
         )
         helm_templates = list(Helm.load_manifest(stdout))
@@ -324,10 +328,20 @@ class TestHelmWrapper:
         )
         assert helm_templates[0].filepath == Path("chart/templates/test3a.yaml")
         assert helm_templates[0].manifest == KubernetesManifest(
-            {"data": [{"a": 1}, {"b": 2}]}
+            **{
+                "apiVersion": "v1",
+                "kind": "Pod",
+                "metadata": {"name": "test-3a"},
+            }
         )
         assert helm_templates[1].filepath == Path("chart/templates/test3b.yaml")
-        assert helm_templates[1].manifest == KubernetesManifest({"foo": "bar"})
+        assert helm_templates[1].manifest == KubernetesManifest(
+            **{
+                "apiVersion": "v1",
+                "kind": "Pod",
+                "metadata": {"name": "test-3b"},
+            }
+        )
 
     def test_raise_parse_error_when_helm_content_is_invalid(self):
         stdout = dedent(
@@ -372,12 +386,16 @@ class TestHelmWrapper:
             MANIFEST:
             ---
             # Source: chart/templates/test3a.yaml
-            data:
-                - a: 1
-                - b: 2
+            apiVersion: v1
+            kind: Pod
+            metadata:
+              name: test-3a
             ---
             # Source: chart/templates/test3b.yaml
-            foo: bar
+            apiVersion: v1
+            kind: Pod
+            metadata:
+              name: test-3b
 
             NOTES:
             1. Get the application URL by running these commands:
@@ -394,19 +412,30 @@ class TestHelmWrapper:
         )
         assert helm_templates[0].filepath == Path("chart/templates/test3a.yaml")
         assert helm_templates[0].manifest == KubernetesManifest(
-            {"data": [{"a": 1}, {"b": 2}]}
+            **{
+                "apiVersion": "v1",
+                "kind": "Pod",
+                "metadata": {"name": "test-3a"},
+            }
         )
         assert helm_templates[1].filepath == Path("chart/templates/test3b.yaml")
-        assert helm_templates[1].manifest == KubernetesManifest({"foo": "bar"})
+        assert helm_templates[1].manifest == KubernetesManifest(
+            **{
+                "apiVersion": "v1",
+                "kind": "Pod",
+                "metadata": {"name": "test-3b"},
+            }
+        )
 
     def test_helm_get_manifest(self, helm: Helm, mock_execute: MagicMock):
         mock_execute.return_value = dedent(
             """
             ---
             # Source: chart/templates/test.yaml
-            data:
-                - a: 1
-                - b: 2
+            apiVersion: v1
+            kind: Pod
+            metadata:
+              name: my-pod
             """
         )
         helm_templates = list(helm.get_manifest("test-release", "test-namespace"))
@@ -423,7 +452,11 @@ class TestHelmWrapper:
         assert len(helm_templates) == 1
         assert helm_templates[0].filepath == Path("chart/templates/test.yaml")
         assert helm_templates[0].manifest == KubernetesManifest(
-            {"data": [{"a": 1}, {"b": 2}]}
+            **{
+                "apiVersion": "v1",
+                "kind": "Pod",
+                "metadata": {"name": "my-pod"},
+            }
         )
 
         mock_execute.side_effect = ReleaseNotFoundException()

@@ -16,7 +16,7 @@ from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
-from kpops.components.base_components.models.resource import Resource
+from kpops.components.common.kubernetes_model import KubernetesManifest
 from kpops.config import KpopsConfig
 from kpops.pipeline import (
     Pipeline,
@@ -79,7 +79,7 @@ def manifest_deploy(
     environment: str | None = None,
     verbose: bool = True,
     operation_mode: OperationMode = OperationMode.MANIFEST,
-) -> Iterator[Resource]:
+) -> Iterator[list[KubernetesManifest]]:
     pipeline = generate(
         pipeline_path=pipeline_path,
         dotenv=dotenv,

@@ -6,8 +6,8 @@ from typing_extensions import override
 
 from kpops.api import OperationMode
 from kpops.components.base_components.kafka_app import KafkaAppCleaner
-from kpops.components.base_components.models.resource import Resource
 from kpops.components.common.app_type import AppType
+from kpops.components.common.kubernetes_model import KubernetesManifest
 from kpops.components.common.topic import (
     KafkaTopic,
     OutputTopicTypes,
@@ -36,7 +36,7 @@ class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrap):
         )
 
     @override
-    def manifest_deploy(self) -> Resource:
+    def manifest_deploy(self) -> list[KubernetesManifest]:
         values = self.to_helm_values()
         if get_config().operation_mode is OperationMode.ARGO:
             post_delete = ArgoHook.POST_DELETE
@@ -144,7 +144,7 @@ class ProducerApp(StreamsBootstrap):
         await super().clean(dry_run)
         await self._cleaner.clean(dry_run)
 
-    def manifest_deploy(self) -> Resource:
+    def manifest_deploy(self) -> list[KubernetesManifest]:
         manifests = super().manifest_deploy()
         operation_mode = get_config().operation_mode
 

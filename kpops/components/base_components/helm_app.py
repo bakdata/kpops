@@ -22,12 +22,14 @@ from kpops.component_handlers.helm_wrapper.utils import (
     create_helm_name_override,
     create_helm_release_name,
 )
-from kpops.component_handlers.kubernetes.model import K8S_LABEL_MAX_LEN
 from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
     KubernetesAppValues,
 )
-from kpops.components.base_components.models.resource import Resource
+from kpops.components.common.kubernetes_model import (
+    K8S_LABEL_MAX_LEN,
+    KubernetesManifest,
+)
 from kpops.config import get_config
 from kpops.manifests.argo import ArgoSyncWave, enrich_annotations
 from kpops.utils.colorify import magentaify
@@ -144,7 +146,7 @@ class HelmApp(KubernetesApp):
         )
 
     @override
-    def manifest_deploy(self) -> Resource:
+    def manifest_deploy(self) -> list[KubernetesManifest]:
         values = self.to_helm_values()
         if get_config().operation_mode is OperationMode.ARGO:
             sync_wave = ArgoSyncWave(sync_wave=1)
