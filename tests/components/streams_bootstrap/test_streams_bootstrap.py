@@ -9,6 +9,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
+from kpops.components.common.kubernetes_model import ResourceDefinition
 from kpops.components.streams_bootstrap.base import StreamsBootstrap
 from kpops.components.streams_bootstrap.model import StreamsBootstrapValues
 
@@ -126,3 +127,11 @@ class TestStreamsBootstrap:
                     "version": "2.1.0",
                 },
             )
+
+    def test_resource_definition(self):
+        assert ResourceDefinition(cpu=1)
+        assert ResourceDefinition(cpu="1")
+        assert ResourceDefinition(cpu="1m")
+        assert ResourceDefinition(cpu="100m")
+        with pytest.raises(ValidationError):
+            ResourceDefinition(cpu="100foo")
