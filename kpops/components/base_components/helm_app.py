@@ -29,7 +29,7 @@ from kpops.components.base_components.kubernetes_app import (
 )
 from kpops.components.base_components.models.resource import Resource
 from kpops.config import get_config
-from kpops.manifests.argo import ArgoSyncWave
+from kpops.manifests.argo import ArgoSyncWave, enrich_annotations
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import exclude_by_name
@@ -147,7 +147,8 @@ class HelmApp(KubernetesApp):
     def manifest_deploy(self) -> Resource:
         values = self.to_helm_values()
         if get_config().operation_mode is OperationMode.ARGO:
-            values = ArgoSyncWave.create(1).enrich(values)
+            sync_wave = ArgoSyncWave(sync_wave=1)
+            values = enrich_annotations(values, sync_wave.key, sync_wave.value)
 
         return self.helm.template(
             self.helm_release_name,
