@@ -1396,6 +1396,7 @@
                             "type": "string"
                         },
                         {
+                            "exclusiveMinimum": 0,
                             "type": "integer"
                         },
                         {

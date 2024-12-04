@@ -135,3 +135,5 @@ class TestStreamsBootstrap:
         assert ResourceDefinition(cpu="100m")
         with pytest.raises(ValidationError):
             ResourceDefinition(cpu="100foo")
+        with pytest.raises(ValidationError):
+            ResourceDefinition(cpu=-1)

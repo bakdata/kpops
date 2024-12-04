@@ -94,11 +94,13 @@ class ResourceDefinition(DescConfigModel):
     :param memory: The maximum amount of memory a container can use, with valid units such as 'Mi' or 'Gi' (e.g., '2G').
     """
 
-    cpu: Annotated[str, pydantic.StringConstraints(pattern=r"^\d+m$")] | int | None = (
-        Field(
-            default=None,
-            description=describe_attr("cpu", __doc__),
-        )
+    cpu: (
+        Annotated[str, pydantic.StringConstraints(pattern=r"^\d+m$")]
+        | pydantic.PositiveInt
+        | None
+    ) = Field(
+        default=None,
+        description=describe_attr("cpu", __doc__),
     )
     memory: str | None = Field(
         default=None,
