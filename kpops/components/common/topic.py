@@ -8,7 +8,7 @@ import pydantic
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import DescConfigModel
+from kpops.utils.pydantic import DescConfigModel, to_str
 
 
 class OutputTopicTypes(str, Enum):
@@ -75,6 +75,10 @@ class TopicConfig(DescConfigModel):
             msg = "Define `label` only if `type` is undefined"
             raise ValueError(msg)
         return self
+
+    @pydantic.field_serializer("configs")
+    def serialize_configs(self, configs: dict[str, str | int]) -> dict[str, str]:
+        return {key: to_str(value) for key, value in configs.items()}
 
 
 class KafkaTopic(BaseModel):

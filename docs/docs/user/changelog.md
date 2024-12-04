@@ -1,4 +1,15 @@
 # Changelog
+## [8.1.2](https://github.com/bakdata/kpops/releases/tag/8.1.2) - Release Date: [2024-12-04]
+
+### 🌀 Miscellaneous
+
+- Convert all values of Kafka connector and topic config to string - [#544](https://github.com/bakdata/kpops/pull/544)
+
+
+
+
+
+
 ## [8.1.1](https://github.com/bakdata/kpops/releases/tag/8.1.1) - Release Date: [2024-12-02]
 
 ### 🐛 Fixes
