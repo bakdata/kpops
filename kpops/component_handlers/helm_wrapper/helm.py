@@ -160,7 +160,7 @@ class Helm:
         namespace: str,
         values: dict[str, Any],
         flags: HelmTemplateFlags | None = None,
-    ) -> list[KubernetesManifest]:
+    ) -> tuple[KubernetesManifest, ...]:
         """From Helm: Render chart templates locally and display the output.
 
         Any values that would normally be looked up or retrieved in-cluster will
@@ -191,9 +191,9 @@ class Helm:
             command.extend(flags.to_command())
             output = self.__execute(command)
             if output == "":
-                return []
+                return ()
             manifests = KubernetesManifest.from_yaml(output)
-            return list(manifests)
+            return tuple(manifests)
 
     def get_manifest(self, release_name: str, namespace: str) -> Iterable[HelmTemplate]:
         command = [

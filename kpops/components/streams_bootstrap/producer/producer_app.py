@@ -36,11 +36,12 @@ class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrap):
         )
 
     @override
-    def manifest_deploy(self) -> list[KubernetesManifest]:
+    def manifest_deploy(self) -> tuple[KubernetesManifest, ...]:
         values = self.to_helm_values()
         if get_config().operation_mode is OperationMode.ARGO:
             post_delete = ArgoHook.POST_DELETE
             values = enrich_annotations(values, post_delete.key, post_delete.value)
+
         return self.helm.template(
             self.helm_release_name,
             self.helm_chart,
@@ -145,11 +146,11 @@ class ProducerApp(StreamsBootstrap):
         await self._cleaner.clean(dry_run)
 
     @override
-    def manifest_deploy(self) -> list[KubernetesManifest]:
+    def manifest_deploy(self) -> tuple[KubernetesManifest, ...]:
         manifests = super().manifest_deploy()
         operation_mode = get_config().operation_mode
 
         if operation_mode is OperationMode.ARGO:
-            manifests.extend(self._cleaner.manifest_deploy())
+            manifests = manifests + self._cleaner.manifest_deploy()
 
         return manifests

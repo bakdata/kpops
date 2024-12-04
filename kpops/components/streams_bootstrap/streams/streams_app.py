@@ -49,7 +49,7 @@ class StreamsAppCleaner(KafkaAppCleaner, StreamsBootstrap):
             await self.clean_pvcs(dry_run)
 
     @override
-    def manifest_deploy(self) -> list[KubernetesManifest]:
+    def manifest_deploy(self) -> tuple[KubernetesManifest, ...]:
         values = self.to_helm_values()
         if get_config().operation_mode is OperationMode.ARGO:
             post_delete = ArgoHook.POST_DELETE
@@ -174,13 +174,13 @@ class StreamsApp(StreamsBootstrap):
         await self._cleaner.clean(dry_run)
 
     @override
-    def manifest_deploy(self) -> list[KubernetesManifest]:
+    def manifest_deploy(self) -> tuple[KubernetesManifest, ...]:
         manifests = super().manifest_deploy()
         if get_config().operation_mode is OperationMode.ARGO:
-            manifests.extend(self._cleaner.manifest_deploy())
+            manifests = manifests + self._cleaner.manifest_deploy()
 
         return manifests
 
     @override
-    def manifest_clean(self) -> list[KubernetesManifest]:
-        return []
+    def manifest_clean(self) -> tuple[KubernetesManifest, ...]:
+        return ()

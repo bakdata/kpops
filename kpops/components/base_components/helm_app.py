@@ -146,7 +146,7 @@ class HelmApp(KubernetesApp):
         )
 
     @override
-    def manifest_deploy(self) -> list[KubernetesManifest]:
+    def manifest_deploy(self) -> tuple[KubernetesManifest, ...]:
         values = self.to_helm_values()
         if get_config().operation_mode is OperationMode.ARGO:
             sync_wave = ArgoSyncWave(sync_wave=1)

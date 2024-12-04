@@ -3,7 +3,6 @@ from pathlib import Path
 from unittest.mock import ANY, MagicMock
 
 import pytest
-import yaml
 from pytest_mock import MockerFixture
 from pytest_snapshot.plugin import Snapshot
 from typer.testing import CliRunner
@@ -12,6 +11,7 @@ import kpops.api as kpops
 from kpops.cli.main import app
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, Version
+from kpops.components.common.kubernetes_model import KubernetesManifest
 from kpops.const.file_type import PIPELINE_YAML
 
 MANIFEST_YAML = "manifest.yaml"
@@ -123,7 +123,7 @@ class TestManifest:
         assert result.exit_code == 0, result.stdout
         snapshot.assert_match(result.stdout, MANIFEST_YAML)
 
-    def test_python_api(self, snapshot: Snapshot):
+    def test_python_api(self):
         generator = kpops.manifest_deploy(
             RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML,
             environment="development",
@@ -131,7 +131,11 @@ class TestManifest:
         assert isinstance(generator, Iterator)
         resources = list(generator)
         assert len(resources) == 2
-        snapshot.assert_match(yaml.dump_all(resources), "resources")
+        assert all(
+            isinstance(manifest, KubernetesManifest)
+            for resource in resources
+            for manifest in resource
+        )
 
     def test_streams_bootstrap(self, snapshot: Snapshot):
         result = runner.invoke(

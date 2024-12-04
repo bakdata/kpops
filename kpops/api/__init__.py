@@ -79,7 +79,7 @@ def manifest_deploy(
     environment: str | None = None,
     verbose: bool = True,
     operation_mode: OperationMode = OperationMode.MANIFEST,
-) -> Iterator[list[KubernetesManifest]]:
+) -> Iterator[tuple[KubernetesManifest, ...]]:
     pipeline = generate(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
