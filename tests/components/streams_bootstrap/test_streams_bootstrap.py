@@ -34,7 +34,7 @@ class TestStreamsBootstrap:
         )
         assert streams_bootstrap.version == "3.0.1"
         assert streams_bootstrap.namespace == "test-namespace"
-        assert streams_bootstrap.values.image_tag == "latest"
+        assert streams_bootstrap.values.image_tag is None
 
     @pytest.mark.asyncio()
     async def test_should_deploy_streams_bootstrap_app(self, mocker: MockerFixture):
