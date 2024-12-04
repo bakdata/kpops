@@ -144,6 +144,7 @@ class ProducerApp(StreamsBootstrap):
         await super().clean(dry_run)
         await self._cleaner.clean(dry_run)
 
+    @override
     def manifest_deploy(self) -> list[KubernetesManifest]:
         manifests = super().manifest_deploy()
         operation_mode = get_config().operation_mode
