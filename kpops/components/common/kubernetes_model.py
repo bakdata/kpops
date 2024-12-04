@@ -92,9 +92,13 @@ class ResourceDefinition(DescConfigModel):
     :param memory: The maximum amount of memory a container can use, with valid units such as 'Mi' or 'Gi' (e.g., '2G').
     """
 
-    cpu: str | int = Field(pattern=r"^\d+m$", description=describe_attr("cpu", __doc__))
-    memory: str = Field(
-        pattern=MEMORY_PATTERN, description=describe_attr("memory", __doc__)
+    cpu: str | int | None = Field(
+        default=None, pattern=r"^\d+m$", description=describe_attr("cpu", __doc__)
+    )
+    memory: str | None = Field(
+        default=None,
+        pattern=MEMORY_PATTERN,
+        description=describe_attr("memory", __doc__),
     )
 
 

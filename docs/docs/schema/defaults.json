@@ -1736,22 +1736,30 @@
                         },
                         {
                             "type": "integer"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
                     "description": "The maximum amount of CPU a container can use, expressed in milli CPUs (e.g., '300m').",
                     "title": "Cpu"
                 },
                 "memory": {
+                    "anyOf": [
+                        {
+                            "pattern": "^\\d+([EPTGMk]|Ei|Pi|Ti|Gi|Mi|Ki)?$",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "The maximum amount of memory a container can use, with valid units such as 'Mi' or 'Gi' (e.g., '2G').",
-                    "pattern": "^\\d+([EPTGMk]|Ei|Pi|Ti|Gi|Mi|Ki)?$",
-                    "title": "Memory",
-                    "type": "string"
+                    "title": "Memory"
                 }
             },
-            "required": [
-                "cpu",
-                "memory"
-            ],
             "title": "ResourceDefinition",
             "type": "object"
         },
