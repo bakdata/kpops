@@ -14,7 +14,6 @@
       backoffLimit: 6
       commandLine:
         FAKE_ARG: fake-arg-value
-      configurationEnvPrefix: APP
       deployment: false
       env: {}
       failedJobsHistoryLimit: 1
@@ -31,9 +30,6 @@
       imagePullPolicy: IfNotPresent
       imagePullSecrets: []
       imageTag: 1.0.0
-      javaOptions:
-        maxRAMPercentage: 75
-        others: []
       kafka:
         bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         labeledOutputTopics:
@@ -45,22 +41,11 @@
       podLabels: {}
       ports: []
       readinessProbe: {}
-      resources:
-        limits:
-          cpu: 300m
-          memory: 2G
-        requests:
-          cpu: 100m
-          memory: 500Mi
       restartPolicy: OnFailure
       schedule: 30 3/8 * * *
       secretFilesRefs: []
       secretRefs: {}
       secrets: {}
-      service:
-        enabled: false
-        labels: {}
-        type: ClusterIP
       successfulJobsHistoryLimit: 1
       suspend: false
       tolerations: []
@@ -89,7 +74,6 @@
     backoffLimit: 6
     commandLine:
       FAKE_ARG: fake-arg-value
-    configurationEnvPrefix: APP
     deployment: false
     env: {}
     failedJobsHistoryLimit: 1
@@ -106,9 +90,6 @@
     imagePullPolicy: IfNotPresent
     imagePullSecrets: []
     imageTag: 1.0.0
-    javaOptions:
-      maxRAMPercentage: 75
-      others: []
     kafka:
       bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       labeledOutputTopics:
@@ -120,22 +101,11 @@
     podLabels: {}
     ports: []
     readinessProbe: {}
-    resources:
-      limits:
-        cpu: 300m
-        memory: 2G
-      requests:
-        cpu: 100m
-        memory: 500Mi
     restartPolicy: OnFailure
     schedule: 30 3/8 * * *
     secretFilesRefs: []
     secretRefs: {}
     secrets: {}
-    service:
-      enabled: false
-      labels: {}
-      type: ClusterIP
     successfulJobsHistoryLimit: 1
     suspend: false
     tolerations: []
@@ -156,7 +126,6 @@
       affinity: {}
       commandLine:
         CONVERT_XML: true
-      configurationEnvPrefix: APP
       env: {}
       files:
         log4j2.xml:
@@ -217,20 +186,9 @@
               cpu: 100m
               memory: 500Mi
       readinessProbe: {}
-      resources:
-        limits:
-          cpu: 300m
-          memory: 2G
-        requests:
-          cpu: 100m
-          memory: 500Mi
       secretFilesRefs: []
       secretRefs: {}
       secrets: {}
-      service:
-        enabled: false
-        labels: {}
-        type: ClusterIP
       statefulSet: false
       terminationGracePeriodSeconds: 300
       tolerations: []
@@ -278,7 +236,6 @@
     affinity: {}
     commandLine:
       CONVERT_XML: true
-    configurationEnvPrefix: APP
     env: {}
     files:
       log4j2.xml:
@@ -339,20 +296,9 @@
             cpu: 100m
             memory: 500Mi
     readinessProbe: {}
-    resources:
-      limits:
-        cpu: 300m
-        memory: 2G
-      requests:
-        cpu: 100m
-        memory: 500Mi
     secretFilesRefs: []
     secretRefs: {}
     secrets: {}
-    service:
-      enabled: false
-      labels: {}
-      type: ClusterIP
     statefulSet: false
     terminationGracePeriodSeconds: 300
     tolerations: []
