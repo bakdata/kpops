@@ -459,22 +459,7 @@
         "KafkaConnectorConfig": {
             "additionalProperties": true,
             "additional_properties": {
-                "type": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "boolean"
-                        },
-                        {
-                            "type": "integer"
-                        },
-                        {
-                            "type": "number"
-                        }
-                    ]
-                }
+                "type": "string"
             },
             "description": "Settings specific to Kafka Connectors.",
             "properties": {
