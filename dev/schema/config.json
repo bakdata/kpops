@@ -118,15 +118,6 @@
             "title": "KafkaRestConfig",
             "type": "object"
         },
-        "OperationMode": {
-            "enum": [
-                "argo",
-                "manifest",
-                "managed"
-            ],
-            "title": "OperationMode",
-            "type": "string"
-        },
         "SchemaRegistryConfig": {
             "additionalProperties": false,
             "description": "Configuration for Schema Registry.",
@@ -247,15 +238,6 @@
                 "url": "http://localhost:8082/"
             },
             "description": "Configuration for Kafka REST Proxy."
-        },
-        "operation_mode": {
-            "allOf": [
-                {
-                    "$ref": "#/$defs/OperationMode"
-                }
-            ],
-            "default": "managed",
-            "description": "The operation mode of KPOps (managed, manifest, argo)."
         },
         "pipeline_base_dir": {
             "default": ".",
