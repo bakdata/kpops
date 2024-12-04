@@ -190,8 +190,6 @@ class Helm:
             ]
             command.extend(flags.to_command())
             output = self.__execute(command)
-            if output == "":
-                return ()
             manifests = KubernetesManifest.from_yaml(output)
             return tuple(manifests)
 
