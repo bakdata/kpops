@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Iterator
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 from kpops.api.logs import log, log_action
+from kpops.api.operation import OperationMode
 from kpops.api.options import FilterType
 from kpops.api.registry import Registry
 from kpops.component_handlers import ComponentHandlers
@@ -14,6 +16,7 @@ from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
+from kpops.components.base_components.models.resource import Resource
 from kpops.config import KpopsConfig
 from kpops.pipeline import (
     Pipeline,
@@ -22,7 +25,6 @@ from kpops.pipeline import (
 from kpops.utils.cli_commands import init_project
 
 if TYPE_CHECKING:
-    from kpops.components.base_components.models.resource import Resource
     from kpops.components.base_components.pipeline_component import PipelineComponent
     from kpops.config import KpopsConfig
 
@@ -35,6 +37,7 @@ def generate(
     filter_type: FilterType = FilterType.INCLUDE,
     environment: str | None = None,
     verbose: bool = False,
+    operation_mode: OperationMode = OperationMode.MANAGED,
 ) -> Pipeline:
     """Generate enriched pipeline representation.
 
@@ -45,13 +48,11 @@ def generate(
     :param filter_type: Whether `steps` should include/exclude the steps.
     :param environment: The environment to generate and deploy the pipeline to.
     :param verbose: Enable verbose printing.
+    :param operation_mode: How KPOps should operate.
     :return: Generated `Pipeline` object.
     """
     kpops_config = KpopsConfig.create(
-        config,
-        dotenv,
-        environment,
-        verbose,
+        config, dotenv, environment, verbose, operation_mode
     )
     pipeline = _create_pipeline(pipeline_path, kpops_config, environment)
     log.info(f"Picked up pipeline '{pipeline_path.parent.name}'")
@@ -69,26 +70,16 @@ def generate(
     return pipeline
 
 
-def manifest(
+def manifest_deploy(
     pipeline_path: Path,
     dotenv: list[Path] | None = None,
     config: Path = Path(),
     steps: set[str] | None = None,
     filter_type: FilterType = FilterType.INCLUDE,
     environment: str | None = None,
-    verbose: bool = False,
-) -> list[Resource]:
-    """Generate pipeline, return final resource representations for each step.
-
-    :param pipeline_path: Path to pipeline definition yaml file.
-    :param dotenv: Paths to dotenv files.
-    :param config: Path to the dir containing config.yaml files.
-    :param steps: Set of steps (components) to apply the command on.
-    :param filter_type: Whether `steps` should include/exclude the steps.
-    :param environment: The environment to generate and deploy the pipeline to.
-    :param verbose: Enable verbose printing.
-    :return: Resources.
-    """
+    verbose: bool = True,
+    operation_mode: OperationMode = OperationMode.MANIFEST,
+) -> Iterator[Resource]:
     pipeline = generate(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
@@ -97,12 +88,11 @@ def manifest(
         filter_type=filter_type,
         environment=environment,
         verbose=verbose,
+        operation_mode=operation_mode,
     )
-    resources: list[Resource] = []
     for component in pipeline.components:
-        resource = component.manifest()
-        resources.append(resource)
-    return resources
+        resource = component.manifest_deploy()
+        yield resource
 
 
 def deploy(
@@ -301,12 +291,12 @@ def clean(
 
 def init(
     path: Path,
-    config_include_opt: bool = False,
+    config_include_optional: bool = False,
 ):
     """Initiate a default empty project.
 
     :param path: Directory in which the project should be initiated.
-    :param conf_incl_opt: Whether to include non-required settings
+    :param config_include_optional: Whether to include non-required settings
         in the generated config file.
     """
     if not path.exists():
@@ -314,7 +304,7 @@ def init(
     elif next(path.iterdir(), False):
         log.warning("Please provide a path to an empty directory.")
         return
-    init_project(path, config_include_opt)
+    init_project(path, config_include_optional)
 
 
 def _create_pipeline(

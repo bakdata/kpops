@@ -27,6 +27,7 @@ if TYPE_CHECKING:
 
     from kpops.components.base_components.models.resource import Resource
 
+
 log = logging.getLogger("Helm")
 
 

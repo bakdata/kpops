@@ -8,6 +8,7 @@ import pydantic
 from pydantic import Field, model_serializer
 from typing_extensions import override
 
+from kpops.api import OperationMode
 from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
@@ -28,6 +29,7 @@ from kpops.components.base_components.kubernetes_app import (
 )
 from kpops.components.base_components.models.resource import Resource
 from kpops.config import get_config
+from kpops.manifests.argo import ArgoSyncWave, enrich_annotations
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import exclude_by_name
@@ -142,12 +144,17 @@ class HelmApp(KubernetesApp):
         )
 
     @override
-    def manifest(self) -> Resource:
+    def manifest_deploy(self) -> Resource:
+        values = self.to_helm_values()
+        if get_config().operation_mode is OperationMode.ARGO:
+            sync_wave = ArgoSyncWave(sync_wave=1)
+            values = enrich_annotations(values, sync_wave.key, sync_wave.value)
+
         return self.helm.template(
             self.helm_release_name,
             self.helm_chart,
             self.namespace,
-            self.to_helm_values(),
+            values,
             self.template_flags,
         )
 

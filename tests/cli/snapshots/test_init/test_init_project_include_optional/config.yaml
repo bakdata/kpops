@@ -9,13 +9,15 @@ helm_config:
   api_version: null
   context: null
   debug: false
-helm_diff_config: {}
+helm_diff_config:
+  ignore: []
 kafka_connect:
   timeout: 30
   url: http://localhost:8083/
 kafka_rest:
   timeout: 30
   url: http://localhost:8082/
+operation_mode: managed
 pipeline_base_dir: .
 retain_clean_jobs: false
 schema_registry:

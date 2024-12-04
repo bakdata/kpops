@@ -7,7 +7,6 @@ from unittest import mock
 
 import pytest
 
-from kpops.config import KpopsConfig
 from kpops.utils.environment import ENV, Environment
 from kpops.utils.yaml import load_yaml_file
 
@@ -56,6 +55,8 @@ def custom_components() -> Iterator[None]:
 
 @pytest.fixture(scope="module")
 def clear_kpops_config() -> Iterator[None]:
+    from kpops.config import KpopsConfig
+
     yield
     KpopsConfig._instance = None
 
