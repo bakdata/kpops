@@ -145,12 +145,14 @@ class TestHelmDiff:
             )
         ) == [
             Change(
-                old_value={},
-                new_value={
-                    "apiVersion": "v1",
-                    "kind": "Deployment",
-                    "metadata": {"a": "1"},
-                },
+                old_value=None,
+                new_value=KubernetesManifest(
+                    **{
+                        "apiVersion": "v1",
+                        "kind": "Deployment",
+                        "metadata": {"a": "1"},
+                    }
+                ),
             ),
         ]
 

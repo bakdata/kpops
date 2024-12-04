@@ -1,8 +1,8 @@
 import logging
 from collections.abc import Iterable, Iterator
-from typing import Any
 
 from kpops.component_handlers.helm_wrapper.model import HelmDiffConfig, HelmTemplate
+from kpops.components.common.kubernetes_model import KubernetesManifest
 from kpops.utils.dict_differ import Change, render_diff
 
 log = logging.getLogger("HelmDiff")
@@ -16,7 +16,7 @@ class HelmDiff:
     def calculate_changes(
         current_release: Iterable[HelmTemplate],
         new_release: Iterable[HelmTemplate],
-    ) -> Iterator[Change[dict[str, Any], dict[str, Any]]]:
+    ) -> Iterator[Change[KubernetesManifest | None, KubernetesManifest | None]]:
         """Compare 2 releases and generate a Change object for each difference.
 
         :param current_release: Iterable containing HelmTemplate objects for the current release
@@ -32,15 +32,15 @@ class HelmDiff:
             # get corresponding dry-run release
             new_resource = new_release_index.pop(current_resource.filepath, None)
             yield Change(
-                current_resource.manifest.model_dump(),
-                new_resource.manifest.model_dump() if new_resource else {},
+                current_resource.manifest,
+                new_resource.manifest if new_resource else None,
             )
 
         # collect added files
         for new_resource in new_release_index.values():
             yield Change(
-                {},
-                new_resource.manifest.model_dump(mode="json"),
+                None,
+                new_resource.manifest,
             )
 
     def log_helm_diff(
@@ -51,8 +51,8 @@ class HelmDiff:
     ) -> None:
         for change in self.calculate_changes(current_release, new_release):
             if diff := render_diff(
-                change.old_value,
-                change.new_value,
+                change.old_value.model_dump() if change.old_value else {},
+                change.new_value.model_dump() if change.new_value else {},
                 ignore=self.config.ignore,
             ):
                 logger.info("\n" + diff)
