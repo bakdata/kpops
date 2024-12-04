@@ -19,7 +19,7 @@ from kpops.components.streams_bootstrap.base import (
 from kpops.components.streams_bootstrap.producer.model import ProducerAppValues
 from kpops.config import get_config
 from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
-from kpops.manifests.argo import ArgoHook
+from kpops.manifests.argo import ArgoHook, enrich_annotations
 from kpops.utils.docstring import describe_attr
 
 log = logging.getLogger("ProducerApp")
@@ -39,7 +39,8 @@ class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrap):
     def manifest_deploy(self) -> Resource:
         values = self.to_helm_values()
         if get_config().operation_mode is OperationMode.ARGO:
-            values = ArgoHook.POST_DELETE.enrich(values)
+            post_delete = ArgoHook.POST_DELETE
+            values = enrich_annotations(values, post_delete.key, post_delete.value)
         return self.helm.template(
             self.helm_release_name,
             self.helm_chart,
