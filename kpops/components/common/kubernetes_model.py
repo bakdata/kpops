@@ -34,11 +34,11 @@ class ObjectMeta(CamelCaseConfigModel):
 
     annotations: dict[str, str] | None = None
     creation_timestamp: str | None = Field(
-        None, description="Timestamp in RFC3339 format"
+        default=None, description="Timestamp in RFC3339 format"
     )
     deletion_grace_period_seconds: int | None = None
     deletion_timestamp: str | None = Field(
-        None, description="Timestamp in RFC3339 format"
+        default=None, description="Timestamp in RFC3339 format"
     )
     finalizers: list[str] | None = None
     generate_name: str | None = None
@@ -50,7 +50,7 @@ class ObjectMeta(CamelCaseConfigModel):
     owner_references: list[OwnerReference] | None = None
     resource_version: str | None = None
     self_link: str | None = Field(
-        None,
+        default=None,
         description="Deprecated field, not populated by Kubernetes in modern versions",
     )
     uid: str | None = None
