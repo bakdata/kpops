@@ -14,8 +14,8 @@ from kpops.components.base_components import KafkaApp
 from kpops.components.base_components.helm_app import HelmApp
 from kpops.components.common.topic import KafkaTopic
 from kpops.components.streams_bootstrap.model import StreamsBootstrapValues
-from kpops.components.streams_bootstrap.strimzi.kafka_topic import StrimziKafkaTopic
 from kpops.manifests.kubernetes import KubernetesManifest
+from kpops.manifests.strimzi.kafka_topic import StrimziKafkaTopic
 from kpops.utils.docstring import describe_attr
 
 if TYPE_CHECKING:
@@ -97,10 +97,9 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
     def manifest_strimzi_topics(
         self, kafka_topics: list[KafkaTopic]
     ) -> tuple[StrimziKafkaTopic, ...]:
-        topics = []
-        for topic in kafka_topics:
-            strimzi_topic = StrimziKafkaTopic.create_strimzi_topic(
+        return tuple(
+            StrimziKafkaTopic.create_strimzi_topic(
                 topic, self.values.kafka.bootstrap_servers
             )
-            topics.append(strimzi_topic)
-        return tuple(topics)
+            for topic in kafka_topics
+        )
