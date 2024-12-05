@@ -6,7 +6,7 @@ from pytest import LogCaptureFixture
 
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
 from kpops.component_handlers.helm_wrapper.model import HelmDiffConfig, HelmTemplate
-from kpops.components.common.kubernetes_model import KubernetesManifest
+from kpops.components.common.kubernetes_model import KubernetesManifest, ObjectMeta
 from kpops.utils.dict_differ import Change
 
 logger = logging.getLogger("TestHelmDiff")
@@ -21,29 +21,29 @@ class TestHelmDiff:
         templates = [
             HelmTemplate(
                 Path("a.yaml"),
-                KubernetesManifest(
-                    **{
+                KubernetesManifest.model_validate(
+                    {
                         "apiVersion": "v1",
                         "kind": "Deployment",
-                        "metadata": {},
+                        "metadata": ObjectMeta.model_validate({}),
                     }
                 ),
             )
         ]
         assert list(helm_diff.calculate_changes(templates, templates)) == [
             Change(
-                old_value=KubernetesManifest(
-                    **{
+                old_value=KubernetesManifest.model_validate(
+                    {
                         "apiVersion": "v1",
                         "kind": "Deployment",
-                        "metadata": {},
+                        "metadata": ObjectMeta.model_validate({}),
                     }
                 ),
-                new_value=KubernetesManifest(
-                    **{
+                new_value=KubernetesManifest.model_validate(
+                    {
                         "apiVersion": "v1",
                         "kind": "Deployment",
-                        "metadata": {},
+                        "metadata": ObjectMeta.model_validate({}),
                     }
                 ),
             ),
@@ -56,21 +56,21 @@ class TestHelmDiff:
                 [
                     HelmTemplate(
                         Path("a.yaml"),
-                        KubernetesManifest(
-                            **{
+                        KubernetesManifest.model_validate(
+                            {
                                 "apiVersion": "v1",
                                 "kind": "Deployment",
-                                "metadata": {"a": "1"},
+                                "metadata": ObjectMeta.model_validate({"a": "1"}),
                             }
                         ),
                     ),
                     HelmTemplate(
                         Path("b.yaml"),
-                        KubernetesManifest(
-                            **{
+                        KubernetesManifest.model_validate(
+                            {
                                 "apiVersion": "v1",
                                 "kind": "Deployment",
-                                "metadata": {"b": "1"},
+                                "metadata": ObjectMeta.model_validate({"b": "1"}),
                             }
                         ),
                     ),
@@ -78,21 +78,21 @@ class TestHelmDiff:
                 [
                     HelmTemplate(
                         Path("a.yaml"),
-                        KubernetesManifest(
-                            **{
+                        KubernetesManifest.model_validate(
+                            {
                                 "apiVersion": "v1",
                                 "kind": "Deployment",
-                                "metadata": {"a": "2"},
+                                "metadata": ObjectMeta.model_validate({"a": "2"}),
                             }
                         ),
                     ),
                     HelmTemplate(
                         Path("c.yaml"),
-                        KubernetesManifest(
-                            **{
+                        KubernetesManifest.model_validate(
+                            {
                                 "apiVersion": "v1",
                                 "kind": "Deployment",
-                                "metadata": {"c": "1"},
+                                "metadata": ObjectMeta.model_validate({"c": "1"}),
                             }
                         ),
                     ),
@@ -100,38 +100,38 @@ class TestHelmDiff:
             )
         ) == [
             Change(
-                old_value=KubernetesManifest(
-                    **{
+                old_value=KubernetesManifest.model_validate(
+                    {
                         "apiVersion": "v1",
                         "kind": "Deployment",
-                        "metadata": {"a": "1"},
+                        "metadata": ObjectMeta.model_validate({"a": "1"}),
                     }
                 ),
-                new_value=KubernetesManifest(
-                    **{
+                new_value=KubernetesManifest.model_validate(
+                    {
                         "apiVersion": "v1",
                         "kind": "Deployment",
-                        "metadata": {"a": "2"},
+                        "metadata": ObjectMeta.model_validate({"a": "2"}),
                     }
                 ),
             ),
             Change(
-                old_value=KubernetesManifest(
-                    **{
+                old_value=KubernetesManifest.model_validate(
+                    {
                         "apiVersion": "v1",
                         "kind": "Deployment",
-                        "metadata": {"b": "1"},
+                        "metadata": ObjectMeta.model_validate({"b": "1"}),
                     }
                 ),
                 new_value=None,
             ),
             Change(
                 old_value=None,
-                new_value=KubernetesManifest(
-                    **{
+                new_value=KubernetesManifest.model_validate(
+                    {
                         "apiVersion": "v1",
                         "kind": "Deployment",
-                        "metadata": {"c": "1"},
+                        "metadata": ObjectMeta.model_validate({"c": "1"}),
                     }
                 ),
             ),
@@ -145,11 +145,11 @@ class TestHelmDiff:
                 [
                     HelmTemplate(
                         Path("a.yaml"),
-                        KubernetesManifest(
-                            **{
+                        KubernetesManifest.model_validate(
+                            {
                                 "apiVersion": "v1",
                                 "kind": "Deployment",
-                                "metadata": {"a": "1"},
+                                "metadata": ObjectMeta.model_validate({"a": "1"}),
                             }
                         ),
                     )
@@ -158,11 +158,11 @@ class TestHelmDiff:
         ) == [
             Change(
                 old_value=None,
-                new_value=KubernetesManifest(
-                    **{
+                new_value=KubernetesManifest.model_validate(
+                    {
                         "apiVersion": "v1",
                         "kind": "Deployment",
-                        "metadata": {"a": "1"},
+                        "metadata": ObjectMeta.model_validate({"a": "1"}),
                     }
                 ),
             ),
@@ -175,11 +175,11 @@ class TestHelmDiff:
             [
                 HelmTemplate(
                     Path("a.yaml"),
-                    KubernetesManifest(
-                        **{
+                    KubernetesManifest.model_validate(
+                        {
                             "apiVersion": "v1",
                             "kind": "Deployment",
-                            "metadata": {"a": "1"},
+                            "metadata": ObjectMeta.model_validate({"a": "1"}),
                         }
                     ),
                 )

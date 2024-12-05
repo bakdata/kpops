@@ -15,12 +15,10 @@ K8S_LABEL_MAX_LEN = 63
 
 
 class ManagedFieldsEntry(CamelCaseConfigModel):
-    # Define this class based on its actual structure
     fields: dict[str, Any] | None = None
 
 
 class OwnerReference(CamelCaseConfigModel):
-    # Define this class based on its actual structure
     apiVersion: str
     kind: str
     name: str
@@ -30,7 +28,11 @@ class OwnerReference(CamelCaseConfigModel):
 
 
 class ObjectMeta(CamelCaseConfigModel):
-    """Metadata for all Kubernetes objects."""
+    """Metadata for all Kubernetes objects.
+
+    ref: https://gtsystem.github.io/lightkube-models/1.19/models/meta_v1/#objectmeta
+
+    """
 
     annotations: dict[str, str] | None = None
     creation_timestamp: str | None = Field(
