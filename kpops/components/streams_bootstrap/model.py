@@ -42,8 +42,9 @@ class PortConfig(CamelCaseConfigModel, DescConfigModel):
         default=None,
         description=describe_attr("name", __doc__),
     )
-    schema: ProtocolSchema = Field(
+    schema_: ProtocolSchema = Field(
         default=ProtocolSchema.TCP,
+        alias="schema",  # because schema is already a builtin of Pydantic
         description=describe_attr("schema", __doc__),
     )
     service_port: int | None = Field(
