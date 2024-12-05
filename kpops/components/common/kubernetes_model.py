@@ -1,13 +1,13 @@
 import enum
 from collections.abc import Iterator
-from typing import Any
+from typing import Any, override
 
+import pydantic
 import yaml
 from pydantic import ConfigDict, Field
-from typing_extensions import override
 
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel
+from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel, by_alias
 
 # Matches plain integer or numbers with valid suffixes: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory
 MEMORY_PATTERN = r"^\d+([EPTGMk]|Ei|Pi|Ti|Gi|Mi|Ki)?$"
@@ -59,11 +59,25 @@ class ObjectMeta(CamelCaseConfigModel):
 
     model_config = ConfigDict(extra="allow")
 
+    @pydantic.model_serializer(mode="wrap", when_used="always")
+    def serialize_model(
+        self,
+        default_serialize_handler: pydantic.SerializerFunctionWrapHandler,
+        info: pydantic.SerializationInfo,
+    ) -> dict[str, Any]:
+        result = default_serialize_handler(self)
+        return {
+            by_alias(self, name): value
+            for name, value in result.items()
+            if name in self.model_fields_set
+        }
+
 
 class KubernetesManifest(CamelCaseConfigModel):
     api_version: str
     kind: str
     metadata: ObjectMeta
+    _required: set[str] = pydantic.PrivateAttr({"api_version", "kind"})
 
     model_config = ConfigDict(extra="allow")
 
@@ -75,13 +89,23 @@ class KubernetesManifest(CamelCaseConfigModel):
         for manifest in manifests:
             yield cls(**manifest)
 
+    @pydantic.model_serializer(mode="wrap", when_used="always")
+    def serialize_model(
+        self,
+        default_serialize_handler: pydantic.SerializerFunctionWrapHandler,
+        info: pydantic.SerializationInfo,
+    ) -> dict[str, Any]:
+        include = self._required | self.model_fields_set
+        result = default_serialize_handler(self)
+        return {
+            by_alias(self, name): value
+            for name, value in result.items()
+            if name in include
+        }
+
     @override
     def model_dump(self, **_: Any) -> dict[str, Any]:
-        return super().model_dump(
-            mode="json",
-            by_alias=True,
-            exclude_unset=True,
-        )
+        return super().model_dump(mode="json")
 
 
 class ServiceType(str, enum.Enum):
