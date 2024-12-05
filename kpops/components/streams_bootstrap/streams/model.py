@@ -161,28 +161,28 @@ class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
         title="Lag threshold",
         description=describe_attr("lag_threshold", __doc__),
     )
-    polling_interval: int = Field(
-        default=30,
+    polling_interval: int | None = Field(
+        default=None,
         title="Polling interval",
         description=describe_attr("polling_interval", __doc__),
     )
-    cooldown_period: int = Field(
-        default=300,
+    cooldown_period: int | None = Field(
+        default=None,
         title="Cooldown period",
         description=describe_attr("cooldown_period", __doc__),
     )
-    offset_reset_policy: str = Field(
-        default="earliest",
+    offset_reset_policy: str | None = Field(
+        default=None,
         title="Offset reset policy",
         description=describe_attr("offset_reset_policy", __doc__),
     )
-    min_replicas: int = Field(
-        default=0,
+    min_replicas: int | None = Field(
+        default=None,
         title="Min replica count",
         description=describe_attr("min_replicas", __doc__),
     )
-    max_replicas: int = Field(
-        default=1,
+    max_replicas: int | None = Field(
+        default=None,
         title="Max replica count",
         description=describe_attr("max_replicas", __doc__),
     )

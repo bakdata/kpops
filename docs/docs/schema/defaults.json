@@ -3129,10 +3129,17 @@
                     "type": "array"
                 },
                 "cooldownPeriod": {
-                    "default": 300,
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "The period to wait after the last trigger reported active before scaling the resource back to 0. https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod",
-                    "title": "Cooldown period",
-                    "type": "integer"
+                    "title": "Cooldown period"
                 },
                 "enabled": {
                     "default": false,
@@ -3176,28 +3183,56 @@
                     "title": "Lag threshold"
                 },
                 "maxReplicas": {
-                    "default": 1,
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "This setting is passed to the HPA definition that KEDA will create for a given resource and holds the maximum number of replicas of the target resouce. https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount",
-                    "title": "Max replica count",
-                    "type": "integer"
+                    "title": "Max replica count"
                 },
                 "minReplicas": {
-                    "default": 0,
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Minimum number of replicas KEDA will scale the resource down to. \"https://keda.sh/docs/2.9/concepts/scaling-deployments/#minreplicacount\"",
-                    "title": "Min replica count",
-                    "type": "integer"
+                    "title": "Min replica count"
                 },
                 "offsetResetPolicy": {
-                    "default": "earliest",
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "The offset reset policy for the consumer if the consumer group is not yet subscribed to a partition.",
-                    "title": "Offset reset policy",
-                    "type": "string"
+                    "title": "Offset reset policy"
                 },
                 "pollingInterval": {
-                    "default": 30,
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "This is the interval to check each trigger on. https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval",
-                    "title": "Polling interval",
-                    "type": "integer"
+                    "title": "Polling interval"
                 },
                 "topics": {
                     "default": [],
