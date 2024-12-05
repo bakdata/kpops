@@ -1,4 +1,15 @@
 # Changelog
+## [8.1.3](https://github.com/bakdata/kpops/releases/tag/8.1.3) - Release Date: [2024-12-05]
+
+### 🌀 Miscellaneous
+
+- Remove repeated defaults from streams-bootstrap values - [#547](https://github.com/bakdata/kpops/pull/547)
+
+
+
+
+
+
 ## [8.1.2](https://github.com/bakdata/kpops/releases/tag/8.1.2) - Release Date: [2024-12-04]
 
 ### 🌀 Miscellaneous
