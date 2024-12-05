@@ -7,7 +7,6 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from kpops.components.common.kubernetes_model import (
     ImagePullPolicy,
-    ResourceDefinition,
     Resources,
 )
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
@@ -162,28 +161,28 @@ class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
         title="Lag threshold",
         description=describe_attr("lag_threshold", __doc__),
     )
-    polling_interval: int = Field(
-        default=30,
+    polling_interval: int | None = Field(
+        default=None,
         title="Polling interval",
         description=describe_attr("polling_interval", __doc__),
     )
-    cooldown_period: int = Field(
-        default=300,
+    cooldown_period: int | None = Field(
+        default=None,
         title="Cooldown period",
         description=describe_attr("cooldown_period", __doc__),
     )
-    offset_reset_policy: str = Field(
-        default="earliest",
+    offset_reset_policy: str | None = Field(
+        default=None,
         title="Offset reset policy",
         description=describe_attr("offset_reset_policy", __doc__),
     )
-    min_replicas: int = Field(
-        default=0,
+    min_replicas: int | None = Field(
+        default=None,
         title="Min replica count",
         description=describe_attr("min_replicas", __doc__),
     )
-    max_replicas: int = Field(
-        default=1,
+    max_replicas: int | None = Field(
+        default=None,
         title="Max replica count",
         description=describe_attr("max_replicas", __doc__),
     )
@@ -192,16 +191,16 @@ class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
         title="Idle replica count",
         description=describe_attr("idle_replicas", __doc__),
     )
-    internal_topics: list[str] = Field(
-        default=[],
+    internal_topics: list[str] | None = Field(
+        default=None,
         description=describe_attr("internal_topics", __doc__),
     )
-    topics: list[str] = Field(
-        default=[],
+    topics: list[str] | None = Field(
+        default=None,
         description=describe_attr("topics", __doc__),
     )
-    additional_triggers: list[str] = Field(
-        default=[],
+    additional_triggers: list[str] | None = Field(
+        default=None,
         description=describe_attr("additional_triggers", __doc__),
     )
     model_config = ConfigDict(extra="allow")
@@ -217,7 +216,7 @@ class PersistenceConfig(BaseModel):
 
     enabled: bool = Field(
         default=False,
-        description="Whether to use a persistent volume to store the state of the streams app.	",
+        description="Whether to use a persistent volume to store the state of the streams app.",
     )
     size: str | None = Field(
         default=None,
@@ -247,36 +246,33 @@ class PrometheusExporterConfig(CamelCaseConfigModel, DescConfigModel):
         :param resources: JMX Exporter resources configuration.
         """
 
-        enabled: bool = Field(
-            default=True,
+        enabled: bool | None = Field(
+            default=None,
             description=describe_attr("enabled", __doc__),
         )
-        image: str = Field(
-            default="solsson/kafka-prometheus-jmx-exporter@sha256",
+        image: str | None = Field(
+            default=None,
             description=describe_attr("image", __doc__),
         )
-        image_tag: str = Field(
-            default="6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e78946143",
+        image_tag: str | None = Field(
+            default=None,
             description=describe_attr("image_tag", __doc__),
         )
-        image_pull_policy: ImagePullPolicy = Field(
-            default=ImagePullPolicy.IF_NOT_PRESENT,
+        image_pull_policy: ImagePullPolicy | None = Field(
+            default=None,
             description=describe_attr("image_pull_policy", __doc__),
         )
-        port: int = Field(
-            default=5556,
+        port: int | None = Field(
+            default=None,
             description=describe_attr("port", __doc__),
         )
-        resources: Resources = Field(
-            default=Resources(
-                requests=ResourceDefinition(cpu="100m", memory="500Mi"),
-                limits=ResourceDefinition(cpu="300m", memory="2G"),
-            ),
+        resources: Resources | None = Field(
+            default=None,
             description=describe_attr("resources", __doc__),
         )
 
-    jmx: PrometheusJMXExporterConfig = Field(
-        default_factory=PrometheusJMXExporterConfig,
+    jmx: PrometheusJMXExporterConfig | None = Field(
+        default=None,
         description=describe_attr("jmx", __doc__),
     )
 
@@ -288,13 +284,13 @@ class JMXConfig(CamelCaseConfigModel, DescConfigModel):
     :param metric_rules: List of JMX metric rules.
     """
 
-    port: int = Field(
-        default=5555,
+    port: int | None = Field(
+        default=None,
         description=describe_attr("port", __doc__),
     )
 
-    metric_rules: list[str] = Field(
-        default=[".*"],
+    metric_rules: list[str] | None = Field(
+        default=None,
         description=describe_attr("metric_rules", __doc__),
     )
 
@@ -327,23 +323,23 @@ class StreamsAppValues(StreamsBootstrapValues):
         description=describe_attr("stateful_set", __doc__),
     )
 
-    persistence: PersistenceConfig = Field(
-        default=PersistenceConfig(),
+    persistence: PersistenceConfig | None = Field(
+        default=None,
         description=describe_attr("persistence", __doc__),
     )
 
-    prometheus: PrometheusExporterConfig = Field(
-        default_factory=PrometheusExporterConfig,
+    prometheus: PrometheusExporterConfig | None = Field(
+        default=None,
         description=describe_attr("prometheus", __doc__),
     )
 
-    jmx: JMXConfig = Field(
-        default_factory=JMXConfig,
+    jmx: JMXConfig | None = Field(
+        default=None,
         description=describe_attr("jmx", __doc__),
     )
 
-    termination_grace_period_seconds: int = Field(
-        default=300,
+    termination_grace_period_seconds: int | None = Field(
+        default=None,
         description=describe_attr("termination_grace_period_seconds", __doc__),
     )
 
