@@ -241,21 +241,33 @@
             "description": "JMX configuration options.",
             "properties": {
                 "metricRules": {
-                    "default": [
-                        ".*"
+                    "anyOf": [
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
                     ],
+                    "default": null,
                     "description": "List of JMX metric rules.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "title": "Metricrules",
-                    "type": "array"
+                    "title": "Metricrules"
                 },
                 "port": {
-                    "default": 5555,
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "The jmx port which JMX style metrics are exposed.",
-                    "title": "Port",
-                    "type": "integer"
+                    "title": "Port"
                 }
             },
             "title": "JMXConfig",
@@ -265,10 +277,17 @@
             "description": "JVM configuration options.",
             "properties": {
                 "maxRAMPercentage": {
-                    "default": 75,
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Sets the maximum amount of memory that the JVM may use for the Java heap before applying ergonomics heuristics as a percentage of the maximum amount determined as described in the -XX:MaxRAM option",
-                    "title": "Maxrampercentage",
-                    "type": "integer"
+                    "title": "Maxrampercentage"
                 },
                 "others": {
                     "description": "List of Java VM options passed to the streams app.",
@@ -833,45 +852,6 @@
             "title": "OutputTopicTypes",
             "type": "string"
         },
-        "PersistenceConfig": {
-            "description": "streams-bootstrap persistence configurations.\n\n:param enabled: Whether to use a persistent volume to store the state of the streams app.\n:param size: The size of the PersistentVolume to allocate to each streams pod in the StatefulSet.\n:param storage_class: Storage class to use for the persistent volume.",
-            "properties": {
-                "enabled": {
-                    "default": false,
-                    "description": "Whether to use a persistent volume to store the state of the streams app.\t",
-                    "title": "Enabled",
-                    "type": "boolean"
-                },
-                "size": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "The size of the PersistentVolume to allocate to each streams pod in the StatefulSet.",
-                    "title": "Size"
-                },
-                "storage_class": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Storage class to use for the persistent volume.",
-                    "title": "Storage Class"
-                }
-            },
-            "title": "PersistenceConfig",
-            "type": "object"
-        },
         "PipelineComponent": {
             "additionalProperties": true,
             "description": "Base class for all components.",
@@ -1192,64 +1172,124 @@
             "description": "Settings specific to producers.",
             "properties": {
                 "affinity": {
+                    "anyOf": [
+                        {
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Map to configure pod affinities https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity.",
-                    "title": "Affinity",
-                    "type": "object"
+                    "title": "Affinity"
                 },
                 "backoffLimit": {
-                    "default": 6,
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "The number of times to restart an unsuccessful job.",
-                    "title": "Backofflimit",
-                    "type": "integer"
+                    "title": "Backofflimit"
                 },
                 "commandLine": {
-                    "additionalProperties": {
-                        "anyOf": [
-                            {
-                                "type": "string"
+                    "anyOf": [
+                        {
+                            "additionalProperties": {
+                                "anyOf": [
+                                    {
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "boolean"
+                                    },
+                                    {
+                                        "type": "integer"
+                                    }
+                                ]
                             },
-                            {
-                                "type": "boolean"
-                            },
-                            {
-                                "type": "integer"
-                            }
-                        ]
-                    },
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Map of command line arguments passed to the streams app.",
-                    "title": "Commandline",
-                    "type": "object"
+                    "title": "Commandline"
                 },
                 "configurationEnvPrefix": {
-                    "default": "APP",
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Prefix for environment variables to use that should be parsed as command line arguments.",
-                    "title": "Configurationenvprefix",
-                    "type": "string"
+                    "title": "Configurationenvprefix"
                 },
                 "deployment": {
-                    "default": false,
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Deploy the producer as a Kubernetes Deployment (thereby ignoring Job-related configurations)",
-                    "title": "Deployment",
-                    "type": "boolean"
+                    "title": "Deployment"
                 },
                 "env": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
+                    "anyOf": [
+                        {
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Custom environment variables.",
-                    "title": "Env",
-                    "type": "object"
+                    "title": "Env"
                 },
                 "failedJobsHistoryLimit": {
-                    "default": 1,
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "The number of unsuccessful jobs to retain.",
-                    "title": "Failedjobshistorylimit",
-                    "type": "integer"
+                    "title": "Failedjobshistorylimit"
                 },
                 "files": {
+                    "anyOf": [
+                        {
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Map of files to mount for the app. File will be mounted as $value.mountPath/$key. $value.content denotes file content (recommended to be used with --set-file).",
-                    "title": "Files",
-                    "type": "object"
+                    "title": "Files"
                 },
                 "image": {
                     "description": "Docker image of the Kafka producer app.",
@@ -1257,38 +1297,60 @@
                     "type": "string"
                 },
                 "imagePullPolicy": {
-                    "allOf": [
+                    "anyOf": [
                         {
                             "$ref": "#/$defs/ImagePullPolicy"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "default": "Always",
+                    "default": null,
                     "description": "Docker image pull policy."
                 },
                 "imagePullSecrets": {
-                    "description": "",
-                    "items": {
-                        "additionalProperties": {
-                            "type": "string"
-                        },
-                        "type": "object"
-                    },
-                    "title": "Imagepullsecrets",
-                    "type": "array"
-                },
-                "imageTag": {
-                    "default": "latest",
-                    "description": "Docker image tag of the streams-bootstrap app.",
-                    "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
-                    "title": "Imagetag",
-                    "type": "string"
-                },
-                "javaOptions": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/$defs/JavaOptions"
+                            "items": {
+                                "additionalProperties": {
+                                    "type": "string"
+                                },
+                                "type": "object"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
+                    "description": "",
+                    "title": "Imagepullsecrets"
+                },
+                "imageTag": {
+                    "anyOf": [
+                        {
+                            "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Docker image tag of the streams-bootstrap app.",
+                    "title": "Imagetag"
+                },
+                "javaOptions": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/JavaOptions"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": ""
                 },
                 "kafka": {
@@ -1300,9 +1362,17 @@
                     "description": "Kafka Streams settings"
                 },
                 "livenessProbe": {
+                    "anyOf": [
+                        {
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
-                    "title": "Livenessprobe",
-                    "type": "object"
+                    "title": "Livenessprobe"
                 },
                 "nameOverride": {
                     "anyOf": [
@@ -1319,59 +1389,88 @@
                     "title": "Nameoverride"
                 },
                 "podAnnotations": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
-                    "description": "Map of custom annotations to attach to the pod spec.",
-                    "title": "Podannotations",
-                    "type": "object"
-                },
-                "podLabels": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
-                    "description": "Map of custom labels to attach to the pod spec.",
-                    "title": "Podlabels",
-                    "type": "object"
-                },
-                "ports": {
-                    "description": "",
-                    "items": {
-                        "$ref": "#/$defs/PortConfig"
-                    },
-                    "title": "Ports",
-                    "type": "array"
-                },
-                "readinessProbe": {
-                    "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
-                    "title": "Readinessprobe",
-                    "type": "object"
-                },
-                "resources": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/$defs/Resources"
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "default": {
-                        "limits": {
-                            "cpu": "300m",
-                            "memory": "2G"
+                    "default": null,
+                    "description": "Map of custom annotations to attach to the pod spec.",
+                    "title": "Podannotations"
+                },
+                "podLabels": {
+                    "anyOf": [
+                        {
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
                         },
-                        "requests": {
-                            "cpu": "100m",
-                            "memory": "500Mi"
+                        {
+                            "type": "null"
                         }
-                    },
+                    ],
+                    "default": null,
+                    "description": "Map of custom labels to attach to the pod spec.",
+                    "title": "Podlabels"
+                },
+                "ports": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/PortConfig"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "",
+                    "title": "Ports"
+                },
+                "readinessProbe": {
+                    "anyOf": [
+                        {
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
+                    "title": "Readinessprobe"
+                },
+                "resources": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/Resources"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
                 },
                 "restartPolicy": {
-                    "allOf": [
+                    "anyOf": [
                         {
                             "$ref": "#/$defs/RestartPolicy"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "default": "OnFailure",
+                    "default": null,
                     "description": "See https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy"
                 },
                 "schedule": {
@@ -1388,59 +1487,116 @@
                     "title": "Schedule"
                 },
                 "secretFilesRefs": {
-                    "description": "Mount existing secrets as volumes",
-                    "items": {
-                        "type": "string"
-                    },
-                    "title": "Secretfilesrefs",
-                    "type": "array"
-                },
-                "secretRefs": {
-                    "description": "Inject existing secrets as environment variables. Map key is used as environment variable name. Value consists of secret name and key.",
-                    "title": "Secretrefs",
-                    "type": "object"
-                },
-                "secrets": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
-                    "description": "Custom secret environment variables. Prefix with configurationEnvPrefix in order to pass secrets to command line or prefix with KAFKA_ to pass secrets to Kafka Streams configuration.",
-                    "title": "Secrets",
-                    "type": "object"
-                },
-                "service": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/$defs/ServiceConfig"
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
+                    "description": "Mount existing secrets as volumes",
+                    "title": "Secretfilesrefs"
+                },
+                "secretRefs": {
+                    "anyOf": [
+                        {
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Inject existing secrets as environment variables. Map key is used as environment variable name. Value consists of secret name and key.",
+                    "title": "Secretrefs"
+                },
+                "secrets": {
+                    "anyOf": [
+                        {
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Custom secret environment variables. Prefix with configurationEnvPrefix in order to pass secrets to command line or prefix with KAFKA_ to pass secrets to Kafka Streams configuration.",
+                    "title": "Secrets"
+                },
+                "service": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ServiceConfig"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": ""
                 },
                 "successfulJobsHistoryLimit": {
-                    "default": 1,
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "The number of successful jobs to retain.",
-                    "title": "Successfuljobshistorylimit",
-                    "type": "integer"
+                    "title": "Successfuljobshistorylimit"
                 },
                 "suspend": {
-                    "default": false,
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Whether to suspend the execution of the cron job.",
-                    "title": "Suspend",
-                    "type": "boolean"
+                    "title": "Suspend"
                 },
                 "tolerations": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/Toleration"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
-                    "items": {
-                        "$ref": "#/$defs/Toleration"
-                    },
-                    "title": "Tolerations",
-                    "type": "array"
+                    "title": "Tolerations"
                 },
                 "ttlSecondsAfterFinished": {
-                    "default": 100,
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "See https://kubernetes.io/docs/concepts/workloads/controllers/ttlafterfinished/#ttl-after-finished-controller",
-                    "title": "Ttlsecondsafterfinished",
-                    "type": "integer"
+                    "title": "Ttlsecondsafterfinished"
                 }
             },
             "required": [
@@ -1554,11 +1710,15 @@
             "description": "Prometheus JMX exporter configuration.",
             "properties": {
                 "jmx": {
-                    "allOf": [
+                    "anyOf": [
                         {
                             "$ref": "#/$defs/PrometheusJMXExporterConfig"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
                     "description": "The prometheus JMX exporter configuration."
                 }
             },
@@ -1569,54 +1729,79 @@
             "description": "Prometheus JMX exporter configuration.",
             "properties": {
                 "enabled": {
-                    "default": true,
-                    "description": "Whether to install Prometheus JMX Exporter as a sidecar container and expose JMX metrics to Prometheus.",
-                    "title": "Enabled",
-                    "type": "boolean"
-                },
-                "image": {
-                    "default": "solsson/kafka-prometheus-jmx-exporter@sha256",
-                    "description": "Docker Image for Prometheus JMX Exporter container.",
-                    "title": "Image",
-                    "type": "string"
-                },
-                "imagePullPolicy": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/$defs/ImagePullPolicy"
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "default": "IfNotPresent",
+                    "default": null,
+                    "description": "Whether to install Prometheus JMX Exporter as a sidecar container and expose JMX metrics to Prometheus.",
+                    "title": "Enabled"
+                },
+                "image": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Docker Image for Prometheus JMX Exporter container.",
+                    "title": "Image"
+                },
+                "imagePullPolicy": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ImagePullPolicy"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Docker Image Pull Policy for Prometheus JMX Exporter container."
                 },
                 "imageTag": {
-                    "default": "6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e78946143",
-                    "description": "Docker Image Tag for Prometheus JMX Exporter container.",
-                    "title": "Imagetag",
-                    "type": "string"
-                },
-                "port": {
-                    "default": 5556,
-                    "description": "JMX Exporter Port which exposes metrics in Prometheus format for scraping.",
-                    "title": "Port",
-                    "type": "integer"
-                },
-                "resources": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/$defs/Resources"
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "default": {
-                        "limits": {
-                            "cpu": "300m",
-                            "memory": "2G"
+                    "default": null,
+                    "description": "Docker Image Tag for Prometheus JMX Exporter container.",
+                    "title": "Imagetag"
+                },
+                "port": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
                         },
-                        "requests": {
-                            "cpu": "100m",
-                            "memory": "500Mi"
+                        {
+                            "type": "null"
                         }
-                    },
+                    ],
+                    "default": null,
+                    "description": "JMX Exporter Port which exposes metrics in Prometheus format for scraping.",
+                    "title": "Port"
+                },
+                "resources": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/Resources"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "JMX Exporter resources configuration."
                 }
             },
@@ -1701,31 +1886,45 @@
             "type": "object"
         },
         "ResourceDefinition": {
-            "description": "Model representing the 'limits' or `request` section of Kubernetes resource specifications.",
+            "description": "Model representing the `limits` or `requests` section of Kubernetes resource specifications.",
             "properties": {
                 "cpu": {
                     "anyOf": [
                         {
+                            "pattern": "^\\d+m$",
                             "type": "string"
                         },
                         {
+                            "exclusiveMinimum": 0,
                             "type": "integer"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
                     "description": "The maximum amount of CPU a container can use, expressed in milli CPUs (e.g., '300m').",
                     "title": "Cpu"
                 },
                 "memory": {
-                    "description": "The maximum amount of memory a container can use, with valid units such as 'Mi' or 'Gi' (e.g., '2G').",
-                    "pattern": "^\\d+([EPTGMk]|Ei|Pi|Ti|Gi|Mi|Ki)?$",
-                    "title": "Memory",
-                    "type": "string"
+                    "anyOf": [
+                        {
+                            "pattern": "^\\d+([EPTGMk]|Ei|Pi|Ti|Gi|Mi|Ki)?$",
+                            "type": "string"
+                        },
+                        {
+                            "exclusiveMinimum": 0,
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The maximum amount of memory a container can use, as integer or string with valid units such as 'Mi' or 'Gi' (e.g., '2G').",
+                    "title": "Memory"
                 }
             },
-            "required": [
-                "cpu",
-                "memory"
-            ],
             "title": "ResourceDefinition",
             "type": "object"
         },
@@ -1783,12 +1982,15 @@
                     "type": "object"
                 },
                 "type": {
-                    "allOf": [
+                    "anyOf": [
                         {
                             "$ref": "#/$defs/ServiceType"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "default": "ClusterIP",
+                    "default": null,
                     "description": "Service type."
                 }
             },
@@ -2038,7 +2240,7 @@
                 "persistence": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/PersistenceConfig"
+                            "$ref": "#/$defs/kpops__components__streams_bootstrap_v2__streams__model__PersistenceConfig"
                         }
                     ],
                     "default": {
@@ -2074,9 +2276,17 @@
             "description": "streams-bootstrap app configurations.\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
             "properties": {
                 "affinity": {
+                    "anyOf": [
+                        {
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Map to configure pod affinities https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity.",
-                    "title": "Affinity",
-                    "type": "object"
+                    "title": "Affinity"
                 },
                 "autoscaling": {
                     "anyOf": [
@@ -2091,41 +2301,72 @@
                     "description": "Kubernetes event-driven autoscaling config"
                 },
                 "commandLine": {
-                    "additionalProperties": {
-                        "anyOf": [
-                            {
-                                "type": "string"
+                    "anyOf": [
+                        {
+                            "additionalProperties": {
+                                "anyOf": [
+                                    {
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "boolean"
+                                    },
+                                    {
+                                        "type": "integer"
+                                    }
+                                ]
                             },
-                            {
-                                "type": "boolean"
-                            },
-                            {
-                                "type": "integer"
-                            }
-                        ]
-                    },
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Map of command line arguments passed to the streams app.",
-                    "title": "Commandline",
-                    "type": "object"
+                    "title": "Commandline"
                 },
                 "configurationEnvPrefix": {
-                    "default": "APP",
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Prefix for environment variables to use that should be parsed as command line arguments.",
-                    "title": "Configurationenvprefix",
-                    "type": "string"
+                    "title": "Configurationenvprefix"
                 },
                 "env": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
+                    "anyOf": [
+                        {
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Custom environment variables.",
-                    "title": "Env",
-                    "type": "object"
+                    "title": "Env"
                 },
                 "files": {
+                    "anyOf": [
+                        {
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Map of files to mount for the app. File will be mounted as $value.mountPath/$key. $value.content denotes file content (recommended to be used with --set-file).",
-                    "title": "Files",
-                    "type": "object"
+                    "title": "Files"
                 },
                 "image": {
                     "description": "Docker image of the Kafka producer app.",
@@ -2133,46 +2374,72 @@
                     "type": "string"
                 },
                 "imagePullPolicy": {
-                    "allOf": [
+                    "anyOf": [
                         {
                             "$ref": "#/$defs/ImagePullPolicy"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "default": "Always",
+                    "default": null,
                     "description": "Docker image pull policy."
                 },
                 "imagePullSecrets": {
-                    "description": "",
-                    "items": {
-                        "additionalProperties": {
-                            "type": "string"
-                        },
-                        "type": "object"
-                    },
-                    "title": "Imagepullsecrets",
-                    "type": "array"
-                },
-                "imageTag": {
-                    "default": "latest",
-                    "description": "Docker image tag of the streams-bootstrap app.",
-                    "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
-                    "title": "Imagetag",
-                    "type": "string"
-                },
-                "javaOptions": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/$defs/JavaOptions"
+                            "items": {
+                                "additionalProperties": {
+                                    "type": "string"
+                                },
+                                "type": "object"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
+                    "description": "",
+                    "title": "Imagepullsecrets"
+                },
+                "imageTag": {
+                    "anyOf": [
+                        {
+                            "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Docker image tag of the streams-bootstrap app.",
+                    "title": "Imagetag"
+                },
+                "javaOptions": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/JavaOptions"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": ""
                 },
                 "jmx": {
-                    "allOf": [
+                    "anyOf": [
                         {
                             "$ref": "#/$defs/JMXConfig"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
                     "description": "Configuration for JMX Exporter."
                 },
                 "kafka": {
@@ -2184,9 +2451,17 @@
                     "description": "streams-bootstrap kafka section"
                 },
                 "livenessProbe": {
+                    "anyOf": [
+                        {
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
-                    "title": "Livenessprobe",
-                    "type": "object"
+                    "title": "Livenessprobe"
                 },
                 "nameOverride": {
                     "anyOf": [
@@ -2203,100 +2478,157 @@
                     "title": "Nameoverride"
                 },
                 "persistence": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/$defs/PersistenceConfig"
+                            "$ref": "#/$defs/kpops__components__streams_bootstrap__streams__model__PersistenceConfig"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "default": {
-                        "enabled": false,
-                        "size": null,
-                        "storage_class": null
-                    },
+                    "default": null,
                     "description": "Configuration for persistent volume to store the state of the streams app."
                 },
                 "podAnnotations": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
-                    "description": "Map of custom annotations to attach to the pod spec.",
-                    "title": "Podannotations",
-                    "type": "object"
-                },
-                "podLabels": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
-                    "description": "Map of custom labels to attach to the pod spec.",
-                    "title": "Podlabels",
-                    "type": "object"
-                },
-                "ports": {
-                    "description": "",
-                    "items": {
-                        "$ref": "#/$defs/PortConfig"
-                    },
-                    "title": "Ports",
-                    "type": "array"
-                },
-                "prometheus": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/$defs/PrometheusExporterConfig"
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
+                    "description": "Map of custom annotations to attach to the pod spec.",
+                    "title": "Podannotations"
+                },
+                "podLabels": {
+                    "anyOf": [
+                        {
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Map of custom labels to attach to the pod spec.",
+                    "title": "Podlabels"
+                },
+                "ports": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/PortConfig"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "",
+                    "title": "Ports"
+                },
+                "prometheus": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/PrometheusExporterConfig"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Configuration for Prometheus JMX Exporter."
                 },
                 "readinessProbe": {
-                    "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
-                    "title": "Readinessprobe",
-                    "type": "object"
-                },
-                "resources": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/$defs/Resources"
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "default": {
-                        "limits": {
-                            "cpu": "300m",
-                            "memory": "2G"
+                    "default": null,
+                    "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
+                    "title": "Readinessprobe"
+                },
+                "resources": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/Resources"
                         },
-                        "requests": {
-                            "cpu": "100m",
-                            "memory": "500Mi"
+                        {
+                            "type": "null"
                         }
-                    },
+                    ],
+                    "default": null,
                     "description": "See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
                 },
                 "secretFilesRefs": {
-                    "description": "Mount existing secrets as volumes",
-                    "items": {
-                        "type": "string"
-                    },
-                    "title": "Secretfilesrefs",
-                    "type": "array"
-                },
-                "secretRefs": {
-                    "description": "Inject existing secrets as environment variables. Map key is used as environment variable name. Value consists of secret name and key.",
-                    "title": "Secretrefs",
-                    "type": "object"
-                },
-                "secrets": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
-                    "description": "Custom secret environment variables. Prefix with configurationEnvPrefix in order to pass secrets to command line or prefix with KAFKA_ to pass secrets to Kafka Streams configuration.",
-                    "title": "Secrets",
-                    "type": "object"
-                },
-                "service": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/$defs/ServiceConfig"
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
+                    "description": "Mount existing secrets as volumes",
+                    "title": "Secretfilesrefs"
+                },
+                "secretRefs": {
+                    "anyOf": [
+                        {
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Inject existing secrets as environment variables. Map key is used as environment variable name. Value consists of secret name and key.",
+                    "title": "Secretrefs"
+                },
+                "secrets": {
+                    "anyOf": [
+                        {
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Custom secret environment variables. Prefix with configurationEnvPrefix in order to pass secrets to command line or prefix with KAFKA_ to pass secrets to Kafka Streams configuration.",
+                    "title": "Secrets"
+                },
+                "service": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ServiceConfig"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": ""
                 },
                 "statefulSet": {
@@ -2306,18 +2638,33 @@
                     "type": "boolean"
                 },
                 "terminationGracePeriodSeconds": {
-                    "default": 300,
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Delay for graceful application shutdown in seconds: https://pracucci.com/graceful-shutdown-of-kubernetes-pods.html",
-                    "title": "Terminationgraceperiodseconds",
-                    "type": "integer"
+                    "title": "Terminationgraceperiodseconds"
                 },
                 "tolerations": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/Toleration"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
-                    "items": {
-                        "$ref": "#/$defs/Toleration"
-                    },
-                    "title": "Tolerations",
-                    "type": "array"
+                    "title": "Tolerations"
                 }
             },
             "required": [
@@ -2554,46 +2901,85 @@
             "description": "Base value class for all streams bootstrap related components.",
             "properties": {
                 "affinity": {
+                    "anyOf": [
+                        {
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Map to configure pod affinities https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity.",
-                    "title": "Affinity",
-                    "type": "object"
+                    "title": "Affinity"
                 },
                 "commandLine": {
-                    "additionalProperties": {
-                        "anyOf": [
-                            {
-                                "type": "string"
+                    "anyOf": [
+                        {
+                            "additionalProperties": {
+                                "anyOf": [
+                                    {
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "boolean"
+                                    },
+                                    {
+                                        "type": "integer"
+                                    }
+                                ]
                             },
-                            {
-                                "type": "boolean"
-                            },
-                            {
-                                "type": "integer"
-                            }
-                        ]
-                    },
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Map of command line arguments passed to the streams app.",
-                    "title": "Commandline",
-                    "type": "object"
+                    "title": "Commandline"
                 },
                 "configurationEnvPrefix": {
-                    "default": "APP",
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Prefix for environment variables to use that should be parsed as command line arguments.",
-                    "title": "Configurationenvprefix",
-                    "type": "string"
+                    "title": "Configurationenvprefix"
                 },
                 "env": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
+                    "anyOf": [
+                        {
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Custom environment variables.",
-                    "title": "Env",
-                    "type": "object"
+                    "title": "Env"
                 },
                 "files": {
+                    "anyOf": [
+                        {
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Map of files to mount for the app. File will be mounted as $value.mountPath/$key. $value.content denotes file content (recommended to be used with --set-file).",
-                    "title": "Files",
-                    "type": "object"
+                    "title": "Files"
                 },
                 "image": {
                     "description": "Docker image of the Kafka producer app.",
@@ -2601,38 +2987,60 @@
                     "type": "string"
                 },
                 "imagePullPolicy": {
-                    "allOf": [
+                    "anyOf": [
                         {
                             "$ref": "#/$defs/ImagePullPolicy"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "default": "Always",
+                    "default": null,
                     "description": "Docker image pull policy."
                 },
                 "imagePullSecrets": {
-                    "description": "",
-                    "items": {
-                        "additionalProperties": {
-                            "type": "string"
-                        },
-                        "type": "object"
-                    },
-                    "title": "Imagepullsecrets",
-                    "type": "array"
-                },
-                "imageTag": {
-                    "default": "latest",
-                    "description": "Docker image tag of the streams-bootstrap app.",
-                    "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
-                    "title": "Imagetag",
-                    "type": "string"
-                },
-                "javaOptions": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/$defs/JavaOptions"
+                            "items": {
+                                "additionalProperties": {
+                                    "type": "string"
+                                },
+                                "type": "object"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
+                    "description": "",
+                    "title": "Imagepullsecrets"
+                },
+                "imageTag": {
+                    "anyOf": [
+                        {
+                            "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Docker image tag of the streams-bootstrap app.",
+                    "title": "Imagetag"
+                },
+                "javaOptions": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/JavaOptions"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": ""
                 },
                 "kafka": {
@@ -2644,9 +3052,17 @@
                     "description": "Kafka configuration for the streams-bootstrap app."
                 },
                 "livenessProbe": {
+                    "anyOf": [
+                        {
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
-                    "title": "Livenessprobe",
-                    "type": "object"
+                    "title": "Livenessprobe"
                 },
                 "nameOverride": {
                     "anyOf": [
@@ -2663,88 +3079,150 @@
                     "title": "Nameoverride"
                 },
                 "podAnnotations": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
-                    "description": "Map of custom annotations to attach to the pod spec.",
-                    "title": "Podannotations",
-                    "type": "object"
-                },
-                "podLabels": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
-                    "description": "Map of custom labels to attach to the pod spec.",
-                    "title": "Podlabels",
-                    "type": "object"
-                },
-                "ports": {
-                    "description": "",
-                    "items": {
-                        "$ref": "#/$defs/PortConfig"
-                    },
-                    "title": "Ports",
-                    "type": "array"
-                },
-                "readinessProbe": {
-                    "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
-                    "title": "Readinessprobe",
-                    "type": "object"
-                },
-                "resources": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/$defs/Resources"
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "default": {
-                        "limits": {
-                            "cpu": "300m",
-                            "memory": "2G"
+                    "default": null,
+                    "description": "Map of custom annotations to attach to the pod spec.",
+                    "title": "Podannotations"
+                },
+                "podLabels": {
+                    "anyOf": [
+                        {
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
                         },
-                        "requests": {
-                            "cpu": "100m",
-                            "memory": "500Mi"
+                        {
+                            "type": "null"
                         }
-                    },
+                    ],
+                    "default": null,
+                    "description": "Map of custom labels to attach to the pod spec.",
+                    "title": "Podlabels"
+                },
+                "ports": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/PortConfig"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "",
+                    "title": "Ports"
+                },
+                "readinessProbe": {
+                    "anyOf": [
+                        {
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
+                    "title": "Readinessprobe"
+                },
+                "resources": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/Resources"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
                 },
                 "secretFilesRefs": {
-                    "description": "Mount existing secrets as volumes",
-                    "items": {
-                        "type": "string"
-                    },
-                    "title": "Secretfilesrefs",
-                    "type": "array"
-                },
-                "secretRefs": {
-                    "description": "Inject existing secrets as environment variables. Map key is used as environment variable name. Value consists of secret name and key.",
-                    "title": "Secretrefs",
-                    "type": "object"
-                },
-                "secrets": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
-                    "description": "Custom secret environment variables. Prefix with configurationEnvPrefix in order to pass secrets to command line or prefix with KAFKA_ to pass secrets to Kafka Streams configuration.",
-                    "title": "Secrets",
-                    "type": "object"
-                },
-                "service": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/$defs/ServiceConfig"
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
+                    "description": "Mount existing secrets as volumes",
+                    "title": "Secretfilesrefs"
+                },
+                "secretRefs": {
+                    "anyOf": [
+                        {
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Inject existing secrets as environment variables. Map key is used as environment variable name. Value consists of secret name and key.",
+                    "title": "Secretrefs"
+                },
+                "secrets": {
+                    "anyOf": [
+                        {
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Custom secret environment variables. Prefix with configurationEnvPrefix in order to pass secrets to command line or prefix with KAFKA_ to pass secrets to Kafka Streams configuration.",
+                    "title": "Secrets"
+                },
+                "service": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ServiceConfig"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": ""
                 },
                 "tolerations": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/Toleration"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
-                    "items": {
-                        "$ref": "#/$defs/Toleration"
-                    },
-                    "title": "Tolerations",
-                    "type": "array"
+                    "title": "Tolerations"
                 }
             },
             "required": [
@@ -2802,7 +3280,6 @@
                             "$ref": "#/$defs/Operation"
                         }
                     ],
-                    "default": "Equal",
                     "description": "The operator ('Exists' or 'Equal')."
                 },
                 "toleration_seconds": {
@@ -2834,6 +3311,7 @@
             },
             "required": [
                 "key",
+                "operator",
                 "effect"
             ],
             "title": "Toleration",
@@ -2941,24 +3419,77 @@
             "title": "TopicConfig",
             "type": "object"
         },
+        "kpops__components__streams_bootstrap__streams__model__PersistenceConfig": {
+            "description": "streams-bootstrap persistence configurations.\n\n:param enabled: Whether to use a persistent volume to store the state of the streams app.\n:param size: The size of the PersistentVolume to allocate to each streams pod in the StatefulSet.\n:param storage_class: Storage class to use for the persistent volume.",
+            "properties": {
+                "enabled": {
+                    "default": false,
+                    "description": "Whether to use a persistent volume to store the state of the streams app.",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
+                "size": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The size of the PersistentVolume to allocate to each streams pod in the StatefulSet.",
+                    "title": "Size"
+                },
+                "storage_class": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Storage class to use for the persistent volume.",
+                    "title": "Storage Class"
+                }
+            },
+            "title": "PersistenceConfig",
+            "type": "object"
+        },
         "kpops__components__streams_bootstrap__streams__model__StreamsAppAutoScaling": {
             "additionalProperties": true,
             "description": "Kubernetes Event-driven Autoscaling config.",
             "properties": {
                 "additionalTriggers": {
-                    "default": [],
+                    "anyOf": [
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "List of additional KEDA triggers, see https://keda.sh/docs/latest/scalers/",
-                    "items": {
-                        "type": "string"
-                    },
-                    "title": "Additionaltriggers",
-                    "type": "array"
+                    "title": "Additionaltriggers"
                 },
                 "cooldownPeriod": {
-                    "default": 300,
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "The period to wait after the last trigger reported active before scaling the resource back to 0. https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod",
-                    "title": "Cooldown period",
-                    "type": "integer"
+                    "title": "Cooldown period"
                 },
                 "enabled": {
                     "default": false,
@@ -2980,13 +3511,20 @@
                     "title": "Idle replica count"
                 },
                 "internalTopics": {
-                    "default": [],
+                    "anyOf": [
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "List of auto-generated Kafka Streams topics used by the streams app",
-                    "items": {
-                        "type": "string"
-                    },
-                    "title": "Internaltopics",
-                    "type": "array"
+                    "title": "Internaltopics"
                 },
                 "lagThreshold": {
                     "anyOf": [
@@ -3002,37 +3540,72 @@
                     "title": "Lag threshold"
                 },
                 "maxReplicas": {
-                    "default": 1,
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "This setting is passed to the HPA definition that KEDA will create for a given resource and holds the maximum number of replicas of the target resouce. https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount",
-                    "title": "Max replica count",
-                    "type": "integer"
+                    "title": "Max replica count"
                 },
                 "minReplicas": {
-                    "default": 0,
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Minimum number of replicas KEDA will scale the resource down to. \"https://keda.sh/docs/2.9/concepts/scaling-deployments/#minreplicacount\"",
-                    "title": "Min replica count",
-                    "type": "integer"
+                    "title": "Min replica count"
                 },
                 "offsetResetPolicy": {
-                    "default": "earliest",
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "The offset reset policy for the consumer if the consumer group is not yet subscribed to a partition.",
-                    "title": "Offset reset policy",
-                    "type": "string"
+                    "title": "Offset reset policy"
                 },
                 "pollingInterval": {
-                    "default": 30,
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "This is the interval to check each trigger on. https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval",
-                    "title": "Polling interval",
-                    "type": "integer"
+                    "title": "Polling interval"
                 },
                 "topics": {
-                    "default": [],
+                    "anyOf": [
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "List of topics used by the streams app",
-                    "items": {
-                        "type": "string"
-                    },
-                    "title": "Topics",
-                    "type": "array"
+                    "title": "Topics"
                 }
             },
             "title": "StreamsAppAutoScaling",
@@ -3173,6 +3746,45 @@
                 "bootstrapServers"
             ],
             "title": "StreamsConfig",
+            "type": "object"
+        },
+        "kpops__components__streams_bootstrap_v2__streams__model__PersistenceConfig": {
+            "description": "streams-bootstrap persistence configurations.\n\n:param enabled: Whether to use a persistent volume to store the state of the streams app.\n:param size: The size of the PersistentVolume to allocate to each streams pod in the StatefulSet.\n:param storage_class: Storage class to use for the persistent volume.",
+            "properties": {
+                "enabled": {
+                    "default": false,
+                    "description": "Whether to use a persistent volume to store the state of the streams app.\t",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
+                "size": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The size of the PersistentVolume to allocate to each streams pod in the StatefulSet.",
+                    "title": "Size"
+                },
+                "storage_class": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Storage class to use for the persistent volume.",
+                    "title": "Storage Class"
+                }
+            },
+            "title": "PersistenceConfig",
             "type": "object"
         },
         "kpops__components__streams_bootstrap_v2__streams__model__StreamsAppAutoScaling": {
