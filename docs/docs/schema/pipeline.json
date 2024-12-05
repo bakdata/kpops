@@ -241,12 +241,20 @@
             "description": "JMX configuration options.",
             "properties": {
                 "metricRules": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "List of JMX metric rules.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "title": "Metricrules",
-                    "type": "array"
+                    "title": "Metricrules"
                 },
                 "port": {
                     "anyOf": [
@@ -1970,16 +1978,15 @@
                     "title": "Nameoverride"
                 },
                 "persistence": {
-                    "allOf": [
+                    "anyOf": [
                         {
                             "$ref": "#/$defs/kpops__components__streams_bootstrap__streams__model__PersistenceConfig"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "default": {
-                        "enabled": false,
-                        "size": null,
-                        "storage_class": null
-                    },
+                    "default": null,
                     "description": "Configuration for persistent volume to store the state of the streams app."
                 },
                 "podAnnotations": {
@@ -2334,13 +2341,20 @@
             "description": "Kubernetes Event-driven Autoscaling config.",
             "properties": {
                 "additionalTriggers": {
-                    "default": [],
+                    "anyOf": [
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "List of additional KEDA triggers, see https://keda.sh/docs/latest/scalers/",
-                    "items": {
-                        "type": "string"
-                    },
-                    "title": "Additionaltriggers",
-                    "type": "array"
+                    "title": "Additionaltriggers"
                 },
                 "cooldownPeriod": {
                     "anyOf": [
@@ -2375,13 +2389,20 @@
                     "title": "Idle replica count"
                 },
                 "internalTopics": {
-                    "default": [],
+                    "anyOf": [
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "List of auto-generated Kafka Streams topics used by the streams app",
-                    "items": {
-                        "type": "string"
-                    },
-                    "title": "Internaltopics",
-                    "type": "array"
+                    "title": "Internaltopics"
                 },
                 "lagThreshold": {
                     "anyOf": [
@@ -2449,13 +2470,20 @@
                     "title": "Polling interval"
                 },
                 "topics": {
-                    "default": [],
+                    "anyOf": [
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "List of topics used by the streams app",
-                    "items": {
-                        "type": "string"
-                    },
-                    "title": "Topics",
-                    "type": "array"
+                    "title": "Topics"
                 }
             },
             "title": "StreamsAppAutoScaling",

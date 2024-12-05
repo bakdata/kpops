@@ -148,8 +148,6 @@
         outputTopic: my-output-topic
         schemaRegistryUrl: http://localhost:8081/
       livenessProbe: {}
-      persistence:
-        enabled: false
       podAnnotations: {}
       podLabels: {}
       ports: []
@@ -239,8 +237,6 @@
       outputTopic: my-output-topic
       schemaRegistryUrl: http://localhost:8081/
     livenessProbe: {}
-    persistence:
-      enabled: false
     podAnnotations: {}
     podLabels: {}
     ports: []

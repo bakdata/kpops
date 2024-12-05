@@ -191,16 +191,16 @@ class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
         title="Idle replica count",
         description=describe_attr("idle_replicas", __doc__),
     )
-    internal_topics: list[str] = Field(
-        default=[],
+    internal_topics: list[str] | None = Field(
+        default=None,
         description=describe_attr("internal_topics", __doc__),
     )
-    topics: list[str] = Field(
-        default=[],
+    topics: list[str] | None = Field(
+        default=None,
         description=describe_attr("topics", __doc__),
     )
-    additional_triggers: list[str] = Field(
-        default=[],
+    additional_triggers: list[str] | None = Field(
+        default=None,
         description=describe_attr("additional_triggers", __doc__),
     )
     model_config = ConfigDict(extra="allow")
@@ -289,8 +289,8 @@ class JMXConfig(CamelCaseConfigModel, DescConfigModel):
         description=describe_attr("port", __doc__),
     )
 
-    metric_rules: list[str] = Field(
-        default_factory=list,
+    metric_rules: list[str] | None = Field(
+        default=None,
         description=describe_attr("metric_rules", __doc__),
     )
 
@@ -323,8 +323,8 @@ class StreamsAppValues(StreamsBootstrapValues):
         description=describe_attr("stateful_set", __doc__),
     )
 
-    persistence: PersistenceConfig = Field(
-        default=PersistenceConfig(),
+    persistence: PersistenceConfig | None = Field(
+        default=None,
         description=describe_attr("persistence", __doc__),
     )
 
