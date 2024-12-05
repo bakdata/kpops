@@ -1722,7 +1722,7 @@
             "type": "object"
         },
         "ResourceDefinition": {
-            "description": "Model representing the 'limits' or `request` section of Kubernetes resource specifications.",
+            "description": "Model representing the `limits` or `requests` section of Kubernetes resource specifications.",
             "properties": {
                 "cpu": {
                     "anyOf": [
@@ -1757,7 +1757,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "The maximum amount of memory a container can use, with valid units such as 'Mi' or 'Gi' (e.g., '2G').",
+                    "description": "The maximum amount of memory a container can use, as integer or string with valid units such as 'Mi' or 'Gi' (e.g., '2G').",
                     "title": "Memory"
                 }
             },

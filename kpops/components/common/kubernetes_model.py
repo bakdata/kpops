@@ -92,10 +92,10 @@ MemoryStr = Annotated[
 
 
 class ResourceDefinition(DescConfigModel):
-    """Model representing the 'limits' or `request` section of Kubernetes resource specifications.
+    """Model representing the `limits` or `requests` section of Kubernetes resource specifications.
 
     :param cpu: The maximum amount of CPU a container can use, expressed in milli CPUs (e.g., '300m').
-    :param memory: The maximum amount of memory a container can use, with valid units such as 'Mi' or 'Gi' (e.g., '2G').
+    :param memory: The maximum amount of memory a container can use, as integer or string with valid units such as 'Mi' or 'Gi' (e.g., '2G').
     """
 
     cpu: CPUStr | pydantic.PositiveInt | None = Field(
