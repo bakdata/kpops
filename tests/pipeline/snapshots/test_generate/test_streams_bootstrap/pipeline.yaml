@@ -11,12 +11,9 @@
     type: producer-app-cleaner
     values:
       affinity: {}
-      backoffLimit: 6
       commandLine:
         FAKE_ARG: fake-arg-value
-      deployment: false
       env: {}
-      failedJobsHistoryLimit: 1
       files:
         log4j2.xml:
           content: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Configuration>\n\
@@ -41,15 +38,11 @@
       podLabels: {}
       ports: []
       readinessProbe: {}
-      restartPolicy: OnFailure
       schedule: 30 3/8 * * *
       secretFilesRefs: []
       secretRefs: {}
       secrets: {}
-      successfulJobsHistoryLimit: 1
-      suspend: false
       tolerations: []
-      ttlSecondsAfterFinished: 100
     version: 3.0.3
   name: my-producer-app
   namespace: example-namespace
@@ -71,12 +64,9 @@
   type: my-producer-app
   values:
     affinity: {}
-    backoffLimit: 6
     commandLine:
       FAKE_ARG: fake-arg-value
-    deployment: false
     env: {}
-    failedJobsHistoryLimit: 1
     files:
       log4j2.xml:
         content: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Configuration>\n  \
@@ -101,15 +91,11 @@
     podLabels: {}
     ports: []
     readinessProbe: {}
-    restartPolicy: OnFailure
     schedule: 30 3/8 * * *
     secretFilesRefs: []
     secretRefs: {}
     secrets: {}
-    successfulJobsHistoryLimit: 1
-    suspend: false
     tolerations: []
-    ttlSecondsAfterFinished: 100
   version: 3.0.3
 - _cleaner:
     name: my-streams-app

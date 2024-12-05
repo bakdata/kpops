@@ -1169,10 +1169,17 @@
                     "type": "object"
                 },
                 "backoffLimit": {
-                    "default": 6,
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "The number of times to restart an unsuccessful job.",
-                    "title": "Backofflimit",
-                    "type": "integer"
+                    "title": "Backofflimit"
                 },
                 "commandLine": {
                     "additionalProperties": {
@@ -1206,10 +1213,17 @@
                     "title": "Configurationenvprefix"
                 },
                 "deployment": {
-                    "default": false,
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Deploy the producer as a Kubernetes Deployment (thereby ignoring Job-related configurations)",
-                    "title": "Deployment",
-                    "type": "boolean"
+                    "title": "Deployment"
                 },
                 "env": {
                     "additionalProperties": {
@@ -1220,10 +1234,17 @@
                     "type": "object"
                 },
                 "failedJobsHistoryLimit": {
-                    "default": 1,
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "The number of unsuccessful jobs to retain.",
-                    "title": "Failedjobshistorylimit",
-                    "type": "integer"
+                    "title": "Failedjobshistorylimit"
                 },
                 "files": {
                     "description": "Map of files to mount for the app. File will be mounted as $value.mountPath/$key. $value.content denotes file content (recommended to be used with --set-file).",
@@ -1353,12 +1374,15 @@
                     "description": "See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
                 },
                 "restartPolicy": {
-                    "allOf": [
+                    "anyOf": [
                         {
                             "$ref": "#/$defs/RestartPolicy"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "default": "OnFailure",
+                    "default": null,
                     "description": "See https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy"
                 },
                 "schedule": {
@@ -1408,16 +1432,30 @@
                     "description": ""
                 },
                 "successfulJobsHistoryLimit": {
-                    "default": 1,
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "The number of successful jobs to retain.",
-                    "title": "Successfuljobshistorylimit",
-                    "type": "integer"
+                    "title": "Successfuljobshistorylimit"
                 },
                 "suspend": {
-                    "default": false,
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Whether to suspend the execution of the cron job.",
-                    "title": "Suspend",
-                    "type": "boolean"
+                    "title": "Suspend"
                 },
                 "tolerations": {
                     "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
@@ -1428,10 +1466,17 @@
                     "type": "array"
                 },
                 "ttlSecondsAfterFinished": {
-                    "default": 100,
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "See https://kubernetes.io/docs/concepts/workloads/controllers/ttlafterfinished/#ttl-after-finished-controller",
-                    "title": "Ttlsecondsafterfinished",
-                    "type": "integer"
+                    "title": "Ttlsecondsafterfinished"
                 }
             },
             "required": [

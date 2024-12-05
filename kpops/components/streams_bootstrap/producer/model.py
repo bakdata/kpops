@@ -30,12 +30,12 @@ class ProducerAppValues(StreamsBootstrapValues):
 
     kafka: ProducerConfig = Field(description=describe_attr("kafka", __doc__))
 
-    deployment: bool = Field(
-        default=False, description=describe_attr("deployment", __doc__)
+    deployment: bool | None = Field(
+        default=None, description=describe_attr("deployment", __doc__)
     )
 
-    restart_policy: RestartPolicy = Field(
-        default=RestartPolicy.ON_FAILURE,
+    restart_policy: RestartPolicy | None = Field(
+        default=None,
         description=describe_attr("restart_policy", __doc__),
     )
 
@@ -43,29 +43,32 @@ class ProducerAppValues(StreamsBootstrapValues):
         default=None, description=describe_attr("schedule", __doc__)
     )
 
-    suspend: bool = Field(default=False, description=describe_attr("suspend", __doc__))
-
-    successful_jobs_history_limit: int = Field(
-        default=1, description=describe_attr("successful_jobs_history_limit", __doc__)
+    suspend: bool | None = Field(
+        default=None, description=describe_attr("suspend", __doc__)
     )
 
-    failed_jobs_history_limit: int = Field(
-        default=1, description=describe_attr("failed_jobs_history_limit", __doc__)
+    successful_jobs_history_limit: int | None = Field(
+        default=None,
+        description=describe_attr("successful_jobs_history_limit", __doc__),
     )
 
-    backoff_limit: int = Field(
-        default=6, description=describe_attr("backoff_limit", __doc__)
+    failed_jobs_history_limit: int | None = Field(
+        default=None, description=describe_attr("failed_jobs_history_limit", __doc__)
     )
 
-    ttl_seconds_after_finished: int = Field(
-        default=100, description=describe_attr("ttl_seconds_after_finished", __doc__)
+    backoff_limit: int | None = Field(
+        default=None, description=describe_attr("backoff_limit", __doc__)
+    )
+
+    ttl_seconds_after_finished: int | None = Field(
+        default=None, description=describe_attr("ttl_seconds_after_finished", __doc__)
     )
 
     model_config = ConfigDict(extra="allow")
 
     @field_validator("schedule")
     @classmethod
-    def schedule_cron_validator(cls, schedule: str) -> str:
+    def schedule_cron_validator(cls, schedule: str | None) -> str | None:
         """Ensure that the defined schedule value is valid."""
         if schedule and not croniter.is_valid(schedule):
             msg = f"The schedule field '{schedule}' must be a valid cron expression."
