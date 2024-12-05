@@ -38,8 +38,8 @@ class TestDryRunHandler:
             [
                 HelmTemplate(
                     Path("path.yaml"),
-                    KubernetesManifest(
-                        **{"apiVersion": "v1", "kind": "Deployment", "metadata": {}}
+                    KubernetesManifest.model_validate(
+                        {"apiVersion": "v1", "kind": "Deployment", "metadata": {}}
                     ),
                 )
             ]
