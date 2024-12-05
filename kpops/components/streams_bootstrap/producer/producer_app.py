@@ -7,7 +7,6 @@ from typing_extensions import override
 from kpops.api import OperationMode
 from kpops.components.base_components.kafka_app import KafkaAppCleaner
 from kpops.components.common.app_type import AppType
-from kpops.components.common.kubernetes_model import KubernetesManifest
 from kpops.components.common.topic import (
     KafkaTopic,
     OutputTopicTypes,
@@ -20,6 +19,7 @@ from kpops.components.streams_bootstrap.producer.model import ProducerAppValues
 from kpops.config import get_config
 from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
 from kpops.manifests.argo import ArgoHook, enrich_annotations
+from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.utils.docstring import describe_attr
 
 log = logging.getLogger("ProducerApp")

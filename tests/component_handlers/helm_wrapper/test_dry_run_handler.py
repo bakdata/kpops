@@ -8,7 +8,7 @@ from pytest_mock import MockerFixture
 
 from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
 from kpops.component_handlers.helm_wrapper.model import HelmTemplate
-from kpops.components.common.kubernetes_model import KubernetesManifest
+from kpops.manifests.kubernetes import KubernetesManifest
 
 log = Logger("TestLogger")
 
@@ -38,8 +38,8 @@ class TestDryRunHandler:
             [
                 HelmTemplate(
                     Path("path.yaml"),
-                    KubernetesManifest(
-                        **{"apiVersion": "v1", "kind": "Deployment", "metadata": {}}
+                    KubernetesManifest.model_validate(
+                        {"apiVersion": "v1", "kind": "Deployment", "metadata": {}}
                     ),
                 )
             ]
@@ -70,8 +70,8 @@ class TestDryRunHandler:
         current_release = [
             HelmTemplate(
                 Path("path.yaml"),
-                KubernetesManifest(
-                    **{"apiVersion": "v1", "kind": "Deployment", "metadata": {}}
+                KubernetesManifest.model_validate(
+                    {"apiVersion": "v1", "kind": "Deployment", "metadata": {}}
                 ),
             )
         ]
@@ -81,8 +81,8 @@ class TestDryRunHandler:
             [
                 HelmTemplate(
                     Path("path.yaml"),
-                    KubernetesManifest(
-                        **{"apiVersion": "v1", "kind": "Deployment", "metadata": {}}
+                    KubernetesManifest.model_validate(
+                        {"apiVersion": "v1", "kind": "Deployment", "metadata": {}}
                     ),
                 )
             ]

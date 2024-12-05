@@ -157,9 +157,9 @@
     connector.class: com.github.jcustenborder.kafka.connect.redis.RedisSinkConnector
     key.converter: org.apache.kafka.connect.storage.StringConverter
     name: word-count-redis-sink-connector
-    redis.database: 0
+    redis.database: '0'
     redis.hosts: redis-headless:6379
-    tasks.max: 1
+    tasks.max: '1'
     topics: word-count-word-counter-topic
     value.converter: org.apache.kafka.connect.storage.StringConverter
   name: redis-sink-connector

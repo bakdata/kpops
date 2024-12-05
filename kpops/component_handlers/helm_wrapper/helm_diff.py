@@ -2,7 +2,7 @@ import logging
 from collections.abc import Iterable, Iterator
 
 from kpops.component_handlers.helm_wrapper.model import HelmDiffConfig, HelmTemplate
-from kpops.components.common.kubernetes_model import KubernetesManifest
+from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.utils.dict_differ import Change, render_diff
 
 log = logging.getLogger("HelmDiff")

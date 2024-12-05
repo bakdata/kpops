@@ -1,85 +1,12 @@
 import enum
-from collections.abc import Iterator
-from typing import Any
 
-import yaml
-from pydantic import ConfigDict, Field
-from typing_extensions import override
+from pydantic import Field
 
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel
+from kpops.utils.pydantic import DescConfigModel
 
 # Matches plain integer or numbers with valid suffixes: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory
 MEMORY_PATTERN = r"^\d+([EPTGMk]|Ei|Pi|Ti|Gi|Mi|Ki)?$"
-K8S_LABEL_MAX_LEN = 63
-
-
-class ManagedFieldsEntry(CamelCaseConfigModel):
-    # Define this class based on its actual structure
-    fields: dict[str, Any] | None = None
-
-
-class OwnerReference(CamelCaseConfigModel):
-    # Define this class based on its actual structure
-    apiVersion: str
-    kind: str
-    name: str
-    uid: str
-    controller: bool | None = None
-    block_owner_deletion: bool | None = None
-
-
-class ObjectMeta(CamelCaseConfigModel):
-    """Metadata for all Kubernetes objects."""
-
-    annotations: dict[str, str] | None = None
-    creation_timestamp: str | None = Field(
-        default=None, description="Timestamp in RFC3339 format"
-    )
-    deletion_grace_period_seconds: int | None = None
-    deletion_timestamp: str | None = Field(
-        default=None, description="Timestamp in RFC3339 format"
-    )
-    finalizers: list[str] | None = None
-    generate_name: str | None = None
-    generation: int | None = None
-    labels: dict[str, str] | None = None
-    managed_fields: list[ManagedFieldsEntry] | None = None
-    name: str | None = None
-    namespace: str | None = None
-    owner_references: list[OwnerReference] | None = None
-    resource_version: str | None = None
-    self_link: str | None = Field(
-        default=None,
-        description="Deprecated field, not populated by Kubernetes in modern versions",
-    )
-    uid: str | None = None
-
-    model_config = ConfigDict(extra="allow")
-
-
-class KubernetesManifest(CamelCaseConfigModel):
-    api_version: str
-    kind: str
-    metadata: ObjectMeta
-
-    model_config = ConfigDict(extra="allow")
-
-    @classmethod
-    def from_yaml(
-        cls, /, content: str
-    ) -> Iterator["KubernetesManifest"]:  # TODO: typing.Self for Python 3.11+
-        manifests: Iterator[dict[str, Any]] = yaml.load_all(content, yaml.Loader)
-        for manifest in manifests:
-            yield cls(**manifest)
-
-    @override
-    def model_dump(self, **_: Any) -> dict[str, Any]:
-        return super().model_dump(
-            mode="json",
-            by_alias=True,
-            exclude_none=True,
-        )
 
 
 class ServiceType(str, enum.Enum):

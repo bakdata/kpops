@@ -13,12 +13,12 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmConfig,
     HelmTemplateFlags,
     HelmUpgradeInstallFlags,
-    KubernetesManifest,
     ParseError,
     RepoAuthFlags,
     Version,
 )
 from kpops.components.common.app_type import AppType
+from kpops.manifests.kubernetes import KubernetesManifest
 
 
 class TestHelmWrapper:
@@ -292,8 +292,8 @@ class TestHelmWrapper:
 
     def test_helm_template(self):
         path = Path("test2.yaml")
-        manifest = KubernetesManifest(
-            **{
+        manifest = KubernetesManifest.model_validate(
+            {
                 "apiVersion": "v1",
                 "kind": "ServiceAccount",
                 "metadata": {"labels": {"foo": "bar"}},
@@ -327,16 +327,16 @@ class TestHelmWrapper:
             isinstance(helm_template, HelmTemplate) for helm_template in helm_templates
         )
         assert helm_templates[0].filepath == Path("chart/templates/test3a.yaml")
-        assert helm_templates[0].manifest == KubernetesManifest(
-            **{
+        assert helm_templates[0].manifest == KubernetesManifest.model_validate(
+            {
                 "apiVersion": "v1",
                 "kind": "Pod",
                 "metadata": {"name": "test-3a"},
             }
         )
         assert helm_templates[1].filepath == Path("chart/templates/test3b.yaml")
-        assert helm_templates[1].manifest == KubernetesManifest(
-            **{
+        assert helm_templates[1].manifest == KubernetesManifest.model_validate(
+            {
                 "apiVersion": "v1",
                 "kind": "Pod",
                 "metadata": {"name": "test-3b"},
@@ -411,16 +411,16 @@ class TestHelmWrapper:
             isinstance(helm_template, HelmTemplate) for helm_template in helm_templates
         )
         assert helm_templates[0].filepath == Path("chart/templates/test3a.yaml")
-        assert helm_templates[0].manifest == KubernetesManifest(
-            **{
+        assert helm_templates[0].manifest == KubernetesManifest.model_validate(
+            {
                 "apiVersion": "v1",
                 "kind": "Pod",
                 "metadata": {"name": "test-3a"},
             }
         )
         assert helm_templates[1].filepath == Path("chart/templates/test3b.yaml")
-        assert helm_templates[1].manifest == KubernetesManifest(
-            **{
+        assert helm_templates[1].manifest == KubernetesManifest.model_validate(
+            {
                 "apiVersion": "v1",
                 "kind": "Pod",
                 "metadata": {"name": "test-3b"},
@@ -451,8 +451,8 @@ class TestHelmWrapper:
         )
         assert len(helm_templates) == 1
         assert helm_templates[0].filepath == Path("chart/templates/test.yaml")
-        assert helm_templates[0].manifest == KubernetesManifest(
-            **{
+        assert helm_templates[0].manifest == KubernetesManifest.model_validate(
+            {
                 "apiVersion": "v1",
                 "kind": "Pod",
                 "metadata": {"name": "my-pod"},

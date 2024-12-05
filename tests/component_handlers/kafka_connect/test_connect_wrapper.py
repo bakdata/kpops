@@ -40,6 +40,30 @@ class TestConnectorApiWrapper:
             }
         )
 
+    def test_convert_config_values_to_str(self):
+        # all values should be converted to strings
+        assert KafkaConnectorConfig.model_validate(
+            {
+                "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
+                "name": "test-connector",
+                "batch.size": 50,
+                "max.buffered.records": 500,
+                "connection.password": "fake-password",
+                "store.kafka.keys": True,
+                "receive.buffer.bytes": -1,
+                "topic.tracking.allow.reset": False,
+            }
+        ).model_dump() == {
+            "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
+            "name": "test-connector",
+            "batch.size": "50",
+            "max.buffered.records": "500",
+            "connection.password": "fake-password",
+            "store.kafka.keys": "true",
+            "receive.buffer.bytes": "-1",
+            "topic.tracking.allow.reset": "false",
+        }
+
     @pytest.mark.asyncio()
     @patch("httpx.AsyncClient.post")
     async def test_should_create_post_requests_for_given_connector_configuration(

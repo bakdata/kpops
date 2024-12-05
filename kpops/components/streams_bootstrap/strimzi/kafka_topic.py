@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING
 from pydantic import BaseModel, Field, model_validator
 from typing_extensions import Any
 
-from kpops.components.common.kubernetes_model import KubernetesManifest, ObjectMeta
 from kpops.components.common.topic import KafkaTopic
+from kpops.manifests.kubernetes import KubernetesManifest, ObjectMeta
 
 if TYPE_CHECKING:
     try:
@@ -44,7 +44,6 @@ class StrimziKafkaTopic(KubernetesManifest):
             "labels": {
                 "strimzi.io/cluster": bootstrap_servers,
             },
-            "kirekhar": None,
         }
         spec = {
             "partitions": topic.config.partitions_count,

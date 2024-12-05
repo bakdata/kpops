@@ -20,7 +20,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     RepoAuthFlags,
     Version,
 )
-from kpops.components.common.kubernetes_model import KubernetesManifest
+from kpops.manifests.kubernetes import KubernetesManifest
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator
