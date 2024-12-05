@@ -143,10 +143,6 @@
       javaOptions:
         maxRAMPercentage: 85
         others: []
-      jmx:
-        metricRules:
-        - .*
-        port: 5555
       kafka:
         applicationId: my-streams-app-id
         bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
@@ -171,26 +167,11 @@
       podAnnotations: {}
       podLabels: {}
       ports: []
-      prometheus:
-        jmx:
-          enabled: true
-          image: solsson/kafka-prometheus-jmx-exporter@sha256
-          imagePullPolicy: IfNotPresent
-          imageTag: 6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e78946143
-          port: 5556
-          resources:
-            limits:
-              cpu: 300m
-              memory: 2G
-            requests:
-              cpu: 100m
-              memory: 500Mi
       readinessProbe: {}
       secretFilesRefs: []
       secretRefs: {}
       secrets: {}
       statefulSet: false
-      terminationGracePeriodSeconds: 300
       tolerations: []
     version: 3.0.3
   from:
@@ -253,10 +234,6 @@
     javaOptions:
       maxRAMPercentage: 85
       others: []
-    jmx:
-      metricRules:
-      - .*
-      port: 5555
     kafka:
       applicationId: my-streams-app-id
       bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
@@ -281,26 +258,11 @@
     podAnnotations: {}
     podLabels: {}
     ports: []
-    prometheus:
-      jmx:
-        enabled: true
-        image: solsson/kafka-prometheus-jmx-exporter@sha256
-        imagePullPolicy: IfNotPresent
-        imageTag: 6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e78946143
-        port: 5556
-        resources:
-          limits:
-            cpu: 300m
-            memory: 2G
-          requests:
-            cpu: 100m
-            memory: 500Mi
     readinessProbe: {}
     secretFilesRefs: []
     secretRefs: {}
     secrets: {}
     statefulSet: false
-    terminationGracePeriodSeconds: 300
     tolerations: []
   version: 3.0.3
 
