@@ -130,8 +130,8 @@ class StreamsBootstrapValues(HelmAppValues):
         description=describe_attr("image_pull_policy", __doc__),
     )
 
-    image_pull_secrets: list[dict[str, str]] = Field(
-        default_factory=list,
+    image_pull_secrets: list[dict[str, str]] | None = Field(
+        default=None,
         description=describe_attr("image_pull_secret", __doc__),
     )
 
@@ -144,8 +144,8 @@ class StreamsBootstrapValues(HelmAppValues):
         description=describe_attr("resources", __doc__),
     )
 
-    ports: list[PortConfig] = Field(
-        default_factory=list,
+    ports: list[PortConfig] | None = Field(
+        default=None,
         description=describe_attr("ports", __doc__),
     )
 
@@ -159,33 +159,33 @@ class StreamsBootstrapValues(HelmAppValues):
         description=describe_attr("configuration_env_prefix", __doc__),
     )
 
-    command_line: dict[str, str | bool | int] = Field(
-        default_factory=dict,
+    command_line: dict[str, str | bool | int] | None = Field(
+        default=None,
         description=describe_attr("command_line", __doc__),
     )
 
-    env: dict[str, str] = Field(
-        default_factory=dict,
+    env: dict[str, str] | None = Field(
+        default=None,
         description=describe_attr("env", __doc__),
     )
 
-    secrets: dict[str, str] = Field(
-        default_factory=dict,
+    secrets: dict[str, str] | None = Field(
+        default=None,
         description=describe_attr("secrets", __doc__),
     )
 
-    secret_refs: dict[str, Any] = Field(
-        default_factory=dict,
+    secret_refs: dict[str, Any] | None = Field(
+        default=None,
         description=describe_attr("secret_refs", __doc__),
     )
 
-    secret_files_refs: list[str] = Field(
-        default_factory=list,
+    secret_files_refs: list[str] | None = Field(
+        default=None,
         description=describe_attr("secret_files_refs", __doc__),
     )
 
-    files: dict[str, Any] = Field(
-        default_factory=dict,
+    files: dict[str, Any] | None = Field(
+        default=None,
         description=describe_attr("files", __doc__),
     )
 
@@ -194,33 +194,33 @@ class StreamsBootstrapValues(HelmAppValues):
         description=describe_attr("java_options", __doc__),
     )
 
-    pod_annotations: dict[str, str] = Field(
-        default_factory=dict,
+    pod_annotations: dict[str, str] | None = Field(
+        default=None,
         description=describe_attr("pod_annotations", __doc__),
     )
 
-    pod_labels: dict[str, str] = Field(
-        default_factory=dict,
+    pod_labels: dict[str, str] | None = Field(
+        default=None,
         description=describe_attr("pod_labels", __doc__),
     )
 
-    liveness_probe: dict[str, Any] = Field(
-        default_factory=dict,
+    liveness_probe: dict[str, Any] | None = Field(
+        default=None,
         description=describe_attr("liveness_probe", __doc__),
     )
 
-    readiness_probe: dict[str, Any] = Field(
-        default_factory=dict,
+    readiness_probe: dict[str, Any] | None = Field(
+        default=None,
         description=describe_attr("readiness_probe", __doc__),
     )
 
-    affinity: dict[str, Any] = Field(
-        default_factory=dict,
+    affinity: dict[str, Any] | None = Field(
+        default=None,
         description=describe_attr("affinity", __doc__),
     )
 
-    tolerations: list[Toleration] = Field(
-        default_factory=list,
+    tolerations: list[Toleration] | None = Field(
+        default=None,
         description=describe_attr("tolerations", __doc__),
     )
 
