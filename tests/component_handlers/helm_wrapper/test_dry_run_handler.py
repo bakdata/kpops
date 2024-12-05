@@ -8,7 +8,7 @@ from pytest_mock import MockerFixture
 
 from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
 from kpops.component_handlers.helm_wrapper.model import HelmTemplate
-from kpops.component_handlers.kubernetes.model import KubernetesManifest
+from kpops.components.common.kubernetes_model import KubernetesManifest
 
 log = Logger("TestLogger")
 
@@ -35,7 +35,14 @@ class TestDryRunHandler:
     ):
         helm_mock.get_manifest.return_value = iter(())
         new_release = iter(
-            [HelmTemplate(Path("path.yaml"), KubernetesManifest({"a": 1}))]
+            [
+                HelmTemplate(
+                    Path("path.yaml"),
+                    KubernetesManifest(
+                        **{"apiVersion": "v1", "kind": "Deployment", "metadata": {}}
+                    ),
+                )
+            ]
         )
         mock_load_manifest = mocker.patch(
             "kpops.component_handlers.helm_wrapper.dry_run_handler.Helm.load_manifest",
@@ -61,12 +68,24 @@ class TestDryRunHandler:
         caplog: LogCaptureFixture,
     ):
         current_release = [
-            HelmTemplate(Path("path.yaml"), KubernetesManifest({"a": 1}))
+            HelmTemplate(
+                Path("path.yaml"),
+                KubernetesManifest(
+                    **{"apiVersion": "v1", "kind": "Deployment", "metadata": {}}
+                ),
+            )
         ]
 
         helm_mock.get_manifest.return_value = iter(current_release)
         new_release = iter(
-            [HelmTemplate(Path("path.yaml"), KubernetesManifest({"a": 1}))]
+            [
+                HelmTemplate(
+                    Path("path.yaml"),
+                    KubernetesManifest(
+                        **{"apiVersion": "v1", "kind": "Deployment", "metadata": {}}
+                    ),
+                )
+            ]
         )
         mock_load_manifest = mocker.patch(
             "kpops.component_handlers.helm_wrapper.dry_run_handler.Helm.load_manifest",

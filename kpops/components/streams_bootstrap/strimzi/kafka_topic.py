@@ -3,8 +3,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, Field, model_validator
-from typing_extensions import Any, override
+from typing_extensions import Any
 
+from kpops.components.common.kubernetes_model import KubernetesManifest, ObjectMeta
 from kpops.components.common.topic import KafkaTopic
 
 if TYPE_CHECKING:
@@ -30,23 +31,11 @@ class TopicSpec(BaseModel):
         return values
 
 
-class Metadata(BaseModel):
-    name: str
-    namespace: str | None = None
-    labels: dict[str, str]
-
-
-class StrimziKafkaTopic(BaseModel):
-    api_version: str = Field(default="kafka.strimzi.io/v1beta2", alias="apiVersion")
-    kind: str = Field(default="KafkaTopic")
-    metadata: Metadata
+class StrimziKafkaTopic(KubernetesManifest):
+    api_version: str = "kafka.strimzi.io/v1beta2"
+    kind: str = "KafkaTopic"
+    metadata: ObjectMeta
     spec: TopicSpec
-
-    @override
-    def model_dump(self, **_: Any) -> dict[str, Any]:
-        return super().model_dump(
-            by_alias=True, exclude_none=True, exclude_defaults=False
-        )
 
     @classmethod
     def create_strimzi_topic(cls, topic: KafkaTopic, bootstrap_servers: str) -> Self:
@@ -55,10 +44,11 @@ class StrimziKafkaTopic(BaseModel):
             "labels": {
                 "strimzi.io/cluster": bootstrap_servers,
             },
+            "kirekhar": None,
         }
         spec = {
             "partitions": topic.config.partitions_count,
             "replicas": topic.config.replication_factor,
             "config": topic.config.configs,
         }
-        return cls(metadata=Metadata(**metadata), spec=TopicSpec(**spec))
+        return cls(metadata=ObjectMeta(**metadata), spec=TopicSpec(**spec))
