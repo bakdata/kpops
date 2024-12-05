@@ -16,12 +16,12 @@ from kpops.components.base_components.models.from_section import (
 from kpops.components.base_components.models.to_section import (
     ToSection,
 )
-from kpops.components.common.kubernetes_model import KubernetesManifest
 from kpops.components.common.topic import (
     KafkaTopic,
     OutputTopicTypes,
     TopicConfig,
 )
+from kpops.manifest.kubernetes import KubernetesManifest
 from kpops.utils.docstring import describe_attr
 
 

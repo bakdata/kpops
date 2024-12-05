@@ -13,12 +13,12 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmConfig,
     HelmTemplateFlags,
     HelmUpgradeInstallFlags,
-    KubernetesManifest,
     ParseError,
     RepoAuthFlags,
     Version,
 )
 from kpops.components.common.app_type import AppType
+from kpops.manifest.kubernetes import KubernetesManifest
 
 
 class TestHelmWrapper:

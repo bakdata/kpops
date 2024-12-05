@@ -2,11 +2,7 @@ from textwrap import dedent
 
 import pytest
 
-from kpops.components.common.kubernetes_model import (
-    KubernetesManifest,
-    ObjectMeta,
-    OwnerReference,
-)
+from kpops.manifest.kubernetes import KubernetesManifest, ObjectMeta
 
 
 class TestCRD(KubernetesManifest):
@@ -118,15 +114,6 @@ def test_objectmeta_serialization():
         namespace="default",
         labels={"app": "test"},
         annotations=None,  # This field should be included
-        owner_references=[
-            OwnerReference(
-                apiVersion="v1",
-                kind="Controller",
-                name="controller",
-                uid="12345",
-                controller=True,
-            )
-        ],
     )
     serialized = metadata.model_dump()
     expected_serialized = {
@@ -134,14 +121,5 @@ def test_objectmeta_serialization():
         "name": "example",
         "namespace": "default",
         "labels": {"app": "test"},
-        "ownerReferences": [
-            {
-                "apiVersion": "v1",
-                "kind": "Controller",
-                "name": "controller",
-                "uid": "12345",
-                "controller": True,
-            }
-        ],
     }
     assert serialized == expected_serialized

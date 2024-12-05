@@ -8,7 +8,7 @@ from pytest_mock import MockerFixture
 
 from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
 from kpops.component_handlers.helm_wrapper.model import HelmTemplate
-from kpops.components.common.kubernetes_model import KubernetesManifest
+from kpops.manifest.kubernetes import KubernetesManifest
 
 log = Logger("TestLogger")
 

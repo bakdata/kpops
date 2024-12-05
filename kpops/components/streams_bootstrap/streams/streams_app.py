@@ -9,7 +9,6 @@ from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
 from kpops.components.base_components.helm_app import HelmApp
 from kpops.components.base_components.kafka_app import KafkaAppCleaner
 from kpops.components.common.app_type import AppType
-from kpops.components.common.kubernetes_model import KubernetesManifest
 from kpops.components.common.topic import KafkaTopic
 from kpops.components.streams_bootstrap.base import (
     StreamsBootstrap,
@@ -19,7 +18,8 @@ from kpops.components.streams_bootstrap.streams.model import (
 )
 from kpops.config import get_config
 from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
-from kpops.manifests.argo import ArgoHook, enrich_annotations
+from kpops.manifest.argo import ArgoHook, enrich_annotations
+from kpops.manifest.kubernetes import KubernetesManifest
 from kpops.utils.docstring import describe_attr
 
 log = logging.getLogger("StreamsApp")

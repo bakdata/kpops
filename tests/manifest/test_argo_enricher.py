@@ -2,7 +2,7 @@ from typing import Any
 
 import pytest
 
-from kpops.manifests.argo import ArgoHook, ArgoSyncWave, enrich_annotations
+from kpops.manifest.argo import ArgoHook, ArgoSyncWave, enrich_annotations
 
 
 @pytest.fixture
