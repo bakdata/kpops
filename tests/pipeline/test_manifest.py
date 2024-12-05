@@ -13,7 +13,7 @@ from kpops.cli.main import app
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, Version
 from kpops.const.file_type import PIPELINE_YAML
-from kpops.manifest.kubernetes import KubernetesManifest
+from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.utils.yaml import print_yaml
 
 MANIFEST_YAML = "manifest.yaml"

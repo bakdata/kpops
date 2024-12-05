@@ -2,7 +2,7 @@ from textwrap import dedent
 
 import pytest
 
-from kpops.manifest.kubernetes import KubernetesManifest
+from kpops.manifests.kubernetes import KubernetesManifest
 
 
 class TestKubernetesManifest:

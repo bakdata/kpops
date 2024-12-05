@@ -18,7 +18,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     Version,
 )
 from kpops.components.common.app_type import AppType
-from kpops.manifest.kubernetes import KubernetesManifest
+from kpops.manifests.kubernetes import KubernetesManifest
 
 
 class TestHelmWrapper:

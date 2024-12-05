@@ -27,8 +27,8 @@ from kpops.components.base_components.kubernetes_app import (
     KubernetesAppValues,
 )
 from kpops.config import get_config
-from kpops.manifest.argo import ArgoSyncWave, enrich_annotations
-from kpops.manifest.kubernetes import K8S_LABEL_MAX_LEN, KubernetesManifest
+from kpops.manifests.argo import ArgoSyncWave, enrich_annotations
+from kpops.manifests.kubernetes import K8S_LABEL_MAX_LEN, KubernetesManifest
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import exclude_by_name

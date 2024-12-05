@@ -18,8 +18,8 @@ from kpops.components.streams_bootstrap.base import (
 from kpops.components.streams_bootstrap.producer.model import ProducerAppValues
 from kpops.config import get_config
 from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
-from kpops.manifest.argo import ArgoHook, enrich_annotations
-from kpops.manifest.kubernetes import KubernetesManifest
+from kpops.manifests.argo import ArgoHook, enrich_annotations
+from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.utils.docstring import describe_attr
 
 log = logging.getLogger("ProducerApp")

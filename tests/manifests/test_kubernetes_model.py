@@ -2,7 +2,7 @@ from textwrap import dedent
 
 import pytest
 
-from kpops.manifest.kubernetes import KubernetesManifest, ObjectMeta
+from kpops.manifests.kubernetes import KubernetesManifest, ObjectMeta
 
 
 class TestCRD(KubernetesManifest):

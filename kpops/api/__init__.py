@@ -17,7 +17,7 @@ from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.config import KpopsConfig
-from kpops.manifest.kubernetes import KubernetesManifest
+from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.pipeline import (
     Pipeline,
     PipelineGenerator,

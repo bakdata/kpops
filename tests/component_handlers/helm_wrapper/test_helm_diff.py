@@ -6,7 +6,7 @@ from pytest import LogCaptureFixture
 
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
 from kpops.component_handlers.helm_wrapper.model import HelmDiffConfig, HelmTemplate
-from kpops.manifest.kubernetes import KubernetesManifest, ObjectMeta
+from kpops.manifests.kubernetes import KubernetesManifest, ObjectMeta
 from kpops.utils.dict_differ import Change
 
 logger = logging.getLogger("TestHelmDiff")
