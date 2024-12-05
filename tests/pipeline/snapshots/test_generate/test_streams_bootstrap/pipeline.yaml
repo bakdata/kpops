@@ -10,10 +10,8 @@
     suffix: -clean
     type: producer-app-cleaner
     values:
-      affinity: {}
       commandLine:
         FAKE_ARG: fake-arg-value
-      env: {}
       files:
         log4j2.xml:
           content: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Configuration>\n\
@@ -25,7 +23,6 @@
           mountPath: app/resources
       image: my-registry/my-producer-image
       imagePullPolicy: IfNotPresent
-      imagePullSecrets: []
       imageTag: 1.0.0
       kafka:
         bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
@@ -33,16 +30,7 @@
           my-producer-app-output-topic-label: my-labeled-producer-app-topic-output
         outputTopic: my-producer-app-output-topic
         schemaRegistryUrl: http://localhost:8081/
-      livenessProbe: {}
-      podAnnotations: {}
-      podLabels: {}
-      ports: []
-      readinessProbe: {}
       schedule: 30 3/8 * * *
-      secretFilesRefs: []
-      secretRefs: {}
-      secrets: {}
-      tolerations: []
     version: 3.0.3
   name: my-producer-app
   namespace: example-namespace
@@ -63,10 +51,8 @@
         type: output
   type: my-producer-app
   values:
-    affinity: {}
     commandLine:
       FAKE_ARG: fake-arg-value
-    env: {}
     files:
       log4j2.xml:
         content: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Configuration>\n  \
@@ -78,7 +64,6 @@
         mountPath: app/resources
     image: my-registry/my-producer-image
     imagePullPolicy: IfNotPresent
-    imagePullSecrets: []
     imageTag: 1.0.0
     kafka:
       bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
@@ -86,16 +71,7 @@
         my-producer-app-output-topic-label: my-labeled-producer-app-topic-output
       outputTopic: my-producer-app-output-topic
       schemaRegistryUrl: http://localhost:8081/
-    livenessProbe: {}
-    podAnnotations: {}
-    podLabels: {}
-    ports: []
-    readinessProbe: {}
     schedule: 30 3/8 * * *
-    secretFilesRefs: []
-    secretRefs: {}
-    secrets: {}
-    tolerations: []
   version: 3.0.3
 - _cleaner:
     name: my-streams-app
@@ -109,10 +85,8 @@
     suffix: -clean
     type: streams-app-cleaner
     values:
-      affinity: {}
       commandLine:
         CONVERT_XML: true
-      env: {}
       files:
         log4j2.xml:
           content: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Configuration>\n\
@@ -124,7 +98,6 @@
           mountPath: app/resources
       image: my-registry/my-streams-app-image
       imagePullPolicy: IfNotPresent
-      imagePullSecrets: []
       imageTag: 1.0.0
       javaOptions:
         maxRAMPercentage: 85
@@ -147,16 +120,7 @@
           my-output-topic-label: my-labeled-topic-output
         outputTopic: my-output-topic
         schemaRegistryUrl: http://localhost:8081/
-      livenessProbe: {}
-      podAnnotations: {}
-      podLabels: {}
-      ports: []
-      readinessProbe: {}
-      secretFilesRefs: []
-      secretRefs: {}
-      secrets: {}
       statefulSet: false
-      tolerations: []
     version: 3.0.3
   from:
     components: {}
@@ -198,10 +162,8 @@
         value_schema: com.bakdata.kafka.DeadLetter
   type: my-streams-app
   values:
-    affinity: {}
     commandLine:
       CONVERT_XML: true
-    env: {}
     files:
       log4j2.xml:
         content: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Configuration>\n  \
@@ -213,7 +175,6 @@
         mountPath: app/resources
     image: my-registry/my-streams-app-image
     imagePullPolicy: IfNotPresent
-    imagePullSecrets: []
     imageTag: 1.0.0
     javaOptions:
       maxRAMPercentage: 85
@@ -236,15 +197,6 @@
         my-output-topic-label: my-labeled-topic-output
       outputTopic: my-output-topic
       schemaRegistryUrl: http://localhost:8081/
-    livenessProbe: {}
-    podAnnotations: {}
-    podLabels: {}
-    ports: []
-    readinessProbe: {}
-    secretFilesRefs: []
-    secretRefs: {}
-    secrets: {}
     statefulSet: false
-    tolerations: []
   version: 3.0.3
 
