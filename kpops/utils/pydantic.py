@@ -1,3 +1,4 @@
+import json
 import logging
 from pathlib import Path
 from typing import Any
@@ -40,6 +41,12 @@ def by_alias(model: BaseModel, field_name: str) -> str:
     :param model: Model that owns the field
     """
     return model.model_fields.get(field_name, Field()).alias or field_name
+
+
+def to_str(value: Any) -> str:
+    if isinstance(value, str):
+        return value
+    return json.dumps(value)
 
 
 _V = TypeVar("_V")
