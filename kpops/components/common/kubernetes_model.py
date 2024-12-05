@@ -1,10 +1,11 @@
 import enum
 from collections.abc import Iterator
-from typing import Any, override
+from typing import Any
 
 import pydantic
 import yaml
 from pydantic import ConfigDict, Field
+from typing_extensions import override
 
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel, by_alias
@@ -26,11 +27,24 @@ class OwnerReference(CamelCaseConfigModel):
     controller: bool | None = None
     block_owner_deletion: bool | None = None
 
+    @pydantic.model_serializer(mode="wrap", when_used="always")
+    def serialize_model(
+        self,
+        default_serialize_handler: pydantic.SerializerFunctionWrapHandler,
+        info: pydantic.SerializationInfo,
+    ) -> dict[str, Any]:
+        result = default_serialize_handler(self)
+        return {
+            by_alias(self, name): value
+            for name, value in result.items()
+            if name in self.model_fields_set
+        }
+
 
 class ObjectMeta(CamelCaseConfigModel):
     """Metadata for all Kubernetes objects.
 
-    ref: https://gtsystem.github.io/lightkube-models/1.19/models/meta_v1/#objectmeta
+    https://gtsystem.github.io/lightkube-models/1.19/models/meta_v1/#objectmeta
 
     """
 
