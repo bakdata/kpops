@@ -290,7 +290,7 @@ class JMXConfig(CamelCaseConfigModel, DescConfigModel):
     )
 
     metric_rules: list[str] = Field(
-        default=[],
+        default_factory=list,
         description=describe_attr("metric_rules", __doc__),
     )
 

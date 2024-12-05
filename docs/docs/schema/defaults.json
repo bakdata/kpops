@@ -241,7 +241,6 @@
             "description": "JMX configuration options.",
             "properties": {
                 "metricRules": {
-                    "default": [],
                     "description": "List of JMX metric rules.",
                     "items": {
                         "type": "string"
