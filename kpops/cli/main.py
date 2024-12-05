@@ -227,7 +227,7 @@ def deploy(
                 )
                 for resource in resources:
                     for rendered_manifest in resource:
-                        print_yaml(rendered_manifest)
+                        print_yaml(rendered_manifest.model_dump())
 
 
 @app.command(help="Destroy pipeline steps")

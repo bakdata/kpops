@@ -20,12 +20,10 @@ from kpops.component_handlers.helm_wrapper.model import (
     RepoAuthFlags,
     Version,
 )
-from kpops.component_handlers.kubernetes.model import KubernetesManifest
+from kpops.manifests.kubernetes import KubernetesManifest
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator
-
-    from kpops.components.base_components.models.resource import Resource
 
 
 log = logging.getLogger("Helm")
@@ -162,7 +160,7 @@ class Helm:
         namespace: str,
         values: dict[str, Any],
         flags: HelmTemplateFlags | None = None,
-    ) -> Resource:
+    ) -> tuple[KubernetesManifest, ...]:
         """From Helm: Render chart templates locally and display the output.
 
         Any values that would normally be looked up or retrieved in-cluster will
@@ -193,7 +191,7 @@ class Helm:
             command.extend(flags.to_command())
             output = self.__execute(command)
             manifests = KubernetesManifest.from_yaml(output)
-            return list(manifests)
+            return tuple(manifests)
 
     def get_manifest(self, release_name: str, namespace: str) -> Iterable[HelmTemplate]:
         command = [
