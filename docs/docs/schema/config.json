@@ -248,6 +248,19 @@
             },
             "description": "Configuration for Kafka REST Proxy."
         },
+        "kafka_topic_resource_label": {
+            "anyOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "type": "null"
+                }
+            ],
+            "default": null,
+            "description": "The label to identify the KafkaTopic resources managed by the Topic Operator. This does not have to be the name of the Kafka cluster. It can be the label assigned to the KafkaTopic resource. If you deploy more than one Topic Operator, the labels must be unique for each. That is, the operators cannot manage the same resources.",
+            "title": "Kafka Topic Resource Label"
+        },
         "operation_mode": {
             "allOf": [
                 {

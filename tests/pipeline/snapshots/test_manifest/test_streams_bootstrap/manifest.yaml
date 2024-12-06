@@ -71,6 +71,30 @@ spec:
   suspend: false
 
 ---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: my-cluster
+  name: my-producer-app-output-topic
+spec:
+  config: {}
+  partitions: 1
+  replicas: 1
+
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: my-cluster
+  name: my-labeled-producer-app-topic-output
+spec:
+  config: {}
+  partitions: 1
+  replicas: 1
+
+---
 apiVersion: v1
 data:
   log4j2.xml: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Configuration>\n    <Appenders>\n\
@@ -208,4 +232,53 @@ spec:
       - configMap:
           name: resources-streams-bootstrap-my-streams-app
         name: config
+
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: my-cluster
+  name: my-output-topic
+spec:
+  config: {}
+  partitions: 1
+  replicas: 1
+
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: my-cluster
+  name: my-error-topic
+spec:
+  config: {}
+  partitions: 1
+  replicas: 1
+
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: my-cluster
+  name: my-labeled-topic-output
+spec:
+  config: {}
+  partitions: 1
+  replicas: 1
+
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: my-cluster
+  name: resources-streams-bootstrap-my-streams-app-error
+spec:
+  config:
+    cleanup.policy: compact,delete
+  partitions: 1
+  replicas: 1
 
