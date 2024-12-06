@@ -5,7 +5,9 @@ from typing import TYPE_CHECKING
 from pydantic import ConfigDict, Field, model_validator
 from typing_extensions import Any
 
+from kpops.api.exception import ValidationError
 from kpops.components.common.topic import KafkaTopic
+from kpops.config import get_config
 from kpops.manifests.kubernetes import KubernetesManifest, ObjectMeta
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import CamelCaseConfigModel
@@ -62,12 +64,17 @@ class StrimziKafkaTopic(KubernetesManifest):
     status: dict[str, Any] | None = None
 
     @classmethod
-    def from_topic(cls, topic: KafkaTopic, cluster_name: str) -> Self:
+    def from_topic(cls, topic: KafkaTopic) -> Self:
+        topic_resource_label = get_config().kafka_topic_resource_label
+        if not topic_resource_label:
+            msg = "When manifesting KafkaTopic you must define 'kafka_topic_resource_label' in the config.yaml"
+            raise ValidationError(msg)
+
         metadata = ObjectMeta.model_validate(
             {
                 "name": topic.name,
                 "labels": {
-                    "strimzi.io/cluster": cluster_name,
+                    "strimzi.io/cluster": topic_resource_label,
                 },
             }
         )

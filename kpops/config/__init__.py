@@ -125,6 +125,10 @@ class KpopsConfig(BaseSettings):
         default=OperationMode.MANAGED,
         description="The operation mode of KPOps (managed, manifest, argo).",
     )
+    kafka_topic_resource_label: str | None = Field(
+        default=None,
+        description="The label to identify the KafkaTopic resources managed by the Topic Operator. This does not have to be the name of the Kafka cluster. It can be the label assigned to the KafkaTopic resource. If you deploy more than one Topic Operator, the labels must be unique for each. That is, the operators cannot manage the same resources.",
+    )
 
     model_config = SettingsConfigDict(
         env_prefix=ENV_PREFIX,

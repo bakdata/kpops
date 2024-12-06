@@ -90,9 +90,7 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
         resource = super().manifest_deploy()
         if self.to:
             resource = resource + tuple(
-                # TODO: change to cluster_name
-                StrimziKafkaTopic.from_topic(topic, self.values.kafka.bootstrap_servers)
-                for topic in self.to.kafka_topics
+                StrimziKafkaTopic.from_topic(topic) for topic in self.to.kafka_topics
             )
 
         return resource

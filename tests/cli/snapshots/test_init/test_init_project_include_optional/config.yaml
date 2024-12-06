@@ -17,6 +17,7 @@ kafka_connect:
 kafka_rest:
   timeout: 30
   url: http://localhost:8082/
+kafka_topic_resource_label: null
 operation_mode: managed
 pipeline_base_dir: .
 retain_clean_jobs: false

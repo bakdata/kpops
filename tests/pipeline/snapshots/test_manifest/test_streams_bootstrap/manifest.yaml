@@ -75,7 +75,7 @@ apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
   labels:
-    strimzi.io/cluster: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+    strimzi.io/cluster: my-cluster
   name: my-producer-app-output-topic
 spec:
   config: {}
@@ -87,7 +87,7 @@ apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
   labels:
-    strimzi.io/cluster: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+    strimzi.io/cluster: my-cluster
   name: my-labeled-producer-app-topic-output
 spec:
   config: {}
@@ -238,7 +238,7 @@ apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
   labels:
-    strimzi.io/cluster: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+    strimzi.io/cluster: my-cluster
   name: my-output-topic
 spec:
   config: {}
@@ -250,7 +250,7 @@ apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
   labels:
-    strimzi.io/cluster: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+    strimzi.io/cluster: my-cluster
   name: my-error-topic
 spec:
   config: {}
@@ -262,7 +262,7 @@ apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
   labels:
-    strimzi.io/cluster: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+    strimzi.io/cluster: my-cluster
   name: my-labeled-topic-output
 spec:
   config: {}
@@ -274,7 +274,7 @@ apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
   labels:
-    strimzi.io/cluster: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+    strimzi.io/cluster: my-cluster
   name: resources-streams-bootstrap-my-streams-app-error
 spec:
   config:
