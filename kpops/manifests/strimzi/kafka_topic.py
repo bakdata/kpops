@@ -62,12 +62,12 @@ class StrimziKafkaTopic(KubernetesManifest):
     status: dict[str, Any] | None = None
 
     @classmethod
-    def create_strimzi_topic(cls, topic: KafkaTopic, bootstrap_servers: str) -> Self:
+    def from_topic(cls, topic: KafkaTopic, cluster_name: str) -> Self:
         metadata = ObjectMeta.model_validate(
             {
                 "name": topic.name,
                 "labels": {
-                    "strimzi.io/cluster": bootstrap_servers,
+                    "strimzi.io/cluster": cluster_name,
                 },
             }
         )

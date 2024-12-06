@@ -12,7 +12,6 @@ from typing_extensions import override
 from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
 from kpops.components.base_components import KafkaApp
 from kpops.components.base_components.helm_app import HelmApp
-from kpops.components.common.topic import KafkaTopic
 from kpops.components.streams_bootstrap.model import StreamsBootstrapValues
 from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.manifests.strimzi.kafka_topic import StrimziKafkaTopic
@@ -90,16 +89,10 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
     def manifest_deploy(self) -> tuple[KubernetesManifest, ...]:
         resource = super().manifest_deploy()
         if self.to:
-            resource = resource + self.manifest_strimzi_topics(self.to.kafka_topics)
+            resource = resource + tuple(
+                # TODO: change to cluster_name
+                StrimziKafkaTopic.from_topic(topic, self.values.kafka.bootstrap_servers)
+                for topic in self.to.kafka_topics
+            )
 
         return resource
-
-    def manifest_strimzi_topics(
-        self, kafka_topics: list[KafkaTopic]
-    ) -> tuple[StrimziKafkaTopic, ...]:
-        return tuple(
-            StrimziKafkaTopic.create_strimzi_topic(
-                topic, self.values.kafka.bootstrap_servers
-            )
-            for topic in kafka_topics
-        )
