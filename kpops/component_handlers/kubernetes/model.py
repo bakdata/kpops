@@ -10,6 +10,9 @@ from kpops.utils.types import JsonType
 
 K8S_LABEL_MAX_LEN = 63
 
+# https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs
+K8S_CRON_JOB_NAME_MAX_LEN = 52
+
 
 class KubernetesManifest(UserDict[str, JsonType]):
     """Representation of a Kubernetes API object as YAML/JSON mapping."""
