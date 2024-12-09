@@ -16,20 +16,17 @@ from typing_extensions import override
 from kpops.api.exception import ValidationError
 from kpops.api.operation import OperationMode
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
-from kpops.utils.docstring import describe_attr, describe_object
+from kpops.utils.docstring import describe_object
 from kpops.utils.pydantic import YamlConfigSettingsSource
 
 ENV_PREFIX = "KPOPS_"
 
 
 class StrimziTopicConfig(BaseSettings):
-    """Configuration for Strimzi Kafka Topics.
-
-    :param resource_label: The label to identify the KafkaTopic resources managed by the Topic Operator. This does not have to be the name of the Kafka cluster. It can be the label assigned to the KafkaTopic resource. If you deploy more than one Topic Operator, the labels must be unique for each. That is, the operators cannot manage the same resources.
-    """
+    """Configuration for Strimzi Kafka Topics."""
 
     resource_label: tuple[str, str] = Field(
-        description=describe_attr("resource_label", __doc__)
+        description="The label to identify the KafkaTopic resources managed by the Topic Operator. This does not have to be the name of the Kafka cluster. It can be the label assigned to the KafkaTopic resource. If you deploy more than one Topic Operator, the labels must be unique for each. That is, the operators cannot manage the same resources."
     )
 
     @pydantic.field_validator("resource_label", mode="before")
