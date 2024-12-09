@@ -23,7 +23,7 @@ class TopicSpec(CamelCaseConfigModel):
 
     :param partitions: The number of partitions the topic should have. This cannot be decreased after topic creation. It can be increased after topic creation, but it is important to understand the consequences that has, especially for topics with semantic partitioning. When absent this will default to the broker configuration for `num.partitions`.
     :param replicas: The number of replicas the topic should have. When absent this will default to the broker configuration for `default.replication.factor`.
-    :param config: The topic configuration.
+    :param config: The topic configuration. Topic config reference: https://docs.confluent.io/platform/current/installation/configuration/topic-configs.html
 
     """
 
@@ -33,7 +33,7 @@ class TopicSpec(CamelCaseConfigModel):
     replicas: int = Field(
         default=1, ge=1, le=32767, description=describe_attr("replicas", __doc__)
     )
-    config: dict[str, str | int] = Field(
+    config: dict[str, Any] = Field(
         default_factory=dict, description=describe_attr("config", __doc__)
     )
 
