@@ -33,8 +33,8 @@ class TopicSpec(CamelCaseConfigModel):
     replicas: int = Field(
         default=1, ge=1, le=32767, description=describe_attr("replicas", __doc__)
     )
-    config: dict[str, Any] = Field(
-        default_factory=dict, description=describe_attr("config", __doc__)
+    config: dict[str, Any] | None = Field(
+        default=None, description=describe_attr("config", __doc__)
     )
 
     model_config = ConfigDict(extra="allow")
