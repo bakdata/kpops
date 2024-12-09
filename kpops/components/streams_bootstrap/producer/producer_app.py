@@ -4,6 +4,7 @@ from functools import cached_property
 from pydantic import Field, ValidationError, computed_field
 from typing_extensions import override
 
+from kpops.component_handlers.kubernetes.model import K8S_CRON_JOB_NAME_MAX_LEN
 from kpops.component_handlers.kubernetes.utils import trim
 from kpops.components.base_components.kafka_app import KafkaAppCleaner
 from kpops.components.common.app_type import AppType
@@ -79,7 +80,7 @@ class ProducerApp(StreamsBootstrap):
     @override
     def helm_name_override(self) -> str:
         if self.is_cron_job:
-            return trim(52, self.full_name, "")
+            return trim(K8S_CRON_JOB_NAME_MAX_LEN, self.full_name, "")
         return super().helm_name_override
 
     @property
