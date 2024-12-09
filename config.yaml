@@ -1,4 +1,4 @@
 kafka_brokers: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"
 pipeline_base_dir: tests/pipeline
 strimzi_topic:
-  kafka_topic_resource_label: "strimzi.io/cluster=my-cluster"
+  resource_label: "strimzi.io/cluster=my-cluster"

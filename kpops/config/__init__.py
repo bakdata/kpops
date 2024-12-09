@@ -23,7 +23,7 @@ ENV_PREFIX = "KPOPS_"
 
 
 class StrimziTopicConfig(BaseSettings):
-    """Configuration for Strimzi Kafka Topics.\
+    """Configuration for Strimzi Kafka Topics.
 
     :param resource_label: The label to identify the KafkaTopic resources managed by the Topic Operator. This does not have to be the name of the Kafka cluster. It can be the label assigned to the KafkaTopic resource. If you deploy more than one Topic Operator, the labels must be unique for each. That is, the operators cannot manage the same resources.
     """
@@ -43,7 +43,7 @@ class StrimziTopicConfig(BaseSettings):
                 key, value = next(iter(value.items()))
                 return key, value
             case _:
-                msg = "'kafka_topic_resource_label' should be defined either like 'foo=bar' or as a valid dictionary."
+                msg = "'resource_label' should be defined either like 'foo=bar' or as a valid dictionary."
                 raise ValidationError(msg)
 
 
@@ -152,10 +152,6 @@ class KpopsConfig(BaseSettings):
         default=OperationMode.MANAGED,
         description="The operation mode of KPOps (managed, manifest, argo).",
     )
-    # kafka_topic_resource_label: str | None = Field(
-    #     default=None,
-    #     description="",
-    # )
     strimzi_topic: StrimziTopicConfig | None = Field(
         default=None,
         description=describe_object(StrimziTopicConfig.__doc__),

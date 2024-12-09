@@ -66,7 +66,7 @@ class StrimziKafkaTopic(KubernetesManifest):
     def from_topic(cls, topic: KafkaTopic) -> Self:
         strimzi_topic = get_config().strimzi_topic
         if not strimzi_topic:
-            msg = "When manifesting KafkaTopic you must define 'strimzi_topic.kafka_topic_resource_label' in the config.yaml"
+            msg = "When manifesting KafkaTopic you must define 'strimzi_topic.resource_label' in the config.yaml"
             raise ValidationError(msg)
         topic_resource_label = strimzi_topic.resource_label
 
