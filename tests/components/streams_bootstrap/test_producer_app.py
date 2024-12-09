@@ -41,7 +41,7 @@ class TestProducerApp:
 
     @pytest.fixture()
     def producer_app(self) -> ProducerApp:
-        return ProducerApp(
+        producer = ProducerApp(
             name=PRODUCER_APP_NAME,
             **{
                 "version": "3.2.1",
@@ -60,10 +60,12 @@ class TestProducerApp:
                 },
             },
         )
+        assert producer.is_cron_job is False
+        return producer
 
     @pytest.fixture()
     def producer_app_cron_job(self) -> ProducerApp:
-        return ProducerApp(
+        producer = ProducerApp(
             name=PRODUCER_APP_NAME,
             **{
                 "version": "3.2.1",
@@ -83,6 +85,8 @@ class TestProducerApp:
                 },
             },
         )
+        assert producer.is_cron_job is True
+        return producer
 
     @pytest.fixture(autouse=True)
     def empty_helm_get_values(self, mocker: MockerFixture) -> MagicMock:

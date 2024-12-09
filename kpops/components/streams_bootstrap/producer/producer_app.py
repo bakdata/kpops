@@ -55,6 +55,10 @@ class ProducerApp(StreamsBootstrap):
         description=describe_attr("from_", __doc__),
     )
 
+    @property
+    def is_cron_job(self) -> bool:
+        return bool(not self.values.deployment and self.values.schedule)
+
     @computed_field
     @cached_property
     def _cleaner(self) -> ProducerAppCleaner:
@@ -74,7 +78,7 @@ class ProducerApp(StreamsBootstrap):
     @property
     @override
     def helm_name_override(self) -> str:
-        if not self.values.deployment and self.values.schedule:
+        if self.is_cron_job:
             return trim(52, self.full_name, "")
         return super().helm_name_override
 
