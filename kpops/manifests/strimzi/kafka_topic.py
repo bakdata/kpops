@@ -64,17 +64,16 @@ class StrimziKafkaTopic(KubernetesManifest):
 
     @classmethod
     def from_topic(cls, topic: KafkaTopic) -> Self:
-        topic_resource_label = get_config().kafka_topic_resource_label
-        if not topic_resource_label:
-            msg = "When manifesting KafkaTopic you must define 'kafka_topic_resource_label' in the config.yaml"
+        strimzi_topic = get_config().strimzi_topic
+        if not strimzi_topic:
+            msg = "When manifesting KafkaTopic you must define 'strimzi_topic.kafka_topic_resource_label' in the config.yaml"
             raise ValidationError(msg)
+        topic_resource_label = strimzi_topic.resource_label
 
         metadata = ObjectMeta.model_validate(
             {
                 "name": topic.name,
-                "labels": {
-                    "strimzi.io/cluster": topic_resource_label,
-                },
+                "labels": {topic_resource_label[0]: topic_resource_label[1]},
             }
         )
         spec = TopicSpec.model_validate(

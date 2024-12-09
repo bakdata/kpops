@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import ClassVar
+from typing import Any, ClassVar
 
+import pydantic
 from pydantic import AnyHttpUrl, Field, PrivateAttr, TypeAdapter
 from pydantic_settings import (
     BaseSettings,
@@ -12,12 +13,38 @@ from pydantic_settings import (
 )
 from typing_extensions import override
 
+from kpops.api.exception import ValidationError
 from kpops.api.operation import OperationMode
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
-from kpops.utils.docstring import describe_object
+from kpops.utils.docstring import describe_attr, describe_object
 from kpops.utils.pydantic import YamlConfigSettingsSource
 
 ENV_PREFIX = "KPOPS_"
+
+
+class StrimziTopicConfig(BaseSettings):
+    """Configuration for Strimzi Kafka Topics.\
+
+    :param resource_label: The label to identify the KafkaTopic resources managed by the Topic Operator. This does not have to be the name of the Kafka cluster. It can be the label assigned to the KafkaTopic resource. If you deploy more than one Topic Operator, the labels must be unique for each. That is, the operators cannot manage the same resources.
+    """
+
+    resource_label: tuple[str, str] = Field(
+        description=describe_attr("resource_label", __doc__)
+    )
+
+    @pydantic.field_validator("resource_label", mode="before")
+    @classmethod
+    def deserialize_topics(cls, resource_label: Any) -> tuple[str, str]:
+        match resource_label:
+            case str(value) if "=" in value:
+                key, value = value.split("=")
+                return key, value
+            case dict(value) if len(value) == 1:
+                key, value = next(iter(value.items()))
+                return key, value
+            case _:
+                msg = "'kafka_topic_resource_label' should be defined either like 'foo=bar' or as a valid dictionary."
+                raise ValidationError(msg)
 
 
 class TopicNameConfig(BaseSettings):
@@ -125,9 +152,13 @@ class KpopsConfig(BaseSettings):
         default=OperationMode.MANAGED,
         description="The operation mode of KPOps (managed, manifest, argo).",
     )
-    kafka_topic_resource_label: str | None = Field(
+    # kafka_topic_resource_label: str | None = Field(
+    #     default=None,
+    #     description="",
+    # )
+    strimzi_topic: StrimziTopicConfig | None = Field(
         default=None,
-        description="The label to identify the KafkaTopic resources managed by the Topic Operator. This does not have to be the name of the Kafka cluster. It can be the label assigned to the KafkaTopic resource. If you deploy more than one Topic Operator, the labels must be unique for each. That is, the operators cannot manage the same resources.",
+        description=describe_object(StrimziTopicConfig.__doc__),
     )
 
     model_config = SettingsConfigDict(
