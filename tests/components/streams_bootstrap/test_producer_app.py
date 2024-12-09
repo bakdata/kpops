@@ -61,9 +61,43 @@ class TestProducerApp:
             },
         )
 
+    @pytest.fixture()
+    def producer_app_cron_job(self) -> ProducerApp:
+        return ProducerApp(
+            name=PRODUCER_APP_NAME,
+            **{
+                "version": "3.2.1",
+                "namespace": "test-namespace",
+                "values": {
+                    "image": "ProducerApp",
+                    "kafka": {"bootstrapServers": "fake-broker:9092"},
+                    "schedule": "0 12 * * *",
+                },
+                "clean_schemas": True,
+                "to": {
+                    "topics": {
+                        "producer-app-output-topic": TopicConfig(
+                            type=OutputTopicTypes.OUTPUT, partitions_count=10
+                        ),
+                    }
+                },
+            },
+        )
+
     @pytest.fixture(autouse=True)
     def empty_helm_get_values(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch.object(Helm, "get_values", return_value=None)
+
+    def test_helm_name_override(self, producer_app: ProducerApp):
+        assert len(producer_app.helm_name_override) == 63
+        assert producer_app.helm_name_override == PRODUCER_APP_HELM_NAME_OVERRIDE
+
+    def test_cron_job_helm_name_override(self, producer_app_cron_job: ProducerApp):
+        assert len(producer_app_cron_job.helm_name_override) == 52
+        assert (
+            producer_app_cron_job.helm_name_override
+            == "${pipeline.name}-test-producer-app-with-long-n-c4c51"
+        )
 
     def test_cleaner(self, producer_app: ProducerApp):
         cleaner = producer_app._cleaner

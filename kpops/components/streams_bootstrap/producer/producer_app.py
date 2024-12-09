@@ -4,6 +4,7 @@ from functools import cached_property
 from pydantic import Field, ValidationError, computed_field
 from typing_extensions import override
 
+from kpops.component_handlers.kubernetes.utils import trim
 from kpops.components.base_components.kafka_app import KafkaAppCleaner
 from kpops.components.common.app_type import AppType
 from kpops.components.common.topic import (
@@ -69,6 +70,13 @@ class ProducerApp(StreamsBootstrap):
                 raise ValueError(msg)
             case _:
                 super().apply_to_outputs(name, topic)
+
+    @property
+    @override
+    def helm_name_override(self) -> str:
+        if not self.values.deployment and self.values.schedule:
+            return trim(52, self.full_name, "")
+        return super().helm_name_override
 
     @property
     @override
