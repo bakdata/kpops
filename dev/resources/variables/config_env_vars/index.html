@@ -1789,6 +1789,20 @@
 <td>Whether to retain clean up jobs in the cluster or uninstall the, after completion.</td>
 <td>retain_clean_jobs</td>
 </tr>
+<tr>
+<td>KPOPS_OPERATION_MODE</td>
+<td>managed</td>
+<td>False</td>
+<td>The operation mode of KPOps (managed, manifest, argo).</td>
+<td>operation_mode</td>
+</tr>
+<tr>
+<td>KPOPS_KAFKA_TOPIC_RESOURCE_LABEL</td>
+<td></td>
+<td>False</td>
+<td>The label to identify the KafkaTopic resources managed by the Topic Operator. This does not have to be the name of the Kafka cluster. It can be the label assigned to the KafkaTopic resource. If you deploy more than one Topic Operator, the labels must be unique for each. That is, the operators cannot manage the same resources.</td>
+<td>kafka_topic_resource_label</td>
+</tr>
 </tbody>
 </table>
 
