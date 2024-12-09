@@ -41,9 +41,9 @@ class TestProducerApp:
 
     @pytest.fixture()
     def producer_app(self) -> ProducerApp:
-        producer = ProducerApp(
-            name=PRODUCER_APP_NAME,
-            **{
+        producer = ProducerApp.model_validate(
+            {
+                "name": PRODUCER_APP_NAME,
                 "version": "3.2.1",
                 "namespace": "test-namespace",
                 "values": {
@@ -65,9 +65,9 @@ class TestProducerApp:
 
     @pytest.fixture()
     def producer_app_cron_job(self) -> ProducerApp:
-        producer = ProducerApp(
-            name=PRODUCER_APP_NAME,
-            **{
+        producer = ProducerApp.model_validate(
+            {
+                "name": PRODUCER_APP_NAME,
                 "version": "3.2.1",
                 "namespace": "test-namespace",
                 "values": {
