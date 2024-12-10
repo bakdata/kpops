@@ -26,11 +26,17 @@ log = logging.getLogger("KPOpsConfig")
 class StrimziTopicConfig(BaseSettings):
     """Configuration for Strimzi Kafka Topics."""
 
-    label: dict[str, str] = Field(
+    label_: dict[str, str] = Field(
+        alias="label",
         description="The label to identify the KafkaTopic resources managed by the Topic Operator. This does not have to be the name of the Kafka cluster. It can be the label assigned to the KafkaTopic resource. If you deploy more than one Topic Operator, the labels must be unique for each. That is, the operators cannot manage the same resources.",
     )
 
-    @pydantic.field_validator("label", mode="after")
+    @property
+    def cluster_labels(self) -> tuple[str, str]:
+        """Return the defined strimzi_topic.label as a tuple."""
+        return next(iter(self.label_.items()))
+
+    @pydantic.field_validator("label_", mode="after")
     @classmethod
     def label_validator(cls, label: dict[str, str]) -> dict[str, str]:
         if len(label) > 1:
