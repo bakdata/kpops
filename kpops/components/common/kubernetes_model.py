@@ -131,7 +131,7 @@ class RestartPolicy(str, enum.Enum):
     NEVER = "Never"
 
 
-class Toleration(DescConfigModel):
+class Toleration(DescConfigModel, CamelCaseConfigModel):
     """Represents the different Kubernetes tolerations.
 
     https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/

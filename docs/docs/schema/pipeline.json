@@ -2692,7 +2692,7 @@
                     ],
                     "description": "The operator ('Exists' or 'Equal')."
                 },
-                "toleration_seconds": {
+                "tolerationSeconds": {
                     "anyOf": [
                         {
                             "type": "integer"
@@ -2703,7 +2703,7 @@
                     ],
                     "default": null,
                     "description": "The duration for which the toleration is valid.",
-                    "title": "Toleration Seconds"
+                    "title": "Tolerationseconds"
                 },
                 "value": {
                     "anyOf": [
