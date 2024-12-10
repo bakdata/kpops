@@ -7,6 +7,7 @@ from pydantic import AliasChoices, ConfigDict, Field
 
 from kpops.components.base_components.helm_app import HelmAppValues
 from kpops.components.common.kubernetes_model import (
+    Affinity,
     ImagePullPolicy,
     ProtocolSchema,
     Resources,
@@ -215,7 +216,7 @@ class StreamsBootstrapValues(HelmAppValues):
         description=describe_attr("readiness_probe", __doc__),
     )
 
-    affinity: dict[str, Any] | None = Field(
+    affinity: Affinity | None = Field(
         default=None,
         description=describe_attr("affinity", __doc__),
     )

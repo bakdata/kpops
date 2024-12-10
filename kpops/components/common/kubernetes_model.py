@@ -5,7 +5,7 @@ import pydantic
 from pydantic import Field
 
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import DescConfigModel
+from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel
 
 
 class ServiceType(str, enum.Enum):
@@ -40,6 +40,78 @@ class ImagePullPolicy(str, enum.Enum):
     ALWAYS = "Always"
     IF_NOT_PRESENT = "IfNotPresent"
     NEVER = "Never"
+
+
+Weight = Annotated[int, pydantic.Field(ge=1, le=100)]
+
+
+class Operator(str, enum.Enum):
+    IN = "In"
+    NOT_IN = "NotIn"
+    EXISTS = "Exists"
+    DOES_NOT_EXIST = "DoesNotExist"
+
+
+class SelectorRequirement(DescConfigModel, CamelCaseConfigModel):
+    key: str
+    operator: Operator
+    values: list[str] | None = pydantic.Field(
+        default=None,
+        description="An array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. If the operator is Gt or Lt, the values array must have a single element, which will be interpreted as an integer. This array is replaced during a strategic merge patch.",
+    )
+
+
+class NodeSelectorTerm(DescConfigModel, CamelCaseConfigModel):
+    match_expressions: list[SelectorRequirement] | None = None
+    match_fields: list[SelectorRequirement] | None = None
+
+
+class NodeSelector(DescConfigModel, CamelCaseConfigModel):
+    node_selector_terms: list[NodeSelectorTerm]
+
+
+class PreferredSchedulingTerm(DescConfigModel, CamelCaseConfigModel):
+    preference: NodeSelectorTerm
+    weight: Weight
+
+
+class NodeAffinity(DescConfigModel, CamelCaseConfigModel):
+    required_during_scheduling_ignored_during_execution: NodeSelector | None = None
+    preferred_during_scheduling_ignored_during_execution: (
+        list[PreferredSchedulingTerm] | None
+    ) = None
+
+
+class LabelSelector(DescConfigModel, CamelCaseConfigModel):
+    match_labels: dict[str, str] | None = None
+    match_expressions: list[SelectorRequirement] | None = None
+
+
+class PodAffinityTerm(DescConfigModel, CamelCaseConfigModel):
+    label_selector: LabelSelector | None = None
+    topology_key: str
+    namespaces: list[str] | None = None
+    weight: int
+
+
+class WeightedPodAffinityTerm(DescConfigModel, CamelCaseConfigModel):
+    pod_affinity_term: PodAffinityTerm
+    weight: Weight
+
+
+class PodAffinity(DescConfigModel, CamelCaseConfigModel):
+    required_during_scheduling_ignored_during_execution: (
+        list[PodAffinityTerm] | None
+    ) = None
+    preferred_during_scheduling_ignored_during_execution: (
+        list[WeightedPodAffinityTerm] | None
+    ) = None
+
+
+class Affinity(DescConfigModel, CamelCaseConfigModel):
+    node_affinity: NodeAffinity | None = None
+    pod_affinity: PodAffinity | None = None
+    pod_anti_affinity: PodAffinity | None = None
 
 
 class Operation(str, enum.Enum):
