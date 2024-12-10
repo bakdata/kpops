@@ -7,11 +7,14 @@ from typing import TYPE_CHECKING
 
 import pydantic
 from pydantic import Field
+from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
 from kpops.components.base_components import KafkaApp
 from kpops.components.base_components.helm_app import HelmApp
 from kpops.components.streams_bootstrap.model import StreamsBootstrapValues
+from kpops.manifests.kubernetes import KubernetesManifest
+from kpops.manifests.strimzi.kafka_topic import StrimziKafkaTopic
 from kpops.utils.docstring import describe_attr
 
 if TYPE_CHECKING:
@@ -83,3 +86,13 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
                 f"The image tag for component '{self.name}' is set or defaulted to 'latest'. Please, consider providing a stable image tag."
             )
         return self
+
+    @override
+    def manifest_deploy(self) -> tuple[KubernetesManifest, ...]:
+        resource = super().manifest_deploy()
+        if self.to:
+            resource = resource + tuple(
+                StrimziKafkaTopic.from_topic(topic) for topic in self.to.kafka_topics
+            )
+
+        return resource
