@@ -1,12 +1,11 @@
 import enum
+from typing import Annotated
 
+import pydantic
 from pydantic import Field
 
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import DescConfigModel
-
-# Matches plain integer or numbers with valid suffixes: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory
-MEMORY_PATTERN = r"^\d+([EPTGMk]|Ei|Pi|Ti|Gi|Mi|Ki)?$"
 
 
 class ServiceType(str, enum.Enum):
@@ -72,13 +71,11 @@ class Toleration(DescConfigModel):
     :param toleration_seconds: The duration for which the toleration is valid.
     """
 
-    key: str = Field(default=..., description=describe_attr("key", __doc__))
+    key: str = Field(description=describe_attr("key", __doc__))
 
-    operator: Operation = Field(
-        default=Operation.EQUAL, description=describe_attr("operator", __doc__)
-    )
+    operator: Operation = Field(description=describe_attr("operator", __doc__))
 
-    effect: Effects = Field(default=..., description=describe_attr("effect", __doc__))
+    effect: Effects = Field(description=describe_attr("effect", __doc__))
 
     value: str | None = Field(default=None, description=describe_attr("value", __doc__))
 
@@ -87,16 +84,27 @@ class Toleration(DescConfigModel):
     )
 
 
+CPUStr = Annotated[str, pydantic.StringConstraints(pattern=r"^\d+m$")]
+MemoryStr = Annotated[
+    # Matches plain number string or number with valid suffixes: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory
+    str, pydantic.StringConstraints(pattern=r"^\d+([EPTGMk]|Ei|Pi|Ti|Gi|Mi|Ki)?$")
+]
+
+
 class ResourceDefinition(DescConfigModel):
-    """Model representing the 'limits' or `request` section of Kubernetes resource specifications.
+    """Model representing the `limits` or `requests` section of Kubernetes resource specifications.
 
     :param cpu: The maximum amount of CPU a container can use, expressed in milli CPUs (e.g., '300m').
-    :param memory: The maximum amount of memory a container can use, with valid units such as 'Mi' or 'Gi' (e.g., '2G').
+    :param memory: The maximum amount of memory a container can use, as integer or string with valid units such as 'Mi' or 'Gi' (e.g., '2G').
     """
 
-    cpu: str | int = Field(pattern=r"^\d+m$", description=describe_attr("cpu", __doc__))
-    memory: str = Field(
-        pattern=MEMORY_PATTERN, description=describe_attr("memory", __doc__)
+    cpu: CPUStr | pydantic.PositiveInt | None = Field(
+        default=None,
+        description=describe_attr("cpu", __doc__),
+    )
+    memory: MemoryStr | pydantic.PositiveInt | None = Field(
+        default=None,
+        description=describe_attr("memory", __doc__),
     )
 
 
