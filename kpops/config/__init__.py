@@ -13,6 +13,7 @@ from pydantic_settings import (
 )
 from typing_extensions import override
 
+from kpops.api.exception import ValidationError
 from kpops.api.operation import OperationMode
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
 from kpops.utils.docstring import describe_object
@@ -39,6 +40,9 @@ class StrimziTopicConfig(BaseSettings):
     @pydantic.field_validator("label_", mode="after")
     @classmethod
     def label_validator(cls, label: dict[str, str]) -> dict[str, str]:
+        if len(label) == 0:
+            msg = "'strimzi_topic.label' must contain a single key-value pair."
+            raise ValidationError(msg)
         if len(label) > 1:
             log.warning(
                 "'resource_label' only reads the first entry in the dictionary. Other defined labels will be ignored."
