@@ -47,7 +47,7 @@ def test_topic_spec_validation():
 
 def test_strimzi_kafka_topic_from_topic(kafka_topic: KafkaTopic, mocker: MockerFixture):
     mock_config = MagicMock()
-    mock_config.strimzi_topic.resource_label = ("bakdata.com/cluster", "my-cluster")
+    mock_config.strimzi_topic.label = {"bakdata.com/cluster": "my-cluster"}
     mocker.patch(
         "kpops.manifests.strimzi.kafka_topic.get_config", return_value=mock_config
     )
