@@ -1,6 +1,9 @@
 import re
+from contextlib import nullcontext as does_not_raise
+from typing import Any
 
 import pytest
+from _pytest.python_api import RaisesContext
 from pydantic import ValidationError
 from pytest_mock import MockerFixture
 
@@ -9,6 +12,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
+from kpops.components.common.kubernetes_model import ResourceDefinition
 from kpops.components.streams_bootstrap.base import StreamsBootstrap
 from kpops.components.streams_bootstrap.model import StreamsBootstrapValues
 
@@ -34,7 +38,7 @@ class TestStreamsBootstrap:
         )
         assert streams_bootstrap.version == "3.0.1"
         assert streams_bootstrap.namespace == "test-namespace"
-        assert streams_bootstrap.values.image_tag == "latest"
+        assert streams_bootstrap.values.image_tag is None
 
     @pytest.mark.asyncio()
     async def test_should_deploy_streams_bootstrap_app(self, mocker: MockerFixture):
@@ -126,3 +130,52 @@ class TestStreamsBootstrap:
                     "version": "2.1.0",
                 },
             )
+
+    @pytest.mark.parametrize(
+        ("input", "expectation"),
+        [
+            pytest.param({"cpu": 1}, does_not_raise(), id="cpu int"),
+            pytest.param({"cpu": "1"}, does_not_raise(), id="cpu str without unit"),
+            pytest.param({"cpu": "10m"}, does_not_raise(), id="cpu str milli CPU"),
+            pytest.param(
+                {"cpu": "100foo"},
+                pytest.raises(ValidationError),
+                id="cpu str disallow regex mismatch",
+            ),
+            pytest.param(
+                {"cpu": 0}, pytest.raises(ValidationError), id="cpu int disallow 0"
+            ),
+            pytest.param(
+                {"cpu": -1},
+                pytest.raises(ValidationError),
+                id="cpu int disallow negative",
+            ),
+            pytest.param({"memory": 1}, does_not_raise(), id="memory int"),
+            pytest.param(
+                {"memory": "1"}, does_not_raise(), id="memory str without unit"
+            ),
+            pytest.param({"memory": "10G"}, does_not_raise(), id="memory str gigabyte"),
+            pytest.param({"memory": "1Gi"}, does_not_raise(), id="memory str gibibyte"),
+            pytest.param({"memory": "10M"}, does_not_raise(), id="memory str megabyte"),
+            pytest.param(
+                {"memory": "10Mi"}, does_not_raise(), id="memory str mebibyte"
+            ),
+            pytest.param(
+                {"memory": 0},
+                pytest.raises(ValidationError),
+                id="memory int disallow 0",
+            ),
+            pytest.param(
+                {"memory": -1},
+                pytest.raises(ValidationError),
+                id="memory int disallow negative",
+            ),
+        ],
+    )
+    def test_resource_definition(
+        self,
+        input: dict[str, Any],
+        expectation: RaisesContext[ValidationError] | does_not_raise[None],
+    ):
+        with expectation:
+            assert ResourceDefinition.model_validate(input)

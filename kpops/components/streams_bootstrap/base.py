@@ -79,7 +79,9 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
 
     @pydantic.model_validator(mode="after")
     def warning_for_latest_image_tag(self) -> Self:
-        if self.validate_ and self.values.image_tag == "latest":
+        if self.validate_ and (
+            not self.values.image_tag or self.values.image_tag == "latest"
+        ):
             log.warning(
                 f"The image tag for component '{self.name}' is set or defaulted to 'latest'. Please, consider providing a stable image tag."
             )

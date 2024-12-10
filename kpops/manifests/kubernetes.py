@@ -9,6 +9,8 @@ from typing_extensions import override
 from kpops.utils.pydantic import CamelCaseConfigModel, by_alias
 
 K8S_LABEL_MAX_LEN = 63
+# https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs
+K8S_CRON_JOB_NAME_MAX_LEN = 52
 
 
 class ObjectMeta(CamelCaseConfigModel):

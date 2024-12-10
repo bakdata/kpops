@@ -45,7 +45,11 @@ class StreamsAppCleaner(KafkaAppCleaner, StreamsBootstrap):
         self.values.kafka.delete_output = True
         await super().clean(dry_run)
 
-        if self.values.stateful_set and self.values.persistence.enabled:
+        if (
+            self.values.stateful_set
+            and self.values.persistence
+            and self.values.persistence.enabled
+        ):
             await self.clean_pvcs(dry_run)
 
     @override

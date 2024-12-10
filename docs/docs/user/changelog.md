@@ -1,4 +1,31 @@
 # Changelog
+## [8.1.4](https://github.com/bakdata/kpops/releases/tag/8.1.4) - Release Date: [2024-12-09]
+
+### 🐛 Fixes
+
+- Fix `kpops --version` - [#551](https://github.com/bakdata/kpops/pull/551)
+
+
+### 🌀 Miscellaneous
+
+- Trim Helm name override for Producer CronJob to 52 characters - [#550](https://github.com/bakdata/kpops/pull/550)
+
+
+
+
+
+
+## [8.1.3](https://github.com/bakdata/kpops/releases/tag/8.1.3) - Release Date: [2024-12-05]
+
+### 🌀 Miscellaneous
+
+- Remove repeated defaults from streams-bootstrap values - [#547](https://github.com/bakdata/kpops/pull/547)
+
+
+
+
+
+
 ## [8.1.2](https://github.com/bakdata/kpops/releases/tag/8.1.2) - Release Date: [2024-12-04]
 
 ### 🌀 Miscellaneous

@@ -5,6 +5,7 @@ from pydantic import Field, ValidationError, computed_field
 from typing_extensions import override
 
 from kpops.api import OperationMode
+from kpops.component_handlers.kubernetes.utils import trim
 from kpops.components.base_components.kafka_app import KafkaAppCleaner
 from kpops.components.common.app_type import AppType
 from kpops.components.common.topic import (
@@ -19,7 +20,7 @@ from kpops.components.streams_bootstrap.producer.model import ProducerAppValues
 from kpops.config import get_config
 from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
 from kpops.manifests.argo import ArgoHook, enrich_annotations
-from kpops.manifests.kubernetes import KubernetesManifest
+from kpops.manifests.kubernetes import K8S_CRON_JOB_NAME_MAX_LEN, KubernetesManifest
 from kpops.utils.docstring import describe_attr
 
 log = logging.getLogger("ProducerApp")
@@ -73,6 +74,10 @@ class ProducerApp(StreamsBootstrap):
         description=describe_attr("from_", __doc__),
     )
 
+    @property
+    def is_cron_job(self) -> bool:
+        return bool(not self.values.deployment and self.values.schedule)
+
     @computed_field
     @cached_property
     def _cleaner(self) -> ProducerAppCleaner:
@@ -90,6 +95,13 @@ class ProducerApp(StreamsBootstrap):
                 raise ValueError(msg)
             case _:
                 super().apply_to_outputs(name, topic)
+
+    @property
+    @override
+    def helm_name_override(self) -> str:
+        if self.is_cron_job:
+            return trim(K8S_CRON_JOB_NAME_MAX_LEN, self.full_name, "")
+        return super().helm_name_override
 
     @property
     @override
