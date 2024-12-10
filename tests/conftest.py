@@ -57,8 +57,8 @@ def custom_components() -> Iterator[None]:
 def clear_kpops_config() -> Iterator[None]:
     from kpops.config import KpopsConfig
 
-    yield
     KpopsConfig._instance = None
+    yield
 
 
 KUBECONFIG = """
