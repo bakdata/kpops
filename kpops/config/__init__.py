@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Any, ClassVar
+from typing import ClassVar
 
 import pydantic
 from pydantic import AnyHttpUrl, Field, PrivateAttr, TypeAdapter
@@ -13,7 +13,6 @@ from pydantic_settings import (
 )
 from typing_extensions import override
 
-from kpops.api.exception import ValidationError
 from kpops.api.operation import OperationMode
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
 from kpops.utils.docstring import describe_object
@@ -21,27 +20,31 @@ from kpops.utils.pydantic import YamlConfigSettingsSource
 
 ENV_PREFIX = "KPOPS_"
 
+log = logging.getLogger("KPOpsConfig")
+
 
 class StrimziTopicConfig(BaseSettings):
     """Configuration for Strimzi Kafka Topics."""
 
-    resource_label: tuple[str, str] = Field(
-        description="The label to identify the KafkaTopic resources managed by the Topic Operator. This does not have to be the name of the Kafka cluster. It can be the label assigned to the KafkaTopic resource. If you deploy more than one Topic Operator, the labels must be unique for each. That is, the operators cannot manage the same resources."
+    label_: dict[str, str] = Field(
+        alias="label",
+        description="The label to identify the KafkaTopic resources managed by the Topic Operator. This does not have to be the name of the Kafka cluster. It can be the label assigned to the KafkaTopic resource. If you deploy more than one Topic Operator, the labels must be unique for each. That is, the operators cannot manage the same resources.",
     )
 
-    @pydantic.field_validator("resource_label", mode="before")
+    @property
+    def cluster_labels(self) -> tuple[str, str]:
+        """Return the defined strimzi_topic.label as a tuple."""
+        return next(iter(self.label_.items()))
+
+    @pydantic.field_validator("label_", mode="after")
     @classmethod
-    def deserialize_topics(cls, resource_label: Any) -> tuple[str, str]:
-        match resource_label:
-            case str(value) if "=" in value:
-                key, value = value.split("=")
-                return key, value
-            case dict(value) if len(value) == 1:
-                key, value = next(iter(value.items()))
-                return key, value
-            case _:
-                msg = "'resource_label' should be defined either like 'foo=bar' or as a valid dictionary."
-                raise ValidationError(msg)
+    def label_validator(cls, label: dict[str, str]) -> dict[str, str]:
+        if len(label) > 1:
+            log.warning(
+                "'resource_label' only reads the first entry in the dictionary. Other defined labels will be ignored."
+            )
+
+        return label
 
 
 class TopicNameConfig(BaseSettings):

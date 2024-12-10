@@ -166,24 +166,17 @@
             "additionalProperties": false,
             "description": "Configuration for Strimzi Kafka Topics.",
             "properties": {
-                "resource_label": {
+                "label": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
                     "description": "The label to identify the KafkaTopic resources managed by the Topic Operator. This does not have to be the name of the Kafka cluster. It can be the label assigned to the KafkaTopic resource. If you deploy more than one Topic Operator, the labels must be unique for each. That is, the operators cannot manage the same resources.",
-                    "maxItems": 2,
-                    "minItems": 2,
-                    "prefixItems": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "string"
-                        }
-                    ],
-                    "title": "Resource Label",
-                    "type": "array"
+                    "title": "Label",
+                    "type": "object"
                 }
             },
             "required": [
-                "resource_label"
+                "label"
             ],
             "title": "StrimziTopicConfig",
             "type": "object"
