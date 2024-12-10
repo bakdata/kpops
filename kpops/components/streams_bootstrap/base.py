@@ -99,8 +99,8 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
 
     @override
     def manifest_destroy(self) -> tuple[KubernetesManifest, ...]:
-        if self.to:
-            return tuple(
-                StrimziKafkaTopic.from_topic(topic) for topic in self.to.kafka_topics
-            )
-        return ()
+        return (
+            tuple(StrimziKafkaTopic.from_topic(topic) for topic in self.to.kafka_topics)
+            if self.to
+            else ()
+        )
