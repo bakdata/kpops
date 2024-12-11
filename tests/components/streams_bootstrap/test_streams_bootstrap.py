@@ -36,7 +36,7 @@ class TestStreamsBootstrap:
             repository_name="bakdata-streams-bootstrap",
             url="https://bakdata.github.io/streams-bootstrap/",
         )
-        assert streams_bootstrap.version == "3.1.0"
+        assert streams_bootstrap.version == "3.0.1"
         assert streams_bootstrap.namespace == "test-namespace"
         assert streams_bootstrap.values.image_tag is None
 
