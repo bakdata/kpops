@@ -125,7 +125,9 @@ class TestManifest:
         assert result.exit_code == 0, result.stdout
         snapshot.assert_match(result.stdout, MANIFEST_YAML)
 
-    def test_python_api(self, capsys: CaptureFixture, snapshot: Snapshot):
+    def test_manifest_deploy_python_api(
+        self, capsys: CaptureFixture, snapshot: Snapshot
+    ):
         generator = kpops.manifest_deploy(
             RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML,
             environment="development",
@@ -182,3 +184,49 @@ class TestManifest:
         )
         assert result.exit_code == 0, result.stdout
         snapshot.assert_match(result.stdout, MANIFEST_YAML)
+
+    def test_manifest_destroy_manifest_mode(self, snapshot: Snapshot):
+        result = runner.invoke(
+            app,
+            [
+                "destroy",
+                str(RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML),
+                "--operation-mode",
+                "manifest",
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+        snapshot.assert_match(result.stdout, MANIFEST_YAML)
+
+    def test_manifest_destroy_argo_mode(self, snapshot: Snapshot):
+        result = runner.invoke(
+            app,
+            [
+                "destroy",
+                str(RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML),
+                "--operation-mode",
+                "argo",
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+        snapshot.assert_match(result.stdout, MANIFEST_YAML)
+
+    def test_manifest_destroy_python_api(
+        self, capsys: CaptureFixture, snapshot: Snapshot
+    ):
+        generator = kpops.manifest_destroy(
+            RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML,
+            environment="development",
+        )
+        assert isinstance(generator, Iterator)
+        resources = list(generator)
+        assert len(resources) == 2
+        for resource in resources:
+            for manifest in resource:
+                assert isinstance(manifest, KubernetesManifest)
+                print_yaml(manifest.model_dump())
+
+        captured = capsys.readouterr()
+        snapshot.assert_match(captured.out, MANIFEST_YAML)

@@ -95,6 +95,31 @@ def manifest_deploy(
         yield resource
 
 
+def manifest_destroy(
+    pipeline_path: Path,
+    dotenv: list[Path] | None = None,
+    config: Path = Path(),
+    steps: set[str] | None = None,
+    filter_type: FilterType = FilterType.INCLUDE,
+    environment: str | None = None,
+    verbose: bool = True,
+    operation_mode: OperationMode = OperationMode.MANIFEST,
+) -> Iterator[tuple[KubernetesManifest, ...]]:
+    pipeline = generate(
+        pipeline_path=pipeline_path,
+        dotenv=dotenv,
+        config=config,
+        steps=steps,
+        filter_type=filter_type,
+        environment=environment,
+        verbose=verbose,
+        operation_mode=operation_mode,
+    )
+    for component in pipeline.components:
+        resource = component.manifest_destroy()
+        yield resource
+
+
 def deploy(
     pipeline_path: Path,
     dotenv: list[Path] | None = None,
