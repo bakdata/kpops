@@ -143,7 +143,7 @@ class PodAffinityTerm(DescConfigModel, CamelCaseConfigModel):
     label_selector: LabelSelector | None = None
     topology_key: str
     namespaces: list[str] | None = None
-    weight: int
+    weight: Weight
 
 
 class WeightedPodAffinityTerm(DescConfigModel, CamelCaseConfigModel):
