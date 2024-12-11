@@ -870,6 +870,8 @@
                     "type": "string"
                 },
                 "weight": {
+                    "maximum": 100,
+                    "minimum": 1,
                     "title": "Weight",
                     "type": "integer"
                 }
