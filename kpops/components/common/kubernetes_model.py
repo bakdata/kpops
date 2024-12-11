@@ -1,11 +1,19 @@
+from __future__ import annotations
+
 import enum
-from typing import Annotated
+from typing import TYPE_CHECKING, Annotated
 
 import pydantic
-from pydantic import Field
+from pydantic import Field, model_validator
 
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel
+
+if TYPE_CHECKING:
+    try:
+        from typing import Self  # pyright: ignore[reportAttributeAccessIssue]
+    except ImportError:
+        from typing_extensions import Self
 
 
 class ServiceType(str, enum.Enum):
@@ -45,25 +53,42 @@ class ImagePullPolicy(str, enum.Enum):
 Weight = Annotated[int, pydantic.Field(ge=1, le=100)]
 
 
-class Operator(str, enum.Enum):
+class NodeSelectorOperator(str, enum.Enum):
     IN = "In"
     NOT_IN = "NotIn"
     EXISTS = "Exists"
     DOES_NOT_EXIST = "DoesNotExist"
+    GT = "Gt"
+    LT = "Lt"
 
 
-class SelectorRequirement(DescConfigModel, CamelCaseConfigModel):
+class NodeSelectorRequirement(DescConfigModel, CamelCaseConfigModel):
     key: str
-    operator: Operator
-    values: list[str] | None = pydantic.Field(
-        default=None,
+    operator: NodeSelectorOperator
+    values: list[str] = pydantic.Field(
+        default=[],
         description="An array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. If the operator is Gt or Lt, the values array must have a single element, which will be interpreted as an integer. This array is replaced during a strategic merge patch.",
     )
 
+    @model_validator(mode="after")
+    def validate_values(self) -> Self:
+        match self.operator:
+            case NodeSelectorOperator.IN | NodeSelectorOperator.NOT_IN:
+                assert (
+                    self.values
+                ), "If the operator is In or NotIn, the values array must be non-empty."
+            case NodeSelectorOperator.EXISTS | NodeSelectorOperator.DOES_NOT_EXIST:
+                assert not self.values, "If the operator is Exists or DoesNotExist, the values array must be empty."
+            case NodeSelectorOperator.GT | NodeSelectorOperator.LT:
+                assert (
+                    len(self.values) == 1
+                ), "If the operator is Gt or Lt, the values array must have a single element, which will be interpreted as an integer."
+        return self
+
 
 class NodeSelectorTerm(DescConfigModel, CamelCaseConfigModel):
-    match_expressions: list[SelectorRequirement] | None = None
-    match_fields: list[SelectorRequirement] | None = None
+    match_expressions: list[NodeSelectorRequirement] | None = None
+    match_fields: list[NodeSelectorRequirement] | None = None
 
 
 class NodeSelector(DescConfigModel, CamelCaseConfigModel):
@@ -82,9 +107,36 @@ class NodeAffinity(DescConfigModel, CamelCaseConfigModel):
     ) = None
 
 
+class LabelSelectorOperator(str, enum.Enum):
+    IN = "In"
+    NOT_IN = "NotIn"
+    EXISTS = "Exists"
+    DOES_NOT_EXIST = "DoesNotExist"
+
+
+class LabelSelectorRequirement(DescConfigModel, CamelCaseConfigModel):
+    key: str
+    operator: LabelSelectorOperator
+    values: list[str] = pydantic.Field(
+        default=[],
+        description="An array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.",
+    )
+
+    @model_validator(mode="after")
+    def validate_values(self) -> Self:
+        match self.operator:
+            case LabelSelectorOperator.IN | LabelSelectorOperator.NOT_IN:
+                assert (
+                    self.values
+                ), "If the operator is In or NotIn, the values array must be non-empty."
+            case LabelSelectorOperator.EXISTS | LabelSelectorOperator.DOES_NOT_EXIST:
+                assert not self.values, "If the operator is Exists or DoesNotExist, the values array must be empty."
+        return self
+
+
 class LabelSelector(DescConfigModel, CamelCaseConfigModel):
     match_labels: dict[str, str] | None = None
-    match_expressions: list[SelectorRequirement] | None = None
+    match_expressions: list[LabelSelectorRequirement] | None = None
 
 
 class PodAffinityTerm(DescConfigModel, CamelCaseConfigModel):

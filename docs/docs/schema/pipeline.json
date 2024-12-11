@@ -589,7 +589,7 @@
                     "anyOf": [
                         {
                             "items": {
-                                "$ref": "#/$defs/SelectorRequirement"
+                                "$ref": "#/$defs/LabelSelectorRequirement"
                             },
                             "type": "array"
                         },
@@ -617,6 +617,43 @@
                 }
             },
             "title": "LabelSelector",
+            "type": "object"
+        },
+        "LabelSelectorOperator": {
+            "enum": [
+                "In",
+                "NotIn",
+                "Exists",
+                "DoesNotExist"
+            ],
+            "title": "LabelSelectorOperator",
+            "type": "string"
+        },
+        "LabelSelectorRequirement": {
+            "description": "",
+            "properties": {
+                "key": {
+                    "title": "Key",
+                    "type": "string"
+                },
+                "operator": {
+                    "$ref": "#/$defs/LabelSelectorOperator"
+                },
+                "values": {
+                    "default": [],
+                    "description": "An array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Values",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "key",
+                "operator"
+            ],
+            "title": "LabelSelectorRequirement",
             "type": "object"
         },
         "NodeAffinity": {
@@ -669,6 +706,45 @@
             "title": "NodeSelector",
             "type": "object"
         },
+        "NodeSelectorOperator": {
+            "enum": [
+                "In",
+                "NotIn",
+                "Exists",
+                "DoesNotExist",
+                "Gt",
+                "Lt"
+            ],
+            "title": "NodeSelectorOperator",
+            "type": "string"
+        },
+        "NodeSelectorRequirement": {
+            "description": "",
+            "properties": {
+                "key": {
+                    "title": "Key",
+                    "type": "string"
+                },
+                "operator": {
+                    "$ref": "#/$defs/NodeSelectorOperator"
+                },
+                "values": {
+                    "default": [],
+                    "description": "An array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. If the operator is Gt or Lt, the values array must have a single element, which will be interpreted as an integer. This array is replaced during a strategic merge patch.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Values",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "key",
+                "operator"
+            ],
+            "title": "NodeSelectorRequirement",
+            "type": "object"
+        },
         "NodeSelectorTerm": {
             "description": "",
             "properties": {
@@ -676,7 +752,7 @@
                     "anyOf": [
                         {
                             "items": {
-                                "$ref": "#/$defs/SelectorRequirement"
+                                "$ref": "#/$defs/NodeSelectorRequirement"
                             },
                             "type": "array"
                         },
@@ -691,7 +767,7 @@
                     "anyOf": [
                         {
                             "items": {
-                                "$ref": "#/$defs/SelectorRequirement"
+                                "$ref": "#/$defs/NodeSelectorRequirement"
                             },
                             "type": "array"
                         },
@@ -712,16 +788,6 @@
                 "Equal"
             ],
             "title": "Operation",
-            "type": "string"
-        },
-        "Operator": {
-            "enum": [
-                "In",
-                "NotIn",
-                "Exists",
-                "DoesNotExist"
-            ],
-            "title": "Operator",
             "type": "string"
         },
         "OutputTopicTypes": {
@@ -1898,40 +1964,6 @@
             ],
             "title": "RestartPolicy",
             "type": "string"
-        },
-        "SelectorRequirement": {
-            "description": "",
-            "properties": {
-                "key": {
-                    "title": "Key",
-                    "type": "string"
-                },
-                "operator": {
-                    "$ref": "#/$defs/Operator"
-                },
-                "values": {
-                    "anyOf": [
-                        {
-                            "items": {
-                                "type": "string"
-                            },
-                            "type": "array"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "An array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. If the operator is Gt or Lt, the values array must have a single element, which will be interpreted as an integer. This array is replaced during a strategic merge patch.",
-                    "title": "Values"
-                }
-            },
-            "required": [
-                "key",
-                "operator"
-            ],
-            "title": "SelectorRequirement",
-            "type": "object"
         },
         "ServiceConfig": {
             "description": "Base model for configuring a service for the Kafka Streams application.",
