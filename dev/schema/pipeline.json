@@ -1,45 +1,5 @@
 {
     "$defs": {
-        "Affinity": {
-            "description": "",
-            "properties": {
-                "nodeAffinity": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/NodeAffinity"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null
-                },
-                "podAffinity": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/PodAffinity"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null
-                },
-                "podAntiAffinity": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/PodAffinity"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null
-                }
-            },
-            "title": "Affinity",
-            "type": "object"
-        },
         "Effects": {
             "enum": [
                 "NoExecute",
@@ -582,146 +542,12 @@
             "title": "KafkaSourceConnector",
             "type": "object"
         },
-        "LabelSelector": {
-            "description": "",
-            "properties": {
-                "matchExpressions": {
-                    "anyOf": [
-                        {
-                            "items": {
-                                "$ref": "#/$defs/SelectorRequirement"
-                            },
-                            "type": "array"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Matchexpressions"
-                },
-                "matchLabels": {
-                    "anyOf": [
-                        {
-                            "additionalProperties": {
-                                "type": "string"
-                            },
-                            "type": "object"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Matchlabels"
-                }
-            },
-            "title": "LabelSelector",
-            "type": "object"
-        },
-        "NodeAffinity": {
-            "description": "",
-            "properties": {
-                "preferredDuringSchedulingIgnoredDuringExecution": {
-                    "anyOf": [
-                        {
-                            "items": {
-                                "$ref": "#/$defs/PreferredSchedulingTerm"
-                            },
-                            "type": "array"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Preferredduringschedulingignoredduringexecution"
-                },
-                "requiredDuringSchedulingIgnoredDuringExecution": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/NodeSelector"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null
-                }
-            },
-            "title": "NodeAffinity",
-            "type": "object"
-        },
-        "NodeSelector": {
-            "description": "",
-            "properties": {
-                "nodeSelectorTerms": {
-                    "items": {
-                        "$ref": "#/$defs/NodeSelectorTerm"
-                    },
-                    "title": "Nodeselectorterms",
-                    "type": "array"
-                }
-            },
-            "required": [
-                "nodeSelectorTerms"
-            ],
-            "title": "NodeSelector",
-            "type": "object"
-        },
-        "NodeSelectorTerm": {
-            "description": "",
-            "properties": {
-                "matchExpressions": {
-                    "anyOf": [
-                        {
-                            "items": {
-                                "$ref": "#/$defs/SelectorRequirement"
-                            },
-                            "type": "array"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Matchexpressions"
-                },
-                "matchFields": {
-                    "anyOf": [
-                        {
-                            "items": {
-                                "$ref": "#/$defs/SelectorRequirement"
-                            },
-                            "type": "array"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Matchfields"
-                }
-            },
-            "title": "NodeSelectorTerm",
-            "type": "object"
-        },
         "Operation": {
             "enum": [
                 "Exists",
                 "Equal"
             ],
             "title": "Operation",
-            "type": "string"
-        },
-        "Operator": {
-            "enum": [
-                "In",
-                "NotIn",
-                "Exists",
-                "DoesNotExist"
-            ],
-            "title": "Operator",
             "type": "string"
         },
         "OutputTopicTypes": {
@@ -732,88 +558,6 @@
             ],
             "title": "OutputTopicTypes",
             "type": "string"
-        },
-        "PodAffinity": {
-            "description": "",
-            "properties": {
-                "preferredDuringSchedulingIgnoredDuringExecution": {
-                    "anyOf": [
-                        {
-                            "items": {
-                                "$ref": "#/$defs/WeightedPodAffinityTerm"
-                            },
-                            "type": "array"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Preferredduringschedulingignoredduringexecution"
-                },
-                "requiredDuringSchedulingIgnoredDuringExecution": {
-                    "anyOf": [
-                        {
-                            "items": {
-                                "$ref": "#/$defs/PodAffinityTerm"
-                            },
-                            "type": "array"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Requiredduringschedulingignoredduringexecution"
-                }
-            },
-            "title": "PodAffinity",
-            "type": "object"
-        },
-        "PodAffinityTerm": {
-            "description": "",
-            "properties": {
-                "labelSelector": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/LabelSelector"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null
-                },
-                "namespaces": {
-                    "anyOf": [
-                        {
-                            "items": {
-                                "type": "string"
-                            },
-                            "type": "array"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Namespaces"
-                },
-                "topologyKey": {
-                    "title": "Topologykey",
-                    "type": "string"
-                },
-                "weight": {
-                    "title": "Weight",
-                    "type": "integer"
-                }
-            },
-            "required": [
-                "topologyKey",
-                "weight"
-            ],
-            "title": "PodAffinityTerm",
-            "type": "object"
         },
         "PortConfig": {
             "description": "Base class for the port configuration of the Kafka Streams application.",
@@ -863,26 +607,6 @@
                 "containerPort"
             ],
             "title": "PortConfig",
-            "type": "object"
-        },
-        "PreferredSchedulingTerm": {
-            "description": "",
-            "properties": {
-                "preference": {
-                    "$ref": "#/$defs/NodeSelectorTerm"
-                },
-                "weight": {
-                    "maximum": 100,
-                    "minimum": 1,
-                    "title": "Weight",
-                    "type": "integer"
-                }
-            },
-            "required": [
-                "preference",
-                "weight"
-            ],
-            "title": "PreferredSchedulingTerm",
             "type": "object"
         },
         "ProducerApp": {
@@ -1110,14 +834,15 @@
                 "affinity": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/Affinity"
+                            "type": "object"
                         },
                         {
                             "type": "null"
                         }
                     ],
                     "default": null,
-                    "description": "Map to configure pod affinities https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity."
+                    "description": "Map to configure pod affinities https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity.",
+                    "title": "Affinity"
                 },
                 "backoffLimit": {
                     "anyOf": [
@@ -1899,40 +1624,6 @@
             "title": "RestartPolicy",
             "type": "string"
         },
-        "SelectorRequirement": {
-            "description": "",
-            "properties": {
-                "key": {
-                    "title": "Key",
-                    "type": "string"
-                },
-                "operator": {
-                    "$ref": "#/$defs/Operator"
-                },
-                "values": {
-                    "anyOf": [
-                        {
-                            "items": {
-                                "type": "string"
-                            },
-                            "type": "array"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "An array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. If the operator is Gt or Lt, the values array must have a single element, which will be interpreted as an integer. This array is replaced during a strategic merge patch.",
-                    "title": "Values"
-                }
-            },
-            "required": [
-                "key",
-                "operator"
-            ],
-            "title": "SelectorRequirement",
-            "type": "object"
-        },
         "ServiceConfig": {
             "description": "Base model for configuring a service for the Kafka Streams application.",
             "properties": {
@@ -2247,14 +1938,15 @@
                 "affinity": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/Affinity"
+                            "type": "object"
                         },
                         {
                             "type": "null"
                         }
                     ],
                     "default": null,
-                    "description": "Map to configure pod affinities https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity."
+                    "description": "Map to configure pod affinities https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity.",
+                    "title": "Affinity"
                 },
                 "autoscaling": {
                     "anyOf": [
@@ -2692,7 +2384,7 @@
                     ],
                     "description": "The operator ('Exists' or 'Equal')."
                 },
-                "tolerationSeconds": {
+                "toleration_seconds": {
                     "anyOf": [
                         {
                             "type": "integer"
@@ -2703,7 +2395,7 @@
                     ],
                     "default": null,
                     "description": "The duration for which the toleration is valid.",
-                    "title": "Tolerationseconds"
+                    "title": "Toleration Seconds"
                 },
                 "value": {
                     "anyOf": [
@@ -2827,26 +2519,6 @@
                 }
             },
             "title": "TopicConfig",
-            "type": "object"
-        },
-        "WeightedPodAffinityTerm": {
-            "description": "",
-            "properties": {
-                "podAffinityTerm": {
-                    "$ref": "#/$defs/PodAffinityTerm"
-                },
-                "weight": {
-                    "maximum": 100,
-                    "minimum": 1,
-                    "title": "Weight",
-                    "type": "integer"
-                }
-            },
-            "required": [
-                "podAffinityTerm",
-                "weight"
-            ],
-            "title": "WeightedPodAffinityTerm",
             "type": "object"
         },
         "kpops__components__streams_bootstrap__streams__model__PersistenceConfig": {
