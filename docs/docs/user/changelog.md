@@ -1,4 +1,27 @@
 # Changelog
+## [8.2.0](https://github.com/bakdata/kpops/releases/tag/8.2.0) - Release Date: [2024-12-12]
+
+### 🐛 Fixes
+
+- Update KPOps example snapshots and fix broken link to defaults.yaml - [#560](https://github.com/bakdata/kpops/pull/560)
+
+
+### 📝 Documentation
+
+- Update KPOps example snapshots and fix broken link to defaults.yaml - [#560](https://github.com/bakdata/kpops/pull/560)
+
+
+### 🌀 Miscellaneous
+
+- Bump streams-bootstrap to 3.1.0 - [#557](https://github.com/bakdata/kpops/pull/557)
+
+- Add Pydantic models for Kubernetes Affinity - [#555](https://github.com/bakdata/kpops/pull/555)
+
+
+
+
+
+
 ## [8.1.4](https://github.com/bakdata/kpops/releases/tag/8.1.4) - Release Date: [2024-12-09]
 
 ### 🐛 Fixes
