@@ -19,6 +19,7 @@ jobs:
     name: Release
     with:
       release-type: ${{ inputs.release-type }}
+      python-version: "3.12"
       poetry-version: "1.7.1"
       changelog: true
       changelog-config: "./.github/changelog-config.json"
