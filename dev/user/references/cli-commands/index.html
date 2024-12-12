@@ -11,7 +11,7 @@
         <link rel="canonical" href="https://bakdata.github.io/kpops/dev/user/references/cli-commands/">
       
       
-        <link rel="prev" href="../../migration-guide/v8-v9/">
+        <link rel="prev" href="../../migration-guide/v7-v8/">
       
       
         <link rel="next" href="../editor-integration/">
@@ -1149,8 +1149,6 @@
       
         
       
-        
-      
     
     
     
@@ -1321,26 +1319,6 @@
 
               
             
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../migration-guide/v8-v9/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Migrate from v8 to v9
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -1431,6 +1409,13 @@
         <li class="md-nav__item">
   <a href="#kpops-init" class="md-nav__link">
     kpops init
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kpops-manifest" class="md-nav__link">
+    kpops manifest
   </a>
   
 </li>
@@ -1810,6 +1795,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kpops-manifest" class="md-nav__link">
+    kpops manifest
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kpops-reset" class="md-nav__link">
     kpops reset
   </a>
@@ -1859,6 +1851,7 @@
 <li><code>destroy</code>: Destroy pipeline steps</li>
 <li><code>generate</code>: Generate enriched pipeline representation</li>
 <li><code>init</code>: Initialize a new KPOps project.</li>
+<li><code>manifest</code>: Render final resource representation</li>
 <li><code>reset</code>: Reset pipeline steps</li>
 <li><code>schema</code>: Generate JSON schema.</li>
 </ul>
@@ -1881,7 +1874,6 @@
 <li><code>--dry-run / --execute</code>: Whether to dry run the command or execute it  [default: dry-run]</li>
 <li><code>--verbose / --no-verbose</code>: Enable verbose printing  [default: no-verbose]</li>
 <li><code>--parallel / --no-parallel</code>: Enable or disable parallel execution of pipeline steps. If enabled, multiple steps can be processed concurrently. If disabled, steps will be processed sequentially.  [default: no-parallel]</li>
-<li><code>--operation-mode [argo|manifest|managed]</code>: How KPOps should operate.  [env var: KPOPS_OPERATION_MODE; default: managed]</li>
 <li><code>--help</code>: Show this message and exit.</li>
 </ul>
 <h2 id="kpops-deploy"><code>kpops deploy</code><a class="headerlink" href="#kpops-deploy" title="Permanent link">&para;</a></h2>
@@ -1903,7 +1895,6 @@
 <li><code>--dry-run / --execute</code>: Whether to dry run the command or execute it  [default: dry-run]</li>
 <li><code>--verbose / --no-verbose</code>: Enable verbose printing  [default: no-verbose]</li>
 <li><code>--parallel / --no-parallel</code>: Enable or disable parallel execution of pipeline steps. If enabled, multiple steps can be processed concurrently. If disabled, steps will be processed sequentially.  [default: no-parallel]</li>
-<li><code>--operation-mode [argo|manifest|managed]</code>: How KPOps should operate.  [env var: KPOPS_OPERATION_MODE; default: managed]</li>
 <li><code>--help</code>: Show this message and exit.</li>
 </ul>
 <h2 id="kpops-destroy"><code>kpops destroy</code><a class="headerlink" href="#kpops-destroy" title="Permanent link">&para;</a></h2>
@@ -1925,7 +1916,6 @@
 <li><code>--dry-run / --execute</code>: Whether to dry run the command or execute it  [default: dry-run]</li>
 <li><code>--verbose / --no-verbose</code>: Enable verbose printing  [default: no-verbose]</li>
 <li><code>--parallel / --no-parallel</code>: Enable or disable parallel execution of pipeline steps. If enabled, multiple steps can be processed concurrently. If disabled, steps will be processed sequentially.  [default: no-parallel]</li>
-<li><code>--operation-mode [argo|manifest|managed]</code>: How KPOps should operate.  [env var: KPOPS_OPERATION_MODE; default: managed]</li>
 <li><code>--help</code>: Show this message and exit.</li>
 </ul>
 <h2 id="kpops-generate"><code>kpops generate</code><a class="headerlink" href="#kpops-generate" title="Permanent link">&para;</a></h2>
@@ -1958,13 +1948,32 @@
 </ul>
 <p><strong>Options</strong>:</p>
 <ul>
-<li><code>--config-include-optional / --no-config-include-optional</code>: Whether to include non-required settings in the generated 'config.yaml'  [default: no-config-include-optional]</li>
+<li><code>--config-include-opt / --no-config-include-opt</code>: Whether to include non-required settings in the generated 'config.yaml'  [default: no-config-include-opt]</li>
+<li><code>--help</code>: Show this message and exit.</li>
+</ul>
+<h2 id="kpops-manifest"><code>kpops manifest</code><a class="headerlink" href="#kpops-manifest" title="Permanent link">&para;</a></h2>
+<p>In addition to generate, render final resource representation for each pipeline step, e.g. Kubernetes manifests.</p>
+<p><strong>Usage</strong>:</p>
+<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>manifest<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>PIPELINE_PATHS...
+</span></code></pre></div></td></tr></table></div>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>PIPELINE_PATHS...</code>: Paths to dir containing 'pipeline.yaml' or files named 'pipeline.yaml'.  [env var: KPOPS_PIPELINE_PATHS;required]</li>
+</ul>
+<p><strong>Options</strong>:</p>
+<ul>
+<li><code>--dotenv FILE</code>: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]</li>
+<li><code>--config DIRECTORY</code>: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]</li>
+<li><code>--steps TEXT</code>: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]</li>
+<li><code>--filter-type [include|exclude]</code>: Whether the --steps option should include/exclude the steps  [default: include]</li>
+<li><code>--environment TEXT</code>: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]</li>
+<li><code>--verbose / --no-verbose</code>: Enable verbose printing  [default: no-verbose]</li>
 <li><code>--help</code>: Show this message and exit.</li>
 </ul>
 <h2 id="kpops-reset"><code>kpops reset</code><a class="headerlink" href="#kpops-reset" title="Permanent link">&para;</a></h2>
 <p>Reset pipeline steps</p>
 <p><strong>Usage</strong>:</p>
-<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>reset<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>PIPELINE_PATHS...
+<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>reset<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>PIPELINE_PATHS...
 </span></code></pre></div></td></tr></table></div>
 <p><strong>Arguments</strong>:</p>
 <ul>
@@ -1986,7 +1995,7 @@
 <p>Generate JSON schema.</p>
 <p>The schemas can be used to enable support for KPOps files in a text editor.</p>
 <p><strong>Usage</strong>:</p>
-<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>schema<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>SCOPE:<span class="o">{</span>pipeline<span class="p">|</span>defaults<span class="p">|</span>config<span class="o">}</span>
+<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>schema<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>SCOPE:<span class="o">{</span>pipeline<span class="p">|</span>defaults<span class="p">|</span>config<span class="o">}</span>
 </span></code></pre></div></td></tr></table></div>
 <p><strong>Arguments</strong>:</p>
 <ul>
