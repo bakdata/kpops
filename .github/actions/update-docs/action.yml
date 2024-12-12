@@ -28,7 +28,7 @@ runs:
       uses: bakdata/ci-templates/actions/python-setup-poetry@v1.5.2
       with:
         poetry-version: "1.5.1"
-        python-version: "3.10"
+        python-version: "3.12"
 
     - name: Install docs dependencies
       shell: bash

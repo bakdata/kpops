@@ -21,7 +21,7 @@ jobs:
         os:
           - ubuntu-22.04
           - windows-2022
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.11", "3.12"]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -43,7 +43,7 @@ jobs:
 
       - name: Lint (ruff)
         run: |
-          if [[ "$RUNNER_OS" == "Linux" && "${{ matrix.python-version }}" == "3.10" ]]
+          if [[ "$RUNNER_OS" == "Linux" && "${{ matrix.python-version }}" == "3.11" ]]
           then
             poetry run ruff check . --config pyproject.toml --output-format=github --no-fix
           else
@@ -55,7 +55,7 @@ jobs:
 
       - name: Typing (pyright)
         run: |
-          if [[ "$RUNNER_OS" == "Linux" && "${{ matrix.python-version }}" == "3.10" ]]
+          if [[ "$RUNNER_OS" == "Linux" && "${{ matrix.python-version }}" == "3.11" ]]
           then
             echo "::add-matcher::.github/pyright-matcher.json"
             poetry run pre-commit run pyright --all-files
