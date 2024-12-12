@@ -868,17 +868,10 @@
                 "topologyKey": {
                     "title": "Topologykey",
                     "type": "string"
-                },
-                "weight": {
-                    "maximum": 100,
-                    "minimum": 1,
-                    "title": "Weight",
-                    "type": "integer"
                 }
             },
             "required": [
-                "topologyKey",
-                "weight"
+                "topologyKey"
             ],
             "title": "PodAffinityTerm",
             "type": "object"
