@@ -9,7 +9,7 @@ from contextlib import suppress
 from dataclasses import dataclass
 from pathlib import Path
 from textwrap import fill
-from typing import Any
+from typing import Any, Self
 
 from pydantic_core import PydanticUndefined
 from pytablewriter import MarkdownTableWriter
@@ -70,9 +70,7 @@ class EnvVar:
     corresponding_setting_name: str | None
 
     @classmethod
-    def from_record(
-        cls, record: dict[str, Any]
-    ) -> EnvVar:  # TODO: typing.Self for Python 3.11+
+    def from_record(cls, record: dict[str, Any]) -> Self:
         """Construct an ``EnvVar`` instance from a specific dict.
 
         Reads a dict that contains keys equivalent to the

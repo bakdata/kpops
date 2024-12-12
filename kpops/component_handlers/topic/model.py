@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict
@@ -28,7 +28,7 @@ class TopicResponse(BaseModel):
     )
 
 
-class KafkaTopicConfigSource(str, Enum):
+class KafkaTopicConfigSource(StrEnum):
     DYNAMIC_TOPIC_CONFIG = "DYNAMIC_TOPIC_CONFIG"
     DEFAULT_CONFIG = "DEFAULT_CONFIG"
     STATIC_BROKER_CONFIG = "STATIC_BROKER_CONFIG"
@@ -68,7 +68,7 @@ class TopicConfigResponse(BaseModel):
     )
 
 
-class KafkaBrokerConfigSource(str, Enum):
+class KafkaBrokerConfigSource(StrEnum):
     STATIC_BROKER_CONFIG = "STATIC_BROKER_CONFIG"
     DYNAMIC_BROKER_CONFIG = "DYNAMIC_BROKER_CONFIG"
     DEFAULT_CONFIG = "DEFAULT_CONFIG"

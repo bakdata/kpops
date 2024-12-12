@@ -4,7 +4,7 @@ from functools import cached_property
 from pydantic import Field, ValidationError, computed_field
 from typing_extensions import override
 
-from kpops.component_handlers.kubernetes.model import K8S_CRON_JOB_NAME_MAX_LEN
+from kpops.api import OperationMode
 from kpops.component_handlers.kubernetes.utils import trim
 from kpops.components.base_components.kafka_app import KafkaAppCleaner
 from kpops.components.common.app_type import AppType
@@ -17,7 +17,10 @@ from kpops.components.streams_bootstrap.base import (
     StreamsBootstrap,
 )
 from kpops.components.streams_bootstrap.producer.model import ProducerAppValues
+from kpops.config import get_config
 from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
+from kpops.manifests.argo import ArgoHook, enrich_annotations
+from kpops.manifests.kubernetes import K8S_CRON_JOB_NAME_MAX_LEN, KubernetesManifest
 from kpops.utils.docstring import describe_attr
 
 log = logging.getLogger("ProducerApp")
@@ -31,6 +34,21 @@ class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrap):
     def helm_chart(self) -> str:
         return (
             f"{self.repo_config.repository_name}/{AppType.CLEANUP_PRODUCER_APP.value}"
+        )
+
+    @override
+    def manifest_deploy(self) -> tuple[KubernetesManifest, ...]:
+        values = self.to_helm_values()
+        if get_config().operation_mode is OperationMode.ARGO:
+            post_delete = ArgoHook.POST_DELETE
+            values = enrich_annotations(values, post_delete.key, post_delete.value)
+
+        return self.helm.template(
+            self.helm_release_name,
+            self.helm_chart,
+            self.namespace,
+            values,
+            self.template_flags,
         )
 
 
@@ -63,9 +81,11 @@ class ProducerApp(StreamsBootstrap):
     @computed_field
     @cached_property
     def _cleaner(self) -> ProducerAppCleaner:
-        return ProducerAppCleaner(
+        cleaner = ProducerAppCleaner(
             **self.model_dump(by_alias=True, exclude={"_cleaner", "from_", "to"})
         )
+        cleaner.values.name_override = None
+        return cleaner
 
     @override
     def apply_to_outputs(self, name: str, topic: TopicConfig) -> None:
@@ -136,3 +156,19 @@ class ProducerApp(StreamsBootstrap):
         """Destroy and clean."""
         await super().clean(dry_run)
         await self._cleaner.clean(dry_run)
+
+    @override
+    def manifest_deploy(self) -> tuple[KubernetesManifest, ...]:
+        manifests = super().manifest_deploy()
+        operation_mode = get_config().operation_mode
+
+        if operation_mode is OperationMode.ARGO:
+            manifests = manifests + self._cleaner.manifest_deploy()
+
+        return manifests
+
+    @override
+    def manifest_clean(self) -> tuple[KubernetesManifest, ...]:
+        if get_config().operation_mode is OperationMode.MANIFEST:
+            return self._cleaner.manifest_deploy()
+        return ()
