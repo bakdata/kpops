@@ -102,11 +102,11 @@ class NodeSelectorTerm(DescConfigModel, CamelCaseConfigModel):
     :param match_fields: A list of node selector requirements by node's fields.
     """
 
-    match_expressions: list[NodeSelectorRequirement] | None = Field(
-        default=None, description=describe_attr("match_expressions", __doc__)
+    match_expressions: SerializeAsOptional[list[NodeSelectorRequirement]] = Field(
+        default=[], description=describe_attr("match_expressions", __doc__)
     )
-    match_fields: list[NodeSelectorRequirement] | None = Field(
-        default=None, description=describe_attr("match_fields", __doc__)
+    match_fields: SerializeAsOptional[list[NodeSelectorRequirement]] = Field(
+        default=[], description=describe_attr("match_fields", __doc__)
     )
 
 
@@ -201,12 +201,12 @@ class LabelSelector(DescConfigModel, CamelCaseConfigModel):
     :param match_expressions: matchExpressions is a list of label selector requirements. The requirements are ANDed.
     """
 
-    match_labels: dict[str, str] | None = Field(
-        default=None,
+    match_labels: SerializeAsOptional[dict[str, str]] = Field(
+        default={},
         description=describe_attr("match_labels", __doc__),
     )
-    match_expressions: list[LabelSelectorRequirement] | None = Field(
-        default=None,
+    match_expressions: SerializeAsOptional[list[LabelSelectorRequirement]] = Field(
+        default=[],
         description=describe_attr("match_expressions", __doc__),
     )
 
@@ -226,19 +226,19 @@ class PodAffinityTerm(DescConfigModel, CamelCaseConfigModel):
         default=None,
         description=describe_attr("label_selector", __doc__),
     )
-    match_label_keys: list[str] | None = Field(
-        default=None,
+    match_label_keys: SerializeAsOptional[list[str]] = Field(
+        default=[],
         description=describe_attr("match_label_keys", __doc__),
     )
-    mismatch_label_keys: list[str] | None = Field(
-        default=None,
+    mismatch_label_keys: SerializeAsOptional[list[str]] = Field(
+        default=[],
         description=describe_attr("mismatch_label_keys", __doc__),
     )
     topology_key: str = Field(
         description=describe_attr("topology_key", __doc__),
     )
-    namespaces: list[str] | None = Field(
-        default=None,
+    namespaces: SerializeAsOptional[list[str]] = Field(
+        default=[],
         description=describe_attr("namespaces", __doc__),
     )
     namespace_selector: LabelSelector | None = Field(
@@ -269,18 +269,18 @@ class PodAffinity(DescConfigModel, CamelCaseConfigModel):
     :param preferred_during_scheduling_ignored_during_execution: The scheduler will prefer to schedule pods to nodes that satisfy the affinity expressions specified by this field, but it may choose a node that violates one or more of the expressions. The node that is most preferred is the one with the greatest sum of weights, i.e. for each node that meets all of the scheduling requirements (resource request, requiredDuringScheduling affinity expressions, etc.), compute a sum by iterating through the elements of this field and adding weight to the sum if the node has pods which matches the corresponding podAffinityTerm; the node(s) with the highest sum are the most preferred.
     """
 
-    required_during_scheduling_ignored_during_execution: (
-        list[PodAffinityTerm] | None
-    ) = Field(
-        default=None,
+    required_during_scheduling_ignored_during_execution: SerializeAsOptional[
+        list[PodAffinityTerm]
+    ] = Field(
+        default=[],
         description=describe_attr(
             "required_during_scheduling_ignored_during_execution", __doc__
         ),
     )
-    preferred_during_scheduling_ignored_during_execution: (
-        list[WeightedPodAffinityTerm] | None
-    ) = Field(
-        default=None,
+    preferred_during_scheduling_ignored_during_execution: SerializeAsOptional[
+        list[WeightedPodAffinityTerm]
+    ] = Field(
+        default=[],
         description=describe_attr(
             "preferred_during_scheduling_ignored_during_execution", __doc__
         ),
