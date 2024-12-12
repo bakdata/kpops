@@ -1,3 +1,3 @@
-__version__ = "8.1.4"
+__version__ = "8.2.0"
 KPOPS = "KPOps"
 KPOPS_MODULE = "kpops."
