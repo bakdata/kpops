@@ -166,3 +166,9 @@ class ProducerApp(StreamsBootstrap):
             manifests = manifests + self._cleaner.manifest_deploy()
 
         return manifests
+
+    @override
+    def manifest_clean(self) -> tuple[KubernetesManifest, ...]:
+        if get_config().operation_mode is OperationMode.MANIFEST:
+            return self._cleaner.manifest_deploy()
+        return ()

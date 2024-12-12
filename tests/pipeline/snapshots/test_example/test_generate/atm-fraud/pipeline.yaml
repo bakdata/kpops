@@ -1,5 +1,4 @@
 - _cleaner:
-    debug: true
     name: account-producer
     namespace: ${NAMESPACE}
     prefix: atm-fraud-
@@ -27,7 +26,6 @@
         schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
       suspend: true
     version: 2.9.0
-  debug: true
   name: account-producer
   namespace: ${NAMESPACE}
   prefix: atm-fraud-
@@ -61,7 +59,6 @@
     suspend: true
   version: 2.9.0
 - _cleaner:
-    debug: true
     name: transaction-avro-producer
     namespace: ${NAMESPACE}
     prefix: atm-fraud-
@@ -92,7 +89,6 @@
         schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
       suspend: true
     version: 2.9.0
-  debug: true
   name: transaction-avro-producer
   namespace: ${NAMESPACE}
   prefix: atm-fraud-
@@ -129,7 +125,6 @@
     suspend: true
   version: 2.9.0
 - _cleaner:
-    debug: true
     name: transaction-joiner
     namespace: ${NAMESPACE}
     prefix: atm-fraud-
@@ -165,7 +160,6 @@
         outputTopic: atm-fraud-transaction-joiner-topic
         schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
     version: 2.9.0
-  debug: true
   name: transaction-joiner
   namespace: ${NAMESPACE}
   prefix: atm-fraud-
@@ -211,7 +205,6 @@
       schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
   version: 2.9.0
 - _cleaner:
-    debug: true
     name: fraud-detector
     namespace: ${NAMESPACE}
     prefix: atm-fraud-
@@ -247,7 +240,6 @@
         outputTopic: atm-fraud-fraud-detector-topic
         schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
     version: 2.9.0
-  debug: true
   name: fraud-detector
   namespace: ${NAMESPACE}
   prefix: atm-fraud-
@@ -293,7 +285,6 @@
       schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
   version: 2.9.0
 - _cleaner:
-    debug: true
     name: account-linker
     namespace: ${NAMESPACE}
     prefix: atm-fraud-
@@ -332,7 +323,6 @@
         outputTopic: atm-fraud-account-linker-topic
         schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
     version: 2.9.0
-  debug: true
   from:
     components:
       account-producer:
