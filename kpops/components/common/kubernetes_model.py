@@ -1,14 +1,17 @@
 from __future__ import annotations
 
 import enum
-from typing import TYPE_CHECKING, Annotated, Any, TypeVar
+from typing import TYPE_CHECKING, Annotated
 
 import pydantic
-from pydantic import Field, GetCoreSchemaHandler, model_validator
-from pydantic_core import core_schema
+from pydantic import Field, model_validator
 
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel
+from kpops.utils.pydantic import (
+    CamelCaseConfigModel,
+    DescConfigModel,
+    SerializeAsOptional,
+)
 
 if TYPE_CHECKING:
     try:
@@ -129,37 +132,6 @@ class PreferredSchedulingTerm(DescConfigModel, CamelCaseConfigModel):
         description=describe_attr("preference", __doc__)
     )
     weight: Weight = Field(description=describe_attr("weight", __doc__))
-
-
-_T = TypeVar("_T")
-
-
-def serialize_to_optional(
-    value: _T,
-    default_serialize_handler: pydantic.SerializerFunctionWrapHandler,
-    info: pydantic.SerializationInfo,
-) -> _T | None:
-    result = default_serialize_handler(value)
-    return result or None
-
-
-class OptionalSchema:
-    def __get_pydantic_core_schema__(
-        self,
-        source: type[Any],
-        handler: GetCoreSchemaHandler,
-    ) -> core_schema.CoreSchema:
-        schema = handler(source)
-        # wrap generated schema in nullable
-        return core_schema.NullableSchema(type="nullable", schema=schema)
-
-
-SerializeAsOptional = Annotated[
-    _T,
-    pydantic.WrapSerializer(serialize_to_optional),
-    OptionalSchema(),
-    "Optional that is serialized to None if falsy",
-]
 
 
 class NodeAffinity(DescConfigModel, CamelCaseConfigModel):

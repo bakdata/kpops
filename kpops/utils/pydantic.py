@@ -1,11 +1,20 @@
 import json
 import logging
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any
 
 import humps
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    GetCoreSchemaHandler,
+    SerializationInfo,
+    SerializerFunctionWrapHandler,
+    WrapSerializer,
+)
 from pydantic.fields import FieldInfo
+from pydantic_core import core_schema
 from pydantic_settings import PydanticBaseSettingsSource
 from typing_extensions import TypeVar, override
 
@@ -224,3 +233,34 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
             if field_value is not None:
                 d[field_key] = field_value
         return d
+
+
+_T = TypeVar("_T")
+
+
+def serialize_to_optional(
+    value: _T,
+    default_serialize_handler: SerializerFunctionWrapHandler,
+    info: SerializationInfo,
+) -> _T | None:
+    result = default_serialize_handler(value)
+    return result or None
+
+
+class OptionalSchema:
+    def __get_pydantic_core_schema__(
+        self,
+        source: type[Any],
+        handler: GetCoreSchemaHandler,
+    ) -> core_schema.CoreSchema:
+        schema = handler(source)
+        # wrap generated schema in nullable
+        return core_schema.NullableSchema(type="nullable", schema=schema)
+
+
+SerializeAsOptional = Annotated[
+    _T,
+    WrapSerializer(serialize_to_optional),
+    OptionalSchema(),
+    "Optional that is serialized to None if falsy",
+]
