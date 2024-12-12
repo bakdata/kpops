@@ -7,7 +7,7 @@ from collections.abc import Hashable, Sequence
 from dataclasses import asdict
 from functools import cached_property
 from pathlib import Path
-from typing import Any, TypeVar
+from typing import Any, Self, TypeVar
 
 import pydantic
 import typer
@@ -33,11 +33,6 @@ from kpops.utils.environment import ENV, PIPELINE_PATH
 from kpops.utils.pydantic import DescConfigModel, issubclass_patched, to_dash
 from kpops.utils.types import JsonType
 from kpops.utils.yaml import load_yaml_file, substitute_nested
-
-try:
-    from typing import Self  # pyright: ignore[reportAttributeAccessIssue]
-except ImportError:
-    from typing_extensions import Self
 
 log = logging.getLogger("BaseDefaultsComponent")
 

@@ -1,10 +1,11 @@
 from collections.abc import Iterator
-from typing import Any
+from typing import Any, Self
 
 import pydantic
 import yaml
 from pydantic import ConfigDict, Field
 from typing_extensions import override
+from yaml.loader import Loader
 
 from kpops.utils.pydantic import CamelCaseConfigModel, by_alias
 
@@ -56,10 +57,8 @@ class KubernetesManifest(CamelCaseConfigModel):
     model_config = ConfigDict(extra="allow")
 
     @classmethod
-    def from_yaml(
-        cls, /, content: str
-    ) -> Iterator["KubernetesManifest"]:  # TODO: typing.Self for Python 3.11+
-        manifests: Iterator[dict[str, Any]] = yaml.load_all(content, yaml.Loader)
+    def from_yaml(cls, /, content: str) -> Iterator[Self]:
+        manifests: Iterator[dict[str, Any]] = yaml.load_all(content, Loader)
         for manifest in manifests:
             yield cls(**manifest)
 

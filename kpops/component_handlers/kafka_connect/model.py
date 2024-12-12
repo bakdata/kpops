@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 import pydantic
@@ -21,7 +21,7 @@ from kpops.utils.pydantic import (
 )
 
 
-class KafkaConnectorType(str, Enum):
+class KafkaConnectorType(StrEnum):
     SINK = "sink"
     SOURCE = "source"
 
