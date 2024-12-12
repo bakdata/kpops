@@ -247,7 +247,7 @@ def serialize_to_optional(
     return result or None
 
 
-class OptionalSchema:
+class WrapNullableSchema:
     def __get_pydantic_core_schema__(
         self,
         source: type[Any],
@@ -261,6 +261,6 @@ class OptionalSchema:
 SerializeAsOptional = Annotated[
     _T,
     WrapSerializer(serialize_to_optional),
-    OptionalSchema(),
+    WrapNullableSchema(),
     "Optional that is serialized to None if falsy",
 ]
