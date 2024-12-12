@@ -12,7 +12,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
-from kpops.components.common.kubernetes_model import ResourceDefinition
+from kpops.components.common.kubernetes_model import NodeAffinity, ResourceDefinition
 from kpops.components.streams_bootstrap.base import StreamsBootstrap
 from kpops.components.streams_bootstrap.model import StreamsBootstrapValues
 
@@ -179,3 +179,11 @@ class TestStreamsBootstrap:
     ):
         with expectation:
             assert ResourceDefinition.model_validate(input)
+
+    def test_affinity(self):
+        node_affinity = NodeAffinity()
+        assert node_affinity.preferred_during_scheduling_ignored_during_execution == []
+        assert node_affinity.model_dump(by_alias=True) == {
+            "requiredDuringSchedulingIgnoredDuringExecution": None,
+            "preferredDuringSchedulingIgnoredDuringExecution": None,
+        }

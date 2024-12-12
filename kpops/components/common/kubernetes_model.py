@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import enum
-from typing import TYPE_CHECKING, Annotated
+from typing import TYPE_CHECKING, Annotated, TypeVar
 
 import pydantic
 from pydantic import Field, model_validator
@@ -130,6 +130,25 @@ class PreferredSchedulingTerm(DescConfigModel, CamelCaseConfigModel):
     weight: Weight = Field(description=describe_attr("weight", __doc__))
 
 
+_T = TypeVar("_T")
+
+
+def serialize_list_to_optional(
+    value: list[_T],
+    default_serialize_handler: pydantic.SerializerFunctionWrapHandler,
+    info: pydantic.SerializationInfo,
+) -> list[_T] | None:
+    result = default_serialize_handler(value)
+    return result or None
+
+
+OptionalList = Annotated[
+    list[_T],
+    pydantic.WrapSerializer(serialize_list_to_optional),
+    "list that is serialized to None if empty",
+]
+
+
 class NodeAffinity(DescConfigModel, CamelCaseConfigModel):
     """Node affinity is a group of node affinity scheduling rules.
 
@@ -143,10 +162,10 @@ class NodeAffinity(DescConfigModel, CamelCaseConfigModel):
             "required_during_scheduling_ignored_during_execution", __doc__
         ),
     )
-    preferred_during_scheduling_ignored_during_execution: (
-        list[PreferredSchedulingTerm] | None
-    ) = Field(
-        default=None,
+    preferred_during_scheduling_ignored_during_execution: OptionalList[
+        PreferredSchedulingTerm
+    ] = Field(
+        default=[],
         description=describe_attr(
             "preferred_during_scheduling_ignored_during_execution", __doc__
         ),
