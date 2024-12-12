@@ -286,19 +286,37 @@ def reset(
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
+    operation_mode: OperationMode = OPERATION_MODE_OPTION,
 ):
-    for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
-        kpops.reset(
-            pipeline_path=pipeline_file_path,
-            dotenv=dotenv,
-            config=config,
-            steps=parse_steps(steps),
-            filter_type=filter_type,
-            environment=environment,
-            dry_run=dry_run,
-            verbose=verbose,
-            parallel=parallel,
-        )
+    match operation_mode:
+        case OperationMode.MANAGED:
+            for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
+                kpops.reset(
+                    pipeline_path=pipeline_file_path,
+                    dotenv=dotenv,
+                    config=config,
+                    steps=parse_steps(steps),
+                    filter_type=filter_type,
+                    environment=environment,
+                    dry_run=dry_run,
+                    verbose=verbose,
+                    parallel=parallel,
+                )
+        case _:
+            for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
+                resources = kpops.manifest_reset(
+                    pipeline_file_path,
+                    dotenv,
+                    config,
+                    parse_steps(steps),
+                    filter_type,
+                    environment,
+                    verbose,
+                    operation_mode,
+                )
+                for resource in resources:
+                    for rendered_manifest in resource:
+                        print_yaml(rendered_manifest.model_dump())
 
 
 @app.command(help="Clean pipeline steps")
