@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import StrEnum
 from typing import Any, NewType
 
 from pydantic import ConfigDict, Field, model_validator
@@ -8,7 +8,7 @@ from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import DescConfigModel
 
 
-class InputTopicTypes(str, Enum):
+class InputTopicTypes(StrEnum):
     """Input topic types.
 
     - INPUT: input topic

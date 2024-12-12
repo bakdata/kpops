@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import Mapping, MutableMapping
 from dataclasses import dataclass
 from difflib import Differ
-from enum import Enum
+from enum import StrEnum
 from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 import typer
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 differ = Differ()
 
 
-class DiffType(str, Enum):
+class DiffType(StrEnum):
     ADD = "add"
     CHANGE = "change"
     REMOVE = "remove"
