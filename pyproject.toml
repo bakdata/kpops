@@ -73,11 +73,8 @@ reportUnknownLambdaType = "warning"
 reportUnknownVariableType = "warning"
 reportUnknownMemberType = "warning"
 
-reportIncompatibleVariableOverride = false
-reportIncompatibleMethodOverride = false
-# FIXME: causes issues on Python 3.10
-# reportIncompatibleVariableOverride = "warning"
-# reportIncompatibleMethodOverride = "warning"
+reportIncompatibleVariableOverride = "warning"
+reportIncompatibleMethodOverride = "warning"
 
 [tool.ruff]
 output-format = "grouped"
