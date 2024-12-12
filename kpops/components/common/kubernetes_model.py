@@ -133,19 +133,19 @@ class PreferredSchedulingTerm(DescConfigModel, CamelCaseConfigModel):
 _T = TypeVar("_T")
 
 
-def serialize_list_to_optional(
-    value: list[_T],
+def serialize_to_optional(
+    value: _T,
     default_serialize_handler: pydantic.SerializerFunctionWrapHandler,
     info: pydantic.SerializationInfo,
-) -> list[_T] | None:
+) -> _T | None:
     result = default_serialize_handler(value)
     return result or None
 
 
-OptionalList = Annotated[
-    list[_T],
-    pydantic.WrapSerializer(serialize_list_to_optional),
-    "list that is serialized to None if empty",
+SerializeAsOptional = Annotated[
+    _T,
+    pydantic.WrapSerializer(serialize_to_optional),
+    "Optional that is serialized to None if falsy",
 ]
 
 
@@ -162,8 +162,8 @@ class NodeAffinity(DescConfigModel, CamelCaseConfigModel):
             "required_during_scheduling_ignored_during_execution", __doc__
         ),
     )
-    preferred_during_scheduling_ignored_during_execution: OptionalList[
-        PreferredSchedulingTerm
+    preferred_during_scheduling_ignored_during_execution: SerializeAsOptional[
+        list[PreferredSchedulingTerm]
     ] = Field(
         default=[],
         description=describe_attr(
