@@ -3,3 +3,5 @@ pipeline_base_dir: tests/pipeline
 strimzi_topic:
   label:
      strimzi.io/cluster: my-cluster
+
+operation_mode: manifest
