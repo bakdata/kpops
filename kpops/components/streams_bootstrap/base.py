@@ -28,7 +28,7 @@ STREAMS_BOOTSTRAP_HELM_REPO = HelmRepoConfig(
     url="https://bakdata.github.io/streams-bootstrap/",
 )
 
-STREAMS_BOOTSTRAP_VERSION = "3.0.1"
+STREAMS_BOOTSTRAP_VERSION = "3.1.0"
 STREAMS_BOOTSTRAP_VERSION_PATTERN = r"^(\d+)\.(\d+)\.(\d+)(-[a-zA-Z]+(\.[a-zA-Z]+)?)?$"
 COMPILED_VERSION_PATTERN = re.compile(STREAMS_BOOTSTRAP_VERSION_PATTERN)
 
