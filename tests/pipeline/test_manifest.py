@@ -259,7 +259,9 @@ class TestManifest:
         assert result.exit_code == 0, result.stdout
         snapshot.assert_match(result.stdout, MANIFEST_YAML)
 
-    def test_manifest_rest_python_api(self, capsys: CaptureFixture, snapshot: Snapshot):
+    def test_manifest_reset_python_api(
+        self, capsys: CaptureFixture, snapshot: Snapshot
+    ):
         generator = kpops.manifest_reset(
             RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML,
             environment="development",
