@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import enum
-from typing import TYPE_CHECKING, Annotated, TypeVar
+from typing import TYPE_CHECKING, Annotated, Any, TypeVar
 
 import pydantic
-from pydantic import Field, model_validator
+from pydantic import Field, GetCoreSchemaHandler, model_validator
+from pydantic_core import core_schema
 
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel
@@ -142,9 +143,21 @@ def serialize_to_optional(
     return result or None
 
 
+class OptionalSchema:
+    def __get_pydantic_core_schema__(
+        self,
+        source: type[Any],
+        handler: GetCoreSchemaHandler,
+    ) -> core_schema.CoreSchema:
+        schema = handler(source)
+        # wrap generated schema in nullable
+        return core_schema.NullableSchema(type="nullable", schema=schema)
+
+
 SerializeAsOptional = Annotated[
     _T,
     pydantic.WrapSerializer(serialize_to_optional),
+    OptionalSchema(),
     "Optional that is serialized to None if falsy",
 ]
 
