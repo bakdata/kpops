@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
-from enum import Enum
+from enum import StrEnum
 from typing import Annotated, Any
 
 import pydantic
@@ -11,7 +11,7 @@ from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import DescConfigModel, to_str
 
 
-class OutputTopicTypes(str, Enum):
+class OutputTopicTypes(StrEnum):
     """Types of output topic.
 
     - OUTPUT: output topic

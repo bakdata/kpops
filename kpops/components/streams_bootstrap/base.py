@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import re
 from abc import ABC
-from typing import TYPE_CHECKING
+from typing import Self
 
 import pydantic
 from pydantic import Field
@@ -16,12 +16,6 @@ from kpops.components.streams_bootstrap.model import StreamsBootstrapValues
 from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.manifests.strimzi.kafka_topic import StrimziKafkaTopic
 from kpops.utils.docstring import describe_attr
-
-if TYPE_CHECKING:
-    try:
-        from typing import Self  # pyright: ignore[reportAttributeAccessIssue]
-    except ImportError:
-        from typing_extensions import Self
 
 STREAMS_BOOTSTRAP_HELM_REPO = HelmRepoConfig(
     repository_name="bakdata-streams-bootstrap",

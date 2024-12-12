@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from abc import ABC
-from typing import TYPE_CHECKING, Any
+from typing import Any, Self
 
 import pydantic
 from pydantic import AliasChoices, ConfigDict, Field
@@ -19,12 +19,6 @@ from kpops.utils.pydantic import (
     exclude_by_value,
     exclude_defaults,
 )
-
-if TYPE_CHECKING:
-    try:
-        from typing import Self  # pyright: ignore[reportAttributeAccessIssue]
-    except ImportError:
-        from typing_extensions import Self
 
 STREAMS_BOOTSTRAP_HELM_REPO = HelmRepoConfig(
     repository_name="bakdata-streams-bootstrap",
