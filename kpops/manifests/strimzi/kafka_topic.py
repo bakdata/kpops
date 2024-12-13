@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import Any, Self
 
 from pydantic import ConfigDict, Field, model_validator
 
@@ -10,12 +10,6 @@ from kpops.config import get_config
 from kpops.manifests.kubernetes import KubernetesManifest, ObjectMeta
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import CamelCaseConfigModel
-
-if TYPE_CHECKING:
-    try:
-        from typing import Self  # pyright: ignore[reportAttributeAccessIssue]
-    except ImportError:
-        from typing_extensions import Self
 
 
 class TopicSpec(CamelCaseConfigModel):

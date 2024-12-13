@@ -21,7 +21,7 @@ jobs:
         os:
           - ubuntu-22.04
           - windows-2022
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.11", "3.12"]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -32,8 +32,8 @@ jobs:
       - name: Install Python and set up Poetry
         uses: bakdata/ci-templates/actions/python-setup-poetry@v1.5.3
         with:
-          poetry-version: "1.7.1"
           python-version: ${{ matrix.python-version }}
+          poetry-version: "1.7.1"
 
       - name: Check Poetry lock file consistency
         run: poetry lock --check
@@ -43,7 +43,7 @@ jobs:
 
       - name: Lint (ruff)
         run: |
-          if [[ "$RUNNER_OS" == "Linux" && "${{ matrix.python-version }}" == "3.10" ]]
+          if [[ "$RUNNER_OS" == "Linux" && "${{ matrix.python-version }}" == "3.11" ]]
           then
             poetry run ruff check . --config pyproject.toml --output-format=github --no-fix
           else
@@ -55,7 +55,7 @@ jobs:
 
       - name: Typing (pyright)
         run: |
-          if [[ "$RUNNER_OS" == "Linux" && "${{ matrix.python-version }}" == "3.10" ]]
+          if [[ "$RUNNER_OS" == "Linux" && "${{ matrix.python-version }}" == "3.11" ]]
           then
             echo "::add-matcher::.github/pyright-matcher.json"
             poetry run pre-commit run pyright --all-files
@@ -93,6 +93,7 @@ jobs:
     needs: [test]
     uses: bakdata/ci-templates/.github/workflows/python-poetry-publish-snapshot.yaml@1.40.4
     with:
+      python-version: "3.11"
       poetry-version: "1.7.1"
     secrets:
       pypi-token: ${{ secrets.TEST_PYPI_TOKEN }}

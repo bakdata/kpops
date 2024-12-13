@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 
 FILE_EXTENSION = ".yaml"
 
 
-class KpopsFileType(str, Enum):
+class KpopsFileType(StrEnum):
     """Enum representing different types of KPOps file naming conventions.
 
     Attributes:

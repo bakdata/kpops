@@ -1,10 +1,10 @@
 """Documentation generation."""
 
 from collections.abc import Iterator
-from enum import Enum
+from enum import StrEnum
 
 
-class IterableStrEnum(str, Enum):
+class IterableStrEnum(StrEnum):
     """Polyfill that also introduces dict-like behavior.
 
     Introduces constructors that return a ``Iterator`` object
