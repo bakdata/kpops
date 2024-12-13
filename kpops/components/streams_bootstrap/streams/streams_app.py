@@ -20,6 +20,7 @@ from kpops.config import get_config
 from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
 from kpops.manifests.argo import ArgoHook, enrich_annotations
 from kpops.manifests.kubernetes import KubernetesManifest
+from kpops.manifests.strimzi.kafka_topic import StrimziKafkaTopic
 from kpops.utils.docstring import describe_attr
 
 log = logging.getLogger("StreamsApp")
@@ -58,6 +59,19 @@ class StreamsAppCleaner(KafkaAppCleaner, StreamsBootstrap):
         if get_config().operation_mode is OperationMode.ARGO:
             post_delete = ArgoHook.POST_DELETE
             values = enrich_annotations(values, post_delete.key, post_delete.value)
+        return self.helm.template(
+            self.helm_release_name,
+            self.helm_chart,
+            self.namespace,
+            values,
+            self.template_flags,
+        )
+
+    @override
+    def manifest_reset(self) -> tuple[KubernetesManifest, ...]:
+        self.values.kafka.delete_output = False
+        values = self.to_helm_values()
+
         return self.helm.template(
             self.helm_release_name,
             self.helm_chart,
@@ -184,6 +198,15 @@ class StreamsApp(StreamsBootstrap):
             manifests = manifests + self._cleaner.manifest_deploy()
 
         return manifests
+
+    @override
+    def manifest_reset(self) -> tuple[KubernetesManifest, ...]:
+        resource = self._cleaner.manifest_reset()
+        if self.to:
+            resource = resource + tuple(
+                StrimziKafkaTopic.from_topic(topic) for topic in self.to.kafka_topics
+            )
+        return resource
 
     @override
     def manifest_clean(self) -> tuple[KubernetesManifest, ...]:
