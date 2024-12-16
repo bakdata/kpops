@@ -118,15 +118,6 @@
             "title": "KafkaRestConfig",
             "type": "object"
         },
-        "OperationMode": {
-            "enum": [
-                "argo",
-                "manifest",
-                "managed"
-            ],
-            "title": "OperationMode",
-            "type": "string"
-        },
         "SchemaRegistryConfig": {
             "additionalProperties": false,
             "description": "Configuration for Schema Registry.",
@@ -160,25 +151,6 @@
                 }
             },
             "title": "SchemaRegistryConfig",
-            "type": "object"
-        },
-        "StrimziTopicConfig": {
-            "additionalProperties": false,
-            "description": "Configuration for Strimzi Kafka Topics.",
-            "properties": {
-                "label": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
-                    "description": "The label to identify the KafkaTopic resources managed by the Topic Operator. This does not have to be the name of the Kafka cluster. It can be the label assigned to the KafkaTopic resource. If you deploy more than one Topic Operator, the labels must be unique for each. That is, the operators cannot manage the same resources.",
-                    "title": "Label",
-                    "type": "object"
-                }
-            },
-            "required": [
-                "label"
-            ],
-            "title": "StrimziTopicConfig",
             "type": "object"
         },
         "TopicNameConfig": {
@@ -267,15 +239,6 @@
             },
             "description": "Configuration for Kafka REST Proxy."
         },
-        "operation_mode": {
-            "allOf": [
-                {
-                    "$ref": "#/$defs/OperationMode"
-                }
-            ],
-            "default": "managed",
-            "description": "The operation mode of KPOps (managed, manifest, argo)."
-        },
         "pipeline_base_dir": {
             "default": ".",
             "description": "Base directory to the pipelines (default is current working directory)",
@@ -301,18 +264,6 @@
                 "url": "http://localhost:8081/"
             },
             "description": "Configuration for Schema Registry."
-        },
-        "strimzi_topic": {
-            "anyOf": [
-                {
-                    "$ref": "#/$defs/StrimziTopicConfig"
-                },
-                {
-                    "type": "null"
-                }
-            ],
-            "default": null,
-            "description": "Configuration for Strimzi Kafka Topics."
         },
         "topic_name_config": {
             "allOf": [
