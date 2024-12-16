@@ -295,7 +295,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "List of JMX metric rules.",
                     "title": "Metricrules"
                 },
@@ -2992,7 +2992,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "List of additional KEDA triggers, see https://keda.sh/docs/latest/scalers/",
                     "title": "Additionaltriggers"
                 },
@@ -3040,7 +3040,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "List of auto-generated Kafka Streams topics used by the streams app",
                     "title": "Internaltopics"
                 },
@@ -3121,7 +3121,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "List of topics used by the streams app",
                     "title": "Topics"
                 }
