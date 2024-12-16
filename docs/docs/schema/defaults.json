@@ -1975,13 +1975,20 @@
                     "title": "Suspend"
                 },
                 "tolerations": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/Toleration"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "default": [],
                     "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
-                    "items": {
-                        "$ref": "#/$defs/Toleration"
-                    },
-                    "title": "Tolerations",
-                    "type": "array"
+                    "title": "Tolerations"
                 },
                 "ttlSecondsAfterFinished": {
                     "anyOf": [
@@ -3048,13 +3055,20 @@
                     "title": "Terminationgraceperiodseconds"
                 },
                 "tolerations": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/Toleration"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "default": [],
                     "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
-                    "items": {
-                        "$ref": "#/$defs/Toleration"
-                    },
-                    "title": "Tolerations",
-                    "type": "array"
+                    "title": "Tolerations"
                 }
             },
             "required": [
@@ -3598,13 +3612,20 @@
                     "description": ""
                 },
                 "tolerations": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/Toleration"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "default": [],
                     "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
-                    "items": {
-                        "$ref": "#/$defs/Toleration"
-                    },
-                    "title": "Tolerations",
-                    "type": "array"
+                    "title": "Tolerations"
                 }
             },
             "required": [

@@ -222,7 +222,7 @@ class StreamsBootstrapValues(HelmAppValues):
         description=describe_attr("affinity", __doc__),
     )
 
-    tolerations: list[Toleration] = Field(
+    tolerations: SerializeAsOptional[list[Toleration]] = Field(
         default=[],
         description=describe_attr("tolerations", __doc__),
     )
