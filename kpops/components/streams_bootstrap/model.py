@@ -20,6 +20,7 @@ from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
     DescConfigModel,
+    SerializeAsOptionalModel,
     exclude_by_value,
     exclude_defaults,
 )
@@ -94,7 +95,7 @@ class JavaOptions(CamelCaseConfigModel, DescConfigModel):
     )
 
 
-class StreamsBootstrapValues(HelmAppValues):
+class StreamsBootstrapValues(SerializeAsOptionalModel, HelmAppValues):
     """Base value class for all streams bootstrap related components.
 
     :param image: Docker image of the Kafka producer app.
