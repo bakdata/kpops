@@ -6,6 +6,7 @@ from typing import Annotated, Any
 import humps
 from pydantic import (
     BaseModel,
+    BeforeValidator,
     ConfigDict,
     Field,
     GetCoreSchemaHandler,
@@ -14,7 +15,7 @@ from pydantic import (
     model_serializer,
 )
 from pydantic.fields import FieldInfo
-from pydantic_core import core_schema
+from pydantic_core import PydanticUseDefault, core_schema
 from pydantic_settings import PydanticBaseSettingsSource
 from typing_extensions import TypeVar, override
 
@@ -238,6 +239,12 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
 _T = TypeVar("_T")
 
 
+def validate_optional_to_default(value: Any | None) -> Any:
+    if value is None:
+        raise PydanticUseDefault
+    return value
+
+
 def serialize_to_optional(
     value: _T,
     default_serialize_handler: SerializerFunctionWrapHandler,
@@ -270,7 +277,9 @@ class WrapNullableSchema:
 SerializeAsOptional = Annotated[
     _T,
     WrapNullableSchema(),
-    "Optional that is serialized to None if falsy",
+    BeforeValidator(validate_optional_to_default),
+    "Optional that is serialized to `None` if falsy",
+    "similarly an input of `None` is translated to its default during validation",
     "requires inheriting from SerializeAsOptionalModel for `model_dump(exclude_none=True)` to work",
 ]
 

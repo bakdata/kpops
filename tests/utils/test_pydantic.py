@@ -78,8 +78,12 @@ def test_serialize_as_optional():
         foo: SerializeAsOptional[list[str]] = []
 
     model = Model()
+    assert model.foo == []
     assert model.model_dump() == {"foo": None}
     assert model.model_dump(exclude_defaults=True) == {}
     assert model.model_dump(exclude_unset=True) == {}
     # this would fail without inheriting from SerializeAsOptionalModel
     assert model.model_dump(exclude_none=True) == {}
+
+    model = Model.model_validate({"foo": None})
+    assert model.foo == []
