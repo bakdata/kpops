@@ -241,9 +241,12 @@ _T = TypeVar("_T")
 def serialize_to_optional(
     value: _T,
     default_serialize_handler: SerializerFunctionWrapHandler,
+    # info: SerializationInfo,
 ) -> _T | None:
-    result = default_serialize_handler(value)
-    return result or None
+    return default_serialize_handler(value) or None
+    # TODO: another potential solution, depends on https://github.com/pydantic/pydantic/issues/6969
+    # if not result and info.exclude_none:
+    #     raise PydanticOmit
 
 
 class WrapNullableSchema:
@@ -262,7 +265,6 @@ class WrapNullableSchema:
                 schema=core_schema.nullable_schema(schema),
             ),
         )
-        return schema
 
 
 SerializeAsOptional = Annotated[
