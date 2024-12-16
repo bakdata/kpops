@@ -67,9 +67,12 @@ class StreamsApp(StreamsBootstrap):
     @computed_field
     @cached_property
     def _cleaner(self) -> StreamsAppCleaner:
-        return StreamsAppCleaner(
-            **self.model_dump(by_alias=True, exclude={"_cleaner", "from_", "to"})
-        )
+        kwargs = {
+            name: getattr(self, name)
+            for name in self.model_fields_set
+            if name not in {"_cleaner", "from_", "to"}
+        }
+        return StreamsAppCleaner.model_validate(kwargs)
 
     @property
     @override
