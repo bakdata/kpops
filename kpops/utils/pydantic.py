@@ -9,9 +9,7 @@ from pydantic import (
     ConfigDict,
     Field,
     GetCoreSchemaHandler,
-    SerializationInfo,
     SerializerFunctionWrapHandler,
-    WrapSerializer,
 )
 from pydantic.fields import FieldInfo
 from pydantic_core import core_schema
@@ -241,7 +239,6 @@ _T = TypeVar("_T")
 def serialize_to_optional(
     value: _T,
     default_serialize_handler: SerializerFunctionWrapHandler,
-    info: SerializationInfo,
 ) -> _T | None:
     result = default_serialize_handler(value)
     return result or None
@@ -255,12 +252,19 @@ class WrapNullableSchema:
     ) -> core_schema.CoreSchema:
         schema = handler(source)
         # wrap generated schema in nullable
-        return core_schema.NullableSchema(type="nullable", schema=schema)
+        return core_schema.NullableSchema(
+            type="nullable",
+            schema=schema,
+            serialization=core_schema.wrap_serializer_function_ser_schema(
+                serialize_to_optional,
+                schema=core_schema.nullable_schema(schema),
+            ),
+        )
+        return schema
 
 
 SerializeAsOptional = Annotated[
     _T,
-    WrapSerializer(serialize_to_optional),
     WrapNullableSchema(),
     "Optional that is serialized to None if falsy",
 ]
