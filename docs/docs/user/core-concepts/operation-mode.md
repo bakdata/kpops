@@ -2,7 +2,7 @@
 
 KPOps supports three operation modes—`managed`, `manifest`, and `argo`. These modes determine how resources are managed and allow users to tailor their deployment strategy.
 
-- **Managed Mode** (default): KPOps uses helm under the hood to manage the installation of applications in the defined pipeline.yaml.
+- **Managed Mode** (default): KPOps uses Helm, and communicates with services like Kafka Rest Proxy, and Kafka Connect under the hood to manage the installation/(graceful) deletion of applications, creation/deletion of Kafka topics, creation/deletion of Connectors defined in the defined `pipeline.yaml`.
 - **Manifest Mode**: Focuses on generating Kubernetes manifests.
 - **Argo Mode**: Extends the functionality to include ArgoCD-specific hooks for certain operations, facilitating GitOps workflows with automated cleanup and reset tasks.
 
@@ -41,7 +41,7 @@ operation_mode: argo
 
 #### **Manifest Mode**
 
-- **Streams bootstrap Applications**:
+- **Streams-bootstrap Applications**:
   - Depending on your pipeline configuration, Kubernetes `Job`, `Deployment`, `ConfigMap`, and `Service` resources.
   - Please refer to [Streams-bootstrap Helm Charts](https://github.com/bakdata/streams-bootstrap/tree/master/charts).
 - **Topics**:
@@ -49,7 +49,7 @@ operation_mode: argo
 
 #### **Argo Mode**
 
-- **Streams bootstrap Applications**:
+- **Streams-bootstrap Applications**:
   - Depending on your pipeline configuration, Kubernetes `Job`, `Deployment`, `ConfigMap`, and `Service` resources.
   - Additional `sync-wave` annotation with value of `>0` to prioritizes Kafka Topics deployment over the application
   - Please refer to [Streams-bootstrap Helm Charts](https://github.com/bakdata/streams-bootstrap/tree/master/charts).
