@@ -195,7 +195,7 @@ class LabelSelectorRequirement(DescConfigModel, CamelCaseConfigModel):
         return self
 
 
-class LabelSelector(DescConfigModel, CamelCaseConfigModel):
+class LabelSelector(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfigModel):
     """A label selector is a label query over a set of resources. The result of matchLabels and matchExpressions are ANDed. An empty label selector matches all objects. A null label selector matches no objects.
 
     :param match_labels: matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is *key*, the operator is *In*, and the values array contains only *value*. The requirements are ANDed.
@@ -212,7 +212,7 @@ class LabelSelector(DescConfigModel, CamelCaseConfigModel):
     )
 
 
-class PodAffinityTerm(DescConfigModel, CamelCaseConfigModel):
+class PodAffinityTerm(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfigModel):
     """Defines a set of pods (namely those matching the labelSelector relative to the given namespace(s)) that this pod should be co-located (affinity) or not co-located (anti-affinity) with, where co-located is defined as running on a node whose value of the label with key <topologyKey> matches that of any node on which a pod of the set of pods is running.
 
     :param label_selector: A label query over a set of resources, in this case pods. If it's null, this PodAffinityTerm matches with no Pods.
@@ -263,7 +263,7 @@ class WeightedPodAffinityTerm(DescConfigModel, CamelCaseConfigModel):
     )
 
 
-class PodAffinity(DescConfigModel, CamelCaseConfigModel):
+class PodAffinity(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfigModel):
     """Pod affinity is a group of inter pod affinity scheduling rules.
 
     :param required_during_scheduling_ignored_during_execution: If the affinity requirements specified by this field are not met at scheduling time, the pod will not be scheduled onto the node. If the affinity requirements specified by this field cease to be met at some point during pod execution (e.g. due to a pod label update), the system may or may not try to eventually evict the pod from its node. When there are multiple elements, the lists of nodes corresponding to each podAffinityTerm are intersected, i.e. all terms must be satisfied.

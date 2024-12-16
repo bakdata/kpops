@@ -19,6 +19,7 @@ from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
     DescConfigModel,
+    SerializeAsOptionalModel,
 )
 
 
@@ -118,7 +119,9 @@ class StreamsConfig(KafkaConfig):
         )
 
 
-class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
+class StreamsAppAutoScaling(
+    SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigModel
+):
     """Kubernetes Event-driven Autoscaling config.
 
     :param enabled: Whether to enable auto-scaling using KEDA., defaults to False
@@ -278,7 +281,7 @@ class PrometheusExporterConfig(CamelCaseConfigModel, DescConfigModel):
     )
 
 
-class JMXConfig(CamelCaseConfigModel, DescConfigModel):
+class JMXConfig(SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigModel):
     """JMX configuration options.
 
     :param port: The jmx port which JMX style metrics are exposed.
