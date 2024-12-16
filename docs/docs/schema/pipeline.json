@@ -1284,7 +1284,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of command line arguments passed to the streams app.",
                     "title": "Commandline"
                 },
@@ -1326,7 +1326,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Custom environment variables.",
                     "title": "Env"
                 },
@@ -1352,7 +1352,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of files to mount for the app. File will be mounted as $value.mountPath/$key. $value.content denotes file content (recommended to be used with --set-file).",
                     "title": "Files"
                 },
@@ -1388,7 +1388,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "",
                     "title": "Imagepullsecrets"
                 },
@@ -1435,7 +1435,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
                     "title": "Livenessprobe"
                 },
@@ -1465,7 +1465,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of custom annotations to attach to the pod spec.",
                     "title": "Podannotations"
                 },
@@ -1481,7 +1481,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of custom labels to attach to the pod spec.",
                     "title": "Podlabels"
                 },
@@ -1497,7 +1497,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "",
                     "title": "Ports"
                 },
@@ -1510,7 +1510,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
                     "title": "Readinessprobe"
                 },
@@ -1563,7 +1563,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "Mount existing secrets as volumes",
                     "title": "Secretfilesrefs"
                 },
@@ -1576,7 +1576,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Inject existing secrets as environment variables. Map key is used as environment variable name. Value consists of secret name and key.",
                     "title": "Secretrefs"
                 },
@@ -1592,7 +1592,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Custom secret environment variables. Prefix with configurationEnvPrefix in order to pass secrets to command line or prefix with KAFKA_ to pass secrets to Kafka Streams configuration.",
                     "title": "Secrets"
                 },
@@ -1635,20 +1635,13 @@
                     "title": "Suspend"
                 },
                 "tolerations": {
-                    "anyOf": [
-                        {
-                            "items": {
-                                "$ref": "#/$defs/Toleration"
-                            },
-                            "type": "array"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
+                    "default": [],
                     "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
-                    "title": "Tolerations"
+                    "items": {
+                        "$ref": "#/$defs/Toleration"
+                    },
+                    "title": "Tolerations",
+                    "type": "array"
                 },
                 "ttlSecondsAfterFinished": {
                     "anyOf": [
@@ -2386,7 +2379,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of command line arguments passed to the streams app.",
                     "title": "Commandline"
                 },
@@ -2415,7 +2408,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Custom environment variables.",
                     "title": "Env"
                 },
@@ -2428,7 +2421,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of files to mount for the app. File will be mounted as $value.mountPath/$key. $value.content denotes file content (recommended to be used with --set-file).",
                     "title": "Files"
                 },
@@ -2464,7 +2457,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "",
                     "title": "Imagepullsecrets"
                 },
@@ -2523,7 +2516,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
                     "title": "Livenessprobe"
                 },
@@ -2565,7 +2558,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of custom annotations to attach to the pod spec.",
                     "title": "Podannotations"
                 },
@@ -2581,7 +2574,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of custom labels to attach to the pod spec.",
                     "title": "Podlabels"
                 },
@@ -2597,7 +2590,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "",
                     "title": "Ports"
                 },
@@ -2622,7 +2615,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
                     "title": "Readinessprobe"
                 },
@@ -2650,7 +2643,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "Mount existing secrets as volumes",
                     "title": "Secretfilesrefs"
                 },
@@ -2663,7 +2656,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Inject existing secrets as environment variables. Map key is used as environment variable name. Value consists of secret name and key.",
                     "title": "Secretrefs"
                 },
@@ -2679,7 +2672,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Custom secret environment variables. Prefix with configurationEnvPrefix in order to pass secrets to command line or prefix with KAFKA_ to pass secrets to Kafka Streams configuration.",
                     "title": "Secrets"
                 },
@@ -2715,20 +2708,13 @@
                     "title": "Terminationgraceperiodseconds"
                 },
                 "tolerations": {
-                    "anyOf": [
-                        {
-                            "items": {
-                                "$ref": "#/$defs/Toleration"
-                            },
-                            "type": "array"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
+                    "default": [],
                     "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
-                    "title": "Tolerations"
+                    "items": {
+                        "$ref": "#/$defs/Toleration"
+                    },
+                    "title": "Tolerations",
+                    "type": "array"
                 }
             },
             "required": [
