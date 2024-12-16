@@ -75,15 +75,38 @@ def test_to_str(input: Any, expected: str):
 
 def test_serialize_as_optional():
     class Model(SerializeAsOptionalModel):
-        foo: SerializeAsOptional[list[str]] = []
+        optional_list: SerializeAsOptional[list[str]] = []
+        optional_dict: SerializeAsOptional[dict[str, str]] = {}
 
     model = Model()
-    assert model.foo == []
-    assert model.model_dump() == {"foo": None}
+    assert model.optional_list == []
+    assert model.optional_dict == {}
+    assert model.model_dump() == {"optional_list": None, "optional_dict": None}
     assert model.model_dump(exclude_defaults=True) == {}
     assert model.model_dump(exclude_unset=True) == {}
     # this would fail without inheriting from SerializeAsOptionalModel
     assert model.model_dump(exclude_none=True) == {}
 
-    model = Model.model_validate({"foo": None})
-    assert model.foo == []
+    model = Model.model_validate({"optional_list": None, "optional_dict": None})
+    assert model.optional_list == []
+    assert model.optional_dict == {}
+
+    model = Model(optional_list=["el"], optional_dict={"foo": "bar"})
+    assert model.optional_list == ["el"]
+    assert model.optional_dict == {"foo": "bar"}
+    assert model.model_dump() == {
+        "optional_list": ["el"],
+        "optional_dict": {"foo": "bar"},
+    }
+    assert model.model_dump(exclude_defaults=True) == {
+        "optional_list": ["el"],
+        "optional_dict": {"foo": "bar"},
+    }
+    assert model.model_dump(exclude_unset=True) == {
+        "optional_list": ["el"],
+        "optional_dict": {"foo": "bar"},
+    }
+    assert model.model_dump(exclude_none=True) == {
+        "optional_list": ["el"],
+        "optional_dict": {"foo": "bar"},
+    }
