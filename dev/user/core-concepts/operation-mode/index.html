@@ -1856,7 +1856,7 @@
 <h1 id="operation-modes-in-kpops">Operation Modes in KPOps<a class="headerlink" href="#operation-modes-in-kpops" title="Permanent link">&para;</a></h1>
 <p>KPOps supports three operation modes—<code>managed</code>, <code>manifest</code>, and <code>argo</code>. These modes determine how resources are managed and allow users to tailor their deployment strategy.</p>
 <ul>
-<li><strong>Managed Mode</strong> (default): KPOps uses helm under the hood to manage the installation of applications in the defined pipeline.yaml.</li>
+<li><strong>Managed Mode</strong> (default): KPOps uses Helm, and communicates with services like Kafka Rest Proxy, and Kafka Connect under the hood to manage the installation/(graceful) deletion of applications, creation/deletion of Kafka topics, creation/deletion of Connectors defined in the defined <code>pipeline.yaml</code>.</li>
 <li><strong>Manifest Mode</strong>: Focuses on generating Kubernetes manifests.</li>
 <li><strong>Argo Mode</strong>: Extends the functionality to include ArgoCD-specific hooks for certain operations, facilitating GitOps workflows with automated cleanup and reset tasks.</li>
 </ul>
@@ -1883,7 +1883,7 @@
 <h3 id="deploy"><code>deploy</code><a class="headerlink" href="#deploy" title="Permanent link">&para;</a></h3>
 <h4 id="manifest-mode_1"><strong>Manifest Mode</strong><a class="headerlink" href="#manifest-mode_1" title="Permanent link">&para;</a></h4>
 <ul>
-<li><strong>Streams bootstrap Applications</strong>:</li>
+<li><strong>Streams-bootstrap Applications</strong>:</li>
 <li>Depending on your pipeline configuration, Kubernetes <code>Job</code>, <code>Deployment</code>, <code>ConfigMap</code>, and <code>Service</code> resources.</li>
 <li>Please refer to <a href="https://github.com/bakdata/streams-bootstrap/tree/master/charts">Streams-bootstrap Helm Charts</a>.</li>
 <li><strong>Topics</strong>:</li>
@@ -1891,7 +1891,7 @@
 </ul>
 <h4 id="argo-mode_1"><strong>Argo Mode</strong><a class="headerlink" href="#argo-mode_1" title="Permanent link">&para;</a></h4>
 <ul>
-<li><strong>Streams bootstrap Applications</strong>:</li>
+<li><strong>Streams-bootstrap Applications</strong>:</li>
 <li>Depending on your pipeline configuration, Kubernetes <code>Job</code>, <code>Deployment</code>, <code>ConfigMap</code>, and <code>Service</code> resources.</li>
 <li>Additional <code>sync-wave</code> annotation with value of <code>&gt;0</code> to prioritizes Kafka Topics deployment over the application</li>
 <li>Please refer to <a href="https://github.com/bakdata/streams-bootstrap/tree/master/charts">Streams-bootstrap Helm Charts</a>.</li>
