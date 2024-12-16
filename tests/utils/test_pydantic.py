@@ -5,6 +5,7 @@ import pytest
 from kpops.components.common.kubernetes_model import SerializeAsOptional
 from kpops.utils.pydantic import (
     SerializeAsOptionalModel,
+    exclude_by_value,
     to_dash,
     to_dot,
     to_snake,
@@ -71,6 +72,64 @@ def test_to_dot(input: str, expected: str):
 )
 def test_to_str(input: Any, expected: str):
     assert to_str(input) == expected
+
+
+@pytest.mark.parametrize(
+    ("dumped_model", "excluded_values", "expected"),
+    [
+        pytest.param(
+            {},
+            (),
+            {},
+        ),
+        pytest.param(
+            {},
+            (None,),
+            {},
+        ),
+        pytest.param(
+            {"foo": 0, "bar": 1},
+            (),
+            {"foo": 0, "bar": 1},
+        ),
+        pytest.param(
+            {"foo": 0, "bar": 1},
+            (None,),
+            {"foo": 0, "bar": 1},
+        ),
+        pytest.param(
+            {"foo": 0, "bar": 1},
+            (0,),
+            {"bar": 1},
+        ),
+        pytest.param(
+            {"foo": 0, "bar": 1},
+            (1,),
+            {"foo": 0},
+        ),
+        pytest.param(
+            {"foo": None},
+            (None,),
+            {},
+        ),
+        pytest.param(
+            {"foo": None, "bar": 0},
+            (None,),
+            {"bar": 0},
+        ),
+        pytest.param(
+            {"foo": None, "bar": 0},
+            (None, 0),
+            {},
+        ),
+    ],
+)
+def test_exclude_by_value(
+    dumped_model: dict[str, Any],
+    excluded_values: tuple[Any, ...],
+    expected: dict[str, Any],
+):
+    assert exclude_by_value(dumped_model, *excluded_values) == expected
 
 
 def test_serialize_as_optional():
