@@ -9,7 +9,9 @@ from pydantic import (
     ConfigDict,
     Field,
     GetCoreSchemaHandler,
+    SerializationInfo,
     SerializerFunctionWrapHandler,
+    model_serializer,
 )
 from pydantic.fields import FieldInfo
 from pydantic_core import core_schema
@@ -267,4 +269,19 @@ SerializeAsOptional = Annotated[
     _T,
     WrapNullableSchema(),
     "Optional that is serialized to None if falsy",
+    "requires inheriting from SerializeAsOptionalModel for `model_dump(exclude_none=True)` to work",
 ]
+
+
+class SerializeAsOptionalModel(BaseModel):
+    # HACK: workaround for exclude_none, which is otherwise evaluated too early
+    @model_serializer(mode="wrap", when_used="always")
+    def serialize_model(
+        self,
+        default_serialize_handler: SerializerFunctionWrapHandler,
+        info: SerializationInfo,
+    ) -> dict[str, Any]:
+        result = default_serialize_handler(self)
+        if info.exclude_none:
+            return exclude_by_value(result, None)
+        return result

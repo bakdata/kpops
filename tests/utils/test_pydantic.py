@@ -1,11 +1,15 @@
 from typing import Any
 
-import pydantic
 import pytest
-from pydantic import BaseModel, model_serializer
 
 from kpops.components.common.kubernetes_model import SerializeAsOptional
-from kpops.utils.pydantic import exclude_by_value, to_dash, to_dot, to_snake, to_str
+from kpops.utils.pydantic import (
+    SerializeAsOptionalModel,
+    to_dash,
+    to_dot,
+    to_snake,
+    to_str,
+)
 
 
 @pytest.mark.parametrize(
@@ -70,24 +74,12 @@ def test_to_str(input: Any, expected: str):
 
 
 def test_serialize_as_optional():
-    class Model(BaseModel):
+    class Model(SerializeAsOptionalModel):
         foo: SerializeAsOptional[list[str]] = []
-
-        # HACK: workaround for exclude_none, which is otherwise evaluated too early
-        @model_serializer(mode="wrap", when_used="always")
-        def serialize_model(
-            self,
-            default_serialize_handler: pydantic.SerializerFunctionWrapHandler,
-            info: pydantic.SerializationInfo,
-        ) -> dict[str, Any]:
-            result = default_serialize_handler(self)
-            if info.exclude_none:
-                return exclude_by_value(result, None)
-            return result
 
     model = Model()
     assert model.model_dump() == {"foo": None}
     assert model.model_dump(exclude_defaults=True) == {}
     assert model.model_dump(exclude_unset=True) == {}
-    # this would fail without custom model_serializer
+    # this would fail without inheriting from SerializeAsOptionalModel
     assert model.model_dump(exclude_none=True) == {}

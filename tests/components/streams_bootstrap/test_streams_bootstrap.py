@@ -192,18 +192,15 @@ class TestStreamsBootstrap:
             "requiredDuringSchedulingIgnoredDuringExecution": None,
             "preferredDuringSchedulingIgnoredDuringExecution": None,
         }
+        assert node_affinity.model_dump(by_alias=True, exclude_none=True) == {}
 
         node_affinity.preferred_during_scheduling_ignored_during_execution.append(
             PreferredSchedulingTerm(preference=NodeSelectorTerm(), weight=1)
         )
-        assert node_affinity.model_dump(by_alias=True) == {
-            "requiredDuringSchedulingIgnoredDuringExecution": None,
+        assert node_affinity.model_dump(by_alias=True, exclude_none=True) == {
             "preferredDuringSchedulingIgnoredDuringExecution": [
                 {
-                    "preference": {
-                        "matchExpressions": None,
-                        "matchFields": None,
-                    },
+                    "preference": {},
                     "weight": 1,
                 }
             ],

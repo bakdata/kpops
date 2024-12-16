@@ -11,6 +11,7 @@ from kpops.utils.pydantic import (
     CamelCaseConfigModel,
     DescConfigModel,
     SerializeAsOptional,
+    SerializeAsOptionalModel,
 )
 
 if TYPE_CHECKING:
@@ -95,7 +96,7 @@ class NodeSelectorRequirement(DescConfigModel, CamelCaseConfigModel):
         return self
 
 
-class NodeSelectorTerm(DescConfigModel, CamelCaseConfigModel):
+class NodeSelectorTerm(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfigModel):
     """A null or empty node selector term matches no objects. The requirements of them are ANDed. The TopologySelectorTerm type implements a subset of the NodeSelectorTerm.
 
     :param match_expressions: A list of node selector requirements by node's labels.
@@ -134,7 +135,7 @@ class PreferredSchedulingTerm(DescConfigModel, CamelCaseConfigModel):
     weight: Weight = Field(description=describe_attr("weight", __doc__))
 
 
-class NodeAffinity(DescConfigModel, CamelCaseConfigModel):
+class NodeAffinity(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfigModel):
     """Node affinity is a group of node affinity scheduling rules.
 
     :param required_during_scheduling_ignored_during_execution: If the affinity requirements specified by this field are not met at scheduling time, the pod will not be scheduled onto the node. If the affinity requirements specified by this field cease to be met at some point during pod execution (e.g. due to an update), the system may or may not try to eventually evict the pod from its node.
