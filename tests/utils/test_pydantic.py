@@ -1,7 +1,9 @@
 from typing import Any
 
 import pytest
+from pydantic import BaseModel
 
+from kpops.components.common.kubernetes_model import SerializeAsOptional
 from kpops.utils.pydantic import to_dash, to_dot, to_snake, to_str
 
 
@@ -64,3 +66,13 @@ def test_to_dot(input: str, expected: str):
 )
 def test_to_str(input: Any, expected: str):
     assert to_str(input) == expected
+
+
+def test_serialize_as_optional():
+    class Model(BaseModel):
+        foo: SerializeAsOptional[list[str]] = []
+
+    assert Model().model_dump() == {"foo": None}
+    assert Model().model_dump(exclude_defaults=True) == {}
+    assert Model().model_dump(exclude_unset=True) == {}
+    assert Model().model_dump(exclude_none=True) == {}
