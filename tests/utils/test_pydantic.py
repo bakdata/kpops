@@ -72,7 +72,8 @@ def test_serialize_as_optional():
     class Model(BaseModel):
         foo: SerializeAsOptional[list[str]] = []
 
-    assert Model().model_dump() == {"foo": None}
-    assert Model().model_dump(exclude_defaults=True) == {}
-    assert Model().model_dump(exclude_unset=True) == {}
-    assert Model().model_dump(exclude_none=True) == {}
+    model = Model()
+    assert model.model_dump() == {"foo": None}
+    assert model.model_dump(exclude_defaults=True) == {}
+    assert model.model_dump(exclude_unset=True) == {}
+    assert model.model_dump(exclude_none=True) == {}
