@@ -1851,7 +1851,7 @@ Alternatively, you can to pass the <code>--operation-mode &lt;OPERATION&gt;</cod
 <ul>
 <li><strong>streams-bootstrap Applications</strong>:</li>
 <li>Depending on your pipeline configuration, Kubernetes <code>Job</code>, <code>Deployment</code>, <code>ConfigMap</code>, and <code>Service</code> resources.</li>
-<li>Please refer to <a href="https://github.com/bakdata/streams-bootstrap/tree/master/charts">Streams-bootstrap Helm Charts</a>.</li>
+<li>Please refer to <a href="https://github.com/bakdata/streams-bootstrap/tree/master/charts">streams-bootstrap Helm Charts</a>.</li>
 <li><strong>Topics</strong>:</li>
 <li>Strimzi <code>KafkaTopic</code> CRDs.</li>
 </ul>
@@ -1859,8 +1859,8 @@ Alternatively, you can to pass the <code>--operation-mode &lt;OPERATION&gt;</cod
 <ul>
 <li><strong>streams-bootstrap Applications</strong>:</li>
 <li>Depending on your pipeline configuration, Kubernetes <code>Job</code>, <code>Deployment</code>, <code>ConfigMap</code>, and <code>Service</code> resources.</li>
-<li>Additional <code>sync-wave</code> annotation with value of <code>&gt;0</code> to prioritizes Kafka Topics deployment over the application</li>
-<li>Please refer to <a href="https://github.com/bakdata/streams-bootstrap/tree/master/charts">Streams-bootstrap Helm Charts</a>.</li>
+<li>Additional Argo <code>sync-wave</code> annotation to ensure Kafka topics are created first (default <code>sync-wave=0</code>) before deploying apps (lower priority <code>sync-wave&gt;0</code>). All components of each sync wave are deployed in parallel by Argo.</li>
+<li>Please refer to <a href="https://github.com/bakdata/streams-bootstrap/tree/master/charts">streams-bootstrap Helm Charts</a>.</li>
 <li><strong>Topics</strong>:</li>
 <li>Strimzi <code>KafkaTopic</code> CRDs.</li>
 <li><strong>Cleanup Jobs</strong>:</li>
@@ -1892,7 +1892,7 @@ Alternatively, you can to pass the <code>--operation-mode &lt;OPERATION&gt;</cod
 <h4 id="argo-mode_2"><strong>Argo Mode</strong><a class="headerlink" href="#argo-mode_2" title="Permanent link">&para;</a></h4>
 <ul>
 <li><strong>Not Applicable</strong>:</li>
-<li>The <code>clean</code> command is not supported in Argo mode. The clean can be achieved through manifesting hooked cleanup jobs during the <code>deploy</code> command.</li>
+<li>The <code>clean</code> command is not supported in Argo mode. The clean is instead achieved through cleanup job hooks during the <code>deploy</code> command.</li>
 </ul>
 <hr />
 <h3 id="destroy"><code>destroy</code><a class="headerlink" href="#destroy" title="Permanent link">&para;</a></h3>
