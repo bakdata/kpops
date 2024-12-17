@@ -349,7 +349,8 @@ class Toleration(DescConfigModel, CamelCaseConfigModel):
 CPUStr = Annotated[str, pydantic.StringConstraints(pattern=r"^\d+m$")]
 MemoryStr = Annotated[
     # Matches plain number string or number with valid suffixes: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory
-    str, pydantic.StringConstraints(pattern=r"^\d+([EPTGMk]|Ei|Pi|Ti|Gi|Mi|Ki)?$")
+    str,
+    pydantic.StringConstraints(pattern=r"^\d+(\.\d+)?([EPTGMk]|Ei|Pi|Ti|Gi|Mi|Ki)?$"),
 ]
 
 
