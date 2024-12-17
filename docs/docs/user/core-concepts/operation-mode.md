@@ -10,8 +10,8 @@ KPOps supports three operation modes—`managed`, `manifest`, and `argo`. These 
 
 ## Configuring Operation Modes
 
-It is possible to configure the operation mode in the `config.yaml` file. Please refer to the [Configuration documentation page](https://bakdata.github.io/kpops/9.0/user/core-concepts/config/).
-Alternatively, you can to pass the `--operation-mode <OPERATION>` option in the CLI to override the operation mode of the `config.yaml`. You can refer to the [CLI commands documentation](https://bakdata.github.io/kpops/9.0/user/references/cli-commands/#kpops-deploy) for more details.
+It is possible to configure the operation mode in the `config.yaml` file. Please refer to the [Configuration documentation page](./config.md).
+Alternatively, you can to pass the `--operation-mode <OPERATION>` option in the CLI to override the operation mode of the `config.yaml`. You can refer to the [CLI commands documentation](./../references/cli-commands.md/#kpops-deploy) for more details.
 
 ---
 
