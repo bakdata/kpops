@@ -17,11 +17,11 @@ from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
     DescConfigModel,
+    SerializeAsOptional,
     SerializeAsOptionalModel,
     exclude_by_value,
     exclude_defaults,
 )
-from tests.utils.test_pydantic import SerializeAsOptional
 
 if TYPE_CHECKING:
     try:
