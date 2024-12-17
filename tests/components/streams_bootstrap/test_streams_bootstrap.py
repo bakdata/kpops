@@ -161,6 +161,14 @@ class TestStreamsBootstrap:
                 {"memory": "10Mi"}, does_not_raise(), id="memory str mebibyte"
             ),
             pytest.param(
+                {"memory": "2.5G"}, does_not_raise(), id="memory str decimal gigabyte"
+            ),
+            pytest.param(
+                {"memory": "0.599M"},
+                does_not_raise(),
+                id="memory str decimal megabyte",
+            ),
+            pytest.param(
                 {"memory": 0},
                 pytest.raises(ValidationError),
                 id="memory int disallow 0",
