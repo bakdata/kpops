@@ -81,11 +81,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://bakdata.github.io/kpops/dev/user/core-concepts/operation-mode/</loc>
-         <lastmod>2024-12-17</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://bakdata.github.io/kpops/dev/user/core-concepts/components/helm-app/</loc>
          <lastmod>2024-12-17</lastmod>
          <changefreq>daily</changefreq>
@@ -192,11 +187,6 @@
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/dev/user/migration-guide/v7-v8/</loc>
-         <lastmod>2024-12-17</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://bakdata.github.io/kpops/dev/user/migration-guide/v8-v9/</loc>
          <lastmod>2024-12-17</lastmod>
          <changefreq>daily</changefreq>
     </url>
