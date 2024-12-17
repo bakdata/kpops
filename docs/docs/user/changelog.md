@@ -1,4 +1,15 @@
 # Changelog
+## [8.3.0](https://github.com/bakdata/kpops/releases/tag/8.3.0) - Release Date: [2024-12-17]
+
+### 🌀 Miscellaneous
+
+- Add Kubernetes affinity and tolerations to streams-bootstrap v2 values - [#567](https://github.com/bakdata/kpops/pull/567)
+
+
+
+
+
+
 ## [8.2.0](https://github.com/bakdata/kpops/releases/tag/8.2.0) - Release Date: [2024-12-12]
 
 ### 🐛 Fixes
