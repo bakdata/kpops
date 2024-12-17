@@ -354,15 +354,17 @@ class Toleration(DescConfigModel, CamelCaseConfigModel):
 CPUStr = Annotated[str, pydantic.StringConstraints(pattern=r"^\d+m$")]
 MemoryStr = Annotated[
     # Matches plain number string or number with valid suffixes: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory
-    str, pydantic.StringConstraints(pattern=r"^\d+([EPTGMk]|Ei|Pi|Ti|Gi|Mi|Ki)?$")
+    str,
+    pydantic.StringConstraints(pattern=r"^\d+(\.\d+)?([EPTGMk]|Ei|Pi|Ti|Gi|Mi|Ki)?$"),
 ]
 
 
 class ResourceDefinition(DescConfigModel):
     """Model representing the `limits` or `requests` section of Kubernetes resource specifications.
 
-    :param cpu: The maximum amount of CPU a container can use, expressed in milli CPUs (e.g., '300m').
-    :param memory: The maximum amount of memory a container can use, as integer or string with valid units such as 'Mi' or 'Gi' (e.g., '2G').
+    :param cpu: The amount of CPU for this container, expressed in milli CPUs (e.g., '300m').
+    :param memory: The amount of memory for this container, as integer or string with valid units such as 'Mi' or 'Gi' (e.g., '2G').
+    :param ephemeral_storage: The amounf of local ephemeral storage for this container, as integer or string with valid units such as 'Mi' or 'Gi' (e.g., '2G').
     """
 
     cpu: CPUStr | pydantic.PositiveInt | None = Field(
@@ -372,6 +374,11 @@ class ResourceDefinition(DescConfigModel):
     memory: MemoryStr | pydantic.PositiveInt | None = Field(
         default=None,
         description=describe_attr("memory", __doc__),
+    )
+    ephemeral_storage: MemoryStr | pydantic.PositiveInt | None = Field(
+        default=None,
+        alias="ephemeral-storage",
+        description=describe_attr("ephemeral_storage", __doc__),
     )
 
 

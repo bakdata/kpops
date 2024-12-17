@@ -1,4 +1,28 @@
 # Changelog
+## [8.3.1](https://github.com/bakdata/kpops/releases/tag/8.3.1) - Release Date: [2024-12-17]
+
+### 🐛 Fixes
+
+- Fix Kubernetes memory not accepting decimal values - [#568](https://github.com/bakdata/kpops/pull/568)
+
+- Add ephemeral storage to Kubernetes resource requests and limits - [#569](https://github.com/bakdata/kpops/pull/569)
+
+
+
+
+
+
+## [8.3.0](https://github.com/bakdata/kpops/releases/tag/8.3.0) - Release Date: [2024-12-17]
+
+### 🌀 Miscellaneous
+
+- Add Kubernetes affinity and tolerations to streams-bootstrap v2 values - [#567](https://github.com/bakdata/kpops/pull/567)
+
+
+
+
+
+
 ## [8.2.0](https://github.com/bakdata/kpops/releases/tag/8.2.0) - Release Date: [2024-12-12]
 
 ### 🐛 Fixes

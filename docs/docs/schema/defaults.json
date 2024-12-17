@@ -2336,13 +2336,13 @@
                         }
                     ],
                     "default": null,
-                    "description": "The maximum amount of CPU a container can use, expressed in milli CPUs (e.g., '300m').",
+                    "description": "The amount of CPU for this container, expressed in milli CPUs (e.g., '300m').",
                     "title": "Cpu"
                 },
-                "memory": {
+                "ephemeral-storage": {
                     "anyOf": [
                         {
-                            "pattern": "^\\d+([EPTGMk]|Ei|Pi|Ti|Gi|Mi|Ki)?$",
+                            "pattern": "^\\d+(\\.\\d+)?([EPTGMk]|Ei|Pi|Ti|Gi|Mi|Ki)?$",
                             "type": "string"
                         },
                         {
@@ -2354,7 +2354,25 @@
                         }
                     ],
                     "default": null,
-                    "description": "The maximum amount of memory a container can use, as integer or string with valid units such as 'Mi' or 'Gi' (e.g., '2G').",
+                    "description": "The amounf of local ephemeral storage for this container, as integer or string with valid units such as 'Mi' or 'Gi' (e.g., '2G').",
+                    "title": "Ephemeral-Storage"
+                },
+                "memory": {
+                    "anyOf": [
+                        {
+                            "pattern": "^\\d+(\\.\\d+)?([EPTGMk]|Ei|Pi|Ti|Gi|Mi|Ki)?$",
+                            "type": "string"
+                        },
+                        {
+                            "exclusiveMinimum": 0,
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The amount of memory for this container, as integer or string with valid units such as 'Mi' or 'Gi' (e.g., '2G').",
                     "title": "Memory"
                 }
             },
