@@ -2002,7 +2002,7 @@
                 "memory": {
                     "anyOf": [
                         {
-                            "pattern": "^\\d+([EPTGMk]|Ei|Pi|Ti|Gi|Mi|Ki)?$",
+                            "pattern": "^\\d+(\\.\\d+)?([EPTGMk]|Ei|Pi|Ti|Gi|Mi|Ki)?$",
                             "type": "string"
                         },
                         {
