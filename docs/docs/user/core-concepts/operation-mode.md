@@ -23,7 +23,7 @@ Alternatively, you can to pass the `--operation-mode <OPERATION>` option in the 
 
 - **streams-bootstrap Applications**:
   - Depending on your pipeline configuration, Kubernetes `Job`, `Deployment`, `ConfigMap`, and `Service` resources.
-  - Please refer to [Streams-bootstrap Helm Charts](https://github.com/bakdata/streams-bootstrap/tree/master/charts).
+  - Please refer to [streams-bootstrap Helm Charts](https://github.com/bakdata/streams-bootstrap/tree/master/charts).
 - **Topics**:
   - Strimzi `KafkaTopic` CRDs.
 
@@ -31,8 +31,8 @@ Alternatively, you can to pass the `--operation-mode <OPERATION>` option in the 
 
 - **streams-bootstrap Applications**:
   - Depending on your pipeline configuration, Kubernetes `Job`, `Deployment`, `ConfigMap`, and `Service` resources.
-  - Additional `sync-wave` annotation with value of `>0` to prioritizes Kafka Topics deployment over the application
-  - Please refer to [Streams-bootstrap Helm Charts](https://github.com/bakdata/streams-bootstrap/tree/master/charts).
+  - Additional Argo `sync-wave` annotation to ensure Kafka topics are created first (default `sync-wave=0`) before deploying apps (lower priority `sync-wave>0`). All components of each sync wave are deployed in parallel by Argo.
+  - Please refer to [streams-bootstrap Helm Charts](https://github.com/bakdata/streams-bootstrap/tree/master/charts).
 - **Topics**:
   - Strimzi `KafkaTopic` CRDs.
 - **Cleanup Jobs**:
@@ -68,7 +68,7 @@ Alternatively, you can to pass the `--operation-mode <OPERATION>` option in the 
 #### **Argo Mode**
 
 - **Not Applicable**:
-  - The `clean` command is not supported in Argo mode. The clean can be achieved through manifesting hooked cleanup jobs during the `deploy` command.
+  - The `clean` command is not supported in Argo mode. The clean is instead achieved through cleanup job hooks during the `deploy` command.
 
 ---
 
