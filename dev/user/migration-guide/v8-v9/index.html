@@ -8,25 +8,25 @@
       
       
       
-        <link rel="canonical" href="https://bakdata.github.io/kpops/dev/user/core-concepts/components/streams-bootstrap/">
+        <link rel="canonical" href="https://bakdata.github.io/kpops/dev/user/migration-guide/v8-v9/">
       
       
-        <link rel="prev" href="../helm-app/">
+        <link rel="prev" href="../v7-v8/">
       
       
-        <link rel="next" href="../streams-app/">
+        <link rel="next" href="../../references/cli-commands/">
       
       
-      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.6">
     
     
       
-        <title>StreamsBootstrap - KPOps</title>
+        <title>Migrate from v8 to v9 - KPOps</title>
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.35e1ed30.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.35e1ed30.min.css">
       
       
 
@@ -45,18 +45,18 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="../../../../stylesheets/extra.css">
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
     
-    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
     
     
     
-   <link href="../../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+   <link href="../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
         html.glightbox-open { overflow: initial; height: 100%; }
         .gslide-title { margin-top: 0px; user-select: text; }
         .gslide-desc { color: #666; user-select: text; }
@@ -67,7 +67,7 @@
             body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
             body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
             body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}
-            </style> <script src="../../../../assets/javascripts/glightbox.min.js"></script></head>
+            </style> <script src="../../../assets/javascripts/glightbox.min.js"></script></head>
   
   
     <body dir="ltr">
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#streams-bootstrap" class="md-skip">
+        <a href="#migrate-from-v8-to-v9" class="md-skip">
           Skip to content
         </a>
       
@@ -100,7 +100,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../.." title="KPOps" class="md-header__button md-logo" aria-label="KPOps" data-md-component="logo">
+    <a href="../../.." title="KPOps" class="md-header__button md-logo" aria-label="KPOps" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -120,7 +120,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              StreamsBootstrap
+              Migrate from v8 to v9
             
           </span>
         </div>
@@ -207,7 +207,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../.." class="md-tabs__link">
+        <a href="../../.." class="md-tabs__link">
           
   
     
@@ -229,7 +229,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../../../what-is-kpops/" class="md-tabs__link">
+        <a href="../../what-is-kpops/" class="md-tabs__link">
           
   
     
@@ -249,7 +249,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../developer/getting-started/" class="md-tabs__link">
+        <a href="../../../developer/getting-started/" class="md-tabs__link">
           
   
     
@@ -284,7 +284,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../.." title="KPOps" class="md-nav__button md-logo" aria-label="KPOps" data-md-component="logo">
+    <a href="../../.." title="KPOps" class="md-nav__button md-logo" aria-label="KPOps" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -336,7 +336,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../.." class="md-nav__link ">
+            <a href="../../.." class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -425,7 +425,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../what-is-kpops/" class="md-nav__link">
+      <a href="../../what-is-kpops/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -445,7 +445,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../changelog/" class="md-nav__link">
+      <a href="../../changelog/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -512,7 +512,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../getting-started/setup/" class="md-nav__link">
+      <a href="../../getting-started/setup/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -532,7 +532,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../getting-started/quick-start/" class="md-nav__link">
+      <a href="../../getting-started/quick-start/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -552,7 +552,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../getting-started/teardown/" class="md-nav__link">
+      <a href="../../getting-started/teardown/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -623,7 +623,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../examples/atm-fraud-pipeline/" class="md-nav__link">
+      <a href="../../examples/atm-fraud-pipeline/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -649,8 +649,6 @@
                 
   
   
-    
-  
   
     
     
@@ -670,12 +668,12 @@
       
       
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
         
           
           <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="">
@@ -689,7 +687,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2_5">
             <span class="md-nav__icon md-icon"></span>
             Core Concepts
@@ -700,8 +698,6 @@
                 
   
   
-    
-  
   
     
     
@@ -728,12 +724,12 @@
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_1" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_1" >
         
           
           <label class="md-nav__link" for="__nav_2_5_1" id="__nav_2_5_1_label" tabindex="0">
@@ -747,7 +743,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_1_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_1_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2_5_1">
             <span class="md-nav__icon md-icon"></span>
             Components
@@ -760,7 +756,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../overview/" class="md-nav__link">
+      <a href="../../core-concepts/components/overview/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -780,7 +776,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kubernetes-app/" class="md-nav__link">
+      <a href="../../core-concepts/components/kubernetes-app/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -800,7 +796,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../helm-app/" class="md-nav__link">
+      <a href="../../core-concepts/components/helm-app/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -818,29 +814,9 @@
                 
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    StreamsBootstrap
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../core-concepts/components/streams-bootstrap/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -849,74 +825,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#usage" class="md-nav__link">
-    Usage
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#operations" class="md-nav__link">
-    Operations
-  </a>
-  
-    <nav class="md-nav" aria-label="Operations">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#deploy" class="md-nav__link">
-    deploy
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#destroy" class="md-nav__link">
-    destroy
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#reset" class="md-nav__link">
-    reset
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#clean" class="md-nav__link">
-    clean
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -928,7 +836,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../streams-app/" class="md-nav__link">
+      <a href="../../core-concepts/components/streams-app/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -948,7 +856,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../producer-app/" class="md-nav__link">
+      <a href="../../core-concepts/components/producer-app/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -968,7 +876,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kafka-connector/" class="md-nav__link">
+      <a href="../../core-concepts/components/kafka-connector/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -988,7 +896,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kafka-sink-connector/" class="md-nav__link">
+      <a href="../../core-concepts/components/kafka-sink-connector/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1008,7 +916,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kafka-source-connector/" class="md-nav__link">
+      <a href="../../core-concepts/components/kafka-source-connector/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1036,7 +944,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../config/" class="md-nav__link">
+      <a href="../../core-concepts/config/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1056,7 +964,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../defaults/" class="md-nav__link">
+      <a href="../../core-concepts/defaults/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1118,7 +1026,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../variables/environment_variables/" class="md-nav__link">
+      <a href="../../core-concepts/variables/environment_variables/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1138,7 +1046,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../variables/substitution/" class="md-nav__link">
+      <a href="../../core-concepts/variables/substitution/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1172,6 +1080,8 @@
                 
   
   
+    
+  
   
     
     
@@ -1191,12 +1101,12 @@
       
       
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" checked>
         
           
           <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="">
@@ -1210,7 +1120,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2_6">
             <span class="md-nav__icon md-icon"></span>
             References
@@ -1221,6 +1131,8 @@
                 
   
   
+    
+  
   
     
     
@@ -1245,12 +1157,12 @@
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_1" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_1" checked>
         
           
           <label class="md-nav__link" for="__nav_2_6_1" id="__nav_2_6_1_label" tabindex="0">
@@ -1264,7 +1176,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_1_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_1_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2_6_1">
             <span class="md-nav__icon md-icon"></span>
             Migration guide
@@ -1277,7 +1189,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../migration-guide/v1-v2/" class="md-nav__link">
+      <a href="../v1-v2/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1297,7 +1209,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../migration-guide/v2-v3/" class="md-nav__link">
+      <a href="../v2-v3/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1317,7 +1229,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../migration-guide/v3-v4/" class="md-nav__link">
+      <a href="../v3-v4/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1337,7 +1249,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../migration-guide/v4-v5/" class="md-nav__link">
+      <a href="../v4-v5/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1357,7 +1269,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../migration-guide/v5-v6/" class="md-nav__link">
+      <a href="../v5-v6/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1377,7 +1289,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../migration-guide/v6-v7/" class="md-nav__link">
+      <a href="../v6-v7/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1397,7 +1309,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../migration-guide/v7-v8/" class="md-nav__link">
+      <a href="../v7-v8/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1415,9 +1327,29 @@
                 
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../../../migration-guide/v8-v9/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Migrate from v8 to v9
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -1426,6 +1358,73 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduce-kpops-operation-and-manifest-resources-for-deployment" class="md-nav__link">
+    Introduce KPOps operation and manifest resources for deployment
+  </a>
+  
+    <nav class="md-nav" aria-label="Introduce KPOps operation and manifest resources for deployment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configyaml" class="md-nav__link">
+    config.yaml
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#manifest-tosection-with-strimzi-kafkatopic" class="md-nav__link">
+    Manifest toSection with Strimzi KafkaTopic
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#drop-support-for-python-310" class="md-nav__link">
+    Drop support for Python 3.10
+  </a>
+  
+    <nav class="md-nav" aria-label="Drop support for Python 3.10">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#action-required" class="md-nav__link">
+    Action Required:
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1445,7 +1444,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../references/cli-commands/" class="md-nav__link">
+      <a href="../../references/cli-commands/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1465,7 +1464,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../references/editor-integration/" class="md-nav__link">
+      <a href="../../references/editor-integration/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1525,7 +1524,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../references/ci-integration/github-actions/" class="md-nav__link">
+      <a href="../../references/ci-integration/github-actions/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1617,7 +1616,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../developer/getting-started/" class="md-nav__link">
+      <a href="../../../developer/getting-started/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1637,7 +1636,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../developer/api/" class="md-nav__link">
+      <a href="../../../developer/api/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1657,7 +1656,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../developer/contributing/" class="md-nav__link">
+      <a href="../../../developer/contributing/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1720,7 +1719,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../developer/auto-generation/" class="md-nav__link">
+      <a href="../../../developer/auto-generation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1776,44 +1775,43 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#usage" class="md-nav__link">
-    Usage
+  <a href="#introduce-kpops-operation-and-manifest-resources-for-deployment" class="md-nav__link">
+    Introduce KPOps operation and manifest resources for deployment
+  </a>
+  
+    <nav class="md-nav" aria-label="Introduce KPOps operation and manifest resources for deployment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configyaml" class="md-nav__link">
+    config.yaml
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#manifest-tosection-with-strimzi-kafkatopic" class="md-nav__link">
+    Manifest toSection with Strimzi KafkaTopic
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#operations" class="md-nav__link">
-    Operations
+  <a href="#drop-support-for-python-310" class="md-nav__link">
+    Drop support for Python 3.10
   </a>
   
-    <nav class="md-nav" aria-label="Operations">
+    <nav class="md-nav" aria-label="Drop support for Python 3.10">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#deploy" class="md-nav__link">
-    deploy
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#destroy" class="md-nav__link">
-    destroy
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#reset" class="md-nav__link">
-    reset
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#clean" class="md-nav__link">
-    clean
+  <a href="#action-required" class="md-nav__link">
+    Action Required:
   </a>
   
 </li>
@@ -1841,26 +1839,51 @@
   
 
 
-<h1 id="streams-bootstrap">Streams Bootstrap<a class="headerlink" href="#streams-bootstrap" title="Permanent link">&para;</a></h1>
-<p>Subclass of <a href="../helm-app/"><em>HelmApp</em></a>.</p>
-<h3 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h3>
+<h1 id="migrate-from-v8-to-v9">Migrate from V8 to V9<a class="headerlink" href="#migrate-from-v8-to-v9" title="Permanent link">&para;</a></h1>
+<h2 id="introduce-kpops-operation-and-manifest-resources-for-deployment"><a href="https://github.com/bakdata/kpops/pull/541">Introduce KPOps operation and manifest resources for deployment</a><a class="headerlink" href="#introduce-kpops-operation-and-manifest-resources-for-deployment" title="Permanent link">&para;</a></h2>
+<p>The <code>kpops manifest</code> command and <code>kpops.manifest()</code> API have been <strong>removed</strong>.</p>
+<p>Resource manifesting is now integrated into the <em>operation</em> commands (<code>deploy</code>, <code>destroy</code>, <code>reset</code>, <code>clean</code>) through the new <strong>operation mode</strong> feature.</p>
+<p>To manifest resources, you can:</p>
 <ul>
-<li>
-<p>Defines a <a href="https://github.com/bakdata/streams-bootstrap" target="_blank">streams-bootstrap</a> component</p>
-</li>
-<li>
-<p>Often used in <code>defaults.yaml</code></p>
-</li>
+<li>Pass <code>--operation-mode manifest</code> when executing <code>kpops</code> commands.</li>
+<li>Configure the <code>operation_mode</code> in your KPOps configuration file.</li>
 </ul>
-<h3 id="operations">Operations<a class="headerlink" href="#operations" title="Permanent link">&para;</a></h3>
-<h4 id="deploy">deploy<a class="headerlink" href="#deploy" title="Permanent link">&para;</a></h4>
-<p>Deploy using Helm.</p>
-<h4 id="destroy">destroy<a class="headerlink" href="#destroy" title="Permanent link">&para;</a></h4>
-<p>Uninstall Helm release.</p>
-<h4 id="reset">reset<a class="headerlink" href="#reset" title="Permanent link">&para;</a></h4>
-<p>Do nothing.</p>
-<h4 id="clean">clean<a class="headerlink" href="#clean" title="Permanent link">&para;</a></h4>
-<p>Do nothing.</p>
+<h4 id="configyaml">config.yaml<a class="headerlink" href="#configyaml" title="Permanent link">&para;</a></h4>
+<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
+<span class="normal"><a href="#__codelineno-0-2">2</a></span>
+<span class="normal"><a href="#__codelineno-0-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="gi">+ operation_mode: manifest</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a># rest of your config
+</span></code></pre></div></td></tr></table></div>
+<h2 id="manifest-tosection-with-strimzi-kafkatopic"><a href="https://github.com/bakdata/kpops/pull/545">Manifest toSection with Strimzi KafkaTopic</a><a class="headerlink" href="#manifest-tosection-with-strimzi-kafkatopic" title="Permanent link">&para;</a></h2>
+<p>KPOps now supports generating valid Kubernetes KafkaTopic resources compatible with <a href="https://github.com/strimzi/strimzi-kafka-operator/blob/main/examples/topic/kafka-topic.yaml">Strimzi</a>. When using manifest or argo as the operation_mode, you must specify the Strimzi cluster label to ensure the topics are recognized by the deployed Strimzi Topic Operator.</p>
+<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
+<span class="normal"><a href="#__codelineno-1-2">2</a></span>
+<span class="normal"><a href="#__codelineno-1-3">3</a></span>
+<span class="normal"><a href="#__codelineno-1-4">4</a></span>
+<span class="normal"><a href="#__codelineno-1-5">5</a></span>
+<span class="normal"><a href="#__codelineno-1-6">6</a></span>
+<span class="normal"><a href="#__codelineno-1-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a>operation_mode: manifest
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="gi">+ strimzi_topic:</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="gi">+  label:</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="gi">+     strimzi.io/cluster: my-cluster</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6"></a>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7"></a># rest of your config
+</span></code></pre></div></td></tr></table></div>
+<!-- dprint-ignore-start -->
+
+<div class="admonition info standalone topic operator deployment">
+<p class="admonition-title">Info</p>
+<p>Refer to the <a href="https://strimzi.io/docs/operators/latest/deploying#deploying-the-topic-operator-standalone-str">Strimzi documentation on deploying a standalone topic operator</a> for more details.</p>
+</div>
+<!-- dprint-ignore-end -->
+
+<h2 id="drop-support-for-python-310"><a href="https://github.com/bakdata/kpops/pull/561">Drop support for Python 3.10</a><a class="headerlink" href="#drop-support-for-python-310" title="Permanent link">&para;</a></h2>
+<p>KPOps V9 no longer supports Python 3.10. Ensure your environment is running Python 3.11 to 3.12.</p>
+<h4 id="action-required">Action Required:<a class="headerlink" href="#action-required" title="Permanent link">&para;</a></h4>
+<p>Upgrade your Python version to a supported version (3.11 or 3.12).
+Update your virtual environments and CI pipelines to reflect this change.</p>
 
 
 
@@ -1909,10 +1932,10 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.sections", "navigation.tabs", "navigation.indexes", "navigation.top", "navigation.tracking", "toc.follow", "search.highlight", "search.share", "search.suggest", "content.tooltips", "content.code.copy", "content.code.select", "content.code.annotate"], "search": "../../../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.sections", "navigation.tabs", "navigation.indexes", "navigation.top", "navigation.tracking", "toc.follow", "search.highlight", "search.share", "search.suggest", "content.tooltips", "content.code.copy", "content.code.select", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.aecac24b.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.aecac24b.min.js"></script>
       
     
   <script>document$.subscribe(() => {const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});})</script></body>
