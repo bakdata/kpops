@@ -389,5 +389,11 @@ class Resources(DescConfigModel):
     :param limits: The maximum resource limits for the container.
     """
 
-    requests: ResourceDefinition = Field(description=describe_attr("requests", __doc__))
-    limits: ResourceDefinition = Field(description=describe_attr("limits", __doc__))
+    requests: ResourceDefinition | None = Field(
+        default=None,
+        description=describe_attr("requests", __doc__),
+    )
+    limits: ResourceDefinition | None = Field(
+        default=None,
+        description=describe_attr("limits", __doc__),
+    )

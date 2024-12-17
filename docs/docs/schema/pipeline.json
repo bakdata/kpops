@@ -2043,26 +2043,30 @@
             "description": "Model representing the resource specifications for a Kubernetes container.",
             "properties": {
                 "limits": {
-                    "allOf": [
+                    "anyOf": [
                         {
                             "$ref": "#/$defs/ResourceDefinition"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
                     "description": "The maximum resource limits for the container."
                 },
                 "requests": {
-                    "allOf": [
+                    "anyOf": [
                         {
                             "$ref": "#/$defs/ResourceDefinition"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
                     "description": "The minimum resource requirements for the container."
                 }
             },
-            "required": [
-                "requests",
-                "limits"
-            ],
             "title": "Resources",
             "type": "object"
         },
