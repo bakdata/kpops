@@ -1590,7 +1590,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
                     "title": "Tolerations"
                 }
@@ -2739,7 +2739,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
                     "title": "Tolerations"
                 }
@@ -3391,7 +3391,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
                     "title": "Tolerations"
                 }

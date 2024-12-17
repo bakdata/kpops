@@ -17,9 +17,11 @@ from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
     DescConfigModel,
+    SerializeAsOptionalModel,
     exclude_by_value,
     exclude_defaults,
 )
+from tests.utils.test_pydantic import SerializeAsOptional
 
 if TYPE_CHECKING:
     try:
@@ -97,7 +99,7 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
         )
 
 
-class StreamsBootstrapV2Values(HelmAppValues):
+class StreamsBootstrapV2Values(SerializeAsOptionalModel, HelmAppValues):
     """Base value class for all streams bootstrap v2 related components.
 
     :param image_tag: Docker image tag of the streams-bootstrap-v2 app.
@@ -120,8 +122,8 @@ class StreamsBootstrapV2Values(HelmAppValues):
         description=describe_attr("affinity", __doc__),
     )
 
-    tolerations: list[Toleration] | None = Field(
-        default=None,
+    tolerations: SerializeAsOptional[list[Toleration]] = Field(
+        default=[],
         description=describe_attr("tolerations", __doc__),
     )
 
