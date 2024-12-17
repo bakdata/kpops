@@ -295,7 +295,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "List of JMX metric rules.",
                     "title": "Metricrules"
                 },
@@ -600,7 +600,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "matchExpressions is a list of label selector requirements. The requirements are ANDed.",
                     "title": "Matchexpressions"
                 },
@@ -616,7 +616,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is *key*, the operator is *In*, and the values array contains only *value*. The requirements are ANDed.",
                     "title": "Matchlabels"
                 }
@@ -678,7 +678,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "The scheduler will prefer to schedule pods to nodes that satisfy the affinity expressions specified by this field, but it may choose a node that violates one or more of the expressions. The node that is most preferred is the one with the greatest sum of weights, i.e. for each node that meets all of the scheduling requirements (resource request, requiredDuringScheduling affinity expressions, etc.), compute a sum by iterating through the elements of this field and adding *weight* to the sum if the node matches the corresponding matchExpressions; the node(s) with the highest sum are the most preferred.",
                     "title": "Preferredduringschedulingignoredduringexecution"
                 },
@@ -772,7 +772,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "A list of node selector requirements by node's labels.",
                     "title": "Matchexpressions"
                 },
@@ -788,7 +788,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "A list of node selector requirements by node's fields.",
                     "title": "Matchfields"
                 }
@@ -828,7 +828,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "The scheduler will prefer to schedule pods to nodes that satisfy the affinity expressions specified by this field, but it may choose a node that violates one or more of the expressions. The node that is most preferred is the one with the greatest sum of weights, i.e. for each node that meets all of the scheduling requirements (resource request, requiredDuringScheduling affinity expressions, etc.), compute a sum by iterating through the elements of this field and adding weight to the sum if the node has pods which matches the corresponding podAffinityTerm; the node(s) with the highest sum are the most preferred.",
                     "title": "Preferredduringschedulingignoredduringexecution"
                 },
@@ -844,7 +844,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "If the affinity requirements specified by this field are not met at scheduling time, the pod will not be scheduled onto the node. If the affinity requirements specified by this field cease to be met at some point during pod execution (e.g. due to a pod label update), the system may or may not try to eventually evict the pod from its node. When there are multiple elements, the lists of nodes corresponding to each podAffinityTerm are intersected, i.e. all terms must be satisfied.",
                     "title": "Requiredduringschedulingignoredduringexecution"
                 }
@@ -879,7 +879,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "MatchLabelKeys is a set of pod label keys to select which pods will be taken into consideration. The keys are used to lookup values from the incoming pod labels, those key-value labels are merged with `labelSelector` as `key in (value)` to select the group of existing pods which pods will be taken into consideration for the incoming pod's pod (anti) affinity. Keys that don't exist in the incoming pod labels will be ignored. The default value is empty. The same key is forbidden to exist in both matchLabelKeys and labelSelector. Also, matchLabelKeys cannot be set when labelSelector isn't set. This is a beta field and requires enabling MatchLabelKeysInPodAffinity feature gate (enabled by default).",
                     "title": "Matchlabelkeys"
                 },
@@ -895,7 +895,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "MismatchLabelKeys is a set of pod label keys to select which pods will be taken into consideration. The keys are used to lookup values from the incoming pod labels, those key-value labels are merged with `labelSelector` as `key notin (value)` to select the group of existing pods which pods will be taken into consideration for the incoming pod's pod (anti) affinity. Keys that don't exist in the incoming pod labels will be ignored. The default value is empty. The same key is forbidden to exist in both mismatchLabelKeys and labelSelector. Also, mismatchLabelKeys cannot be set when labelSelector isn't set. This is a beta field and requires enabling MatchLabelKeysInPodAffinity feature gate (enabled by default).",
                     "title": "Mismatchlabelkeys"
                 },
@@ -923,7 +923,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "",
                     "title": "Namespaces"
                 },
@@ -1312,7 +1312,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of command line arguments passed to the streams app.",
                     "title": "Commandline"
                 },
@@ -1354,7 +1354,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Custom environment variables.",
                     "title": "Env"
                 },
@@ -1380,7 +1380,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of files to mount for the app. File will be mounted as $value.mountPath/$key. $value.content denotes file content (recommended to be used with --set-file).",
                     "title": "Files"
                 },
@@ -1416,7 +1416,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "",
                     "title": "Imagepullsecrets"
                 },
@@ -1463,7 +1463,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
                     "title": "Livenessprobe"
                 },
@@ -1493,7 +1493,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of custom annotations to attach to the pod spec.",
                     "title": "Podannotations"
                 },
@@ -1509,7 +1509,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of custom labels to attach to the pod spec.",
                     "title": "Podlabels"
                 },
@@ -1525,7 +1525,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "",
                     "title": "Ports"
                 },
@@ -1538,7 +1538,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
                     "title": "Readinessprobe"
                 },
@@ -1591,7 +1591,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "Mount existing secrets as volumes",
                     "title": "Secretfilesrefs"
                 },
@@ -1604,7 +1604,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Inject existing secrets as environment variables. Map key is used as environment variable name. Value consists of secret name and key.",
                     "title": "Secretrefs"
                 },
@@ -1620,7 +1620,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Custom secret environment variables. Prefix with configurationEnvPrefix in order to pass secrets to command line or prefix with KAFKA_ to pass secrets to Kafka Streams configuration.",
                     "title": "Secrets"
                 },
@@ -1674,7 +1674,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
                     "title": "Tolerations"
                 },
@@ -2460,7 +2460,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of command line arguments passed to the streams app.",
                     "title": "Commandline"
                 },
@@ -2489,7 +2489,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Custom environment variables.",
                     "title": "Env"
                 },
@@ -2502,7 +2502,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of files to mount for the app. File will be mounted as $value.mountPath/$key. $value.content denotes file content (recommended to be used with --set-file).",
                     "title": "Files"
                 },
@@ -2538,7 +2538,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "",
                     "title": "Imagepullsecrets"
                 },
@@ -2597,7 +2597,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
                     "title": "Livenessprobe"
                 },
@@ -2639,7 +2639,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of custom annotations to attach to the pod spec.",
                     "title": "Podannotations"
                 },
@@ -2655,7 +2655,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of custom labels to attach to the pod spec.",
                     "title": "Podlabels"
                 },
@@ -2671,7 +2671,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "",
                     "title": "Ports"
                 },
@@ -2696,7 +2696,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
                     "title": "Readinessprobe"
                 },
@@ -2724,7 +2724,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "Mount existing secrets as volumes",
                     "title": "Secretfilesrefs"
                 },
@@ -2737,7 +2737,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Inject existing secrets as environment variables. Map key is used as environment variable name. Value consists of secret name and key.",
                     "title": "Secretrefs"
                 },
@@ -2753,7 +2753,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Custom secret environment variables. Prefix with configurationEnvPrefix in order to pass secrets to command line or prefix with KAFKA_ to pass secrets to Kafka Streams configuration.",
                     "title": "Secrets"
                 },
@@ -2800,7 +2800,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
                     "title": "Tolerations"
                 }
@@ -3080,7 +3080,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "List of additional KEDA triggers, see https://keda.sh/docs/latest/scalers/",
                     "title": "Additionaltriggers"
                 },
@@ -3128,7 +3128,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "List of auto-generated Kafka Streams topics used by the streams app",
                     "title": "Internaltopics"
                 },
@@ -3209,7 +3209,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "List of topics used by the streams app",
                     "title": "Topics"
                 }
