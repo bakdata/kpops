@@ -170,6 +170,36 @@ class TestStreamsBootstrap:
                 pytest.raises(ValidationError),
                 id="memory int disallow negative",
             ),
+            pytest.param(
+                {"ephemeral-storage": "10G"},
+                does_not_raise(),
+                id="ephemeral-storage str gigabyte",
+            ),
+            pytest.param(
+                {"ephemeral-storage": "1Gi"},
+                does_not_raise(),
+                id="ephemeral-storage str gibibyte",
+            ),
+            pytest.param(
+                {"ephemeral-storage": "10M"},
+                does_not_raise(),
+                id="ephemeral-storage str megabyte",
+            ),
+            pytest.param(
+                {"ephemeral-storage": "10Mi"},
+                does_not_raise(),
+                id="ephemeral-storage str mebibyte",
+            ),
+            pytest.param(
+                {"ephemeral-storage": 0},
+                pytest.raises(ValidationError),
+                id="ephemeral-storage int disallow 0",
+            ),
+            pytest.param(
+                {"ephemeral-storage": -1},
+                pytest.raises(ValidationError),
+                id="ephemeral-storage int disallow negative",
+            ),
         ],
     )
     def test_resource_definition(
