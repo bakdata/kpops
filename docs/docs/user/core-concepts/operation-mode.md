@@ -2,7 +2,7 @@
 
 KPOps supports three operation modes—`managed`, `manifest`, and `argo`. These modes determine how resources are managed and allow users to tailor their deployment strategy.
 
-- **Managed Mode** (default): KPOps uses Helm, and communicates with services like Kafka Rest Proxy, and Kafka Connect under the hood to manage the installation/(graceful) deletion of applications, creation/deletion of Kafka topics, creation/deletion of Connectors defined in the defined `pipeline.yaml`.
+- **Managed Mode** (default): KPOps uses Helm, and communicates with services like Kafka Rest Proxy, and Kafka Connect under the hood to manage the installation/(graceful) deletion of applications, creation/deletion of Kafka topics, creation/deletion of Connectors defined in your `pipeline.yaml`.
 - **Manifest Mode**: Focuses on generating Kubernetes manifests.
 - **Argo Mode**: Extends the functionality to include ArgoCD-specific hooks for certain operations, facilitating GitOps workflows with automated cleanup and reset tasks.
 
@@ -10,28 +10,8 @@ KPOps supports three operation modes—`managed`, `manifest`, and `argo`. These 
 
 ## Configuring Operation Modes
 
-### `manifest` Mode
-
-Enable `manifest` mode by setting the following in your configuration:
-
-```yaml
-operation_mode: manifest
-```
-
-### `argo` Mode
-
-Enable `argo` mode by setting the following in your configuration:
-
-```yaml
-operation_mode: argo
-```
-
-<!-- dprint-ignore-start -->
-
-!!! info Set operation-mode over CLI
-     It is possible to pass the `--operation-mode <OPERATION>` option in the CLI to override the operation mode of the `config.yaml`. You can refer to the [CLI commands documentation](https://bakdata.github.io/kpops/9.0/user/references/cli-commands/#kpops-deploy) for more details.
-
-<!-- dprint-ignore-end -->
+It is possible to configure the operation mode in the `config.yaml` file. Please refer to the [Configuration documentation page](https://bakdata.github.io/kpops/9.0/user/core-concepts/config/).
+Alternatively, you can to pass the `--operation-mode <OPERATION>` option in the CLI to override the operation mode of the `config.yaml`. You can refer to the [CLI commands documentation](https://bakdata.github.io/kpops/9.0/user/references/cli-commands/#kpops-deploy) for more details.
 
 ---
 
@@ -41,7 +21,7 @@ operation_mode: argo
 
 #### **Manifest Mode**
 
-- **Streams-bootstrap Applications**:
+- **streams-bootstrap Applications**:
   - Depending on your pipeline configuration, Kubernetes `Job`, `Deployment`, `ConfigMap`, and `Service` resources.
   - Please refer to [Streams-bootstrap Helm Charts](https://github.com/bakdata/streams-bootstrap/tree/master/charts).
 - **Topics**:
@@ -49,7 +29,7 @@ operation_mode: argo
 
 #### **Argo Mode**
 
-- **Streams-bootstrap Applications**:
+- **streams-bootstrap Applications**:
   - Depending on your pipeline configuration, Kubernetes `Job`, `Deployment`, `ConfigMap`, and `Service` resources.
   - Additional `sync-wave` annotation with value of `>0` to prioritizes Kafka Topics deployment over the application
   - Please refer to [Streams-bootstrap Helm Charts](https://github.com/bakdata/streams-bootstrap/tree/master/charts).
