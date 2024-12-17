@@ -1537,6 +1537,18 @@
             "additionalProperties": true,
             "description": "Settings specific to producers.",
             "properties": {
+                "affinity": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/Affinity"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Map to configure pod affinities https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity."
+                },
                 "imageTag": {
                     "default": "latest",
                     "description": "Docker image tag of the streams-bootstrap-v2 app.",
@@ -1565,6 +1577,22 @@
                         }
                     ],
                     "description": "Kafka Streams settings"
+                },
+                "tolerations": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/Toleration"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
+                    "title": "Tolerations"
                 }
             },
             "required": [
@@ -2609,6 +2637,18 @@
             "additionalProperties": true,
             "description": "streams-bootstrap-v2 app configurations.\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
             "properties": {
+                "affinity": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/Affinity"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Map to configure pod affinities https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity."
+                },
                 "autoscaling": {
                     "anyOf": [
                         {
@@ -2668,6 +2708,22 @@
                         }
                     ],
                     "description": "streams-bootstrap-v2 streams section"
+                },
+                "tolerations": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/Toleration"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
+                    "title": "Tolerations"
                 }
             },
             "required": [
@@ -3264,6 +3320,18 @@
             "additionalProperties": true,
             "description": "Base value class for all streams bootstrap v2 related components.",
             "properties": {
+                "affinity": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/Affinity"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Map to configure pod affinities https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity."
+                },
                 "imageTag": {
                     "default": "latest",
                     "description": "Docker image tag of the streams-bootstrap-v2 app.",
@@ -3292,6 +3360,22 @@
                         }
                     ],
                     "description": ""
+                },
+                "tolerations": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/Toleration"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
+                    "title": "Tolerations"
                 }
             },
             "required": [
