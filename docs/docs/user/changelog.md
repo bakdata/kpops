@@ -1,4 +1,15 @@
 # Changelog
+## [8.3.2](https://github.com/bakdata/kpops/releases/tag/8.3.2) - Release Date: [2024-12-17]
+
+### 🐛 Fixes
+
+- Fix allow optional resources requests and limits - [#570](https://github.com/bakdata/kpops/pull/570)
+
+
+
+
+
+
 ## [8.3.1](https://github.com/bakdata/kpops/releases/tag/8.3.1) - Release Date: [2024-12-17]
 
 ### 🐛 Fixes
