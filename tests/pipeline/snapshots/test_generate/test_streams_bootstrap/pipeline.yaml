@@ -85,6 +85,21 @@
     suffix: -clean
     type: streams-app-cleaner
     values:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: foo
+                operator: Exists
+                values: []
+            weight: 2
+          - preference:
+              matchExpressions:
+              - key: bar
+                operator: DoesNotExist
+                values: []
+            weight: 1
       commandLine:
         CONVERT_XML: true
       files:
@@ -162,6 +177,21 @@
         value_schema: com.bakdata.kafka.DeadLetter
   type: my-streams-app
   values:
+    affinity:
+      nodeAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+        - preference:
+            matchExpressions:
+            - key: foo
+              operator: Exists
+              values: []
+          weight: 2
+        - preference:
+            matchExpressions:
+            - key: bar
+              operator: DoesNotExist
+              values: []
+          weight: 1
     commandLine:
       CONVERT_XML: true
     files:

@@ -63,9 +63,12 @@ class ProducerApp(StreamsBootstrap):
     @computed_field
     @cached_property
     def _cleaner(self) -> ProducerAppCleaner:
-        return ProducerAppCleaner(
-            **self.model_dump(by_alias=True, exclude={"_cleaner", "from_", "to"})
-        )
+        kwargs = {
+            name: getattr(self, name)
+            for name in self.model_fields_set
+            if name not in {"_cleaner", "from_", "to"}
+        }
+        return ProducerAppCleaner.model_validate(kwargs)
 
     @override
     def apply_to_outputs(self, name: str, topic: TopicConfig) -> None:

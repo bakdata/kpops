@@ -11,6 +11,7 @@ from kpops.components.common.kubernetes_model import (
     ImagePullPolicy,
     ProtocolSchema,
     Resources,
+    SerializeAsOptional,
     ServiceType,
     Toleration,
 )
@@ -19,6 +20,7 @@ from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
     DescConfigModel,
+    SerializeAsOptionalModel,
     exclude_by_value,
     exclude_defaults,
 )
@@ -93,7 +95,7 @@ class JavaOptions(CamelCaseConfigModel, DescConfigModel):
     )
 
 
-class StreamsBootstrapValues(HelmAppValues):
+class StreamsBootstrapValues(SerializeAsOptionalModel, HelmAppValues):
     """Base value class for all streams bootstrap related components.
 
     :param image: Docker image of the Kafka producer app.
@@ -132,8 +134,8 @@ class StreamsBootstrapValues(HelmAppValues):
         description=describe_attr("image_pull_policy", __doc__),
     )
 
-    image_pull_secrets: list[dict[str, str]] | None = Field(
-        default=None,
+    image_pull_secrets: SerializeAsOptional[list[dict[str, str]]] = Field(
+        default=[],
         description=describe_attr("image_pull_secret", __doc__),
     )
 
@@ -146,8 +148,8 @@ class StreamsBootstrapValues(HelmAppValues):
         description=describe_attr("resources", __doc__),
     )
 
-    ports: list[PortConfig] | None = Field(
-        default=None,
+    ports: SerializeAsOptional[list[PortConfig]] = Field(
+        default=[],
         description=describe_attr("ports", __doc__),
     )
 
@@ -161,33 +163,33 @@ class StreamsBootstrapValues(HelmAppValues):
         description=describe_attr("configuration_env_prefix", __doc__),
     )
 
-    command_line: dict[str, str | bool | int] | None = Field(
-        default=None,
+    command_line: SerializeAsOptional[dict[str, str | bool | int]] = Field(
+        default={},
         description=describe_attr("command_line", __doc__),
     )
 
-    env: dict[str, str] | None = Field(
-        default=None,
+    env: SerializeAsOptional[dict[str, str]] = Field(
+        default={},
         description=describe_attr("env", __doc__),
     )
 
-    secrets: dict[str, str] | None = Field(
-        default=None,
+    secrets: SerializeAsOptional[dict[str, str]] = Field(
+        default={},
         description=describe_attr("secrets", __doc__),
     )
 
-    secret_refs: dict[str, Any] | None = Field(
-        default=None,
+    secret_refs: SerializeAsOptional[dict[str, Any]] = Field(
+        default={},
         description=describe_attr("secret_refs", __doc__),
     )
 
-    secret_files_refs: list[str] | None = Field(
-        default=None,
+    secret_files_refs: SerializeAsOptional[list[str]] = Field(
+        default=[],
         description=describe_attr("secret_files_refs", __doc__),
     )
 
-    files: dict[str, Any] | None = Field(
-        default=None,
+    files: SerializeAsOptional[dict[str, Any]] = Field(
+        default={},
         description=describe_attr("files", __doc__),
     )
 
@@ -196,23 +198,23 @@ class StreamsBootstrapValues(HelmAppValues):
         description=describe_attr("java_options", __doc__),
     )
 
-    pod_annotations: dict[str, str] | None = Field(
-        default=None,
+    pod_annotations: SerializeAsOptional[dict[str, str]] = Field(
+        default={},
         description=describe_attr("pod_annotations", __doc__),
     )
 
-    pod_labels: dict[str, str] | None = Field(
-        default=None,
+    pod_labels: SerializeAsOptional[dict[str, str]] = Field(
+        default={},
         description=describe_attr("pod_labels", __doc__),
     )
 
-    liveness_probe: dict[str, Any] | None = Field(
-        default=None,
+    liveness_probe: SerializeAsOptional[dict[str, Any]] = Field(
+        default={},
         description=describe_attr("liveness_probe", __doc__),
     )
 
-    readiness_probe: dict[str, Any] | None = Field(
-        default=None,
+    readiness_probe: SerializeAsOptional[dict[str, Any]] = Field(
+        default={},
         description=describe_attr("readiness_probe", __doc__),
     )
 
@@ -221,8 +223,8 @@ class StreamsBootstrapValues(HelmAppValues):
         description=describe_attr("affinity", __doc__),
     )
 
-    tolerations: list[Toleration] | None = Field(
-        default=None,
+    tolerations: SerializeAsOptional[list[Toleration]] = Field(
+        default=[],
         description=describe_attr("tolerations", __doc__),
     )
 
