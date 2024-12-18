@@ -11,11 +11,14 @@ from typing_extensions import deprecated
 from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
 from kpops.components.base_components import KafkaApp
 from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
+from kpops.components.common.kubernetes_model import Affinity, Toleration
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
     DescConfigModel,
+    SerializeAsOptional,
+    SerializeAsOptionalModel,
     exclude_by_value,
     exclude_defaults,
 )
@@ -90,10 +93,12 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
         )
 
 
-class StreamsBootstrapV2Values(HelmAppValues):
+class StreamsBootstrapV2Values(SerializeAsOptionalModel, HelmAppValues):
     """Base value class for all streams bootstrap v2 related components.
 
     :param image_tag: Docker image tag of the streams-bootstrap-v2 app.
+    :param affinity: Map to configure pod affinities https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity.
+    :param tolerations: Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.
     """
 
     image_tag: str = Field(
@@ -104,6 +109,16 @@ class StreamsBootstrapV2Values(HelmAppValues):
 
     streams: KafkaStreamsConfig = Field(
         description=describe_attr("streams", __doc__),
+    )
+
+    affinity: Affinity | None = Field(
+        default=None,
+        description=describe_attr("affinity", __doc__),
+    )
+
+    tolerations: SerializeAsOptional[list[Toleration]] = Field(
+        default=[],
+        description=describe_attr("tolerations", __doc__),
     )
 
 

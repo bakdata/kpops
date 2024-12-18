@@ -170,14 +170,11 @@
                 },
                 "type": {
                     "const": "helm-app",
-                    "title": "Type"
+                    "title": "Type",
+                    "type": "string"
                 },
                 "values": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/HelmAppValues"
-                        }
-                    ],
+                    "$ref": "#/$defs/HelmAppValues",
                     "description": "Helm app values"
                 },
                 "version": {
@@ -229,11 +226,7 @@
             "description": "Helm repository configuration.",
             "properties": {
                 "repo_auth_flags": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/RepoAuthFlags"
-                        }
-                    ],
+                    "$ref": "#/$defs/RepoAuthFlags",
                     "default": {
                         "ca_file": null,
                         "cert_file": null,
@@ -295,7 +288,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "List of JMX metric rules.",
                     "title": "Metricrules"
                 },
@@ -446,11 +439,7 @@
             "description": "Base class for all Kafka connectors.\nShould only be used to set defaults",
             "properties": {
                 "config": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/KafkaConnectorConfig"
-                        }
-                    ],
+                    "$ref": "#/$defs/KafkaConnectorConfig",
                     "description": "Connector config"
                 },
                 "from": {
@@ -491,11 +480,7 @@
                     "title": "Resetter Namespace"
                 },
                 "resetter_values": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/HelmAppValues"
-                        }
-                    ],
+                    "$ref": "#/$defs/HelmAppValues",
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
                 },
                 "to": {
@@ -587,11 +572,7 @@
             "description": "Kafka sink connector model.",
             "properties": {
                 "config": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/KafkaConnectorConfig"
-                        }
-                    ],
+                    "$ref": "#/$defs/KafkaConnectorConfig",
                     "description": "Connector config"
                 },
                 "from": {
@@ -632,11 +613,7 @@
                     "title": "Resetter Namespace"
                 },
                 "resetter_values": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/HelmAppValues"
-                        }
-                    ],
+                    "$ref": "#/$defs/HelmAppValues",
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
                 },
                 "to": {
@@ -653,7 +630,8 @@
                 },
                 "type": {
                     "const": "kafka-sink-connector",
-                    "title": "Type"
+                    "title": "Type",
+                    "type": "string"
                 }
             },
             "required": [
@@ -669,11 +647,7 @@
             "description": "Kafka source connector model.",
             "properties": {
                 "config": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/KafkaConnectorConfig"
-                        }
-                    ],
+                    "$ref": "#/$defs/KafkaConnectorConfig",
                     "description": "Connector config"
                 },
                 "from": {
@@ -727,11 +701,7 @@
                     "title": "Resetter Namespace"
                 },
                 "resetter_values": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/HelmAppValues"
-                        }
-                    ],
+                    "$ref": "#/$defs/HelmAppValues",
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
                 },
                 "to": {
@@ -748,7 +718,8 @@
                 },
                 "type": {
                     "const": "kafka-source-connector",
-                    "title": "Type"
+                    "title": "Type",
+                    "type": "string"
                 }
             },
             "required": [
@@ -855,11 +826,7 @@
                     "description": "Topic(s) into which the component will write output"
                 },
                 "values": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/KubernetesAppValues"
-                        }
-                    ],
+                    "$ref": "#/$defs/KubernetesAppValues",
                     "description": "Kubernetes app values"
                 }
             },
@@ -893,7 +860,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "matchExpressions is a list of label selector requirements. The requirements are ANDed.",
                     "title": "Matchexpressions"
                 },
@@ -909,7 +876,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is *key*, the operator is *In*, and the values array contains only *value*. The requirements are ANDed.",
                     "title": "Matchlabels"
                 }
@@ -971,7 +938,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "The scheduler will prefer to schedule pods to nodes that satisfy the affinity expressions specified by this field, but it may choose a node that violates one or more of the expressions. The node that is most preferred is the one with the greatest sum of weights, i.e. for each node that meets all of the scheduling requirements (resource request, requiredDuringScheduling affinity expressions, etc.), compute a sum by iterating through the elements of this field and adding *weight* to the sum if the node matches the corresponding matchExpressions; the node(s) with the highest sum are the most preferred.",
                     "title": "Preferredduringschedulingignoredduringexecution"
                 },
@@ -1065,7 +1032,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "A list of node selector requirements by node's labels.",
                     "title": "Matchexpressions"
                 },
@@ -1081,7 +1048,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "A list of node selector requirements by node's fields.",
                     "title": "Matchfields"
                 }
@@ -1168,7 +1135,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "The scheduler will prefer to schedule pods to nodes that satisfy the affinity expressions specified by this field, but it may choose a node that violates one or more of the expressions. The node that is most preferred is the one with the greatest sum of weights, i.e. for each node that meets all of the scheduling requirements (resource request, requiredDuringScheduling affinity expressions, etc.), compute a sum by iterating through the elements of this field and adding weight to the sum if the node has pods which matches the corresponding podAffinityTerm; the node(s) with the highest sum are the most preferred.",
                     "title": "Preferredduringschedulingignoredduringexecution"
                 },
@@ -1184,7 +1151,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "If the affinity requirements specified by this field are not met at scheduling time, the pod will not be scheduled onto the node. If the affinity requirements specified by this field cease to be met at some point during pod execution (e.g. due to a pod label update), the system may or may not try to eventually evict the pod from its node. When there are multiple elements, the lists of nodes corresponding to each podAffinityTerm are intersected, i.e. all terms must be satisfied.",
                     "title": "Requiredduringschedulingignoredduringexecution"
                 }
@@ -1219,7 +1186,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "MatchLabelKeys is a set of pod label keys to select which pods will be taken into consideration. The keys are used to lookup values from the incoming pod labels, those key-value labels are merged with `labelSelector` as `key in (value)` to select the group of existing pods which pods will be taken into consideration for the incoming pod's pod (anti) affinity. Keys that don't exist in the incoming pod labels will be ignored. The default value is empty. The same key is forbidden to exist in both matchLabelKeys and labelSelector. Also, matchLabelKeys cannot be set when labelSelector isn't set. This is a beta field and requires enabling MatchLabelKeysInPodAffinity feature gate (enabled by default).",
                     "title": "Matchlabelkeys"
                 },
@@ -1235,7 +1202,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "MismatchLabelKeys is a set of pod label keys to select which pods will be taken into consideration. The keys are used to lookup values from the incoming pod labels, those key-value labels are merged with `labelSelector` as `key notin (value)` to select the group of existing pods which pods will be taken into consideration for the incoming pod's pod (anti) affinity. Keys that don't exist in the incoming pod labels will be ignored. The default value is empty. The same key is forbidden to exist in both mismatchLabelKeys and labelSelector. Also, mismatchLabelKeys cannot be set when labelSelector isn't set. This is a beta field and requires enabling MatchLabelKeysInPodAffinity feature gate (enabled by default).",
                     "title": "Mismatchlabelkeys"
                 },
@@ -1263,7 +1230,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "",
                     "title": "Namespaces"
                 },
@@ -1301,11 +1268,7 @@
                     "title": "Name"
                 },
                 "schema": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/ProtocolSchema"
-                        }
-                    ],
+                    "$ref": "#/$defs/ProtocolSchema",
                     "default": "TCP",
                     "description": "Protocol for port. Must be UDP, TCP, or SCTP."
                 },
@@ -1333,11 +1296,7 @@
             "description": "An empty preferred scheduling term matches all objects with implicit weight 0 (i.e. it's a no-op). A null preferred scheduling term matches no objects (i.e. is also a no-op).",
             "properties": {
                 "preference": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/NodeSelectorTerm"
-                        }
-                    ],
+                    "$ref": "#/$defs/NodeSelectorTerm",
                     "description": "A node selector term, associated with the corresponding weight."
                 },
                 "weight": {
@@ -1382,11 +1341,7 @@
                     "type": "string"
                 },
                 "repo_config": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/HelmRepoConfig"
-                        }
-                    ],
+                    "$ref": "#/$defs/HelmRepoConfig",
                     "default": {
                         "repo_auth_flags": {
                             "ca_file": null,
@@ -1414,14 +1369,11 @@
                 },
                 "type": {
                     "const": "producer-app",
-                    "title": "Type"
+                    "title": "Type",
+                    "type": "string"
                 },
                 "values": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/ProducerAppValues"
-                        }
-                    ],
+                    "$ref": "#/$defs/ProducerAppValues",
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
@@ -1443,6 +1395,7 @@
         },
         "ProducerAppV2": {
             "additionalProperties": true,
+            "deprecated": true,
             "description": "Producer component.\nThis producer holds configuration to use as values for the streams-bootstrap producer Helm chart. Note that the producer does not support error topics.",
             "properties": {
                 "from": {
@@ -1468,11 +1421,7 @@
                     "type": "string"
                 },
                 "repo_config": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/HelmRepoConfig"
-                        }
-                    ],
+                    "$ref": "#/$defs/HelmRepoConfig",
                     "default": {
                         "repo_auth_flags": {
                             "ca_file": null,
@@ -1500,14 +1449,11 @@
                 },
                 "type": {
                     "const": "producer-app-v2",
-                    "title": "Type"
+                    "title": "Type",
+                    "type": "string"
                 },
                 "values": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/ProducerAppV2Values"
-                        }
-                    ],
+                    "$ref": "#/$defs/ProducerAppV2Values",
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
@@ -1537,6 +1483,18 @@
             "additionalProperties": true,
             "description": "Settings specific to producers.",
             "properties": {
+                "affinity": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/Affinity"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Map to configure pod affinities https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity."
+                },
                 "imageTag": {
                     "default": "latest",
                     "description": "Docker image tag of the streams-bootstrap-v2 app.",
@@ -1559,12 +1517,24 @@
                     "title": "Nameoverride"
                 },
                 "streams": {
-                    "allOf": [
+                    "$ref": "#/$defs/ProducerStreamsConfig",
+                    "description": "Kafka Streams settings"
+                },
+                "tolerations": {
+                    "anyOf": [
                         {
-                            "$ref": "#/$defs/ProducerStreamsConfig"
+                            "items": {
+                                "$ref": "#/$defs/Toleration"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "description": "Kafka Streams settings"
+                    "default": [],
+                    "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
+                    "title": "Tolerations"
                 }
             },
             "required": [
@@ -1624,7 +1594,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of command line arguments passed to the streams app.",
                     "title": "Commandline"
                 },
@@ -1666,7 +1636,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Custom environment variables.",
                     "title": "Env"
                 },
@@ -1692,7 +1662,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of files to mount for the app. File will be mounted as $value.mountPath/$key. $value.content denotes file content (recommended to be used with --set-file).",
                     "title": "Files"
                 },
@@ -1728,7 +1698,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "",
                     "title": "Imagepullsecrets"
                 },
@@ -1759,11 +1729,7 @@
                     "description": ""
                 },
                 "kafka": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/ProducerConfig"
-                        }
-                    ],
+                    "$ref": "#/$defs/ProducerConfig",
                     "description": "Kafka Streams settings"
                 },
                 "livenessProbe": {
@@ -1775,7 +1741,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
                     "title": "Livenessprobe"
                 },
@@ -1805,7 +1771,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of custom annotations to attach to the pod spec.",
                     "title": "Podannotations"
                 },
@@ -1821,7 +1787,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of custom labels to attach to the pod spec.",
                     "title": "Podlabels"
                 },
@@ -1837,7 +1803,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "",
                     "title": "Ports"
                 },
@@ -1850,7 +1816,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
                     "title": "Readinessprobe"
                 },
@@ -1903,7 +1869,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "Mount existing secrets as volumes",
                     "title": "Secretfilesrefs"
                 },
@@ -1916,7 +1882,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Inject existing secrets as environment variables. Map key is used as environment variable name. Value consists of secret name and key.",
                     "title": "Secretrefs"
                 },
@@ -1932,7 +1898,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Custom secret environment variables. Prefix with configurationEnvPrefix in order to pass secrets to command line or prefix with KAFKA_ to pass secrets to Kafka Streams configuration.",
                     "title": "Secrets"
                 },
@@ -1986,7 +1952,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
                     "title": "Tolerations"
                 },
@@ -2308,13 +2274,13 @@
                         }
                     ],
                     "default": null,
-                    "description": "The maximum amount of CPU a container can use, expressed in milli CPUs (e.g., '300m').",
+                    "description": "The amount of CPU for this container, expressed in milli CPUs (e.g., '300m').",
                     "title": "Cpu"
                 },
-                "memory": {
+                "ephemeral-storage": {
                     "anyOf": [
                         {
-                            "pattern": "^\\d+([EPTGMk]|Ei|Pi|Ti|Gi|Mi|Ki)?$",
+                            "pattern": "^\\d+(\\.\\d+)?([EPTGMk]|Ei|Pi|Ti|Gi|Mi|Ki)?$",
                             "type": "string"
                         },
                         {
@@ -2326,7 +2292,25 @@
                         }
                     ],
                     "default": null,
-                    "description": "The maximum amount of memory a container can use, as integer or string with valid units such as 'Mi' or 'Gi' (e.g., '2G').",
+                    "description": "The amounf of local ephemeral storage for this container, as integer or string with valid units such as 'Mi' or 'Gi' (e.g., '2G').",
+                    "title": "Ephemeral-Storage"
+                },
+                "memory": {
+                    "anyOf": [
+                        {
+                            "pattern": "^\\d+(\\.\\d+)?([EPTGMk]|Ei|Pi|Ti|Gi|Mi|Ki)?$",
+                            "type": "string"
+                        },
+                        {
+                            "exclusiveMinimum": 0,
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The amount of memory for this container, as integer or string with valid units such as 'Mi' or 'Gi' (e.g., '2G').",
                     "title": "Memory"
                 }
             },
@@ -2337,26 +2321,30 @@
             "description": "Model representing the resource specifications for a Kubernetes container.",
             "properties": {
                 "limits": {
-                    "allOf": [
+                    "anyOf": [
                         {
                             "$ref": "#/$defs/ResourceDefinition"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
                     "description": "The maximum resource limits for the container."
                 },
                 "requests": {
-                    "allOf": [
+                    "anyOf": [
                         {
                             "$ref": "#/$defs/ResourceDefinition"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
                     "description": "The minimum resource requirements for the container."
                 }
             },
-            "required": [
-                "requests",
-                "limits"
-            ],
             "title": "Resources",
             "type": "object"
         },
@@ -2447,11 +2435,7 @@
                     "type": "string"
                 },
                 "repo_config": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/HelmRepoConfig"
-                        }
-                    ],
+                    "$ref": "#/$defs/HelmRepoConfig",
                     "default": {
                         "repo_auth_flags": {
                             "ca_file": null,
@@ -2479,14 +2463,11 @@
                 },
                 "type": {
                     "const": "streams-app",
-                    "title": "Type"
+                    "title": "Type",
+                    "type": "string"
                 },
                 "values": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/StreamsAppValues"
-                        }
-                    ],
+                    "$ref": "#/$defs/StreamsAppValues",
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
@@ -2508,6 +2489,7 @@
         },
         "StreamsAppV2": {
             "additionalProperties": true,
+            "deprecated": true,
             "description": "StreamsAppV2 component that configures a streams-bootstrap-v2 app.",
             "properties": {
                 "from": {
@@ -2540,11 +2522,7 @@
                     "type": "string"
                 },
                 "repo_config": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/HelmRepoConfig"
-                        }
-                    ],
+                    "$ref": "#/$defs/HelmRepoConfig",
                     "default": {
                         "repo_auth_flags": {
                             "ca_file": null,
@@ -2572,14 +2550,11 @@
                 },
                 "type": {
                     "const": "streams-app-v2",
-                    "title": "Type"
+                    "title": "Type",
+                    "type": "string"
                 },
                 "values": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/StreamsAppV2Values"
-                        }
-                    ],
+                    "$ref": "#/$defs/StreamsAppV2Values",
                     "description": "streams-bootstrap-v2 Helm values"
                 },
                 "version": {
@@ -2609,6 +2584,18 @@
             "additionalProperties": true,
             "description": "streams-bootstrap-v2 app configurations.\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
             "properties": {
+                "affinity": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/Affinity"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Map to configure pod affinities https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity."
+                },
                 "autoscaling": {
                     "anyOf": [
                         {
@@ -2643,11 +2630,7 @@
                     "title": "Nameoverride"
                 },
                 "persistence": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/kpops__components__streams_bootstrap_v2__streams__model__PersistenceConfig"
-                        }
-                    ],
+                    "$ref": "#/$defs/kpops__components__streams_bootstrap_v2__streams__model__PersistenceConfig",
                     "default": {
                         "enabled": false,
                         "size": null,
@@ -2662,12 +2645,24 @@
                     "type": "boolean"
                 },
                 "streams": {
-                    "allOf": [
+                    "$ref": "#/$defs/kpops__components__streams_bootstrap_v2__streams__model__StreamsConfig",
+                    "description": "streams-bootstrap-v2 streams section"
+                },
+                "tolerations": {
+                    "anyOf": [
                         {
-                            "$ref": "#/$defs/kpops__components__streams_bootstrap_v2__streams__model__StreamsConfig"
+                            "items": {
+                                "$ref": "#/$defs/Toleration"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "description": "streams-bootstrap-v2 streams section"
+                    "default": [],
+                    "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
+                    "title": "Tolerations"
                 }
             },
             "required": [
@@ -2726,7 +2721,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of command line arguments passed to the streams app.",
                     "title": "Commandline"
                 },
@@ -2755,7 +2750,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Custom environment variables.",
                     "title": "Env"
                 },
@@ -2768,7 +2763,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of files to mount for the app. File will be mounted as $value.mountPath/$key. $value.content denotes file content (recommended to be used with --set-file).",
                     "title": "Files"
                 },
@@ -2804,7 +2799,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "",
                     "title": "Imagepullsecrets"
                 },
@@ -2847,11 +2842,7 @@
                     "description": "Configuration for JMX Exporter."
                 },
                 "kafka": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/kpops__components__streams_bootstrap__streams__model__StreamsConfig"
-                        }
-                    ],
+                    "$ref": "#/$defs/kpops__components__streams_bootstrap__streams__model__StreamsConfig",
                     "description": "streams-bootstrap kafka section"
                 },
                 "livenessProbe": {
@@ -2863,7 +2854,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
                     "title": "Livenessprobe"
                 },
@@ -2905,7 +2896,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of custom annotations to attach to the pod spec.",
                     "title": "Podannotations"
                 },
@@ -2921,7 +2912,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of custom labels to attach to the pod spec.",
                     "title": "Podlabels"
                 },
@@ -2937,7 +2928,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "",
                     "title": "Ports"
                 },
@@ -2962,7 +2953,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
                     "title": "Readinessprobe"
                 },
@@ -2990,7 +2981,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "Mount existing secrets as volumes",
                     "title": "Secretfilesrefs"
                 },
@@ -3003,7 +2994,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Inject existing secrets as environment variables. Map key is used as environment variable name. Value consists of secret name and key.",
                     "title": "Secretrefs"
                 },
@@ -3019,7 +3010,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Custom secret environment variables. Prefix with configurationEnvPrefix in order to pass secrets to command line or prefix with KAFKA_ to pass secrets to Kafka Streams configuration.",
                     "title": "Secrets"
                 },
@@ -3066,7 +3057,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
                     "title": "Tolerations"
                 }
@@ -3112,11 +3103,7 @@
                     "type": "string"
                 },
                 "repo_config": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/HelmRepoConfig"
-                        }
-                    ],
+                    "$ref": "#/$defs/HelmRepoConfig",
                     "default": {
                         "repo_auth_flags": {
                             "ca_file": null,
@@ -3143,11 +3130,7 @@
                     "description": "Topic(s) into which the component will write output"
                 },
                 "values": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/StreamsBootstrapValues"
-                        }
-                    ],
+                    "$ref": "#/$defs/StreamsBootstrapValues",
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
@@ -3168,6 +3151,7 @@
         },
         "StreamsBootstrapV2": {
             "additionalProperties": true,
+            "deprecated": true,
             "description": "Base for components with a streams-bootstrap-v2 Helm chart.",
             "properties": {
                 "from": {
@@ -3200,11 +3184,7 @@
                     "type": "string"
                 },
                 "repo_config": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/HelmRepoConfig"
-                        }
-                    ],
+                    "$ref": "#/$defs/HelmRepoConfig",
                     "default": {
                         "repo_auth_flags": {
                             "ca_file": null,
@@ -3231,11 +3211,7 @@
                     "description": "Topic(s) into which the component will write output"
                 },
                 "values": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/StreamsBootstrapV2Values"
-                        }
-                    ],
+                    "$ref": "#/$defs/StreamsBootstrapV2Values",
                     "description": "streams-bootstrap-v2 Helm values"
                 },
                 "version": {
@@ -3264,6 +3240,18 @@
             "additionalProperties": true,
             "description": "Base value class for all streams bootstrap v2 related components.",
             "properties": {
+                "affinity": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/Affinity"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Map to configure pod affinities https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity."
+                },
                 "imageTag": {
                     "default": "latest",
                     "description": "Docker image tag of the streams-bootstrap-v2 app.",
@@ -3286,12 +3274,24 @@
                     "title": "Nameoverride"
                 },
                 "streams": {
-                    "allOf": [
+                    "$ref": "#/$defs/KafkaStreamsConfig",
+                    "description": ""
+                },
+                "tolerations": {
+                    "anyOf": [
                         {
-                            "$ref": "#/$defs/KafkaStreamsConfig"
+                            "items": {
+                                "$ref": "#/$defs/Toleration"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "description": ""
+                    "default": [],
+                    "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
+                    "title": "Tolerations"
                 }
             },
             "required": [
@@ -3338,7 +3338,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of command line arguments passed to the streams app.",
                     "title": "Commandline"
                 },
@@ -3367,7 +3367,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Custom environment variables.",
                     "title": "Env"
                 },
@@ -3380,7 +3380,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of files to mount for the app. File will be mounted as $value.mountPath/$key. $value.content denotes file content (recommended to be used with --set-file).",
                     "title": "Files"
                 },
@@ -3416,7 +3416,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "",
                     "title": "Imagepullsecrets"
                 },
@@ -3447,11 +3447,7 @@
                     "description": ""
                 },
                 "kafka": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/KafkaConfig"
-                        }
-                    ],
+                    "$ref": "#/$defs/KafkaConfig",
                     "description": "Kafka configuration for the streams-bootstrap app."
                 },
                 "livenessProbe": {
@@ -3463,7 +3459,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
                     "title": "Livenessprobe"
                 },
@@ -3493,7 +3489,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of custom annotations to attach to the pod spec.",
                     "title": "Podannotations"
                 },
@@ -3509,7 +3505,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Map of custom labels to attach to the pod spec.",
                     "title": "Podlabels"
                 },
@@ -3525,7 +3521,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "",
                     "title": "Ports"
                 },
@@ -3538,7 +3534,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
                     "title": "Readinessprobe"
                 },
@@ -3566,7 +3562,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "Mount existing secrets as volumes",
                     "title": "Secretfilesrefs"
                 },
@@ -3579,7 +3575,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Inject existing secrets as environment variables. Map key is used as environment variable name. Value consists of secret name and key.",
                     "title": "Secretrefs"
                 },
@@ -3595,7 +3591,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": {},
                     "description": "Custom secret environment variables. Prefix with configurationEnvPrefix in order to pass secrets to command line or prefix with KAFKA_ to pass secrets to Kafka Streams configuration.",
                     "title": "Secrets"
                 },
@@ -3623,7 +3619,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.",
                     "title": "Tolerations"
                 }
@@ -3665,11 +3661,7 @@
             "description": "Represents the different Kubernetes tolerations.\nhttps://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
             "properties": {
                 "effect": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/Effects"
-                        }
-                    ],
+                    "$ref": "#/$defs/Effects",
                     "description": "The effect to tolerate."
                 },
                 "key": {
@@ -3678,11 +3670,7 @@
                     "type": "string"
                 },
                 "operator": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/Operation"
-                        }
-                    ],
+                    "$ref": "#/$defs/Operation",
                     "description": "The operator ('Exists' or 'Equal')."
                 },
                 "tolerationSeconds": {
@@ -3826,11 +3814,7 @@
             "description": "The weights of all of the matched WeightedPodAffinityTerm fields are added per-node to find the most preferred node(s).",
             "properties": {
                 "podAffinityTerm": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/PodAffinityTerm"
-                        }
-                    ],
+                    "$ref": "#/$defs/PodAffinityTerm",
                     "description": "A pod affinity term, associated with the corresponding weight."
                 },
                 "weight": {
@@ -3903,7 +3887,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "List of additional KEDA triggers, see https://keda.sh/docs/latest/scalers/",
                     "title": "Additionaltriggers"
                 },
@@ -3951,7 +3935,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "List of auto-generated Kafka Streams topics used by the streams app",
                     "title": "Internaltopics"
                 },
@@ -4032,7 +4016,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "description": "List of topics used by the streams app",
                     "title": "Topics"
                 }
