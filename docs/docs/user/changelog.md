@@ -1,4 +1,15 @@
 # Changelog
+## [8.4.0](https://github.com/bakdata/kpops/releases/tag/8.4.0) - Release Date: [2024-12-18]
+
+### 🏭 Refactor
+
+- Create generic `SerializeAsOptional` type for Pydantic - [#564](https://github.com/bakdata/kpops/pull/564)
+
+
+
+
+
+
 ## [8.3.2](https://github.com/bakdata/kpops/releases/tag/8.3.2) - Release Date: [2024-12-17]
 
 ### 🐛 Fixes
