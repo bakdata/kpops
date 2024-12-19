@@ -1139,6 +1139,8 @@
       
         
       
+        
+      
     
     
     
@@ -1300,6 +1302,26 @@
   
   <span class="md-ellipsis">
     Migrate from v7 to v8
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../migration-guide/v8-v9/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Migrate from v8 to v9
   </span>
   
 
@@ -1842,15 +1864,8 @@
 </ul>
 <hr />
 <h2 id="configuring-operation-modes">Configuring Operation Modes<a class="headerlink" href="#configuring-operation-modes" title="Permanent link">&para;</a></h2>
-<p>You can configure the operation mode using one of the following methods:</p>
-<ol>
-<li>
-<p><strong>Command-Line Option</strong>: Pass the <code>--operation-mode &lt;OPERATION&gt;</code> flag when running a CLI command. Refer to the <a href="https://bakdata.github.io/kpops/9.0/user/references/cli-commands/#kpops-deploy">CLI commands documentation</a> for more details.</p>
-</li>
-<li>
-<p><strong>Environment Variable</strong>: Set the operation mode by defining the <code>KPOPS_OPERATION_MODE</code> environment variable.</p>
-</li>
-</ol>
+<p>It is possible to configure the operation mode in the <code>config.yaml</code> file. Please refer to the <a href="https://bakdata.github.io/kpops/9.0/user/core-concepts/config/">Configuration documentation page</a>.
+Alternatively, you can to pass the <code>--operation-mode &lt;OPERATION&gt;</code> option in the CLI to override the operation mode of the <code>config.yaml</code>. You can refer to the <a href="https://bakdata.github.io/kpops/9.0/user/references/cli-commands/#kpops-deploy">CLI commands documentation</a> for more details.</p>
 <hr />
 <h2 id="generated-resources-by-mode-and-operation">Generated Resources by Mode and Operation<a class="headerlink" href="#generated-resources-by-mode-and-operation" title="Permanent link">&para;</a></h2>
 <h3 id="deploy"><code>deploy</code><a class="headerlink" href="#deploy" title="Permanent link">&para;</a></h3>
