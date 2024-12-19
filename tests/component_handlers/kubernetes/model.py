@@ -2,7 +2,7 @@ from textwrap import dedent
 
 import pytest
 
-from kpops.component_handlers.kubernetes.model import KubernetesManifest
+from kpops.manifests.kubernetes import KubernetesManifest
 
 
 class TestKubernetesManifest:
@@ -23,7 +23,7 @@ class TestKubernetesManifest:
                 ),
                 [
                     KubernetesManifest(
-                        {
+                        **{
                             "apiVersion": "v1",
                             "kind": "ServiceAccount",
                             "metadata": {"labels": {"foo": "bar"}},

@@ -118,6 +118,15 @@
             "title": "KafkaRestConfig",
             "type": "object"
         },
+        "OperationMode": {
+            "enum": [
+                "argo",
+                "manifest",
+                "managed"
+            ],
+            "title": "OperationMode",
+            "type": "string"
+        },
         "SchemaRegistryConfig": {
             "additionalProperties": false,
             "description": "Configuration for Schema Registry.",
@@ -153,6 +162,25 @@
             "title": "SchemaRegistryConfig",
             "type": "object"
         },
+        "StrimziTopicConfig": {
+            "additionalProperties": false,
+            "description": "Configuration for Strimzi Kafka Topics.",
+            "properties": {
+                "label": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "The label to identify the KafkaTopic resources managed by the Topic Operator. This does not have to be the name of the Kafka cluster. It can be the label assigned to the KafkaTopic resource. If you deploy more than one Topic Operator, the labels must be unique for each. That is, the operators cannot manage the same resources.",
+                    "title": "Label",
+                    "type": "object"
+                }
+            },
+            "required": [
+                "label"
+            ],
+            "title": "StrimziTopicConfig",
+            "type": "object"
+        },
         "TopicNameConfig": {
             "additionalProperties": false,
             "description": "Configure the topic name variables you can use in the pipeline definition.",
@@ -184,11 +212,7 @@
             "type": "boolean"
         },
         "helm_config": {
-            "allOf": [
-                {
-                    "$ref": "#/$defs/HelmConfig"
-                }
-            ],
+            "$ref": "#/$defs/HelmConfig",
             "default": {
                 "api_version": null,
                 "context": null,
@@ -197,11 +221,7 @@
             "description": "Global flags for Helm."
         },
         "helm_diff_config": {
-            "allOf": [
-                {
-                    "$ref": "#/$defs/HelmDiffConfig"
-                }
-            ],
+            "$ref": "#/$defs/HelmDiffConfig",
             "default": {
                 "ignore": []
             },
@@ -216,28 +236,23 @@
             "type": "string"
         },
         "kafka_connect": {
-            "allOf": [
-                {
-                    "$ref": "#/$defs/KafkaConnectConfig"
-                }
-            ],
+            "$ref": "#/$defs/KafkaConnectConfig",
             "default": {
                 "timeout": 30,
                 "url": "http://localhost:8083/"
-            },
-            "description": "Configuration for Kafka Connect."
+            }
         },
         "kafka_rest": {
-            "allOf": [
-                {
-                    "$ref": "#/$defs/KafkaRestConfig"
-                }
-            ],
+            "$ref": "#/$defs/KafkaRestConfig",
             "default": {
                 "timeout": 30,
                 "url": "http://localhost:8082/"
-            },
-            "description": "Configuration for Kafka REST Proxy."
+            }
+        },
+        "operation_mode": {
+            "$ref": "#/$defs/OperationMode",
+            "default": "managed",
+            "description": "The operation mode of KPOps (managed, manifest, argo)."
         },
         "pipeline_base_dir": {
             "default": ".",
@@ -253,29 +268,31 @@
             "type": "boolean"
         },
         "schema_registry": {
-            "allOf": [
-                {
-                    "$ref": "#/$defs/SchemaRegistryConfig"
-                }
-            ],
+            "$ref": "#/$defs/SchemaRegistryConfig",
             "default": {
                 "enabled": false,
                 "timeout": 30,
                 "url": "http://localhost:8081/"
-            },
-            "description": "Configuration for Schema Registry."
+            }
         },
-        "topic_name_config": {
-            "allOf": [
+        "strimzi_topic": {
+            "anyOf": [
                 {
-                    "$ref": "#/$defs/TopicNameConfig"
+                    "$ref": "#/$defs/StrimziTopicConfig"
+                },
+                {
+                    "type": "null"
                 }
             ],
+            "default": null,
+            "description": "Configuration for Strimzi Kafka Topics."
+        },
+        "topic_name_config": {
+            "$ref": "#/$defs/TopicNameConfig",
             "default": {
                 "default_error_topic_name": "${pipeline.name}-${component.name}-error",
                 "default_output_topic_name": "${pipeline.name}-${component.name}"
-            },
-            "description": "Configure the topic name variables you can use in the pipeline definition."
+            }
         }
     },
     "required": [

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Self
 
 import pydantic
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -194,9 +194,7 @@ class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
     model_config = ConfigDict(extra="allow")
 
     @model_validator(mode="after")
-    def validate_mandatory_fields_are_set(
-        self: StreamsAppAutoScaling,
-    ) -> StreamsAppAutoScaling:  # TODO: typing.Self for Python 3.11+
+    def validate_mandatory_fields_are_set(self) -> Self:
         if self.enabled and (self.consumer_group is None or self.lag_threshold is None):
             msg = (
                 "If app.autoscaling.enabled is set to true, "
@@ -228,9 +226,7 @@ class PersistenceConfig(BaseModel):
     )
 
     @model_validator(mode="after")
-    def validate_mandatory_fields_are_set(
-        self: PersistenceConfig,
-    ) -> PersistenceConfig:  # TODO: typing.Self for Python 3.11+
+    def validate_mandatory_fields_are_set(self) -> Self:
         if self.enabled and self.size is None:
             msg = (
                 "If app.persistence.enabled is set to true, "

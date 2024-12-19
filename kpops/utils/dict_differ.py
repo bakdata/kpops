@@ -3,8 +3,8 @@ from __future__ import annotations
 from collections.abc import Mapping, MutableMapping
 from dataclasses import dataclass
 from difflib import Differ
-from enum import Enum
-from typing import TYPE_CHECKING, Any, Generic, TypeVar
+from enum import StrEnum
+from typing import TYPE_CHECKING, Any, Generic, NamedTuple, TypeVar
 
 import typer
 import yaml
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 differ = Differ()
 
 
-class DiffType(str, Enum):
+class DiffType(StrEnum):
     ADD = "add"
     CHANGE = "change"
     REMOVE = "remove"
@@ -30,8 +30,7 @@ _O = TypeVar("_O")
 _N = TypeVar("_N")
 
 
-@dataclass
-class Change(Generic[_O, _N]):  # Generic NamedTuple requires Python 3.11+
+class Change(NamedTuple, Generic[_O, _N]):
     old_value: _O
     new_value: _N
 
@@ -41,11 +40,11 @@ class Change(Generic[_O, _N]):  # Generic NamedTuple requires Python 3.11+
     ) -> Change[_O | None, _N | None]:
         match type:
             case DiffType.ADD:
-                return Change(None, change)
+                return Change(None, change)  # pyright: ignore[reportReturnType]
             case DiffType.REMOVE:
-                return Change(change, None)
+                return Change(change, None)  # pyright: ignore[reportReturnType]
             case DiffType.CHANGE if isinstance(change, tuple):
-                return Change(*change)  # pyright: ignore[reportUnknownArgumentType]
+                return Change(*change)  # pyright: ignore[reportReturnType]
         msg = f"{type} is not part of {DiffType}"
         raise ValueError(msg)
 

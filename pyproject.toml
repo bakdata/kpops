@@ -22,7 +22,7 @@ classifiers = [
 kpops = "kpops.cli.main:app"
 
 [tool.poetry.dependencies]
-python = ">=3.10, <3.13"
+python = ">=3.11, <3.13"
 anyio = "^4.3.0"
 pydantic = "^2.5.3"
 pydantic-settings = "^2.0.3"
@@ -73,16 +73,13 @@ reportUnknownLambdaType = "warning"
 reportUnknownVariableType = "warning"
 reportUnknownMemberType = "warning"
 
-reportIncompatibleVariableOverride = false
-reportIncompatibleMethodOverride = false
-# FIXME: causes issues on Python 3.10
-# reportIncompatibleVariableOverride = "warning"
-# reportIncompatibleMethodOverride = "warning"
+reportIncompatibleVariableOverride = "warning"
+reportIncompatibleMethodOverride = "warning"
 
 [tool.ruff]
 output-format = "grouped"
 show-fixes = true
-target-version = "py310"
+target-version = "py311"
 extend-exclude = ["tests/*snapshots/*"]
 
 [tool.ruff.lint]

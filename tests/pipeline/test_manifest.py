@@ -1,8 +1,9 @@
+from collections.abc import Iterator
 from pathlib import Path
 from unittest.mock import ANY, MagicMock
 
 import pytest
-import yaml
+from _pytest.capture import CaptureFixture
 from pytest_mock import MockerFixture
 from pytest_snapshot.plugin import Snapshot
 from typer.testing import CliRunner
@@ -12,6 +13,8 @@ from kpops.cli.main import app
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, Version
 from kpops.const.file_type import PIPELINE_YAML
+from kpops.manifests.kubernetes import KubernetesManifest
+from kpops.utils.yaml import print_yaml
 
 MANIFEST_YAML = "manifest.yaml"
 
@@ -42,10 +45,12 @@ class TestManifest:
         result = runner.invoke(
             app,
             [
-                "manifest",
+                "deploy",
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--environment",
                 "development",
+                "--operation-mode",
+                "manifest",
             ],
             catch_exceptions=False,
         )
@@ -72,12 +77,14 @@ class TestManifest:
         result = runner.invoke(
             app,
             [
-                "manifest",
+                "deploy",
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--config",
                 str(RESOURCE_PATH / "custom-config"),
                 "--environment",
                 "development",
+                "--operation-mode",
+                "manifest",
             ],
             catch_exceptions=False,
         )
@@ -106,33 +113,212 @@ class TestManifest:
         result = runner.invoke(
             app,
             [
-                "manifest",
+                "deploy",
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--environment",
                 "development",
+                "--operation-mode",
+                "manifest",
             ],
             catch_exceptions=False,
         )
         assert result.exit_code == 0, result.stdout
         snapshot.assert_match(result.stdout, MANIFEST_YAML)
 
-    def test_python_api(self, snapshot: Snapshot):
-        resources = kpops.manifest(
-            RESOURCE_PATH / "custom-config/pipeline.yaml",
+    def test_manifest_deploy_python_api(
+        self, capsys: CaptureFixture, snapshot: Snapshot
+    ):
+        generator = kpops.manifest_deploy(
+            RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML,
             environment="development",
         )
-        assert isinstance(resources, list)
+        assert isinstance(generator, Iterator)
+        resources = list(generator)
         assert len(resources) == 2
-        snapshot.assert_match(yaml.dump_all(resources), "resources")
+        for resource in resources:
+            for manifest in resource:
+                assert isinstance(manifest, KubernetesManifest)
+                print_yaml(manifest.model_dump())
+
+        captured = capsys.readouterr()
+        snapshot.assert_match(captured.out, MANIFEST_YAML)
 
     def test_streams_bootstrap(self, snapshot: Snapshot):
         result = runner.invoke(
             app,
             [
-                "manifest",
+                "deploy",
                 str(RESOURCE_PATH / "streams-bootstrap" / PIPELINE_YAML),
+                "--operation-mode",
+                "manifest",
             ],
             catch_exceptions=False,
         )
         assert result.exit_code == 0, result.stdout
         snapshot.assert_match(result.stdout, MANIFEST_YAML)
+
+    def test_deploy_manifest_mode(self, snapshot: Snapshot):
+        result = runner.invoke(
+            app,
+            [
+                "deploy",
+                str(RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML),
+                "--operation-mode",
+                "manifest",
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+        snapshot.assert_match(result.stdout, MANIFEST_YAML)
+
+    def test_deploy_argo_mode(self, snapshot: Snapshot):
+        result = runner.invoke(
+            app,
+            [
+                "deploy",
+                str(RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML),
+                "--operation-mode",
+                "argo",
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+        snapshot.assert_match(result.stdout, MANIFEST_YAML)
+
+    def test_manifest_destroy_manifest_mode(self, snapshot: Snapshot):
+        result = runner.invoke(
+            app,
+            [
+                "destroy",
+                str(RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML),
+                "--operation-mode",
+                "manifest",
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+        snapshot.assert_match(result.stdout, MANIFEST_YAML)
+
+    def test_manifest_destroy_argo_mode(self, snapshot: Snapshot):
+        result = runner.invoke(
+            app,
+            [
+                "destroy",
+                str(RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML),
+                "--operation-mode",
+                "argo",
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+        snapshot.assert_match(result.stdout, MANIFEST_YAML)
+
+    def test_manifest_destroy_python_api(
+        self, capsys: CaptureFixture, snapshot: Snapshot
+    ):
+        generator = kpops.manifest_destroy(
+            RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML,
+            environment="development",
+        )
+        assert isinstance(generator, Iterator)
+        resources = list(generator)
+        assert len(resources) == 2
+        for resource in resources:
+            for manifest in resource:
+                assert isinstance(manifest, KubernetesManifest)
+                print_yaml(manifest.model_dump())
+
+        captured = capsys.readouterr()
+        snapshot.assert_match(captured.out, MANIFEST_YAML)
+
+    def test_manifest_reset_manifest_mode(self, snapshot: Snapshot):
+        result = runner.invoke(
+            app,
+            [
+                "reset",
+                str(RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML),
+                "--operation-mode",
+                "manifest",
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+        snapshot.assert_match(result.stdout, MANIFEST_YAML)
+
+    def test_manifest_reset_argo_mode(self, snapshot: Snapshot):
+        result = runner.invoke(
+            app,
+            [
+                "reset",
+                str(RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML),
+                "--operation-mode",
+                "argo",
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+        snapshot.assert_match(result.stdout, MANIFEST_YAML)
+
+    def test_manifest_reset_python_api(
+        self, capsys: CaptureFixture, snapshot: Snapshot
+    ):
+        generator = kpops.manifest_reset(
+            RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML,
+            environment="development",
+        )
+        assert isinstance(generator, Iterator)
+        resources = list(generator)
+        assert len(resources) == 2
+        for resource in resources:
+            for manifest in resource:
+                assert isinstance(manifest, KubernetesManifest)
+                print_yaml(manifest.model_dump())
+
+        captured = capsys.readouterr()
+        snapshot.assert_match(captured.out, MANIFEST_YAML)
+
+    def test_manifest_clean_manifest_mode(self, snapshot: Snapshot):
+        result = runner.invoke(
+            app,
+            [
+                "clean",
+                str(RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML),
+                "--operation-mode",
+                "manifest",
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+        snapshot.assert_match(result.stdout, MANIFEST_YAML)
+
+    def test_manifest_clean_argo_mode(self, snapshot: Snapshot):
+        result = runner.invoke(
+            app,
+            [
+                "clean",
+                str(RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML),
+                "--operation-mode",
+                "argo",
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+        snapshot.assert_match(result.stdout, MANIFEST_YAML)
+
+    def test_manifest_clean_python_api(
+        self, capsys: CaptureFixture, snapshot: Snapshot
+    ):
+        generator = kpops.manifest_clean(
+            RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML,
+            environment="development",
+        )
+        assert isinstance(generator, Iterator)
+        resources = list(generator)
+        assert len(resources) == 2
+        for resource in resources:
+            for manifest in resource:
+                assert isinstance(manifest, KubernetesManifest)
+                print_yaml(manifest.model_dump())
+
+        captured = capsys.readouterr()
+        snapshot.assert_match(captured.out, MANIFEST_YAML)

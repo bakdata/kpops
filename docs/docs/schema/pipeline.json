@@ -170,14 +170,11 @@
                 },
                 "type": {
                     "const": "helm-app",
-                    "title": "Type"
+                    "title": "Type",
+                    "type": "string"
                 },
                 "values": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/HelmAppValues"
-                        }
-                    ],
+                    "$ref": "#/$defs/HelmAppValues",
                     "description": "Helm app values"
                 },
                 "version": {
@@ -229,11 +226,7 @@
             "description": "Helm repository configuration.",
             "properties": {
                 "repo_auth_flags": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/RepoAuthFlags"
-                        }
-                    ],
+                    "$ref": "#/$defs/RepoAuthFlags",
                     "default": {
                         "ca_file": null,
                         "cert_file": null,
@@ -413,11 +406,7 @@
             "description": "Kafka sink connector model.",
             "properties": {
                 "config": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/KafkaConnectorConfig"
-                        }
-                    ],
+                    "$ref": "#/$defs/KafkaConnectorConfig",
                     "description": "Connector config"
                 },
                 "from": {
@@ -458,11 +447,7 @@
                     "title": "Resetter Namespace"
                 },
                 "resetter_values": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/HelmAppValues"
-                        }
-                    ],
+                    "$ref": "#/$defs/HelmAppValues",
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
                 },
                 "to": {
@@ -479,7 +464,8 @@
                 },
                 "type": {
                     "const": "kafka-sink-connector",
-                    "title": "Type"
+                    "title": "Type",
+                    "type": "string"
                 }
             },
             "required": [
@@ -495,11 +481,7 @@
             "description": "Kafka source connector model.",
             "properties": {
                 "config": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/KafkaConnectorConfig"
-                        }
-                    ],
+                    "$ref": "#/$defs/KafkaConnectorConfig",
                     "description": "Connector config"
                 },
                 "from": {
@@ -553,11 +535,7 @@
                     "title": "Resetter Namespace"
                 },
                 "resetter_values": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/HelmAppValues"
-                        }
-                    ],
+                    "$ref": "#/$defs/HelmAppValues",
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
                 },
                 "to": {
@@ -574,7 +552,8 @@
                 },
                 "type": {
                     "const": "kafka-source-connector",
-                    "title": "Type"
+                    "title": "Type",
+                    "type": "string"
                 }
             },
             "required": [
@@ -961,11 +940,7 @@
                     "title": "Name"
                 },
                 "schema": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/ProtocolSchema"
-                        }
-                    ],
+                    "$ref": "#/$defs/ProtocolSchema",
                     "default": "TCP",
                     "description": "Protocol for port. Must be UDP, TCP, or SCTP."
                 },
@@ -993,11 +968,7 @@
             "description": "An empty preferred scheduling term matches all objects with implicit weight 0 (i.e. it's a no-op). A null preferred scheduling term matches no objects (i.e. is also a no-op).",
             "properties": {
                 "preference": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/NodeSelectorTerm"
-                        }
-                    ],
+                    "$ref": "#/$defs/NodeSelectorTerm",
                     "description": "A node selector term, associated with the corresponding weight."
                 },
                 "weight": {
@@ -1042,11 +1013,7 @@
                     "type": "string"
                 },
                 "repo_config": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/HelmRepoConfig"
-                        }
-                    ],
+                    "$ref": "#/$defs/HelmRepoConfig",
                     "default": {
                         "repo_auth_flags": {
                             "ca_file": null,
@@ -1074,14 +1041,11 @@
                 },
                 "type": {
                     "const": "producer-app",
-                    "title": "Type"
+                    "title": "Type",
+                    "type": "string"
                 },
                 "values": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/ProducerAppValues"
-                        }
-                    ],
+                    "$ref": "#/$defs/ProducerAppValues",
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
@@ -1103,6 +1067,7 @@
         },
         "ProducerAppV2": {
             "additionalProperties": true,
+            "deprecated": true,
             "description": "Producer component.\nThis producer holds configuration to use as values for the streams-bootstrap producer Helm chart. Note that the producer does not support error topics.",
             "properties": {
                 "from": {
@@ -1128,11 +1093,7 @@
                     "type": "string"
                 },
                 "repo_config": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/HelmRepoConfig"
-                        }
-                    ],
+                    "$ref": "#/$defs/HelmRepoConfig",
                     "default": {
                         "repo_auth_flags": {
                             "ca_file": null,
@@ -1160,14 +1121,11 @@
                 },
                 "type": {
                     "const": "producer-app-v2",
-                    "title": "Type"
+                    "title": "Type",
+                    "type": "string"
                 },
                 "values": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/ProducerAppV2Values"
-                        }
-                    ],
+                    "$ref": "#/$defs/ProducerAppV2Values",
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
@@ -1231,11 +1189,7 @@
                     "title": "Nameoverride"
                 },
                 "streams": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/ProducerStreamsConfig"
-                        }
-                    ],
+                    "$ref": "#/$defs/ProducerStreamsConfig",
                     "description": "Kafka Streams settings"
                 },
                 "tolerations": {
@@ -1447,11 +1401,7 @@
                     "description": ""
                 },
                 "kafka": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/ProducerConfig"
-                        }
-                    ],
+                    "$ref": "#/$defs/ProducerConfig",
                     "description": "Kafka Streams settings"
                 },
                 "livenessProbe": {
@@ -2157,11 +2107,7 @@
                     "type": "string"
                 },
                 "repo_config": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/HelmRepoConfig"
-                        }
-                    ],
+                    "$ref": "#/$defs/HelmRepoConfig",
                     "default": {
                         "repo_auth_flags": {
                             "ca_file": null,
@@ -2189,14 +2135,11 @@
                 },
                 "type": {
                     "const": "streams-app",
-                    "title": "Type"
+                    "title": "Type",
+                    "type": "string"
                 },
                 "values": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/StreamsAppValues"
-                        }
-                    ],
+                    "$ref": "#/$defs/StreamsAppValues",
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
@@ -2218,6 +2161,7 @@
         },
         "StreamsAppV2": {
             "additionalProperties": true,
+            "deprecated": true,
             "description": "StreamsAppV2 component that configures a streams-bootstrap-v2 app.",
             "properties": {
                 "from": {
@@ -2250,11 +2194,7 @@
                     "type": "string"
                 },
                 "repo_config": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/HelmRepoConfig"
-                        }
-                    ],
+                    "$ref": "#/$defs/HelmRepoConfig",
                     "default": {
                         "repo_auth_flags": {
                             "ca_file": null,
@@ -2282,14 +2222,11 @@
                 },
                 "type": {
                     "const": "streams-app-v2",
-                    "title": "Type"
+                    "title": "Type",
+                    "type": "string"
                 },
                 "values": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/StreamsAppV2Values"
-                        }
-                    ],
+                    "$ref": "#/$defs/StreamsAppV2Values",
                     "description": "streams-bootstrap-v2 Helm values"
                 },
                 "version": {
@@ -2365,11 +2302,7 @@
                     "title": "Nameoverride"
                 },
                 "persistence": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/kpops__components__streams_bootstrap_v2__streams__model__PersistenceConfig"
-                        }
-                    ],
+                    "$ref": "#/$defs/kpops__components__streams_bootstrap_v2__streams__model__PersistenceConfig",
                     "default": {
                         "enabled": false,
                         "size": null,
@@ -2384,11 +2317,7 @@
                     "type": "boolean"
                 },
                 "streams": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/kpops__components__streams_bootstrap_v2__streams__model__StreamsConfig"
-                        }
-                    ],
+                    "$ref": "#/$defs/kpops__components__streams_bootstrap_v2__streams__model__StreamsConfig",
                     "description": "streams-bootstrap-v2 streams section"
                 },
                 "tolerations": {
@@ -2585,11 +2514,7 @@
                     "description": "Configuration for JMX Exporter."
                 },
                 "kafka": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/kpops__components__streams_bootstrap__streams__model__StreamsConfig"
-                        }
-                    ],
+                    "$ref": "#/$defs/kpops__components__streams_bootstrap__streams__model__StreamsConfig",
                     "description": "streams-bootstrap kafka section"
                 },
                 "livenessProbe": {
@@ -2846,11 +2771,7 @@
             "description": "Represents the different Kubernetes tolerations.\nhttps://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
             "properties": {
                 "effect": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/Effects"
-                        }
-                    ],
+                    "$ref": "#/$defs/Effects",
                     "description": "The effect to tolerate."
                 },
                 "key": {
@@ -2859,11 +2780,7 @@
                     "type": "string"
                 },
                 "operator": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/Operation"
-                        }
-                    ],
+                    "$ref": "#/$defs/Operation",
                     "description": "The operator ('Exists' or 'Equal')."
                 },
                 "tolerationSeconds": {
@@ -3007,11 +2924,7 @@
             "description": "The weights of all of the matched WeightedPodAffinityTerm fields are added per-node to find the most preferred node(s).",
             "properties": {
                 "podAffinityTerm": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/PodAffinityTerm"
-                        }
-                    ],
+                    "$ref": "#/$defs/PodAffinityTerm",
                     "description": "A pod affinity term, associated with the corresponding weight."
                 },
                 "weight": {
