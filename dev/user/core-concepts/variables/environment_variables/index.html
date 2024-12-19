@@ -1893,6 +1893,20 @@
 <td>Whether to retain clean up jobs in the cluster or uninstall the, after completion.</td>
 <td>retain_clean_jobs</td>
 </tr>
+<tr>
+<td>KPOPS_STRIMZI_TOPIC</td>
+<td></td>
+<td>False</td>
+<td>Configuration for Strimzi Kafka Topics.</td>
+<td>strimzi_topic</td>
+</tr>
+<tr>
+<td>KPOPS_OPERATION_MODE</td>
+<td>managed</td>
+<td>False</td>
+<td>The operation mode of KPOps (managed, manifest, argo).</td>
+<td>operation_mode</td>
+</tr>
 </tbody>
 </table>
 <!-- dprint-ignore-start -->
@@ -1958,7 +1972,13 @@
 <span class="normal"><a href="#__codelineno-0-57">57</a></span>
 <span class="normal"><a href="#__codelineno-0-58">58</a></span>
 <span class="normal"><a href="#__codelineno-0-59">59</a></span>
-<span class="normal"><a href="#__codelineno-0-60">60</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="c1"># Global config environment variables</span>
+<span class="normal"><a href="#__codelineno-0-60">60</a></span>
+<span class="normal"><a href="#__codelineno-0-61">61</a></span>
+<span class="normal"><a href="#__codelineno-0-62">62</a></span>
+<span class="normal"><a href="#__codelineno-0-63">63</a></span>
+<span class="normal"><a href="#__codelineno-0-64">64</a></span>
+<span class="normal"><a href="#__codelineno-0-65">65</a></span>
+<span class="normal"><a href="#__codelineno-0-66">66</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="c1"># Global config environment variables</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="c1">#</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="c1"># The default setup is shown. These variables take precedence over the</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="c1"># settings in `config.yaml`. Variables marked as required can instead</span>
@@ -2018,6 +2038,12 @@
 </span><span id="__span-0-58"><a id="__codelineno-0-58" name="__codelineno-0-58"></a><span class="c1"># Whether to retain clean up jobs in the cluster or uninstall the,</span>
 </span><span id="__span-0-59"><a id="__codelineno-0-59" name="__codelineno-0-59"></a><span class="c1"># after completion.</span>
 </span><span id="__span-0-60"><a id="__codelineno-0-60" name="__codelineno-0-60"></a><span class="n">KPOPS_RETAIN_CLEAN_JOBS</span><span class="o">=</span><span class="kc">False</span>
+</span><span id="__span-0-61"><a id="__codelineno-0-61" name="__codelineno-0-61"></a><span class="c1"># strimzi_topic</span>
+</span><span id="__span-0-62"><a id="__codelineno-0-62" name="__codelineno-0-62"></a><span class="c1"># Configuration for Strimzi Kafka Topics.</span>
+</span><span id="__span-0-63"><a id="__codelineno-0-63" name="__codelineno-0-63"></a><span class="n">KPOPS_STRIMZI_TOPIC</span> <span class="c1"># No default value, not required</span>
+</span><span id="__span-0-64"><a id="__codelineno-0-64" name="__codelineno-0-64"></a><span class="c1"># operation_mode</span>
+</span><span id="__span-0-65"><a id="__codelineno-0-65" name="__codelineno-0-65"></a><span class="c1"># The operation mode of KPOps (managed, manifest, argo).</span>
+</span><span id="__span-0-66"><a id="__codelineno-0-66" name="__codelineno-0-66"></a><span class="n">KPOPS_OPERATION_MODE</span><span class="o">=</span><span class="n">managed</span>
 </span></code></pre></div></td></tr></table></div>
 </details>
 <!-- dprint-ignore-end -->
@@ -2051,6 +2077,12 @@
 <td></td>
 <td>False</td>
 <td>The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).</td>
+</tr>
+<tr>
+<td>KPOPS_OPERATION_MODE</td>
+<td>managed</td>
+<td>False</td>
+<td>How KPOps should operate.</td>
 </tr>
 <tr>
 <td>KPOPS_PIPELINE_PATHS</td>
@@ -2090,7 +2122,9 @@
 <span class="normal"><a href="#__codelineno-1-18">18</a></span>
 <span class="normal"><a href="#__codelineno-1-19">19</a></span>
 <span class="normal"><a href="#__codelineno-1-20">20</a></span>
-<span class="normal"><a href="#__codelineno-1-21">21</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="c1"># CLI Environment variables</span>
+<span class="normal"><a href="#__codelineno-1-21">21</a></span>
+<span class="normal"><a href="#__codelineno-1-22">22</a></span>
+<span class="normal"><a href="#__codelineno-1-23">23</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="c1"># CLI Environment variables</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="c1">#</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="c1"># The default setup is shown. These variables take precedence over the</span>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="c1"># commands&#39; flags. If a variable is set, the corresponding flag does</span>
@@ -2106,11 +2140,13 @@
 </span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14"></a><span class="c1"># Suffix your environment files with this value (e.g.</span>
 </span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15"></a><span class="c1"># defaults_development.yaml for environment=development).</span>
 </span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16"></a><span class="n">KPOPS_ENVIRONMENT</span> <span class="c1"># No default value, not required</span>
-</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17"></a><span class="c1"># Paths to dir containing &#39;pipeline.yaml&#39; or files named</span>
-</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18"></a><span class="c1"># &#39;pipeline.yaml&#39;.</span>
-</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19"></a><span class="n">KPOPS_PIPELINE_PATHS</span> <span class="c1"># No default value, required</span>
-</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20"></a><span class="c1"># Comma separated list of steps to apply the command on</span>
-</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21"></a><span class="n">KPOPS_PIPELINE_STEPS</span> <span class="c1"># No default value, not required</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17"></a><span class="c1"># How KPOps should operate.</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18"></a><span class="n">KPOPS_OPERATION_MODE</span><span class="o">=</span><span class="n">managed</span>
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19"></a><span class="c1"># Paths to dir containing &#39;pipeline.yaml&#39; or files named</span>
+</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20"></a><span class="c1"># &#39;pipeline.yaml&#39;.</span>
+</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21"></a><span class="n">KPOPS_PIPELINE_PATHS</span> <span class="c1"># No default value, required</span>
+</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22"></a><span class="c1"># Comma separated list of steps to apply the command on</span>
+</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23"></a><span class="n">KPOPS_PIPELINE_STEPS</span> <span class="c1"># No default value, not required</span>
 </span></code></pre></div></td></tr></table></div>
 </details>
 <!-- dprint-ignore-end -->
