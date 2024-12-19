@@ -1,3 +1,5 @@
+# type: ignore[reportGeneralTypeIssues]
+
 import inspect
 import json
 import logging
