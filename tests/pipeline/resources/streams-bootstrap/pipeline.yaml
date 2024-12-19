@@ -20,6 +20,19 @@
     imageTag: "1.0.0"
     kafka:
       applicationId: "my-streams-app-id"
+    affinity:
+      nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - preference:
+                matchExpressions:
+                - key: foo
+                  operator: Exists
+              weight: 2
+            - preference:
+                matchExpressions:
+                - key: bar
+                  operator: DoesNotExist
+              weight: 1
     commandLine:
       CONVERT_XML: true
     javaOptions:

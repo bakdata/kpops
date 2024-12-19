@@ -7,7 +7,12 @@ import pydantic
 from pydantic import Field, model_validator
 
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel
+from kpops.utils.pydantic import (
+    CamelCaseConfigModel,
+    DescConfigModel,
+    SerializeAsOptional,
+    SerializeAsOptionalModel,
+)
 
 if TYPE_CHECKING:
     try:
@@ -91,18 +96,18 @@ class NodeSelectorRequirement(DescConfigModel, CamelCaseConfigModel):
         return self
 
 
-class NodeSelectorTerm(DescConfigModel, CamelCaseConfigModel):
+class NodeSelectorTerm(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfigModel):
     """A null or empty node selector term matches no objects. The requirements of them are ANDed. The TopologySelectorTerm type implements a subset of the NodeSelectorTerm.
 
     :param match_expressions: A list of node selector requirements by node's labels.
     :param match_fields: A list of node selector requirements by node's fields.
     """
 
-    match_expressions: list[NodeSelectorRequirement] | None = Field(
-        default=None, description=describe_attr("match_expressions", __doc__)
+    match_expressions: SerializeAsOptional[list[NodeSelectorRequirement]] = Field(
+        default=[], description=describe_attr("match_expressions", __doc__)
     )
-    match_fields: list[NodeSelectorRequirement] | None = Field(
-        default=None, description=describe_attr("match_fields", __doc__)
+    match_fields: SerializeAsOptional[list[NodeSelectorRequirement]] = Field(
+        default=[], description=describe_attr("match_fields", __doc__)
     )
 
 
@@ -130,7 +135,7 @@ class PreferredSchedulingTerm(DescConfigModel, CamelCaseConfigModel):
     weight: Weight = Field(description=describe_attr("weight", __doc__))
 
 
-class NodeAffinity(DescConfigModel, CamelCaseConfigModel):
+class NodeAffinity(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfigModel):
     """Node affinity is a group of node affinity scheduling rules.
 
     :param required_during_scheduling_ignored_during_execution: If the affinity requirements specified by this field are not met at scheduling time, the pod will not be scheduled onto the node. If the affinity requirements specified by this field cease to be met at some point during pod execution (e.g. due to an update), the system may or may not try to eventually evict the pod from its node.
@@ -143,10 +148,10 @@ class NodeAffinity(DescConfigModel, CamelCaseConfigModel):
             "required_during_scheduling_ignored_during_execution", __doc__
         ),
     )
-    preferred_during_scheduling_ignored_during_execution: (
-        list[PreferredSchedulingTerm] | None
-    ) = Field(
-        default=None,
+    preferred_during_scheduling_ignored_during_execution: SerializeAsOptional[
+        list[PreferredSchedulingTerm]
+    ] = Field(
+        default=[],
         description=describe_attr(
             "preferred_during_scheduling_ignored_during_execution", __doc__
         ),
@@ -190,24 +195,24 @@ class LabelSelectorRequirement(DescConfigModel, CamelCaseConfigModel):
         return self
 
 
-class LabelSelector(DescConfigModel, CamelCaseConfigModel):
+class LabelSelector(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfigModel):
     """A label selector is a label query over a set of resources. The result of matchLabels and matchExpressions are ANDed. An empty label selector matches all objects. A null label selector matches no objects.
 
     :param match_labels: matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is *key*, the operator is *In*, and the values array contains only *value*. The requirements are ANDed.
     :param match_expressions: matchExpressions is a list of label selector requirements. The requirements are ANDed.
     """
 
-    match_labels: dict[str, str] | None = Field(
-        default=None,
+    match_labels: SerializeAsOptional[dict[str, str]] = Field(
+        default={},
         description=describe_attr("match_labels", __doc__),
     )
-    match_expressions: list[LabelSelectorRequirement] | None = Field(
-        default=None,
+    match_expressions: SerializeAsOptional[list[LabelSelectorRequirement]] = Field(
+        default=[],
         description=describe_attr("match_expressions", __doc__),
     )
 
 
-class PodAffinityTerm(DescConfigModel, CamelCaseConfigModel):
+class PodAffinityTerm(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfigModel):
     """Defines a set of pods (namely those matching the labelSelector relative to the given namespace(s)) that this pod should be co-located (affinity) or not co-located (anti-affinity) with, where co-located is defined as running on a node whose value of the label with key <topologyKey> matches that of any node on which a pod of the set of pods is running.
 
     :param label_selector: A label query over a set of resources, in this case pods. If it's null, this PodAffinityTerm matches with no Pods.
@@ -222,19 +227,19 @@ class PodAffinityTerm(DescConfigModel, CamelCaseConfigModel):
         default=None,
         description=describe_attr("label_selector", __doc__),
     )
-    match_label_keys: list[str] | None = Field(
-        default=None,
+    match_label_keys: SerializeAsOptional[list[str]] = Field(
+        default=[],
         description=describe_attr("match_label_keys", __doc__),
     )
-    mismatch_label_keys: list[str] | None = Field(
-        default=None,
+    mismatch_label_keys: SerializeAsOptional[list[str]] = Field(
+        default=[],
         description=describe_attr("mismatch_label_keys", __doc__),
     )
     topology_key: str = Field(
         description=describe_attr("topology_key", __doc__),
     )
-    namespaces: list[str] | None = Field(
-        default=None,
+    namespaces: SerializeAsOptional[list[str]] = Field(
+        default=[],
         description=describe_attr("namespaces", __doc__),
     )
     namespace_selector: LabelSelector | None = Field(
@@ -258,25 +263,25 @@ class WeightedPodAffinityTerm(DescConfigModel, CamelCaseConfigModel):
     )
 
 
-class PodAffinity(DescConfigModel, CamelCaseConfigModel):
+class PodAffinity(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfigModel):
     """Pod affinity is a group of inter pod affinity scheduling rules.
 
     :param required_during_scheduling_ignored_during_execution: If the affinity requirements specified by this field are not met at scheduling time, the pod will not be scheduled onto the node. If the affinity requirements specified by this field cease to be met at some point during pod execution (e.g. due to a pod label update), the system may or may not try to eventually evict the pod from its node. When there are multiple elements, the lists of nodes corresponding to each podAffinityTerm are intersected, i.e. all terms must be satisfied.
     :param preferred_during_scheduling_ignored_during_execution: The scheduler will prefer to schedule pods to nodes that satisfy the affinity expressions specified by this field, but it may choose a node that violates one or more of the expressions. The node that is most preferred is the one with the greatest sum of weights, i.e. for each node that meets all of the scheduling requirements (resource request, requiredDuringScheduling affinity expressions, etc.), compute a sum by iterating through the elements of this field and adding weight to the sum if the node has pods which matches the corresponding podAffinityTerm; the node(s) with the highest sum are the most preferred.
     """
 
-    required_during_scheduling_ignored_during_execution: (
-        list[PodAffinityTerm] | None
-    ) = Field(
-        default=None,
+    required_during_scheduling_ignored_during_execution: SerializeAsOptional[
+        list[PodAffinityTerm]
+    ] = Field(
+        default=[],
         description=describe_attr(
             "required_during_scheduling_ignored_during_execution", __doc__
         ),
     )
-    preferred_during_scheduling_ignored_during_execution: (
-        list[WeightedPodAffinityTerm] | None
-    ) = Field(
-        default=None,
+    preferred_during_scheduling_ignored_during_execution: SerializeAsOptional[
+        list[WeightedPodAffinityTerm]
+    ] = Field(
+        default=[],
         description=describe_attr(
             "preferred_during_scheduling_ignored_during_execution", __doc__
         ),
@@ -349,15 +354,17 @@ class Toleration(DescConfigModel, CamelCaseConfigModel):
 CPUStr = Annotated[str, pydantic.StringConstraints(pattern=r"^\d+m$")]
 MemoryStr = Annotated[
     # Matches plain number string or number with valid suffixes: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory
-    str, pydantic.StringConstraints(pattern=r"^\d+([EPTGMk]|Ei|Pi|Ti|Gi|Mi|Ki)?$")
+    str,
+    pydantic.StringConstraints(pattern=r"^\d+(\.\d+)?([EPTGMk]|Ei|Pi|Ti|Gi|Mi|Ki)?$"),
 ]
 
 
 class ResourceDefinition(DescConfigModel):
     """Model representing the `limits` or `requests` section of Kubernetes resource specifications.
 
-    :param cpu: The maximum amount of CPU a container can use, expressed in milli CPUs (e.g., '300m').
-    :param memory: The maximum amount of memory a container can use, as integer or string with valid units such as 'Mi' or 'Gi' (e.g., '2G').
+    :param cpu: The amount of CPU for this container, expressed in milli CPUs (e.g., '300m').
+    :param memory: The amount of memory for this container, as integer or string with valid units such as 'Mi' or 'Gi' (e.g., '2G').
+    :param ephemeral_storage: The amounf of local ephemeral storage for this container, as integer or string with valid units such as 'Mi' or 'Gi' (e.g., '2G').
     """
 
     cpu: CPUStr | pydantic.PositiveInt | None = Field(
@@ -368,6 +375,11 @@ class ResourceDefinition(DescConfigModel):
         default=None,
         description=describe_attr("memory", __doc__),
     )
+    ephemeral_storage: MemoryStr | pydantic.PositiveInt | None = Field(
+        default=None,
+        alias="ephemeral-storage",
+        description=describe_attr("ephemeral_storage", __doc__),
+    )
 
 
 class Resources(DescConfigModel):
@@ -377,5 +389,11 @@ class Resources(DescConfigModel):
     :param limits: The maximum resource limits for the container.
     """
 
-    requests: ResourceDefinition = Field(description=describe_attr("requests", __doc__))
-    limits: ResourceDefinition = Field(description=describe_attr("limits", __doc__))
+    requests: ResourceDefinition | None = Field(
+        default=None,
+        description=describe_attr("requests", __doc__),
+    )
+    limits: ResourceDefinition | None = Field(
+        default=None,
+        description=describe_attr("limits", __doc__),
+    )

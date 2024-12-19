@@ -21,6 +21,7 @@ from kpops.config import get_config
 from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
 from kpops.manifests.argo import ArgoHook, enrich_annotations
 from kpops.manifests.kubernetes import K8S_CRON_JOB_NAME_MAX_LEN, KubernetesManifest
+from kpops.manifests.strimzi.kafka_topic import StrimziKafkaTopic
 from kpops.utils.docstring import describe_attr
 
 log = logging.getLogger("ProducerApp")
@@ -81,9 +82,12 @@ class ProducerApp(StreamsBootstrap):
     @computed_field
     @cached_property
     def _cleaner(self) -> ProducerAppCleaner:
-        cleaner = ProducerAppCleaner(
-            **self.model_dump(by_alias=True, exclude={"_cleaner", "from_", "to"})
-        )
+        kwargs = {
+            name: getattr(self, name)
+            for name in self.model_fields_set
+            if name not in {"_cleaner", "from_", "to"}
+        }
+        cleaner = ProducerAppCleaner.model_validate(kwargs)
         cleaner.values.name_override = None
         return cleaner
 
@@ -166,6 +170,14 @@ class ProducerApp(StreamsBootstrap):
             manifests = manifests + self._cleaner.manifest_deploy()
 
         return manifests
+
+    @override
+    def manifest_reset(self) -> tuple[KubernetesManifest, ...]:
+        if self.to:
+            return tuple(
+                StrimziKafkaTopic.from_topic(topic) for topic in self.to.kafka_topics
+            )
+        return ()
 
     @override
     def manifest_clean(self) -> tuple[KubernetesManifest, ...]:

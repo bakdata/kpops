@@ -12,7 +12,12 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
-from kpops.components.common.kubernetes_model import ResourceDefinition
+from kpops.components.common.kubernetes_model import (
+    NodeAffinity,
+    NodeSelectorTerm,
+    PreferredSchedulingTerm,
+    ResourceDefinition,
+)
 from kpops.components.streams_bootstrap.base import StreamsBootstrap
 from kpops.components.streams_bootstrap.model import StreamsBootstrapValues
 
@@ -161,6 +166,14 @@ class TestStreamsBootstrap:
                 {"memory": "10Mi"}, does_not_raise(), id="memory str mebibyte"
             ),
             pytest.param(
+                {"memory": "2.5G"}, does_not_raise(), id="memory str decimal gigabyte"
+            ),
+            pytest.param(
+                {"memory": "0.599M"},
+                does_not_raise(),
+                id="memory str decimal megabyte",
+            ),
+            pytest.param(
                 {"memory": 0},
                 pytest.raises(ValidationError),
                 id="memory int disallow 0",
@@ -169,6 +182,46 @@ class TestStreamsBootstrap:
                 {"memory": -1},
                 pytest.raises(ValidationError),
                 id="memory int disallow negative",
+            ),
+            pytest.param(
+                {"ephemeral-storage": "10G"},
+                does_not_raise(),
+                id="ephemeral-storage str gigabyte",
+            ),
+            pytest.param(
+                {"ephemeral-storage": "1Gi"},
+                does_not_raise(),
+                id="ephemeral-storage str gibibyte",
+            ),
+            pytest.param(
+                {"ephemeral-storage": "10M"},
+                does_not_raise(),
+                id="ephemeral-storage str megabyte",
+            ),
+            pytest.param(
+                {"ephemeral-storage": "10Mi"},
+                does_not_raise(),
+                id="ephemeral-storage str mebibyte",
+            ),
+            pytest.param(
+                {"ephemeral-storage": "2.5G"},
+                does_not_raise(),
+                id="ephemeral-storage str decimal gigabyte",
+            ),
+            pytest.param(
+                {"ephemeral-storage": "0.599M"},
+                does_not_raise(),
+                id="ephemeral-storage str decimal megabyte",
+            ),
+            pytest.param(
+                {"ephemeral-storage": 0},
+                pytest.raises(ValidationError),
+                id="ephemeral-storage int disallow 0",
+            ),
+            pytest.param(
+                {"ephemeral-storage": -1},
+                pytest.raises(ValidationError),
+                id="ephemeral-storage int disallow negative",
             ),
         ],
     )
@@ -179,3 +232,24 @@ class TestStreamsBootstrap:
     ):
         with expectation:
             assert ResourceDefinition.model_validate(input)
+
+    def test_node_affinity(self):
+        node_affinity = NodeAffinity()
+        assert node_affinity.preferred_during_scheduling_ignored_during_execution == []
+        assert node_affinity.model_dump(by_alias=True) == {
+            "requiredDuringSchedulingIgnoredDuringExecution": None,
+            "preferredDuringSchedulingIgnoredDuringExecution": None,
+        }
+        assert node_affinity.model_dump(by_alias=True, exclude_none=True) == {}
+
+        node_affinity.preferred_during_scheduling_ignored_during_execution.append(
+            PreferredSchedulingTerm(preference=NodeSelectorTerm(), weight=1)
+        )
+        assert node_affinity.model_dump(by_alias=True, exclude_none=True) == {
+            "preferredDuringSchedulingIgnoredDuringExecution": [
+                {
+                    "preference": {},
+                    "weight": 1,
+                }
+            ],
+        }

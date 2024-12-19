@@ -8,6 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from kpops.components.common.kubernetes_model import (
     ImagePullPolicy,
     Resources,
+    SerializeAsOptional,
 )
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
 from kpops.components.streams_bootstrap.model import (
@@ -18,6 +19,7 @@ from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
     DescConfigModel,
+    SerializeAsOptionalModel,
 )
 
 
@@ -117,7 +119,9 @@ class StreamsConfig(KafkaConfig):
         )
 
 
-class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
+class StreamsAppAutoScaling(
+    SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigModel
+):
     """Kubernetes Event-driven Autoscaling config.
 
     :param enabled: Whether to enable auto-scaling using KEDA., defaults to False
@@ -191,16 +195,16 @@ class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
         title="Idle replica count",
         description=describe_attr("idle_replicas", __doc__),
     )
-    internal_topics: list[str] | None = Field(
-        default=None,
+    internal_topics: SerializeAsOptional[list[str]] = Field(
+        default=[],
         description=describe_attr("internal_topics", __doc__),
     )
-    topics: list[str] | None = Field(
-        default=None,
+    topics: SerializeAsOptional[list[str]] = Field(
+        default=[],
         description=describe_attr("topics", __doc__),
     )
-    additional_triggers: list[str] | None = Field(
-        default=None,
+    additional_triggers: SerializeAsOptional[list[str]] = Field(
+        default=[],
         description=describe_attr("additional_triggers", __doc__),
     )
     model_config = ConfigDict(extra="allow")
@@ -277,7 +281,7 @@ class PrometheusExporterConfig(CamelCaseConfigModel, DescConfigModel):
     )
 
 
-class JMXConfig(CamelCaseConfigModel, DescConfigModel):
+class JMXConfig(SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigModel):
     """JMX configuration options.
 
     :param port: The jmx port which JMX style metrics are exposed.
@@ -289,8 +293,8 @@ class JMXConfig(CamelCaseConfigModel, DescConfigModel):
         description=describe_attr("port", __doc__),
     )
 
-    metric_rules: list[str] | None = Field(
-        default=None,
+    metric_rules: SerializeAsOptional[list[str]] = Field(
+        default=[],
         description=describe_attr("metric_rules", __doc__),
     )
 

@@ -148,6 +148,19 @@ spec:
         app: resources-streams-bootstrap-my-streams-app
         release: resources-streams-bootstrap-my-streams-app
     spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: foo
+                operator: Exists
+            weight: 2
+          - preference:
+              matchExpressions:
+              - key: bar
+                operator: DoesNotExist
+            weight: 1
       containers:
       - env:
         - name: ENV_PREFIX

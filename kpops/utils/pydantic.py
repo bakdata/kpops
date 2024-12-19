@@ -1,11 +1,21 @@
 import json
 import logging
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any
 
 import humps
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import (
+    BaseModel,
+    BeforeValidator,
+    ConfigDict,
+    Field,
+    GetCoreSchemaHandler,
+    SerializationInfo,
+    SerializerFunctionWrapHandler,
+    model_serializer,
+)
 from pydantic.fields import FieldInfo
+from pydantic_core import PydanticUseDefault, core_schema
 from pydantic_settings import PydanticBaseSettingsSource
 from typing_extensions import TypeVar, override
 
@@ -224,3 +234,65 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
             if field_value is not None:
                 d[field_key] = field_value
         return d
+
+
+_T = TypeVar("_T")
+
+
+def validate_optional_to_default(value: Any | None) -> Any:
+    if value is None:
+        raise PydanticUseDefault
+    return value
+
+
+def serialize_to_optional(
+    value: _T,
+    default_serialize_handler: SerializerFunctionWrapHandler,
+    # info: SerializationInfo,
+) -> _T | None:
+    return default_serialize_handler(value) or None
+    # TODO: another potential solution, depends on https://github.com/pydantic/pydantic/issues/6969
+    # if not result and info.exclude_none:
+    #     raise PydanticOmit
+
+
+class WrapNullableSchema:
+    def __get_pydantic_core_schema__(
+        self,
+        source: type[Any],
+        handler: GetCoreSchemaHandler,
+    ) -> core_schema.CoreSchema:
+        schema = handler(source)
+        # wrap generated schema in nullable
+        return core_schema.NullableSchema(
+            type="nullable",
+            schema=schema,
+            serialization=core_schema.wrap_serializer_function_ser_schema(
+                serialize_to_optional,
+                schema=core_schema.nullable_schema(schema),
+            ),
+        )
+
+
+SerializeAsOptional = Annotated[
+    _T,
+    WrapNullableSchema(),
+    BeforeValidator(validate_optional_to_default),
+    "Optional that is serialized to `None` if falsy",
+    "similarly an input of `None` is translated to its default during validation",
+    "requires inheriting from SerializeAsOptionalModel for `model_dump(exclude_none=True)` to work",
+]
+
+
+class SerializeAsOptionalModel(BaseModel):
+    # HACK: workaround for exclude_none, which is otherwise evaluated too early
+    @model_serializer(mode="wrap", when_used="always")
+    def serialize_model(
+        self,
+        default_serialize_handler: SerializerFunctionWrapHandler,
+        info: SerializationInfo,
+    ) -> dict[str, Any]:
+        result = default_serialize_handler(self)
+        if info.exclude_none:
+            return exclude_by_value(result, None)
+        return result
