@@ -119,6 +119,7 @@ nav:
               - KafkaSourceConnector: user/core-concepts/components/kafka-source-connector.md
           - Config: user/core-concepts/config.md
           - Defaults: user/core-concepts/defaults.md
+          - Operation Modes: user/core-concepts/operation-mode.md
           - Variables:
               - Environment variables: user/core-concepts/variables/environment_variables.md
               - Substitution: user/core-concepts/variables/substitution.md
