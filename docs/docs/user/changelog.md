@@ -1,4 +1,53 @@
 # Changelog
+## [9.0.0](https://github.com/bakdata/kpops/releases/tag/9.0.0) - Release Date: [2024-12-20]
+
+### 🏗️ Breaking changes
+
+- Introduce KPOps operation and manifest resources for deployment - [#541](https://github.com/bakdata/kpops/pull/541)
+
+- Drop support for Python 3.10 - [#561](https://github.com/bakdata/kpops/pull/561)
+
+- KPOps V9 - [#558](https://github.com/bakdata/kpops/pull/558)
+
+
+### 🚀 Features
+
+- Introduce KPOps operation and manifest resources for deployment - [#541](https://github.com/bakdata/kpops/pull/541)
+
+- Define Pydantic model to representing Kubernetes manifest - [#546](https://github.com/bakdata/kpops/pull/546)
+
+- Manifest toSection with Strimzi KafkaTopic - [#545](https://github.com/bakdata/kpops/pull/545)
+
+- Manifest Kubernetes resources for `destroy` command - [#552](https://github.com/bakdata/kpops/pull/552)
+
+- Manifest Kubernetes resources for `clean` command - [#559](https://github.com/bakdata/kpops/pull/559)
+
+- Manifest Kubernetes resources for `reset` command - [#563](https://github.com/bakdata/kpops/pull/563)
+
+- KPOps V9 - [#558](https://github.com/bakdata/kpops/pull/558)
+
+
+### 🐛 Fixes
+
+- Hide `operation_mode` from KPOps config - [#571](https://github.com/bakdata/kpops/pull/571)
+
+
+### 📝 Documentation
+
+- Add documentation for operation-mode in KPOps - [#565](https://github.com/bakdata/kpops/pull/565)
+
+- Add migration guide v8-v9 - [#562](https://github.com/bakdata/kpops/pull/562)
+
+
+### 🌀 Miscellaneous
+
+- Add topic manifestation of ProducerApps for reset command - [#566](https://github.com/bakdata/kpops/pull/566)
+
+
+
+
+
+
 ## [8.4.0](https://github.com/bakdata/kpops/releases/tag/8.4.0) - Release Date: [2024-12-18]
 
 ### 🏭 Refactor
