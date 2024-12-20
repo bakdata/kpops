@@ -9,7 +9,8 @@ helm_config:
   api_version: null
   context: null
   debug: false
-helm_diff_config: {}
+helm_diff_config:
+  ignore: []
 kafka_connect:
   timeout: 30
   url: http://localhost:8083/
@@ -22,6 +23,7 @@ schema_registry:
   enabled: false
   timeout: 30
   url: http://localhost:8081/
+strimzi_topic: null
 topic_name_config:
   default_error_topic_name: ${pipeline.name}-${component.name}-error
   default_output_topic_name: ${pipeline.name}-${component.name}

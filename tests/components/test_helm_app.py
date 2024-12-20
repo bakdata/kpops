@@ -9,8 +9,8 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
-from kpops.component_handlers.kubernetes.model import K8S_LABEL_MAX_LEN
 from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
+from kpops.manifests.kubernetes import K8S_LABEL_MAX_LEN
 from kpops.utils.colorify import magentaify
 
 

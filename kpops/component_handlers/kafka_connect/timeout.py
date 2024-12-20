@@ -1,6 +1,6 @@
 import asyncio
+import builtins
 import logging
-from asyncio import TimeoutError
 from collections.abc import Coroutine
 from typing import Any, TypeVar
 
@@ -21,7 +21,7 @@ async def timeout(coro: Coroutine[Any, Any, T], *, secs: int = 0) -> T | None:
             return await task
         else:
             return await asyncio.wait_for(task, timeout=secs)
-    except TimeoutError:
+    except builtins.TimeoutError:
         log.exception(
             f"Kafka Connect operation {coro.__name__} timed out after {secs} seconds. To increase the duration, set the `timeout` option in config.yaml."
         )

@@ -4,6 +4,7 @@ from functools import cached_property
 from pydantic import Field, ValidationError, computed_field
 from typing_extensions import override
 
+from kpops.api.operation import OperationMode
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
 from kpops.components.base_components.helm_app import HelmApp
 from kpops.components.base_components.kafka_app import KafkaAppCleaner
@@ -15,7 +16,11 @@ from kpops.components.streams_bootstrap.base import (
 from kpops.components.streams_bootstrap.streams.model import (
     StreamsAppValues,
 )
+from kpops.config import get_config
 from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
+from kpops.manifests.argo import ArgoHook, enrich_annotations
+from kpops.manifests.kubernetes import KubernetesManifest
+from kpops.manifests.strimzi.kafka_topic import StrimziKafkaTopic
 from kpops.utils.docstring import describe_attr
 
 log = logging.getLogger("StreamsApp")
@@ -48,6 +53,33 @@ class StreamsAppCleaner(KafkaAppCleaner, StreamsBootstrap):
         ):
             await self.clean_pvcs(dry_run)
 
+    @override
+    def manifest_deploy(self) -> tuple[KubernetesManifest, ...]:
+        values = self.to_helm_values()
+        if get_config().operation_mode is OperationMode.ARGO:
+            post_delete = ArgoHook.POST_DELETE
+            values = enrich_annotations(values, post_delete.key, post_delete.value)
+        return self.helm.template(
+            self.helm_release_name,
+            self.helm_chart,
+            self.namespace,
+            values,
+            self.template_flags,
+        )
+
+    @override
+    def manifest_reset(self) -> tuple[KubernetesManifest, ...]:
+        self.values.kafka.delete_output = False
+        values = self.to_helm_values()
+
+        return self.helm.template(
+            self.helm_release_name,
+            self.helm_chart,
+            self.namespace,
+            values,
+            self.template_flags,
+        )
+
     async def clean_pvcs(self, dry_run: bool) -> None:
         app_full_name = super(HelmApp, self).full_name
         pvc_handler = PVCHandler(app_full_name, self.namespace)
@@ -72,7 +104,9 @@ class StreamsApp(StreamsBootstrap):
             for name in self.model_fields_set
             if name not in {"_cleaner", "from_", "to"}
         }
-        return StreamsAppCleaner.model_validate(kwargs)
+        cleaner = StreamsAppCleaner.model_validate(kwargs)
+        cleaner.values.name_override = None
+        return cleaner
 
     @property
     @override
@@ -159,3 +193,26 @@ class StreamsApp(StreamsBootstrap):
         """Destroy and clean."""
         await super().clean(dry_run)
         await self._cleaner.clean(dry_run)
+
+    @override
+    def manifest_deploy(self) -> tuple[KubernetesManifest, ...]:
+        manifests = super().manifest_deploy()
+        if get_config().operation_mode is OperationMode.ARGO:
+            manifests = manifests + self._cleaner.manifest_deploy()
+
+        return manifests
+
+    @override
+    def manifest_reset(self) -> tuple[KubernetesManifest, ...]:
+        resource = self._cleaner.manifest_reset()
+        if self.to:
+            resource = resource + tuple(
+                StrimziKafkaTopic.from_topic(topic) for topic in self.to.kafka_topics
+            )
+        return resource
+
+    @override
+    def manifest_clean(self) -> tuple[KubernetesManifest, ...]:
+        if get_config().operation_mode is OperationMode.MANIFEST:
+            return self._cleaner.manifest_deploy()
+        return ()

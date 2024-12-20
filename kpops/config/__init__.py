@@ -4,7 +4,9 @@ import logging
 from pathlib import Path
 from typing import ClassVar
 
+import pydantic
 from pydantic import AnyHttpUrl, Field, PrivateAttr, TypeAdapter
+from pydantic.json_schema import SkipJsonSchema
 from pydantic_settings import (
     BaseSettings,
     PydanticBaseSettingsSource,
@@ -12,11 +14,42 @@ from pydantic_settings import (
 )
 from typing_extensions import override
 
+from kpops.api.exception import ValidationError
+from kpops.api.operation import OperationMode
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
 from kpops.utils.docstring import describe_object
 from kpops.utils.pydantic import YamlConfigSettingsSource
 
 ENV_PREFIX = "KPOPS_"
+
+log = logging.getLogger("KPOpsConfig")
+
+
+class StrimziTopicConfig(BaseSettings):
+    """Configuration for Strimzi Kafka Topics."""
+
+    label_: dict[str, str] = Field(
+        alias="label",
+        description="The label to identify the KafkaTopic resources managed by the Topic Operator. This does not have to be the name of the Kafka cluster. It can be the label assigned to the KafkaTopic resource. If you deploy more than one Topic Operator, the labels must be unique for each. That is, the operators cannot manage the same resources.",
+    )
+
+    @property
+    def cluster_labels(self) -> tuple[str, str]:
+        """Return the defined strimzi_topic.label as a tuple."""
+        return next(iter(self.label_.items()))
+
+    @pydantic.field_validator("label_", mode="after")
+    @classmethod
+    def label_validator(cls, label: dict[str, str]) -> dict[str, str]:
+        if len(label) == 0:
+            msg = "'strimzi_topic.label' must contain a single key-value pair."
+            raise ValidationError(msg)
+        if len(label) > 1:
+            log.warning(
+                "'resource_label' only reads the first entry in the dictionary. Other defined labels will be ignored."
+            )
+
+        return label
 
 
 class TopicNameConfig(BaseSettings):
@@ -120,8 +153,21 @@ class KpopsConfig(BaseSettings):
         default=False,
         description="Whether to retain clean up jobs in the cluster or uninstall the, after completion.",
     )
+    strimzi_topic: StrimziTopicConfig | None = Field(
+        default=None,
+        description=describe_object(StrimziTopicConfig.__doc__),
+    )
+    operation_mode: SkipJsonSchema[OperationMode] = Field(
+        default=OperationMode.MANAGED,
+        description="The operation mode of KPOps (managed, manifest, argo).",
+        exclude=True,
+    )
 
-    model_config = SettingsConfigDict(env_prefix=ENV_PREFIX, env_nested_delimiter="__")
+    model_config = SettingsConfigDict(
+        env_prefix=ENV_PREFIX,
+        env_nested_delimiter="__",
+        use_enum_values=True,
+    )
 
     @classmethod
     def create(
@@ -130,6 +176,7 @@ class KpopsConfig(BaseSettings):
         dotenv: list[Path] | None = None,
         environment: str | None = None,
         verbose: bool = False,
+        operation_mode: OperationMode | None = None,
     ) -> KpopsConfig:
         cls.setup_logging_level(verbose)
         YamlConfigSettingsSource.config_dir = config_dir
@@ -137,6 +184,8 @@ class KpopsConfig(BaseSettings):
         cls._instance = KpopsConfig(
             _env_file=dotenv  # pyright: ignore[reportCallIssue]
         )
+        if operation_mode:
+            cls._instance.operation_mode = operation_mode
         return cls._instance
 
     @staticmethod

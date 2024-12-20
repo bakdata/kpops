@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
 from kpops.component_handlers.kafka_connect.exception import (
@@ -12,11 +12,6 @@ from kpops.utils.colorify import magentaify
 from kpops.utils.dict_differ import render_diff
 
 if TYPE_CHECKING:
-    try:
-        from typing import Self  # pyright: ignore[reportAttributeAccessIssue]
-    except ImportError:
-        from typing_extensions import Self
-
     from kpops.component_handlers.kafka_connect.model import KafkaConnectorConfig
     from kpops.config import KpopsConfig
 
