@@ -68,7 +68,8 @@ def test_serialize_model_includes_required_fields():
 
 def test_from_yaml_parsing():
     """Test the from_yaml method parses YAML into KubernetesManifest objects."""
-    yaml_content = dedent("""
+    yaml_content = dedent(
+        """
     ---
     apiVersion: v1
     kind: Service
@@ -82,7 +83,8 @@ def test_from_yaml_parsing():
     metadata:
       name: test-pod
       namespace: test-namespace
-    """)
+    """
+    )
     manifests = list(KubernetesManifest.from_yaml(yaml_content))
     assert len(manifests) == 2
     assert manifests[0].api_version == "v1"
