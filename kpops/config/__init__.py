@@ -6,6 +6,7 @@ from typing import ClassVar
 
 import pydantic
 from pydantic import AnyHttpUrl, Field, PrivateAttr, TypeAdapter
+from pydantic.json_schema import SkipJsonSchema
 from pydantic_settings import (
     BaseSettings,
     PydanticBaseSettingsSource,
@@ -152,13 +153,14 @@ class KpopsConfig(BaseSettings):
         default=False,
         description="Whether to retain clean up jobs in the cluster or uninstall the, after completion.",
     )
-    operation_mode: OperationMode = Field(
-        default=OperationMode.MANAGED,
-        description="The operation mode of KPOps (managed, manifest, argo).",
-    )
     strimzi_topic: StrimziTopicConfig | None = Field(
         default=None,
         description=describe_object(StrimziTopicConfig.__doc__),
+    )
+    operation_mode: SkipJsonSchema[OperationMode] = Field(
+        default=OperationMode.MANAGED,
+        description="The operation mode of KPOps (managed, manifest, argo).",
+        exclude=True,
     )
 
     model_config = SettingsConfigDict(
