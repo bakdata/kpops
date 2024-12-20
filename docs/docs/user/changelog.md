@@ -1,4 +1,15 @@
 # Changelog
+## [9.0.1](https://github.com/bakdata/kpops/releases/tag/9.0.1) - Release Date: [2024-12-20]
+
+### 🐛 Fixes
+
+- Add operation-mode documentation to mkdocs index - [#573](https://github.com/bakdata/kpops/pull/573)
+
+
+
+
+
+
 ## [9.0.0](https://github.com/bakdata/kpops/releases/tag/9.0.0) - Release Date: [2024-12-20]
 
 ### 🏗️ Breaking changes
