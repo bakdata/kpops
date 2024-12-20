@@ -1,3 +1,4 @@
+# FIXME: pyright breaks here. Investigate why this is happening.
 # type: ignore[reportGeneralTypeIssues]
 
 import inspect

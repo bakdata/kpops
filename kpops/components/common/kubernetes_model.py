@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     try:
         from typing import Self  # pyright: ignore[reportAttributeAccessIssue]
     except ImportError:
-        from typing_extensions import Self
+        from typing import Self
 
 
 class ServiceType(str, enum.Enum):
