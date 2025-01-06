@@ -30,6 +30,9 @@ class TestExample:
             EXAMPLES_PATH.iterdir()
         ), "examples directory is empty, please initialize and update the git submodule (see contributing guide)"
 
+    @pytest.mark.filterwarnings(
+        "ignore:.*StreamsBootstrapV2|(Producer|Streams)AppV2.*:DeprecationWarning"
+    )
     @pytest.mark.usefixtures("test_submodule")
     @pytest.mark.parametrize("pipeline_name", ["word-count", "atm-fraud"])
     def test_generate(self, pipeline_name: str, snapshot: Snapshot):
