@@ -123,6 +123,11 @@ def multiline_str_representer(
 yaml.representer.SafeRepresenter.add_representer(str, multiline_str_representer)
 
 
+class CustomSafeDumper(yaml.SafeDumper):
+    def increase_indent(self, flow: bool = False, indentless: bool = False):
+        return super().increase_indent(flow, False)
+
+
 def print_yaml(
     data: Mapping[str, Any] | str, *, substitution: dict[str, Any] | None = None
 ) -> None:
@@ -132,7 +137,7 @@ def print_yaml(
     :param substitution: Substitution dictionary, defaults to None
     """
     if not isinstance(data, str):
-        data = yaml.safe_dump(dict(data))
+        data = yaml.dump(dict(data), Dumper=CustomSafeDumper)
         data = f"---\n{data}"
     syntax = Syntax(
         substitute(data, substitution),
