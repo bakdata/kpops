@@ -20,7 +20,7 @@ def test_fail_load_yaml():
         load_yaml_file(RESOURCE_PATH / "erroneous-file.yaml")
 
 
-@patch("yaml.load")
+@patch("yaml.safe_load")
 def test_caching_load_yaml(mocked_func):
     load_yaml_file(
         RESOURCE_PATH / "test.yaml",

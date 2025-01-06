@@ -27,9 +27,8 @@ def generate_hashkey(
 def load_yaml_file(
     file_path: Path, *, substitution: Mapping[str, Any] | None = None
 ) -> dict[str, Any] | list[dict[str, Any]]:
-    with file_path.open() as yaml_file:
-        log.debug(f"Picked up: {file_path.resolve().relative_to(Path.cwd())}")
-        return yaml.load(substitute(yaml_file.read(), substitution), Loader=yaml.Loader)
+    log.debug(f"Picked up: {file_path.resolve().relative_to(Path.cwd())}")
+    return yaml.safe_load(substitute(file_path.read_text(), substitution))
 
 
 def substitute(input: str, substitution: Mapping[str, Any] | None = None) -> str:

@@ -5,7 +5,6 @@ import pydantic
 import yaml
 from pydantic import ConfigDict, Field
 from typing_extensions import override
-from yaml.loader import Loader
 
 from kpops.utils.pydantic import CamelCaseConfigModel, by_alias
 
@@ -58,7 +57,7 @@ class KubernetesManifest(CamelCaseConfigModel):
 
     @classmethod
     def from_yaml(cls, /, content: str) -> Iterator[Self]:
-        manifests: Iterator[dict[str, Any]] = yaml.load_all(content, Loader)
+        manifests: Iterator[dict[str, Any]] = yaml.safe_load_all(content)
         for manifest in manifests:
             yield cls(**manifest)
 
