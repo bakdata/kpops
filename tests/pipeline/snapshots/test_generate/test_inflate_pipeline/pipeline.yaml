@@ -89,7 +89,7 @@
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-pipeline-with-inflate-converter-error
         inputTopics:
-        - resources-pipeline-with-inflate-scheduled-producer
+          - resources-pipeline-with-inflate-scheduled-producer
         outputTopic: resources-pipeline-with-inflate-converter
         schemaRegistryUrl: http://localhost:8081/
     version: 2.4.2
@@ -145,7 +145,7 @@
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-pipeline-with-inflate-converter-error
       inputTopics:
-      - resources-pipeline-with-inflate-scheduled-producer
+        - resources-pipeline-with-inflate-scheduled-producer
       outputTopic: resources-pipeline-with-inflate-converter
       schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2
@@ -171,7 +171,7 @@
         offsetResetPolicy: earliest
         pollingInterval: 30
         topics:
-        - resources-pipeline-with-inflate-should-inflate
+          - resources-pipeline-with-inflate-should-inflate
       commandLine:
         TYPE: nothing
       image: fake-registry/filter
@@ -189,7 +189,7 @@
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-pipeline-with-inflate-should-inflate-error
         inputTopics:
-        - resources-pipeline-with-inflate-converter
+          - resources-pipeline-with-inflate-converter
         outputTopic: resources-pipeline-with-inflate-should-inflate
         schemaRegistryUrl: http://localhost:8081/
     version: 2.4.2
@@ -227,7 +227,7 @@
       offsetResetPolicy: earliest
       pollingInterval: 30
       topics:
-      - resources-pipeline-with-inflate-should-inflate
+        - resources-pipeline-with-inflate-should-inflate
     commandLine:
       TYPE: nothing
     image: fake-registry/filter
@@ -245,7 +245,7 @@
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-pipeline-with-inflate-should-inflate-error
       inputTopics:
-      - resources-pipeline-with-inflate-converter
+        - resources-pipeline-with-inflate-converter
       outputTopic: resources-pipeline-with-inflate-should-inflate
       schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2
@@ -315,7 +315,7 @@
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-pipeline-with-inflate-should-inflate-inflated-streams-app-error
         inputTopics:
-        - kafka-sink-connector
+          - kafka-sink-connector
         outputTopic: resources-pipeline-with-inflate-should-inflate-should-inflate-inflated-streams-app
         schemaRegistryUrl: http://localhost:8081/
     version: 2.4.2
@@ -351,7 +351,7 @@
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-pipeline-with-inflate-should-inflate-inflated-streams-app-error
       inputTopics:
-      - kafka-sink-connector
+        - kafka-sink-connector
       outputTopic: resources-pipeline-with-inflate-should-inflate-should-inflate-inflated-streams-app
       schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2

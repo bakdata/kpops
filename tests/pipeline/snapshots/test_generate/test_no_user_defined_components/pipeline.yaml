@@ -21,7 +21,7 @@
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-no-user-defined-components-streams-app-v2-error
         inputTopics:
-        - example-topic
+          - example-topic
         outputTopic: example-output
         schemaRegistryUrl: http://localhost:8081/
     version: 2.4.2
@@ -63,7 +63,7 @@
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-no-user-defined-components-streams-app-v2-error
       inputTopics:
-      - example-topic
+        - example-topic
       outputTopic: example-output
       schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2

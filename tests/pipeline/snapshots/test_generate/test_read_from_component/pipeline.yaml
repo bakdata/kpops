@@ -100,7 +100,7 @@
         offsetResetPolicy: earliest
         pollingInterval: 30
         topics:
-        - resources-read-from-component-inflate-step
+          - resources-read-from-component-inflate-step
       image: fake-registry/filter
       imageTag: 2.4.1
       persistence:
@@ -112,7 +112,7 @@
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-read-from-component-inflate-step-error
         inputTopics:
-        - resources-read-from-component-producer2
+          - resources-read-from-component-producer2
         outputTopic: resources-read-from-component-inflate-step
         schemaRegistryUrl: http://localhost:8081/
     version: 2.4.2
@@ -150,7 +150,7 @@
       offsetResetPolicy: earliest
       pollingInterval: 30
       topics:
-      - resources-read-from-component-inflate-step
+        - resources-read-from-component-inflate-step
     image: fake-registry/filter
     imageTag: 2.4.1
     persistence:
@@ -162,7 +162,7 @@
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-read-from-component-inflate-step-error
       inputTopics:
-      - resources-read-from-component-producer2
+        - resources-read-from-component-producer2
       outputTopic: resources-read-from-component-inflate-step
       schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2
@@ -232,7 +232,7 @@
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-read-from-component-inflate-step-inflated-streams-app-error
         inputTopics:
-        - kafka-sink-connector
+          - kafka-sink-connector
         outputTopic: resources-read-from-component-inflate-step-inflate-step-inflated-streams-app
         schemaRegistryUrl: http://localhost:8081/
     version: 2.4.2
@@ -268,7 +268,7 @@
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-read-from-component-inflate-step-inflated-streams-app-error
       inputTopics:
-      - kafka-sink-connector
+        - kafka-sink-connector
       outputTopic: resources-read-from-component-inflate-step-inflate-step-inflated-streams-app
       schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2
@@ -294,7 +294,7 @@
         offsetResetPolicy: earliest
         pollingInterval: 30
         topics:
-        - resources-read-from-component-inflate-step-without-prefix
+          - resources-read-from-component-inflate-step-without-prefix
       image: fake-registry/filter
       imageTag: 2.4.1
       persistence:
@@ -306,7 +306,7 @@
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-read-from-component-inflate-step-without-prefix-error
         inputTopics:
-        - resources-read-from-component-inflate-step-inflate-step-inflated-streams-app
+          - resources-read-from-component-inflate-step-inflate-step-inflated-streams-app
         outputTopic: resources-read-from-component-inflate-step-without-prefix
         schemaRegistryUrl: http://localhost:8081/
     version: 2.4.2
@@ -344,7 +344,7 @@
       offsetResetPolicy: earliest
       pollingInterval: 30
       topics:
-      - resources-read-from-component-inflate-step-without-prefix
+        - resources-read-from-component-inflate-step-without-prefix
     image: fake-registry/filter
     imageTag: 2.4.1
     persistence:
@@ -356,7 +356,7 @@
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-read-from-component-inflate-step-without-prefix-error
       inputTopics:
-      - resources-read-from-component-inflate-step-inflate-step-inflated-streams-app
+        - resources-read-from-component-inflate-step-inflate-step-inflated-streams-app
       outputTopic: resources-read-from-component-inflate-step-without-prefix
       schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2
@@ -426,7 +426,7 @@
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-read-from-component-inflate-step-without-prefix-inflated-streams-app-error
         inputTopics:
-        - kafka-sink-connector
+          - kafka-sink-connector
         outputTopic: inflate-step-without-prefix-inflate-step-without-prefix-inflated-streams-app
         schemaRegistryUrl: http://localhost:8081/
     version: 2.4.2
@@ -462,7 +462,7 @@
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-read-from-component-inflate-step-without-prefix-inflated-streams-app-error
       inputTopics:
-      - kafka-sink-connector
+        - kafka-sink-connector
       outputTopic: inflate-step-without-prefix-inflate-step-without-prefix-inflated-streams-app
       schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2
@@ -488,7 +488,7 @@
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-read-from-component-consumer1-error
         inputTopics:
-        - resources-read-from-component-producer1
+          - resources-read-from-component-producer1
         outputTopic: resources-read-from-component-consumer1
         schemaRegistryUrl: http://localhost:8081/
     version: 2.4.2
@@ -529,7 +529,7 @@
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-read-from-component-consumer1-error
       inputTopics:
-      - resources-read-from-component-producer1
+        - resources-read-from-component-producer1
       outputTopic: resources-read-from-component-consumer1
       schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2
@@ -555,8 +555,8 @@
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-read-from-component-consumer2-error
         inputTopics:
-        - resources-read-from-component-producer1
-        - resources-read-from-component-consumer1
+          - resources-read-from-component-producer1
+          - resources-read-from-component-consumer1
         schemaRegistryUrl: http://localhost:8081/
     version: 2.4.2
   from:
@@ -595,8 +595,8 @@
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-read-from-component-consumer2-error
       inputTopics:
-      - resources-read-from-component-producer1
-      - resources-read-from-component-consumer1
+        - resources-read-from-component-producer1
+        - resources-read-from-component-consumer1
       schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2
 - _cleaner:
@@ -621,8 +621,8 @@
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-read-from-component-consumer3-error
         inputTopics:
-        - resources-read-from-component-producer1
-        - resources-read-from-component-producer2
+          - resources-read-from-component-producer1
+          - resources-read-from-component-producer2
         schemaRegistryUrl: http://localhost:8081/
     version: 2.4.2
   from:
@@ -661,8 +661,8 @@
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-read-from-component-consumer3-error
       inputTopics:
-      - resources-read-from-component-producer1
-      - resources-read-from-component-producer2
+        - resources-read-from-component-producer1
+        - resources-read-from-component-producer2
       schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2
 - _cleaner:
@@ -687,7 +687,7 @@
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-read-from-component-consumer4-error
         inputTopics:
-        - resources-read-from-component-inflate-step-inflate-step-inflated-streams-app
+          - resources-read-from-component-inflate-step-inflate-step-inflated-streams-app
         schemaRegistryUrl: http://localhost:8081/
     version: 2.4.2
   from:
@@ -724,7 +724,7 @@
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-read-from-component-consumer4-error
       inputTopics:
-      - resources-read-from-component-inflate-step-inflate-step-inflated-streams-app
+        - resources-read-from-component-inflate-step-inflate-step-inflated-streams-app
       schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2
 - _cleaner:
@@ -749,7 +749,7 @@
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-read-from-component-consumer5-error
         inputTopics:
-        - inflate-step-without-prefix-inflate-step-without-prefix-inflated-streams-app
+          - inflate-step-without-prefix-inflate-step-without-prefix-inflated-streams-app
         schemaRegistryUrl: http://localhost:8081/
     version: 2.4.2
   from:
@@ -786,7 +786,7 @@
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-read-from-component-consumer5-error
       inputTopics:
-      - inflate-step-without-prefix-inflate-step-without-prefix-inflated-streams-app
+        - inflate-step-without-prefix-inflate-step-without-prefix-inflated-streams-app
       schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2
 

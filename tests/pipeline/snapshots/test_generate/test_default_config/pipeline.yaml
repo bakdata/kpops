@@ -74,7 +74,7 @@
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-custom-config-app2-error
         inputTopics:
-        - resources-custom-config-app1
+          - resources-custom-config-app1
         outputTopic: resources-custom-config-app2
         schemaRegistryUrl: http://localhost:8081/
     version: 2.9.0
@@ -114,7 +114,7 @@
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-custom-config-app2-error
       inputTopics:
-      - resources-custom-config-app1
+        - resources-custom-config-app1
       outputTopic: resources-custom-config-app2
       schemaRegistryUrl: http://localhost:8081/
   version: 2.9.0

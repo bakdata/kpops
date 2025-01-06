@@ -89,7 +89,7 @@
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-first-pipeline-converter-error
         inputTopics:
-        - resources-first-pipeline-scheduled-producer
+          - resources-first-pipeline-scheduled-producer
         outputTopic: resources-first-pipeline-converter
         schemaRegistryUrl: http://localhost:8081/
     version: 2.4.2
@@ -145,7 +145,7 @@
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-first-pipeline-converter-error
       inputTopics:
-      - resources-first-pipeline-scheduled-producer
+        - resources-first-pipeline-scheduled-producer
       outputTopic: resources-first-pipeline-converter
       schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2
@@ -171,7 +171,7 @@
         offsetResetPolicy: earliest
         pollingInterval: 30
         topics:
-        - resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
+          - resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
       commandLine:
         TYPE: nothing
       image: fake-registry/filter
@@ -189,7 +189,7 @@
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-error
         inputTopics:
-        - resources-first-pipeline-converter
+          - resources-first-pipeline-converter
         outputTopic: resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
         schemaRegistryUrl: http://localhost:8081/
     version: 2.4.2
@@ -227,7 +227,7 @@
       offsetResetPolicy: earliest
       pollingInterval: 30
       topics:
-      - resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
+        - resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
     commandLine:
       TYPE: nothing
     image: fake-registry/filter
@@ -245,7 +245,7 @@
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-error
       inputTopics:
-      - resources-first-pipeline-converter
+        - resources-first-pipeline-converter
       outputTopic: resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
       schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2

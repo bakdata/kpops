@@ -21,7 +21,7 @@
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-pipeline-with-env-defaults-streams-app-v2-development-error
         inputTopics:
-        - example-topic
+          - example-topic
         outputTopic: example-output
         schemaRegistryUrl: http://localhost:8081/
     version: 2.9.0
@@ -63,7 +63,7 @@
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-pipeline-with-env-defaults-streams-app-v2-development-error
       inputTopics:
-      - example-topic
+        - example-topic
       outputTopic: example-output
       schemaRegistryUrl: http://localhost:8081/
   version: 2.9.0

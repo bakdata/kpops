@@ -74,7 +74,7 @@
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: app2-dead-letter-topic
         inputTopics:
-        - app1-test-topic
+          - app1-test-topic
         outputTopic: app2-test-topic
         schemaRegistryUrl: http://localhost:8081/
     version: 2.9.0
@@ -114,7 +114,7 @@
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: app2-dead-letter-topic
       inputTopics:
-      - app1-test-topic
+        - app1-test-topic
       outputTopic: app2-test-topic
       schemaRegistryUrl: http://localhost:8081/
   version: 2.9.0

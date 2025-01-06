@@ -89,7 +89,7 @@
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-pipeline-with-envs-converter-error
         inputTopics:
-        - resources-pipeline-with-envs-input-producer
+          - resources-pipeline-with-envs-input-producer
         outputTopic: resources-pipeline-with-envs-converter
         schemaRegistryUrl: http://localhost:8081/
     version: 2.4.2
@@ -145,7 +145,7 @@
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-pipeline-with-envs-converter-error
       inputTopics:
-      - resources-pipeline-with-envs-input-producer
+        - resources-pipeline-with-envs-input-producer
       outputTopic: resources-pipeline-with-envs-converter
       schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2
@@ -171,7 +171,7 @@
         offsetResetPolicy: earliest
         pollingInterval: 30
         topics:
-        - resources-pipeline-with-envs-filter
+          - resources-pipeline-with-envs-filter
       commandLine:
         TYPE: nothing
       image: fake-registry/filter
@@ -189,7 +189,7 @@
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-pipeline-with-envs-filter-error
         inputTopics:
-        - resources-pipeline-with-envs-converter
+          - resources-pipeline-with-envs-converter
         outputTopic: resources-pipeline-with-envs-filter
         schemaRegistryUrl: http://localhost:8081/
     version: 2.4.2
@@ -227,7 +227,7 @@
       offsetResetPolicy: earliest
       pollingInterval: 30
       topics:
-      - resources-pipeline-with-envs-filter
+        - resources-pipeline-with-envs-filter
     commandLine:
       TYPE: nothing
     image: fake-registry/filter
@@ -245,7 +245,7 @@
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-pipeline-with-envs-filter-error
       inputTopics:
-      - resources-pipeline-with-envs-converter
+        - resources-pipeline-with-envs-converter
       outputTopic: resources-pipeline-with-envs-filter
       schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2
