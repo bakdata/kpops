@@ -64,7 +64,6 @@
     type: streams-app-cleaner
     values:
       autoscaling:
-        consumerGroup: converter-resources-pipeline-folders-pipeline-2-converter
         enabled: true
         lagThreshold: 10000
         maxReplicas: 1
@@ -72,6 +71,7 @@
         CONVERT_XML: true
       image: bakdata-demo-streams-app
       kafka:
+        applicationId: converter-resources-pipeline-folders-pipeline-2-converter
         bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
@@ -111,7 +111,6 @@
   type: converter
   values:
     autoscaling:
-      consumerGroup: converter-resources-pipeline-folders-pipeline-2-converter
       enabled: true
       lagThreshold: 10000
       maxReplicas: 1
@@ -119,6 +118,7 @@
       CONVERT_XML: true
     image: bakdata-demo-streams-app
     kafka:
+      applicationId: converter-resources-pipeline-folders-pipeline-2-converter
       bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
@@ -146,7 +146,6 @@
     type: streams-app-cleaner
     values:
       autoscaling:
-        consumerGroup: filter-resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
         enabled: true
         lagThreshold: 10000
         maxReplicas: 4
@@ -158,6 +157,7 @@
       image: fake-registry/filter
       imageTag: 2.4.1
       kafka:
+        applicationId: filter-resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
         bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
@@ -195,7 +195,6 @@
   type: filter
   values:
     autoscaling:
-      consumerGroup: filter-resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
       enabled: true
       lagThreshold: 10000
       maxReplicas: 4
@@ -207,6 +206,7 @@
     image: fake-registry/filter
     imageTag: 2.4.1
     kafka:
+      applicationId: filter-resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
       bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
