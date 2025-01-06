@@ -59,6 +59,18 @@ def test_substitute_nested(input: str, substitution: dict[str, str], expected: s
                     """
             ),
         ),
+        pytest.param(
+            {"foo": ["bar", "baz"]},
+            dedent(
+                """\
+                    ---
+                    foo:
+                      - bar
+                      - baz
+
+                    """
+            ),
+        ),
     ],
 )
 def test_print_yaml(
