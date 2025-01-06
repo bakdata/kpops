@@ -113,6 +113,17 @@ def substitute_in_self(input: dict[str, Any]) -> dict[str, Any]:
     return json.loads(old_str)
 
 
+def multiline_str_representer(
+    representer: yaml.representer.SafeRepresenter, data: Any
+) -> yaml.ScalarNode:
+    if "\n" in data:  # represent multiline strings using block style
+        return representer.represent_scalar("tag:yaml.org,2002:str", data, style="|")
+    return representer.represent_str(data)
+
+
+yaml.representer.SafeRepresenter.add_representer(str, multiline_str_representer)
+
+
 def print_yaml(
     data: Mapping[str, Any] | str, *, substitution: dict[str, Any] | None = None
 ) -> None:

@@ -52,9 +52,9 @@ def test_substitute_nested(input: str, substitution: dict[str, str], expected: s
             dedent(
                 """\
                     ---
-                    foo: 'bar
-
-                      baz'
+                    foo: |-
+                      bar
+                      baz
 
                     """
             ),
