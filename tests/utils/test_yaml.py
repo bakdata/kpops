@@ -1,5 +1,10 @@
+from collections.abc import Mapping
+from textwrap import dedent
+from typing import Any
+
 import pytest
 
+from kpops.cli.main import print_yaml
 from kpops.utils.yaml import substitute_nested
 
 
@@ -27,3 +32,40 @@ from kpops.utils.yaml import substitute_nested
 )
 def test_substitute_nested(input: str, substitution: dict[str, str], expected: str):
     assert substitute_nested(input, **substitution) == expected
+
+
+@pytest.mark.parametrize(
+    ("data", "expected_stdout"),
+    [
+        pytest.param(
+            {"foo": "bar"},
+            dedent(
+                """\
+                    ---
+                    foo: bar
+
+                    """
+            ),
+        ),
+        pytest.param(
+            {"foo": "bar\nbaz"},
+            dedent(
+                """\
+                    ---
+                    foo: 'bar
+
+                      baz'
+
+                    """
+            ),
+        ),
+    ],
+)
+def test_print_yaml(
+    capsys: pytest.CaptureFixture[str],
+    data: Mapping[str, Any] | str,
+    expected_stdout: str,
+):
+    print_yaml(data)
+    captured = capsys.readouterr()
+    assert captured.out == expected_stdout
