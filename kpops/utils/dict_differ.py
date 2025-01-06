@@ -134,4 +134,4 @@ def colorize_line(line: str) -> str:
 
 
 def to_yaml(data: Mapping) -> Sequence[str]:
-    return yaml.dump(data, sort_keys=True).splitlines(keepends=True)
+    return yaml.safe_dump(data, sort_keys=True).splitlines(keepends=True)

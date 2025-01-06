@@ -367,7 +367,7 @@ class TestGenerate:
         temp_config_path = RESOURCE_PATH / "custom-config/config_custom.yaml"
         try:
             with temp_config_path.open("w") as abs_config_yaml:
-                yaml.dump(config_dict, abs_config_yaml)
+                yaml.safe_dump(config_dict, abs_config_yaml)
             result = runner.invoke(
                 app,
                 [
