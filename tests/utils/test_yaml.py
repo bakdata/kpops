@@ -69,3 +69,4 @@ def test_print_yaml(
     print_yaml(data)
     captured = capsys.readouterr()
     assert captured.out == expected_stdout
+    assert not captured.err
