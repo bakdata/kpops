@@ -4,17 +4,17 @@ from kpops.component_handlers.kafka_connect.model import KafkaConnectorConfig
 from kpops.components.base_components.kafka_connector import KafkaSinkConnector
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.components.common.topic import OutputTopicTypes
-from kpops.components.streams_bootstrap_v2.producer.producer_app import ProducerAppV2
-from kpops.components.streams_bootstrap_v2.streams.streams_app import StreamsAppV2
+from kpops.components.streams_bootstrap.producer.producer_app import ProducerApp
+from kpops.components.streams_bootstrap.streams.streams_app import StreamsApp
 
 
-class ScheduledProducer(ProducerAppV2): ...
+class ScheduledProducer(ProducerApp): ...
 
 
-class Converter(StreamsAppV2): ...
+class Converter(StreamsApp): ...
 
 
-class ShouldInflate(StreamsAppV2):
+class ShouldInflate(StreamsApp):
     @override
     def inflate(self) -> list[PipelineComponent]:
         inflate_steps = super().inflate()
@@ -23,8 +23,8 @@ class ShouldInflate(StreamsAppV2):
                 if topic_config.type == OutputTopicTypes.OUTPUT:
                     kafka_connector = KafkaSinkConnector(
                         name="sink-connector",
-                        config=KafkaConnectorConfig(
-                            **{
+                        config=KafkaConnectorConfig.model_validate(
+                            {
                                 "topics": topic_name,
                                 "transforms.changeTopic.replacement": f"{topic_name}-index-v1",
                             }

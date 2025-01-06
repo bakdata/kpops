@@ -4,7 +4,7 @@ kind: Job
 metadata:
   labels:
     app: resources-custom-config-app1
-    chart: producer-app-2.9.0
+    chart: producer-app-3.1.0
     release: resources-custom-config-app1
   name: resources-custom-config-app1
 spec:
@@ -15,22 +15,19 @@ spec:
         app: resources-custom-config-app1
         release: resources-custom-config-app1
     spec:
-      affinity: null
       containers:
       - env:
         - name: ENV_PREFIX
           value: APP_
-        - name: APP_BROKERS
+        - name: APP_BOOTSTRAP_SERVERS
           value: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         - name: APP_SCHEMA_REGISTRY_URL
           value: http://localhost:8081/
-        - name: APP_DEBUG
-          value: 'false'
         - name: APP_OUTPUT_TOPIC
           value: resources-custom-config-app1
         - name: JAVA_TOOL_OPTIONS
           value: '-XX:MaxRAMPercentage=75.0 '
-        image: producerApp:latest
+        image: bakdata-demo-producer-app:latest
         imagePullPolicy: Always
         name: resources-custom-config-app1
         resources:
@@ -43,6 +40,18 @@ spec:
       restartPolicy: OnFailure
 
 ---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: my-cluster
+  name: resources-custom-config-app1
+spec:
+  config: {}
+  partitions: 3
+  replicas: 1
+
+---
 apiVersion: v1
 data:
   jmx-kafka-streams-app-prometheus.yml: "jmxUrl: service:jmx:rmi:///jndi/rmi://localhost:5555/jmxrmi\n\
@@ -52,7 +61,7 @@ kind: ConfigMap
 metadata:
   labels:
     app: resources-custom-config-app2
-    chart: streams-app-2.9.0
+    chart: streams-app-3.1.0
     heritage: Helm
     release: resources-custom-config-app2
   name: resources-custom-config-app2-jmx-configmap
@@ -63,7 +72,7 @@ kind: Deployment
 metadata:
   labels:
     app: resources-custom-config-app2
-    chart: streams-app-2.9.0
+    chart: streams-app-3.1.0
     pipeline: resources-custom-config
     release: resources-custom-config-app2
   name: resources-custom-config-app2
@@ -80,37 +89,22 @@ spec:
         prometheus.io/scrape: 'true'
       labels:
         app: resources-custom-config-app2
-        pipeline: resources-custom-config
         release: resources-custom-config-app2
     spec:
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                - key: app
-                  operator: In
-                  values:
-                  - resources-custom-config-app2
-              topologyKey: kubernetes.io/hostname
-            weight: 1
       containers:
       - env:
         - name: ENV_PREFIX
           value: APP_
-        - name: STREAMS_LARGE_MESSAGE_ID_GENERATOR
+        - name: KAFKA_LARGE_MESSAGE_ID_GENERATOR
           value: com.bakdata.kafka.MurmurHashIdGenerator
         - name: KAFKA_JMX_PORT
           value: '5555'
         - name: APP_VOLATILE_GROUP_INSTANCE_ID
           value: 'true'
-        - name: APP_BROKERS
+        - name: APP_BOOTSTRAP_SERVERS
           value: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         - name: APP_SCHEMA_REGISTRY_URL
           value: http://localhost:8081/
-        - name: APP_DEBUG
-          value: 'false'
         - name: APP_INPUT_TOPICS
           value: resources-custom-config-app1
         - name: APP_OUTPUT_TOPIC
@@ -157,8 +151,34 @@ spec:
         volumeMounts:
         - mountPath: /etc/jmx-streams-app
           name: jmx-config
+      terminationGracePeriodSeconds: 300
       volumes:
       - configMap:
           name: resources-custom-config-app2-jmx-configmap
         name: jmx-config
+
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: my-cluster
+  name: resources-custom-config-app2-error
+spec:
+  config:
+    cleanup.policy: compact,delete
+  partitions: 1
+  replicas: 1
+
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: my-cluster
+  name: resources-custom-config-app2
+spec:
+  config: {}
+  partitions: 3
+  replicas: 1
 

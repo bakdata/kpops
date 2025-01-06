@@ -1,4 +1,4 @@
-- type: producer-app-v2
+- type: producer-app
   name: transaction-avro-producer-1
   to:
     topics:
@@ -6,7 +6,7 @@
         type: output
         partitions_count: 3
 
-- type: producer-app-v2
+- type: producer-app
   name: transaction-avro-producer-2
   to:
     topics:
@@ -14,7 +14,7 @@
         type: output
         partitions_count: 3
 
-- type: producer-app-v2
+- type: producer-app
   name: transaction-avro-producer-3
   to:
     topics:
@@ -22,13 +22,13 @@
         type: output
         partitions_count: 3
 
-- type: streams-app-v2
+- type: streams-app
   name: transaction-joiner
 
-- type: streams-app-v2
+- type: streams-app
   name: fraud-detector
 
-- type: streams-app-v2
+- type: streams-app
   name: account-linker
   from:
     components:

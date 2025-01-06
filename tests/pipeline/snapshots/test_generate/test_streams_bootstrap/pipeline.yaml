@@ -31,7 +31,7 @@
         outputTopic: my-producer-app-output-topic
         schemaRegistryUrl: http://localhost:8081/
       schedule: 30 3/8 * * *
-    version: 3.0.3
+    version: 3.1.0
   name: my-producer-app
   namespace: example-namespace
   prefix: resources-streams-bootstrap-
@@ -72,7 +72,7 @@
       outputTopic: my-producer-app-output-topic
       schemaRegistryUrl: http://localhost:8081/
     schedule: 30 3/8 * * *
-  version: 3.0.3
+  version: 3.1.0
 - _cleaner:
     name: my-streams-app
     namespace: example-namespace
@@ -136,7 +136,7 @@
         outputTopic: my-output-topic
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
-    version: 3.0.3
+    version: 3.1.0
   from:
     components: {}
     topics:
@@ -228,5 +228,5 @@
       outputTopic: my-output-topic
       schemaRegistryUrl: http://localhost:8081/
     statefulSet: false
-  version: 3.0.3
+  version: 3.1.0
 

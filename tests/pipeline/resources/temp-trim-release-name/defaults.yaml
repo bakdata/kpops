@@ -1,16 +1,16 @@
 kubernetes-app:
   namespace: example-namespace
 
-streams-bootstrap-v2:
+streams-bootstrap:
   values:
-    streams:
-      brokers: "${config.kafka_brokers}"
+    kafka:
+      bootstrapServers: "${config.kafka_brokers}"
       schema_registry_url: "${schema_registry_url}"
-  version: "2.4.2"
+  version: "3.1.0"
 
-streams-app-v2: # inherits from streams-bootstrap-v2
+streams-app: # inherits from streams-bootstrap
   values:
-    streams:
+    kafka:
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
   to:
