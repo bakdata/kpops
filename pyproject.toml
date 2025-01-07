@@ -5,7 +5,6 @@ description = "KPOps is a tool to deploy Kafka pipelines to Kubernetes"
 authors = [
   { name = "bakdata", email = "opensource@bakdata.com" },
 ]
-license = { text = "MIT License" }
 readme = "README.md"
 keywords = ["kafka", "kubernetes", "stream-processing", "pipelines"]
 classifiers = [
@@ -16,6 +15,7 @@ classifiers = [
   "Topic :: Software Development",
   "Intended Audience :: Developers",
   "Typing :: Typed",
+  "License :: OSI Approved :: MIT License",
 ]
 requires-python = ">=3.11"
 dependencies = [
