@@ -7,7 +7,7 @@ from typer.testing import CliRunner
 
 from kpops.cli.main import app
 from kpops.components.base_components import HelmApp
-from kpops.components.streams_bootstrap_v2 import ProducerAppV2, StreamsAppV2
+from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
 
 runner = CliRunner()
 
@@ -24,8 +24,8 @@ class TestDestroy:
         ).return_value
 
     def test_order(self, mocker: MockerFixture):
-        producer_app_mock_destroy = mocker.patch.object(ProducerAppV2, "destroy")
-        streams_app_mock_destroy = mocker.patch.object(StreamsAppV2, "destroy")
+        producer_app_mock_destroy = mocker.patch.object(ProducerApp, "destroy")
+        streams_app_mock_destroy = mocker.patch.object(StreamsApp, "destroy")
         helm_app_mock_destroy = mocker.patch.object(HelmApp, "destroy")
         mock_destroy = mocker.AsyncMock()
         mock_destroy.attach_mock(producer_app_mock_destroy, "producer_app_mock_destroy")

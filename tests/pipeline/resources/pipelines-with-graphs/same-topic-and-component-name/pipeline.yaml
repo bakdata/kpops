@@ -1,4 +1,4 @@
-- type: streams-app-v2
+- type: streams-app
   name: app2-processor
   values:
     image: some-image

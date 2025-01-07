@@ -4,7 +4,7 @@ kind: Job
 metadata:
   labels:
     app: resources-manifest-pipeline-my-producer-app
-    chart: producer-app-3.0.3
+    chart: producer-app-3.1.0
     release: resources-manifest-pipeline-my-producer-app
   name: resources-manifest-pipeline-my-producer-app
 spec:
@@ -73,7 +73,7 @@ metadata:
     consumerGroup: my-streams-app-id
   labels:
     app: resources-manifest-pipeline-my-streams-app
-    chart: streams-app-3.0.3
+    chart: streams-app-3.1.0
     release: resources-manifest-pipeline-my-streams-app
   name: resources-manifest-pipeline-my-streams-app
 spec:
@@ -92,6 +92,8 @@ spec:
       - env:
         - name: ENV_PREFIX
           value: APP_
+        - name: KAFKA_LARGE_MESSAGE_ID_GENERATOR
+          value: com.bakdata.kafka.MurmurHashIdGenerator
         - name: APP_VOLATILE_GROUP_INSTANCE_ID
           value: 'true'
         - name: APP_BOOTSTRAP_SERVERS

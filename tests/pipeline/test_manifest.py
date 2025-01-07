@@ -65,7 +65,7 @@ class TestManifest:
                 "--values",
                 ANY,
                 "--version",
-                "2.9.0",
+                "3.1.0",
                 "--timeout",
                 "5m0s",
                 "--wait",
@@ -99,7 +99,7 @@ class TestManifest:
                 "--values",
                 ANY,
                 "--version",
-                "2.9.0",
+                "3.1.0",
                 "--timeout",
                 "5m0s",
                 "--wait",
@@ -126,7 +126,7 @@ class TestManifest:
         snapshot.assert_match(result.stdout, MANIFEST_YAML)
 
     def test_manifest_deploy_python_api(
-        self, capsys: CaptureFixture, snapshot: Snapshot
+        self, capsys: CaptureFixture[str], snapshot: Snapshot
     ):
         generator = kpops.manifest_deploy(
             RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML,
@@ -214,7 +214,7 @@ class TestManifest:
         snapshot.assert_match(result.stdout, MANIFEST_YAML)
 
     def test_manifest_destroy_python_api(
-        self, capsys: CaptureFixture, snapshot: Snapshot
+        self, capsys: CaptureFixture[str], snapshot: Snapshot
     ):
         generator = kpops.manifest_destroy(
             RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML,
@@ -260,7 +260,7 @@ class TestManifest:
         snapshot.assert_match(result.stdout, MANIFEST_YAML)
 
     def test_manifest_reset_python_api(
-        self, capsys: CaptureFixture, snapshot: Snapshot
+        self, capsys: CaptureFixture[str], snapshot: Snapshot
     ):
         generator = kpops.manifest_reset(
             RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML,
@@ -306,7 +306,7 @@ class TestManifest:
         snapshot.assert_match(result.stdout, MANIFEST_YAML)
 
     def test_manifest_clean_python_api(
-        self, capsys: CaptureFixture, snapshot: Snapshot
+        self, capsys: CaptureFixture[str], snapshot: Snapshot
     ):
         generator = kpops.manifest_clean(
             RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML,

@@ -13,8 +13,6 @@ from kpops.components.base_components.models.to_section import (
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.components.common.topic import OutputTopicTypes, TopicConfig
 from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
-from kpops.components.streams_bootstrap_v2.producer.producer_app import ProducerAppV2
-from kpops.components.streams_bootstrap_v2.streams.streams_app import StreamsAppV2
 
 
 class MyProducerApp(ProducerApp): ...
@@ -23,13 +21,13 @@ class MyProducerApp(ProducerApp): ...
 class MyStreamsApp(StreamsApp): ...
 
 
-class ScheduledProducer(ProducerAppV2): ...
+class ScheduledProducer(ProducerApp): ...
 
 
-class Converter(StreamsAppV2): ...
+class Converter(StreamsApp): ...
 
 
-class SubStreamsApp(StreamsAppV2):
+class SubStreamsApp(StreamsApp):
     """Intermediary subclass of StreamsApp used for Filter."""
 
 
@@ -37,7 +35,7 @@ class Filter(SubStreamsApp):
     """Subsubclass of StreamsApp to test inheritance."""
 
 
-class ShouldInflate(StreamsAppV2):
+class ShouldInflate(StreamsApp):
     @override
     def inflate(self) -> list[PipelineComponent]:
         inflate_steps = super().inflate()
@@ -62,7 +60,7 @@ class ShouldInflate(StreamsAppV2):
                         ),
                     )
                     inflate_steps.append(kafka_connector)
-                    streams_app = StreamsAppV2(
+                    streams_app = StreamsApp(
                         name=f"{self.name}-inflated-streams-app",
                         to=ToSection(  # type: ignore[reportGeneralTypeIssues]
                             topics={
@@ -93,7 +91,7 @@ class TestSchemaProvider(SchemaProvider):
         return AvroSchema(schema)
 
 
-class SimpleInflateConnectors(StreamsAppV2):
+class SimpleInflateConnectors(StreamsApp):
     def inflate(self) -> list[PipelineComponent]:
         connector = KafkaSinkConnector(
             name="inflated-connector-name",
