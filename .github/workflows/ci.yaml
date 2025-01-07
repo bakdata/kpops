@@ -124,14 +124,38 @@ jobs:
   # TODO: publish using uv
   # publish-snapshot-version:
   #   name: Publish snapshot to TestPyPI
-  #   needs: [lint, test]
+  #   needs: [lint, test, docs]
   #   uses: bakdata/ci-templates/.github/workflows/python-poetry-publish-snapshot.yaml@1.40.4
   #   with:
   #     python-version: "3.11"
   #   secrets:
   #     pypi-token: ${{ secrets.TEST_PYPI_TOKEN }}
 
+  publish-snapshot-version:
+    name: Publish snapshot to TestPyPI
+    needs: [lint, test, docs]
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+          version: latest
+
+      - name: Build
+        run: uv build
+
+      - name: Publish TestPyPI
+        run: uv publish --trusted-publishing always -r testpypi
+        env:
+          UV_PUBLISH_URL: https://test.pypi.org/legacy/
+          UV_PUBLISH_USERNAME: __token__
+          UV_PUBLISH_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
+
   publish-docs-from-main:
+    name: Publish docs (main)
     runs-on: ubuntu-22.04
     if: ${{ github.ref == 'refs/heads/main' }}
     needs: [lint, test, docs]
@@ -147,6 +171,7 @@ jobs:
           version: main
 
   publish-dev-docs-from-pr:
+    name: Publish docs (PR)
     runs-on: ubuntu-22.04
     if: ${{ github.event_name == 'pull_request' }}
     needs: [lint, test, docs]
