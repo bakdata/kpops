@@ -63,6 +63,12 @@ docs = [
   "mkdocstrings>=0.25.1",
 ]
 
+[tool.uv]
+package = true
+
+[tool.setuptools]
+packages = ['kpops']
+
 [tool.pyright]
 reportUnknownParameterType = "warning"
 reportUnknownArgumentType = "warning"
