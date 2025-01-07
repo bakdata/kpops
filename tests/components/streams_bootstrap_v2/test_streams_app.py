@@ -55,6 +55,9 @@ STREAMS_APP_CLEAN_RELEASE_NAME = create_helm_release_name(
 log = logging.getLogger("TestStreamsApp")
 
 
+@pytest.mark.filterwarnings(
+    "ignore:.*StreamsBootstrapV2|StreamsAppV2.*:DeprecationWarning"
+)
 @pytest.mark.usefixtures("mock_env")
 class TestStreamsApp:
     def test_release_name(self):
