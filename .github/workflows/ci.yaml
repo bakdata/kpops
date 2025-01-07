@@ -30,8 +30,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: false
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
@@ -62,6 +60,10 @@ jobs:
           fi;
           uv run --frozen pyright
 
+      - name: Check markdown, toml, css formatting
+        uses: dprint/check@v2.2
+        if: ${{ runner.os == 'Linux' }}
+
       - name: Generate schema (kpops schema)
         run: uv run --frozen pre-commit run gen-schema --all-files --show-diff-on-failure
 
@@ -73,13 +75,6 @@ jobs:
 
       - name: Generate pipeline definitions
         run: uv run --frozen pre-commit run gen-docs-components --all-files --show-diff-on-failure
-
-      - name: Check markdown, toml, css formatting
-        uses: dprint/check@v2.2
-        if: ${{ runner.os == 'Linux' }}
-
-      - name: Test docs build (mkdocs)
-        run: uv run --frozen mkdocs build -f docs/mkdocs.yml
 
   test:
     name: Test
@@ -110,6 +105,22 @@ jobs:
       - name: Test
         run: uv run --frozen pytest tests
 
+  docs:
+    name: Docs
+    runs-on: [ubuntu-22.04]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+          version: latest
+
+      - name: Test docs build (mkdocs)
+        run: uv run --frozen --group=docs mkdocs build -f docs/mkdocs.yml
+
   # TODO: publish using uv
   # publish-snapshot-version:
   #   name: Publish snapshot to TestPyPI
@@ -123,7 +134,7 @@ jobs:
   publish-docs-from-main:
     runs-on: ubuntu-22.04
     if: ${{ github.ref == 'refs/heads/main' }}
-    needs: [lint, test]
+    needs: [lint, test, docs]
     steps:
       - uses: actions/checkout@v4
 
@@ -138,7 +149,7 @@ jobs:
   publish-dev-docs-from-pr:
     runs-on: ubuntu-22.04
     if: ${{ github.event_name == 'pull_request' }}
-    needs: [lint, test]
+    needs: [lint, test, docs]
     steps:
       - uses: actions/checkout@v4
         with:
