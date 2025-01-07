@@ -42,7 +42,7 @@ runs:
       shell: bash
       if: ${{ inputs.release == 'false' }}
       run: |
-        uv run --frozen group=docs mike deploy ${{ inputs.version }} --push --config-file ./docs/mkdocs.yml
+        uv run --frozen --group=docs mike deploy ${{ inputs.version }} --push --config-file ./docs/mkdocs.yml
 
     - name: Deploy ${{ inputs.version }} version (latest) of the documentation with mike
       shell: bash
@@ -50,4 +50,4 @@ runs:
       run: |
         sem_version=${{ inputs.version }}
         major_minor_version=${sem_version%.*}
-        uv run --frozen group=docs mike deploy "$major_minor_version" latest --update-aliases --push --config-file ./docs/mkdocs.yml
+        uv run --frozen --group=docs mike deploy "$major_minor_version" latest --update-aliases --push --config-file ./docs/mkdocs.yml
