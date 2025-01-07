@@ -64,18 +64,6 @@ jobs:
         uses: dprint/check@v2.2
         if: ${{ runner.os == 'Linux' }}
 
-      - name: Generate schema (kpops schema)
-        run: uv run --frozen pre-commit run gen-schema --all-files --show-diff-on-failure
-
-      - name: Generate CLI Usage docs (typer-cli)
-        run: uv run --frozen pre-commit run gen-docs-cli --all-files --show-diff-on-failure
-
-      - name: Generate Environment variable docs
-        run: uv run --frozen pre-commit run gen-docs-env-vars --all-files --show-diff-on-failure
-
-      - name: Generate pipeline definitions
-        run: uv run --frozen pre-commit run gen-docs-components --all-files --show-diff-on-failure
-
   test:
     name: Test
     strategy:
@@ -117,6 +105,18 @@ jobs:
         with:
           python-version: "3.11"
           version: latest
+
+      - name: Generate schema (kpops schema)
+        run: uv run --frozen pre-commit run gen-schema --all-files --show-diff-on-failure
+
+      - name: Generate CLI Usage docs (typer-cli)
+        run: uv run --frozen pre-commit run gen-docs-cli --all-files --show-diff-on-failure
+
+      - name: Generate Environment variable docs
+        run: uv run --frozen pre-commit run gen-docs-env-vars --all-files --show-diff-on-failure
+
+      - name: Generate pipeline definitions
+        run: uv run --frozen pre-commit run gen-docs-components --all-files --show-diff-on-failure
 
       - name: Test docs build (mkdocs)
         run: uv run --frozen --group=docs mkdocs build -f docs/mkdocs.yml
