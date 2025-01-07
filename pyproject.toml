@@ -67,7 +67,7 @@ docs = [
 package = true
 
 [tool.setuptools]
-packages = ['kpops']
+packages = ['kpops', 'hooks'] # TODO: make sure hooks is excluded from published package
 
 [tool.pyright]
 reportUnknownParameterType = "warning"
