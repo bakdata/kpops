@@ -1,12 +1,12 @@
-[tool.poetry]
+[project]
 name = "kpops"
 version = "9.1.0"
 description = "KPOps is a tool to deploy Kafka pipelines to Kubernetes"
-authors = ["bakdata <opensource@bakdata.com>"]
-license = "MIT"
+authors = [
+  { name = "bakdata", email = "opensource@bakdata.com" },
+]
+license = { text = "MIT License" }
 readme = "README.md"
-repository = "https://github.com/bakdata/kpops"
-documentation = "https://bakdata.github.io/kpops/latest"
 keywords = ["kafka", "kubernetes", "stream-processing", "pipelines"]
 classifiers = [
   "Environment :: Console",
@@ -17,54 +17,51 @@ classifiers = [
   "Intended Audience :: Developers",
   "Typing :: Typed",
 ]
+requires-python = ">=3.11"
+dependencies = [
+  "anyio>=4.3.0",
+  "cachetools>=5.2.0",
+  "croniter>=3.0.3",
+  "dictdiffer>=0.9.0",
+  "httpx>=0.24.1",
+  "lightkube>=0.15.3",
+  "networkx>=3.1",
+  "pydantic>=2.5.3",
+  "pydantic-settings>=2.0.3",
+  "pyhumps>=3.7.3",
+  "python-schema-registry-client>=2.4.1",
+  "pyyaml>=6.0",
+  "rich>=12.4.4",
+  "typer>=0.12.5",
+]
 
-[tool.poetry.scripts]
+[project.scripts]
 kpops = "kpops.cli.main:app"
 
-[tool.poetry.dependencies]
-python = ">=3.11, <3.13"
-anyio = "^4.3.0"
-pydantic = "^2.5.3"
-pydantic-settings = "^2.0.3"
-rich = "^12.4.4"
-PyYAML = "^6.0"
-typer = { extras = ["all"], version = "^0.12.5" }
-pyhumps = "^3.7.3"
-cachetools = "^5.2.0"
-dictdiffer = "^0.9.0"
-python-schema-registry-client = "^2.4.1"
-httpx = "^0 >=0.24.1"
-networkx = "^3.1"
-lightkube = "^0.15.3"
-croniter = "^3.0.3"
-
-[tool.poetry.group.dev.dependencies]
-pytest = "^8.3.2"
-pytest-mock = "^3.14.0"
-pytest-timeout = "^2.3.1"
-pytest-snapshot = "^0.9.0"
-pytest-rerunfailures = "^14.0"
-pytest-asyncio = "^0.23.8"
-pytest-httpx = "^0.30.0"
-pre-commit = "^2.19.0"
-ruff = "^0.5.5"
-pyright = "^1.1.352"
-pytablewriter = { extras = ["from"], version = "^1.0.0" }
-polyfactory = "^2.13.0"
-
-[tool.poetry.group.docs]
-optional = true
-
-[tool.poetry.group.docs.dependencies]
-mkdocs = "^1.4.2"
-mkdocs-macros-plugin = "^1.0.5"
-mkdocs-material = "^9.0.0"
-mkdocs-glightbox = "^0.3.1"
-mkdocs-exclude-search = "^0.6.5"
-mike = "^1.1.2"
-mkdocstrings = { extras = ["python"], version = "^0.25.1" }
-
-[tool.poetry_bumpversion.file."kpops/const/__init__.py"]
+[dependency-groups]
+dev = [
+  "polyfactory>=2.13.0",
+  "pre-commit>=2.19.0",
+  "pyright>=1.1.352",
+  "pytablewriter>=1.0.0",
+  "pytest>=8.3.2",
+  "pytest-asyncio>=0.23.8",
+  "pytest-httpx>=0.30.0",
+  "pytest-mock>=3.14.0",
+  "pytest-rerunfailures>=14.0",
+  "pytest-snapshot>=0.9.0",
+  "pytest-timeout>=2.3.1",
+  "ruff>=0.5.5",
+]
+docs = [
+  "mike>=1.1.2",
+  "mkdocs>=1.4.2",
+  "mkdocs-exclude-search>=0.6.5",
+  "mkdocs-glightbox>=0.3.1",
+  "mkdocs-macros-plugin>=1.0.5",
+  "mkdocs-material>=9.0.0",
+  "mkdocstrings>=0.25.1",
+]
 
 [tool.pyright]
 reportUnknownParameterType = "warning"
@@ -181,7 +178,3 @@ extend-immutable-calls = ["typer.Argument"]
 
 [tool.ruff.lint.flake8-type-checking]
 runtime-evaluated-base-classes = ["pydantic.BaseModel"]
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
