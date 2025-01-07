@@ -1,4 +1,26 @@
 # Changelog
+## [9.1.0](https://github.com/bakdata/kpops/releases/tag/9.1.0) - Release Date: [2025-01-07]
+
+### 🏭 Refactor
+
+- Represent multiline strings using YAML block style - [#574](https://github.com/bakdata/kpops/pull/574)
+
+- Indent sequence items to follow style recommendations - [#575](https://github.com/bakdata/kpops/pull/575)
+
+
+### 🌀 Miscellaneous
+
+- Update CODEOWNERS - [#572](https://github.com/bakdata/kpops/pull/572)
+
+- Update test components to streams-bootstrap v3 - [#576](https://github.com/bakdata/kpops/pull/576)
+
+- Silence deprecation warnings for streams-bootstrap v2 in tests - [#577](https://github.com/bakdata/kpops/pull/577)
+
+
+
+
+
+
 ## [9.0.1](https://github.com/bakdata/kpops/releases/tag/9.0.1) - Release Date: [2024-12-20]
 
 ### 🐛 Fixes
