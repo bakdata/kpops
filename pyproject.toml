@@ -43,6 +43,7 @@ dev = [
   "polyfactory>=2.13.0",
   "pre-commit>=2.19.0",
   "pyright>=1.1.352",
+  "pytablereader>=0.31.4",
   "pytablewriter>=1.0.0",
   "pytest>=8.3.2",
   "pytest-asyncio>=0.23.8",
