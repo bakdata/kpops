@@ -144,6 +144,7 @@ class TestConnectorApiWrapper:
             url=f"{DEFAULT_HOST}/connectors",
             json={},
             status_code=409,
+            is_reusable=True,
         )
 
         await timeout(
