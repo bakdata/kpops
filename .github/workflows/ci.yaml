@@ -170,7 +170,7 @@ jobs:
           version: main
 
   publish-dev-docs-from-pr:
-    name: Publish docs (PR)
+    name: Publish docs (dev)
     runs-on: ubuntu-22.04
     if: ${{ github.event_name == 'pull_request' }}
     needs: [lint, test, docs]
