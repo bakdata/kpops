@@ -1,5 +1,6 @@
 import asyncio
 from pathlib import Path
+from typing import Any
 from unittest import mock
 from unittest.mock import AsyncMock, MagicMock
 
@@ -120,7 +121,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
 
         assert enriched_pipeline[0]["prefix"] == "my-fake-prefix-"
         assert enriched_pipeline[0]["name"] == "my-streams-app"
@@ -167,7 +168,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
         assert (
             enriched_pipeline[0]["prefix"] == "resources-component-type-substitution-"
         )
@@ -223,7 +224,7 @@ class TestGenerate:
             ],
             catch_exceptions=False,
         )
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
         sink_connector = enriched_pipeline[0]
         assert (
             sink_connector["config"]["errors.deadletterqueue.topic.name"]
@@ -340,15 +341,15 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
         producer_details = enriched_pipeline[0]
-        output_topic = producer_details["values"]["streams"]["outputTopic"]
+        output_topic = producer_details["values"]["kafka"]["outputTopic"]
         assert output_topic == "app1-test-topic"
 
         streams_app_details = enriched_pipeline[1]
-        output_topic = streams_app_details["values"]["streams"]["outputTopic"]
+        output_topic = streams_app_details["values"]["kafka"]["outputTopic"]
         assert output_topic == "app2-test-topic"
-        error_topic = streams_app_details["values"]["streams"]["errorTopic"]
+        error_topic = streams_app_details["values"]["kafka"]["errorTopic"]
         assert error_topic == "app2-dead-letter-topic"
 
         snapshot.assert_match(result.stdout, PIPELINE_YAML)
@@ -360,7 +361,7 @@ class TestGenerate:
         with Path(RESOURCE_PATH / "custom-config/config.yaml").open(
             "r",
         ) as rel_config_yaml:
-            config_dict: dict = yaml.safe_load(rel_config_yaml)
+            config_dict: dict[str, Any] = yaml.safe_load(rel_config_yaml)
         config_dict["defaults_path"] = str(
             (RESOURCE_PATH / "no-topics-defaults").absolute(),
         )
@@ -383,15 +384,15 @@ class TestGenerate:
 
             assert result.exit_code == 0, result.stdout
 
-            enriched_pipeline: list = yaml.safe_load(result.stdout)
+            enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
             producer_details = enriched_pipeline[0]
-            output_topic = producer_details["values"]["streams"]["outputTopic"]
+            output_topic = producer_details["values"]["kafka"]["outputTopic"]
             assert output_topic == "app1-test-topic"
 
             streams_app_details = enriched_pipeline[1]
-            output_topic = streams_app_details["values"]["streams"]["outputTopic"]
+            output_topic = streams_app_details["values"]["kafka"]["outputTopic"]
             assert output_topic == "app2-test-topic"
-            error_topic = streams_app_details["values"]["streams"]["errorTopic"]
+            error_topic = streams_app_details["values"]["kafka"]["errorTopic"]
             assert error_topic == "app2-dead-letter-topic"
 
             snapshot.assert_match(result.stdout, PIPELINE_YAML)
@@ -412,15 +413,15 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
         producer_details = enriched_pipeline[0]
-        output_topic = producer_details["values"]["streams"]["outputTopic"]
+        output_topic = producer_details["values"]["kafka"]["outputTopic"]
         assert output_topic == "resources-custom-config-app1"
 
         streams_app_details = enriched_pipeline[1]
-        output_topic = streams_app_details["values"]["streams"]["outputTopic"]
+        output_topic = streams_app_details["values"]["kafka"]["outputTopic"]
         assert output_topic == "resources-custom-config-app2"
-        error_topic = streams_app_details["values"]["streams"]["errorTopic"]
+        error_topic = streams_app_details["values"]["kafka"]["errorTopic"]
         assert error_topic == "resources-custom-config-app2-error"
 
         snapshot.assert_match(result.stdout, PIPELINE_YAML)
@@ -441,8 +442,10 @@ class TestGenerate:
             catch_exceptions=False,
         )
         assert result.exit_code == 0, result.stdout
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
-        assert enriched_pipeline[0]["values"]["streams"]["brokers"] == "env_broker"
+        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
+        assert (
+            enriched_pipeline[0]["values"]["kafka"]["bootstrapServers"] == "env_broker"
+        )
 
     def test_nested_config_env_vars(self, monkeypatch: pytest.MonkeyPatch):
         monkeypatch.setenv(
@@ -462,9 +465,9 @@ class TestGenerate:
             catch_exceptions=False,
         )
         assert result.exit_code == 0, result.stdout
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
         assert (
-            enriched_pipeline[0]["values"]["streams"]["schemaRegistryUrl"]
+            enriched_pipeline[0]["values"]["kafka"]["schemaRegistryUrl"]
             == "http://somename:1234/"
         )
 
@@ -484,9 +487,9 @@ class TestGenerate:
             catch_exceptions=False,
         )
         assert result.exit_code == 0, result.stdout
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
         assert (
-            enriched_pipeline[0]["values"]["streams"]["schemaRegistryUrl"]
+            enriched_pipeline[0]["values"]["kafka"]["schemaRegistryUrl"]
             == "http://production:8081/"
         )
 
@@ -518,10 +521,9 @@ class TestGenerate:
             catch_exceptions=False,
         )
         assert result.exit_code == 0, result.stdout
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
         assert (
-            enriched_pipeline[0]["values"]["streams"]["schemaRegistryUrl"]
-            == expected_url
+            enriched_pipeline[0]["values"]["kafka"]["schemaRegistryUrl"] == expected_url
         )
 
     def test_config_dir_doesnt_exist(self):
@@ -571,9 +573,9 @@ class TestGenerate:
         )
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
         assert (
-            enriched_pipeline[1]["values"]["streams"]["schemaRegistryUrl"]
+            enriched_pipeline[1]["values"]["kafka"]["schemaRegistryUrl"]
             == "http://notlocalhost:8081/"
         )
 
@@ -589,7 +591,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
 
         output_topics = enriched_pipeline[4]["to"]["topics"]
         input_topics = enriched_pipeline[4]["from"]["topics"]
@@ -821,7 +823,7 @@ class TestGenerate:
             catch_exceptions=False,
         )
         assert result.exit_code == 0, result.stdout
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
         assert (
             enriched_pipeline[0]["name"]
             == "in-order-to-have-len-fifty-two-name-should-end--here"
@@ -837,7 +839,7 @@ class TestGenerate:
             catch_exceptions=False,
         )
         assert result.exit_code == 0, result.stdout
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
         assert (
             enriched_pipeline[1]["_resetter"]["values"]["label"]
             == "inflated-connector-name"
@@ -859,7 +861,7 @@ class TestGenerate:
         assert hasattr(pipeline.components[0]._resetter.values, "label")
         assert pipeline.components[0]._resetter.values.label == "es-sink-connector"  # type: ignore[reportGeneralTypeIssues]
 
-        enriched_pipeline: list = yaml.safe_load(pipeline.to_yaml())
+        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(pipeline.to_yaml())
         assert enriched_pipeline[0]["name"] == "es-sink-connector"
         assert enriched_pipeline[0]["_resetter"]["name"] == "es-sink-connector"
         assert (

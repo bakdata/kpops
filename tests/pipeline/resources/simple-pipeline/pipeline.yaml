@@ -1,6 +1,6 @@
-- type: producer-app-v2
+- type: producer-app
 
-- type: streams-app-v2
+- type: streams-app
 
 - type: helm-app
   values: {}

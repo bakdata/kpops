@@ -14,12 +14,12 @@
         FAKE_ARG: fake-arg-value
       image: example-registry/fake-image
       imageTag: 0.0.1
-      schedule: 30 3/8 * * *
-      streams:
-        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      kafka:
+        bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         outputTopic: resources-pipeline-folders-pipeline-1-scheduled-producer
         schemaRegistryUrl: http://localhost:8081/
-    version: 2.4.2
+      schedule: 30 3/8 * * *
+    version: 3.1.0
   name: scheduled-producer
   namespace: example-namespace
   prefix: resources-pipeline-folders-pipeline-1-
@@ -44,12 +44,12 @@
       FAKE_ARG: fake-arg-value
     image: example-registry/fake-image
     imageTag: 0.0.1
-    schedule: 30 3/8 * * *
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+    kafka:
+      bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       outputTopic: resources-pipeline-folders-pipeline-1-scheduled-producer
       schemaRegistryUrl: http://localhost:8081/
-  version: 2.4.2
+    schedule: 30 3/8 * * *
+  version: 3.1.0
 
 - _cleaner:
     name: converter
@@ -64,34 +64,27 @@
     type: streams-app-cleaner
     values:
       autoscaling:
-        consumerGroup: converter-resources-pipeline-folders-pipeline-2-converter
-        cooldownPeriod: 300
         enabled: true
         lagThreshold: 10000
         maxReplicas: 1
-        minReplicas: 0
-        offsetResetPolicy: earliest
-        pollingInterval: 30
-        topics: []
       commandLine:
         CONVERT_XML: true
-      imageTag: latest
-      persistence:
-        enabled: false
+      image: bakdata-demo-streams-app
+      kafka:
+        applicationId: converter-resources-pipeline-folders-pipeline-2-converter
+        bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+        config:
+          large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+        errorTopic: resources-pipeline-folders-pipeline-2-converter-error
+        outputTopic: resources-pipeline-folders-pipeline-2-converter
+        schemaRegistryUrl: http://localhost:8081/
       resources:
         limits:
           memory: 2G
         requests:
           memory: 2G
       statefulSet: false
-      streams:
-        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-        config:
-          large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-        errorTopic: resources-pipeline-folders-pipeline-2-converter-error
-        outputTopic: resources-pipeline-folders-pipeline-2-converter
-        schemaRegistryUrl: http://localhost:8081/
-    version: 2.4.2
+    version: 3.1.0
   name: converter
   namespace: example-namespace
   prefix: resources-pipeline-folders-pipeline-2-
@@ -118,34 +111,27 @@
   type: converter
   values:
     autoscaling:
-      consumerGroup: converter-resources-pipeline-folders-pipeline-2-converter
-      cooldownPeriod: 300
       enabled: true
       lagThreshold: 10000
       maxReplicas: 1
-      minReplicas: 0
-      offsetResetPolicy: earliest
-      pollingInterval: 30
-      topics: []
     commandLine:
       CONVERT_XML: true
-    imageTag: latest
-    persistence:
-      enabled: false
+    image: bakdata-demo-streams-app
+    kafka:
+      applicationId: converter-resources-pipeline-folders-pipeline-2-converter
+      bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      config:
+        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+      errorTopic: resources-pipeline-folders-pipeline-2-converter-error
+      outputTopic: resources-pipeline-folders-pipeline-2-converter
+      schemaRegistryUrl: http://localhost:8081/
     resources:
       limits:
         memory: 2G
       requests:
         memory: 2G
     statefulSet: false
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      config:
-        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-      errorTopic: resources-pipeline-folders-pipeline-2-converter-error
-      outputTopic: resources-pipeline-folders-pipeline-2-converter
-      schemaRegistryUrl: http://localhost:8081/
-  version: 2.4.2
+  version: 3.1.0
 
 - _cleaner:
     name: a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
@@ -160,35 +146,30 @@
     type: streams-app-cleaner
     values:
       autoscaling:
-        consumerGroup: filter-resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
-        cooldownPeriod: 300
         enabled: true
         lagThreshold: 10000
         maxReplicas: 4
         minReplicas: 4
-        offsetResetPolicy: earliest
-        pollingInterval: 30
         topics:
         - resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
       commandLine:
         TYPE: nothing
       image: fake-registry/filter
       imageTag: 2.4.1
-      persistence:
-        enabled: false
-      replicaCount: 4
-      resources:
-        requests:
-          memory: 3G
-      statefulSet: false
-      streams:
-        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      kafka:
+        applicationId: filter-resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
+        bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-error
         outputTopic: resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
         schemaRegistryUrl: http://localhost:8081/
-    version: 2.4.2
+      replicaCount: 4
+      resources:
+        requests:
+          memory: 3G
+      statefulSet: false
+    version: 3.1.0
   name: a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
   namespace: example-namespace
   prefix: resources-pipeline-folders-pipeline-3-
@@ -214,33 +195,28 @@
   type: filter
   values:
     autoscaling:
-      consumerGroup: filter-resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
-      cooldownPeriod: 300
       enabled: true
       lagThreshold: 10000
       maxReplicas: 4
       minReplicas: 4
-      offsetResetPolicy: earliest
-      pollingInterval: 30
       topics:
       - resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
     commandLine:
       TYPE: nothing
     image: fake-registry/filter
     imageTag: 2.4.1
-    persistence:
-      enabled: false
-    replicaCount: 4
-    resources:
-      requests:
-        memory: 3G
-    statefulSet: false
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+    kafka:
+      applicationId: filter-resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
+      bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-error
       outputTopic: resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
       schemaRegistryUrl: http://localhost:8081/
-  version: 2.4.2
+    replicaCount: 4
+    resources:
+      requests:
+        memory: 3G
+    statefulSet: false
+  version: 3.1.0
 

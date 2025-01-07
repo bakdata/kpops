@@ -1,5 +1,5 @@
 - _cleaner:
-    name: streams-app-v2-development
+    name: streams-app-development
     namespace: development-namespace
     prefix: resources-pipeline-with-env-defaults-
     repo_config:
@@ -11,26 +11,23 @@
     type: streams-app-cleaner
     values:
       image: fake-image
-      imageTag: latest
-      persistence:
-        enabled: false
-      statefulSet: false
-      streams:
-        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      kafka:
+        bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-        errorTopic: resources-pipeline-with-env-defaults-streams-app-v2-development-error
+        errorTopic: resources-pipeline-with-env-defaults-streams-app-development-error
         inputTopics:
         - example-topic
         outputTopic: example-output
         schemaRegistryUrl: http://localhost:8081/
-    version: 2.9.0
+      statefulSet: false
+    version: 3.1.0
   from:
     components: {}
     topics:
       example-topic:
         type: input
-  name: streams-app-v2-development
+  name: streams-app-development
   namespace: development-namespace
   prefix: resources-pipeline-with-env-defaults-
   repo_config:
@@ -44,29 +41,26 @@
       example-output:
         configs: {}
         type: output
-      resources-pipeline-with-env-defaults-streams-app-v2-development-error:
+      resources-pipeline-with-env-defaults-streams-app-development-error:
         configs:
           cleanup.policy: compact,delete
         partitions_count: 1
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
-  type: streams-app-v2
+  type: streams-app
   values:
     image: fake-image
-    imageTag: latest
-    persistence:
-      enabled: false
-    statefulSet: false
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+    kafka:
+      bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-      errorTopic: resources-pipeline-with-env-defaults-streams-app-v2-development-error
+      errorTopic: resources-pipeline-with-env-defaults-streams-app-development-error
       inputTopics:
       - example-topic
       outputTopic: example-output
       schemaRegistryUrl: http://localhost:8081/
-  version: 2.9.0
+    statefulSet: false
+  version: 3.1.0
 - _resetter:
     name: es-sink-connector
     namespace: development-namespace
