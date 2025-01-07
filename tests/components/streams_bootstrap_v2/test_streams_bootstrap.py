@@ -13,12 +13,13 @@ from kpops.components.streams_bootstrap_v2 import StreamsBootstrapV2
 from kpops.components.streams_bootstrap_v2.base import StreamsBootstrapV2Values
 
 
+@pytest.mark.filterwarnings("ignore:.*StreamsBootstrapV2.*:DeprecationWarning")
 @pytest.mark.usefixtures("mock_env")
 class TestStreamsBootstrap:
     def test_default_configs(self):
-        streams_bootstrap = StreamsBootstrapV2(
-            name="example-name",
-            **{
+        streams_bootstrap = StreamsBootstrapV2.model_validate(
+            {
+                "name": "example-name",
                 "namespace": "test-namespace",
                 "values": {
                     "streams": {
@@ -37,9 +38,9 @@ class TestStreamsBootstrap:
 
     @pytest.mark.asyncio()
     async def test_should_deploy_streams_bootstrap_app(self, mocker: MockerFixture):
-        streams_bootstrap = StreamsBootstrapV2(
-            name="example-name",
-            **{
+        streams_bootstrap = StreamsBootstrapV2.model_validate(
+            {
+                "name": "example-name",
                 "namespace": "test-namespace",
                 "values": {
                     "imageTag": "1.0.0",
@@ -91,8 +92,8 @@ class TestStreamsBootstrap:
                 "1 validation error for StreamsBootstrapV2Values\nimageTag\n  String should match pattern '^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$'"
             ),
         ):
-            StreamsBootstrapV2Values(
-                **{
+            StreamsBootstrapV2Values.model_validate(
+                {
                     "imageTag": "invalid image tag!",
                     "streams": {
                         "brokers": "localhost:9092",

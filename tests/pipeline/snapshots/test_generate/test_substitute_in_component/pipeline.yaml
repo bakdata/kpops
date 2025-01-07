@@ -14,16 +14,16 @@
         FAKE_ARG: fake-arg-value
       image: example-registry/fake-image
       imageTag: 0.0.1
+      kafka:
+        bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+        outputTopic: resources-component-type-substitution-scheduled-producer
+        schemaRegistryUrl: http://localhost:8081/
       labels:
         app_name: scheduled-producer
         app_schedule: 30 3/8 * * *
         app_type: scheduled-producer
       schedule: 30 3/8 * * *
-      streams:
-        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-        outputTopic: resources-component-type-substitution-scheduled-producer
-        schemaRegistryUrl: http://localhost:8081/
-    version: 2.4.2
+    version: 3.1.0
   name: scheduled-producer
   namespace: example-namespace
   prefix: resources-component-type-substitution-
@@ -48,16 +48,16 @@
       FAKE_ARG: fake-arg-value
     image: example-registry/fake-image
     imageTag: 0.0.1
+    kafka:
+      bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      outputTopic: resources-component-type-substitution-scheduled-producer
+      schemaRegistryUrl: http://localhost:8081/
     labels:
       app_name: scheduled-producer
       app_schedule: 30 3/8 * * *
       app_type: scheduled-producer
     schedule: 30 3/8 * * *
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      outputTopic: resources-component-type-substitution-scheduled-producer
-      schemaRegistryUrl: http://localhost:8081/
-  version: 2.4.2
+  version: 3.1.0
 - _cleaner:
     name: converter
     namespace: example-namespace
@@ -71,28 +71,15 @@
     type: streams-app-cleaner
     values:
       autoscaling:
-        consumerGroup: converter-resources-component-type-substitution-converter
-        cooldownPeriod: 300
         enabled: true
         lagThreshold: 10000
         maxReplicas: 1
-        minReplicas: 0
-        offsetResetPolicy: earliest
-        pollingInterval: 30
-        topics: []
       commandLine:
         CONVERT_XML: true
-      imageTag: latest
-      persistence:
-        enabled: false
-      resources:
-        limits:
-          memory: 2G
-        requests:
-          memory: 2G
-      statefulSet: false
-      streams:
-        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      image: bakdata-demo-streams-app
+      kafka:
+        applicationId: converter-resources-component-type-substitution-converter
+        bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-component-type-substitution-converter-error
@@ -100,7 +87,13 @@
           - resources-component-type-substitution-scheduled-producer
         outputTopic: resources-component-type-substitution-converter
         schemaRegistryUrl: http://localhost:8081/
-    version: 2.4.2
+      resources:
+        limits:
+          memory: 2G
+        requests:
+          memory: 2G
+      statefulSet: false
+    version: 3.1.0
   name: converter
   namespace: example-namespace
   prefix: resources-component-type-substitution-
@@ -127,28 +120,15 @@
   type: converter
   values:
     autoscaling:
-      consumerGroup: converter-resources-component-type-substitution-converter
-      cooldownPeriod: 300
       enabled: true
       lagThreshold: 10000
       maxReplicas: 1
-      minReplicas: 0
-      offsetResetPolicy: earliest
-      pollingInterval: 30
-      topics: []
     commandLine:
       CONVERT_XML: true
-    imageTag: latest
-    persistence:
-      enabled: false
-    resources:
-      limits:
-        memory: 2G
-      requests:
-        memory: 2G
-    statefulSet: false
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+    image: bakdata-demo-streams-app
+    kafka:
+      applicationId: converter-resources-component-type-substitution-converter
+      bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-component-type-substitution-converter-error
@@ -156,7 +136,13 @@
         - resources-component-type-substitution-scheduled-producer
       outputTopic: resources-component-type-substitution-converter
       schemaRegistryUrl: http://localhost:8081/
-  version: 2.4.2
+    resources:
+      limits:
+        memory: 2G
+      requests:
+        memory: 2G
+    statefulSet: false
+  version: 3.1.0
 - _cleaner:
     name: filter-app
     namespace: example-namespace
@@ -170,35 +156,19 @@
     type: streams-app-cleaner
     values:
       autoscaling:
-        consumerGroup: filter-resources-component-type-substitution-filter-app
-        cooldownPeriod: 300
         enabled: true
         lagThreshold: 10000
         maxReplicas: 4
         minReplicas: 4
-        offsetResetPolicy: earliest
-        pollingInterval: 30
         topics:
           - resources-component-type-substitution-filter-app
       commandLine:
         TYPE: nothing
       image: fake-registry/filter
       imageTag: 2.4.1
-      labels:
-        app_name: filter-app
-        app_resources_requests_memory: 3G
-        app_type: filter
-        filter: filter-app-filter
-        test_placeholder_in_placeholder: filter-app-filter
-      persistence:
-        enabled: false
-      replicaCount: 4
-      resources:
-        requests:
-          memory: 3G
-      statefulSet: false
-      streams:
-        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      kafka:
+        applicationId: filter-resources-component-type-substitution-filter-app
+        bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-component-type-substitution-filter-app-error
@@ -206,7 +176,18 @@
           - resources-component-type-substitution-converter
         outputTopic: resources-component-type-substitution-filter-app
         schemaRegistryUrl: http://localhost:8081/
-    version: 2.4.2
+      labels:
+        app_name: filter-app
+        app_resources_requests_memory: 3G
+        app_type: filter
+        filter: filter-app-filter
+        test_placeholder_in_placeholder: filter-app-filter
+      replicaCount: 4
+      resources:
+        requests:
+          memory: 3G
+      statefulSet: false
+    version: 3.1.0
   name: filter-app
   namespace: example-namespace
   prefix: resources-component-type-substitution-
@@ -232,35 +213,19 @@
   type: filter
   values:
     autoscaling:
-      consumerGroup: filter-resources-component-type-substitution-filter-app
-      cooldownPeriod: 300
       enabled: true
       lagThreshold: 10000
       maxReplicas: 4
       minReplicas: 4
-      offsetResetPolicy: earliest
-      pollingInterval: 30
       topics:
         - resources-component-type-substitution-filter-app
     commandLine:
       TYPE: nothing
     image: fake-registry/filter
     imageTag: 2.4.1
-    labels:
-      app_name: filter-app
-      app_resources_requests_memory: 3G
-      app_type: filter
-      filter: filter-app-filter
-      test_placeholder_in_placeholder: filter-app-filter
-    persistence:
-      enabled: false
-    replicaCount: 4
-    resources:
-      requests:
-        memory: 3G
-    statefulSet: false
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+    kafka:
+      applicationId: filter-resources-component-type-substitution-filter-app
+      bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-component-type-substitution-filter-app-error
@@ -268,5 +233,16 @@
         - resources-component-type-substitution-converter
       outputTopic: resources-component-type-substitution-filter-app
       schemaRegistryUrl: http://localhost:8081/
-  version: 2.4.2
+    labels:
+      app_name: filter-app
+      app_resources_requests_memory: 3G
+      app_type: filter
+      filter: filter-app-filter
+      test_placeholder_in_placeholder: filter-app-filter
+    replicaCount: 4
+    resources:
+      requests:
+        memory: 3G
+    statefulSet: false
+  version: 3.1.0
 

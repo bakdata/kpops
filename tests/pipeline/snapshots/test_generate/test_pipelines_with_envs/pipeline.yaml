@@ -14,12 +14,12 @@
         FAKE_ARG: override-arg
       image: example-registry/fake-image
       imageTag: 0.0.1
-      schedule: 20 3/8 * * *
-      streams:
-        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      kafka:
+        bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         outputTopic: resources-pipeline-with-envs-input-producer
         schemaRegistryUrl: http://localhost:8081/
-    version: 2.4.2
+      schedule: 20 3/8 * * *
+    version: 3.1.0
   name: input-producer
   namespace: example-namespace
   prefix: resources-pipeline-with-envs-
@@ -44,12 +44,12 @@
       FAKE_ARG: override-arg
     image: example-registry/fake-image
     imageTag: 0.0.1
-    schedule: 20 3/8 * * *
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+    kafka:
+      bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       outputTopic: resources-pipeline-with-envs-input-producer
       schemaRegistryUrl: http://localhost:8081/
-  version: 2.4.2
+    schedule: 20 3/8 * * *
+  version: 3.1.0
 - _cleaner:
     name: converter
     namespace: example-namespace
@@ -63,28 +63,15 @@
     type: streams-app-cleaner
     values:
       autoscaling:
-        consumerGroup: converter-resources-pipeline-with-envs-converter
-        cooldownPeriod: 300
         enabled: true
         lagThreshold: 10000
         maxReplicas: 1
-        minReplicas: 0
-        offsetResetPolicy: earliest
-        pollingInterval: 30
-        topics: []
       commandLine:
         CONVERT_XML: true
-      imageTag: latest
-      persistence:
-        enabled: false
-      resources:
-        limits:
-          memory: 2G
-        requests:
-          memory: 2G
-      statefulSet: false
-      streams:
-        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      image: bakdata-demo-streams-app
+      kafka:
+        applicationId: converter-resources-pipeline-with-envs-converter
+        bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-pipeline-with-envs-converter-error
@@ -92,7 +79,13 @@
           - resources-pipeline-with-envs-input-producer
         outputTopic: resources-pipeline-with-envs-converter
         schemaRegistryUrl: http://localhost:8081/
-    version: 2.4.2
+      resources:
+        limits:
+          memory: 2G
+        requests:
+          memory: 2G
+      statefulSet: false
+    version: 3.1.0
   name: converter
   namespace: example-namespace
   prefix: resources-pipeline-with-envs-
@@ -119,28 +112,15 @@
   type: converter
   values:
     autoscaling:
-      consumerGroup: converter-resources-pipeline-with-envs-converter
-      cooldownPeriod: 300
       enabled: true
       lagThreshold: 10000
       maxReplicas: 1
-      minReplicas: 0
-      offsetResetPolicy: earliest
-      pollingInterval: 30
-      topics: []
     commandLine:
       CONVERT_XML: true
-    imageTag: latest
-    persistence:
-      enabled: false
-    resources:
-      limits:
-        memory: 2G
-      requests:
-        memory: 2G
-    statefulSet: false
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+    image: bakdata-demo-streams-app
+    kafka:
+      applicationId: converter-resources-pipeline-with-envs-converter
+      bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-pipeline-with-envs-converter-error
@@ -148,7 +128,13 @@
         - resources-pipeline-with-envs-input-producer
       outputTopic: resources-pipeline-with-envs-converter
       schemaRegistryUrl: http://localhost:8081/
-  version: 2.4.2
+    resources:
+      limits:
+        memory: 2G
+      requests:
+        memory: 2G
+    statefulSet: false
+  version: 3.1.0
 - _cleaner:
     name: filter
     namespace: example-namespace
@@ -162,29 +148,19 @@
     type: streams-app-cleaner
     values:
       autoscaling:
-        consumerGroup: filter-resources-pipeline-with-envs-filter
-        cooldownPeriod: 300
         enabled: true
         lagThreshold: 10000
         maxReplicas: 4
         minReplicas: 4
-        offsetResetPolicy: earliest
-        pollingInterval: 30
         topics:
           - resources-pipeline-with-envs-filter
       commandLine:
         TYPE: nothing
       image: fake-registry/filter
       imageTag: 2.4.1
-      persistence:
-        enabled: false
-      replicaCount: 4
-      resources:
-        requests:
-          memory: 3G
-      statefulSet: false
-      streams:
-        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      kafka:
+        applicationId: filter-resources-pipeline-with-envs-filter
+        bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-pipeline-with-envs-filter-error
@@ -192,7 +168,12 @@
           - resources-pipeline-with-envs-converter
         outputTopic: resources-pipeline-with-envs-filter
         schemaRegistryUrl: http://localhost:8081/
-    version: 2.4.2
+      replicaCount: 4
+      resources:
+        requests:
+          memory: 3G
+      statefulSet: false
+    version: 3.1.0
   name: filter
   namespace: example-namespace
   prefix: resources-pipeline-with-envs-
@@ -218,29 +199,19 @@
   type: filter
   values:
     autoscaling:
-      consumerGroup: filter-resources-pipeline-with-envs-filter
-      cooldownPeriod: 300
       enabled: true
       lagThreshold: 10000
       maxReplicas: 4
       minReplicas: 4
-      offsetResetPolicy: earliest
-      pollingInterval: 30
       topics:
         - resources-pipeline-with-envs-filter
     commandLine:
       TYPE: nothing
     image: fake-registry/filter
     imageTag: 2.4.1
-    persistence:
-      enabled: false
-    replicaCount: 4
-    resources:
-      requests:
-        memory: 3G
-    statefulSet: false
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+    kafka:
+      applicationId: filter-resources-pipeline-with-envs-filter
+      bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-pipeline-with-envs-filter-error
@@ -248,5 +219,10 @@
         - resources-pipeline-with-envs-converter
       outputTopic: resources-pipeline-with-envs-filter
       schemaRegistryUrl: http://localhost:8081/
-  version: 2.4.2
+    replicaCount: 4
+    resources:
+      requests:
+        memory: 3G
+    statefulSet: false
+  version: 3.1.0
 

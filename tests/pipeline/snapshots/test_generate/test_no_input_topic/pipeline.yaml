@@ -12,24 +12,22 @@
     values:
       commandLine:
         CONVERT_XML: true
-      imageTag: latest
-      persistence:
-        enabled: false
-      resources:
-        limits:
-          memory: 2G
-        requests:
-          memory: 2G
-      statefulSet: false
-      streams:
-        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      image: bakdata-demo-streams-app
+      kafka:
+        bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-no-input-topic-pipeline-app1-error
         inputPattern: .*
         outputTopic: example-output
         schemaRegistryUrl: http://localhost:8081/
-    version: 2.4.2
+      resources:
+        limits:
+          memory: 2G
+        requests:
+          memory: 2G
+      statefulSet: false
+    version: 3.1.0
   from:
     components: {}
     topics:
@@ -55,28 +53,26 @@
         partitions_count: 1
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
-  type: streams-app-v2
+  type: streams-app
   values:
     commandLine:
       CONVERT_XML: true
-    imageTag: latest
-    persistence:
-      enabled: false
-    resources:
-      limits:
-        memory: 2G
-      requests:
-        memory: 2G
-    statefulSet: false
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+    image: bakdata-demo-streams-app
+    kafka:
+      bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-no-input-topic-pipeline-app1-error
       inputPattern: .*
       outputTopic: example-output
       schemaRegistryUrl: http://localhost:8081/
-  version: 2.4.2
+    resources:
+      limits:
+        memory: 2G
+      requests:
+        memory: 2G
+    statefulSet: false
+  version: 3.1.0
 - _cleaner:
     name: app2
     namespace: example-namespace
@@ -89,22 +85,20 @@
     suffix: -clean
     type: streams-app-cleaner
     values:
-      imageTag: latest
-      persistence:
-        enabled: false
-      statefulSet: false
-      streams:
-        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      image: bakdata-demo-streams-app
+      kafka:
+        bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-no-input-topic-pipeline-app2-error
-        extraOutputTopics:
-          extra: example-output-extra
-          test-output: test-output-extra
         inputTopics:
           - example-output
+        labeledOutputTopics:
+          extra: example-output-extra
+          test-output: test-output-extra
         schemaRegistryUrl: http://localhost:8081/
-    version: 2.4.2
+      statefulSet: false
+    version: 3.1.0
   name: app2
   namespace: example-namespace
   prefix: resources-no-input-topic-pipeline-
@@ -128,22 +122,20 @@
       test-output-extra:
         configs: {}
         label: test-output
-  type: streams-app-v2
+  type: streams-app
   values:
-    imageTag: latest
-    persistence:
-      enabled: false
-    statefulSet: false
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+    image: bakdata-demo-streams-app
+    kafka:
+      bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-no-input-topic-pipeline-app2-error
-      extraOutputTopics:
-        extra: example-output-extra
-        test-output: test-output-extra
       inputTopics:
         - example-output
+      labeledOutputTopics:
+        extra: example-output-extra
+        test-output: test-output-extra
       schemaRegistryUrl: http://localhost:8081/
-  version: 2.4.2
+    statefulSet: false
+  version: 3.1.0
 

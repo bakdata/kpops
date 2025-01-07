@@ -1,2 +1,2 @@
-streams-bootstrap-v2:
-  version: 2.9.0
+streams-bootstrap:
+  version: "3.1.0"

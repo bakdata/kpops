@@ -4,9 +4,9 @@ pipeline-component:
 kubernetes-app:
   namespace: ${NAMESPACE}
 
-streams-bootstrap-v2:
-  version: 2.9.0
+streams-bootstrap:
+  version: "3.1.0"
   values:
-    streams:
-      brokers: ${config.kafka_brokers}
+    kafka:
+      bootstrapServers: ${config.kafka_brokers}
       schemaRegistryUrl: ${config.schema_registry.url}

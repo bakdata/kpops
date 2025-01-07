@@ -1,6 +1,6 @@
-- type: streams-app-v2
+- type: streams-app
   name: in-order-to-have-len-fifty-two-name-should-end--here
   values:
-    streams:
+    kafka:
       config:
         max.poll.records: 100
