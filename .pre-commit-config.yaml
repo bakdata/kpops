@@ -31,7 +31,7 @@ repos:
         require_serial: true # run once for all files
       - id: gen-schema
         name: gen-schema
-        entry: python hooks/gen_schema.py
+        entry: python -m hooks.gen_schema
         language: system
         types: [python]
         require_serial: true
@@ -39,7 +39,7 @@ repos:
         exclude: ^tests/.*snapshots/
       - id: gen-docs-cli
         name: gen-docs-cli
-        entry: python hooks/gen_docs/gen_docs_cli_usage.py
+        entry: python -m hooks.gen_docs.gen_docs_cli_usage
         language: system
         types: [python]
         require_serial: true
@@ -47,7 +47,7 @@ repos:
         pass_filenames: false
       - id: gen-docs-env-vars
         name: gen-docs-env-vars
-        entry: python hooks/gen_docs/gen_docs_env_vars.py
+        entry: python -m hooks.gen_docs.gen_docs_env_vars
         language: system
         types: [python]
         require_serial: true
@@ -55,7 +55,7 @@ repos:
         pass_filenames: false
       - id: gen-docs-components
         name: gen-docs-components
-        entry: python hooks/gen_docs/gen_docs_components.py
+        entry: python -m hooks.gen_docs.gen_docs_components
         language: system
         # .gitignore -- indicates whether the script is ran with `--all-files`
         # hooks/gen_docs.py -- hook's behavior is possibly changed

@@ -67,8 +67,8 @@ docs = [
 [tool.uv]
 package = true
 
-[tool.setuptools]
-packages = ['kpops', 'hooks'] # TODO: make sure hooks is excluded from published package
+[tool.setuptools.packages.find]
+include = ["kpops"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
