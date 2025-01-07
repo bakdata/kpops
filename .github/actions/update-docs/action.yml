@@ -24,16 +24,15 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Install Python and set up Poetry
-      uses: bakdata/ci-templates/actions/python-setup-poetry@v1.5.2
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
       with:
         python-version: "3.11"
-        poetry-version: "1.5.1"
+        version: latest
 
     - name: Install docs dependencies
       shell: bash
-      run: |
-        poetry install --with docs
+      run: uv sync group=docs
 
     - name: Update gh-pages branch
       shell: bash
@@ -47,7 +46,7 @@ runs:
       shell: bash
       if: ${{ inputs.release == 'false' }}
       run: |
-        poetry run mike deploy ${{ inputs.version }} --push --config-file ./docs/mkdocs.yml
+        uv run --frozen group=docs mike deploy ${{ inputs.version }} --push --config-file ./docs/mkdocs.yml
 
     - name: Deploy ${{ inputs.version }} version (latest) of the documentation with mike
       shell: bash
@@ -55,4 +54,4 @@ runs:
       run: |
         sem_version=${{ inputs.version }}
         major_minor_version=${sem_version%.*}
-        poetry run mike deploy "$major_minor_version" latest --update-aliases --push --config-file ./docs/mkdocs.yml
+        uv run --frozen group=docs mike deploy "$major_minor_version" latest --update-aliases --push --config-file ./docs/mkdocs.yml

@@ -13,6 +13,74 @@ defaults:
     shell: bash
 
 jobs:
+  lint:
+    name: Lint
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-22.04
+          - windows-2022
+        python-version: ["3.11", "3.12"]
+        include:
+          - python-version: "3.11"
+            os: ubuntu-22.04
+            format-for-github: true
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          version: latest
+
+      - name: Check uv.lock
+        run: uv lock --check
+
+      - name: Lint (ruff)
+        run: |
+          if [[ "${{ matrix.format-for-github }}" == "true" ]]
+          then
+            uv run --frozen ruff check . --config pyproject.toml --output-format=github --no-fix
+          else
+            uv run --frozen ruff check . --config pyproject.toml --no-fix
+          fi;
+
+      - name: Formatting (ruff)
+        run: uv run --frozen ruff format
+
+      - name: Typing (pyright)
+        run: |
+          if [[ "${{ matrix.format-for-github }}" == "true" ]]
+          then
+            echo "::add-matcher::.github/pyright-matcher.json"
+          fi;
+          uv run --frozen pyright
+
+      - name: Generate schema (kpops schema)
+        run: uv run --frozen pre-commit run gen-schema --all-files --show-diff-on-failure
+
+      - name: Generate CLI Usage docs (typer-cli)
+        run: uv run --frozen pre-commit run gen-docs-cli --all-files --show-diff-on-failure
+
+      - name: Generate Environment variable docs
+        run: uv run --frozen pre-commit run gen-docs-env-vars --all-files --show-diff-on-failure
+
+      - name: Generate pipeline definitions
+        run: uv run --frozen pre-commit run gen-docs-components --all-files --show-diff-on-failure
+
+      - name: Check markdown, toml, css formatting
+        uses: dprint/check@v2.2
+        if: ${{ runner.os == 'Linux' }}
+
+      - name: Test docs build (mkdocs)
+        run: uv run --frozen mkdocs build -f docs/mkdocs.yml
+
   test:
     name: Test
     strategy:
@@ -22,6 +90,10 @@ jobs:
           - ubuntu-22.04
           - windows-2022
         python-version: ["3.11", "3.12"]
+        include:
+          - python-version: "3.11"
+            os: ubuntu-22.04
+            format-for-github: true
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -29,79 +101,29 @@ jobs:
         with:
           submodules: true
 
-      - name: Install Python and set up Poetry
-        uses: bakdata/ci-templates/actions/python-setup-poetry@v1.5.3
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
           python-version: ${{ matrix.python-version }}
-          poetry-version: "1.7.1"
-
-      - name: Check Poetry lock file consistency
-        run: poetry lock --check
-
-      - name: Install dependencies
-        run: poetry install --no-interaction
-
-      - name: Lint (ruff)
-        run: |
-          if [[ "$RUNNER_OS" == "Linux" && "${{ matrix.python-version }}" == "3.11" ]]
-          then
-            poetry run ruff check . --config pyproject.toml --output-format=github --no-fix
-          else
-            poetry run pre-commit run ruff-lint --all-files --show-diff-on-failure
-          fi;
-
-      - name: Formatting (ruff)
-        run: poetry run pre-commit run ruff-format --all-files --show-diff-on-failure
-
-      - name: Typing (pyright)
-        run: |
-          if [[ "$RUNNER_OS" == "Linux" && "${{ matrix.python-version }}" == "3.11" ]]
-          then
-            echo "::add-matcher::.github/pyright-matcher.json"
-            poetry run pre-commit run pyright --all-files
-          else
-            poetry run pre-commit run pyright --all-files
-          fi;
-
-      - name: Generate schema (kpops schema)
-        run: poetry run pre-commit run gen-schema --all-files --show-diff-on-failure
-
-      - name: Generate CLI Usage docs (typer-cli)
-        run: poetry run pre-commit run gen-docs-cli --all-files --show-diff-on-failure
-
-      - name: Generate Environment variable docs
-        run: poetry run pre-commit run gen-docs-env-vars --all-files --show-diff-on-failure
-
-      - name: Generate pipeline definitions
-        run: poetry run pre-commit run gen-docs-components --all-files --show-diff-on-failure
+          version: latest
 
       - name: Test
-        run: poetry run pytest tests
+        run: uv run --frozen pytest tests
 
-      - name: Install docs dependencies
-        run: poetry install --with docs
-
-      - name: Check markdown, toml, css formatting
-        uses: dprint/check@v2.2
-        if: runner.os == 'Linux'
-
-      - name: Test docs build (mkdocs)
-        run: poetry run mkdocs build -f docs/mkdocs.yml
-
-  publish-snapshot-version:
-    name: Publish snapshot to TestPyPI
-    needs: [test]
-    uses: bakdata/ci-templates/.github/workflows/python-poetry-publish-snapshot.yaml@1.40.4
-    with:
-      python-version: "3.11"
-      poetry-version: "1.7.1"
-    secrets:
-      pypi-token: ${{ secrets.TEST_PYPI_TOKEN }}
+  # TODO: publish using uv
+  # publish-snapshot-version:
+  #   name: Publish snapshot to TestPyPI
+  #   needs: [lint, test]
+  #   uses: bakdata/ci-templates/.github/workflows/python-poetry-publish-snapshot.yaml@1.40.4
+  #   with:
+  #     python-version: "3.11"
+  #   secrets:
+  #     pypi-token: ${{ secrets.TEST_PYPI_TOKEN }}
 
   publish-docs-from-main:
     runs-on: ubuntu-22.04
     if: ${{ github.ref == 'refs/heads/main' }}
-    needs: [test]
+    needs: [lint, test]
     steps:
       - uses: actions/checkout@v4
 
@@ -116,7 +138,7 @@ jobs:
   publish-dev-docs-from-pr:
     runs-on: ubuntu-22.04
     if: ${{ github.event_name == 'pull_request' }}
-    needs: [test]
+    needs: [lint, test]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -125,7 +147,7 @@ jobs:
       # Checks to see if any files in the PR match one of the listed file types.
       # This will return true if there's a file in docs folder that was added, deleted, or modified in the PR.
       - name: Check if files in docs folder have changed
-        uses: dorny/paths-filter@v2
+        uses: dorny/paths-filter@v3
         id: docs-changes
         with:
           filters: |
