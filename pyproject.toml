@@ -67,6 +67,9 @@ docs = [
 [tool.uv]
 package = true
 
+[tool.setuptools]
+license-files = [] # HACK: workaround for https://github.com/astral-sh/uv/issues/9513
+
 [tool.setuptools.packages.find]
 include = ["kpops"]
 
