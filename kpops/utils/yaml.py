@@ -27,9 +27,8 @@ def generate_hashkey(
 def load_yaml_file(
     file_path: Path, *, substitution: Mapping[str, Any] | None = None
 ) -> dict[str, Any] | list[dict[str, Any]]:
-    with file_path.open() as yaml_file:
-        log.debug(f"Picked up: {file_path.resolve().relative_to(Path.cwd())}")
-        return yaml.load(substitute(yaml_file.read(), substitution), Loader=yaml.Loader)
+    log.debug(f"Picked up: {file_path.resolve().relative_to(Path.cwd())}")
+    return yaml.safe_load(substitute(file_path.read_text(), substitution))
 
 
 def substitute(input: str, substitution: Mapping[str, Any] | None = None) -> str:
@@ -111,6 +110,17 @@ def substitute_in_self(input: dict[str, Any]) -> dict[str, Any]:
         old_str, new_str = new_str, substitute(new_str, json.loads(new_str))
     _diff_substituted_str(new_str, old_str)
     return json.loads(old_str)
+
+
+def multiline_str_representer(
+    representer: yaml.representer.SafeRepresenter, data: Any
+) -> yaml.ScalarNode:
+    if "\n" in data:  # represent multiline strings using block style
+        return representer.represent_scalar("tag:yaml.org,2002:str", data, style="|")
+    return representer.represent_str(data)
+
+
+yaml.representer.SafeRepresenter.add_representer(str, multiline_str_representer)
 
 
 def print_yaml(

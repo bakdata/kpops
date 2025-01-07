@@ -54,9 +54,13 @@ spec:
 ---
 apiVersion: v1
 data:
-  jmx-kafka-streams-app-prometheus.yml: "jmxUrl: service:jmx:rmi:///jndi/rmi://localhost:5555/jmxrmi\n\
-    lowercaseOutputName: true\nlowercaseOutputLabelNames: true\nssl: false\nrules:\n\
-    \  - pattern: \".*\"\n"
+  jmx-kafka-streams-app-prometheus.yml: |
+    jmxUrl: service:jmx:rmi:///jndi/rmi://localhost:5555/jmxrmi
+    lowercaseOutputName: true
+    lowercaseOutputLabelNames: true
+    ssl: false
+    rules:
+      - pattern: ".*"
 kind: ConfigMap
 metadata:
   labels:
