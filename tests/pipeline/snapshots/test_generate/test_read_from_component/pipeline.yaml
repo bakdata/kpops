@@ -91,7 +91,6 @@
     type: streams-app-cleaner
     values:
       autoscaling:
-        consumerGroup: filter-resources-read-from-component-inflate-step
         enabled: true
         lagThreshold: 10000
         maxReplicas: 1
@@ -100,6 +99,7 @@
       image: fake-registry/filter
       imageTag: 2.4.1
       kafka:
+        applicationId: filter-resources-read-from-component-inflate-step
         bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
@@ -135,7 +135,6 @@
   type: should-inflate
   values:
     autoscaling:
-      consumerGroup: filter-resources-read-from-component-inflate-step
       enabled: true
       lagThreshold: 10000
       maxReplicas: 1
@@ -144,6 +143,7 @@
     image: fake-registry/filter
     imageTag: 2.4.1
     kafka:
+      applicationId: filter-resources-read-from-component-inflate-step
       bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
@@ -269,7 +269,6 @@
     type: streams-app-cleaner
     values:
       autoscaling:
-        consumerGroup: filter-resources-read-from-component-inflate-step-without-prefix
         enabled: true
         lagThreshold: 10000
         maxReplicas: 1
@@ -278,6 +277,7 @@
       image: fake-registry/filter
       imageTag: 2.4.1
       kafka:
+        applicationId: filter-resources-read-from-component-inflate-step-without-prefix
         bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
@@ -313,7 +313,6 @@
   type: should-inflate
   values:
     autoscaling:
-      consumerGroup: filter-resources-read-from-component-inflate-step-without-prefix
       enabled: true
       lagThreshold: 10000
       maxReplicas: 1
@@ -322,6 +321,7 @@
     image: fake-registry/filter
     imageTag: 2.4.1
     kafka:
+      applicationId: filter-resources-read-from-component-inflate-step-without-prefix
       bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator

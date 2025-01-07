@@ -47,12 +47,13 @@ scheduled-producer:
 
 converter:
   values:
+    kafka:
+      application_id: converter-${output_topic_name}
     resources:
       limits:
         memory: 3G
     autoscaling:
       enabled: true
-      consumerGroup: converter-${output_topic_name}
       maxReplicas: 1
       lagThreshold: 10000
   to:
@@ -74,11 +75,12 @@ filter:
   values:
     image: "fake-registry/filter"
     imageTag: "2.4.1"
+    kafka:
+      application_id: filter-${output_topic_name}
     autoscaling:
       enabled: true
       maxReplicas: 1
       lagThreshold: 10000
-      consumerGroup: filter-${output_topic_name}
       topics:
         - "${output_topic_name}"
   to:
@@ -93,11 +95,12 @@ should-inflate:
   values:
     image: "fake-registry/filter"
     imageTag: "2.4.1"
+    kafka:
+      application_id: filter-${output_topic_name}
     autoscaling:
       enabled: true
       maxReplicas: 1
       lagThreshold: 10000
-      consumerGroup: filter-${output_topic_name}
       topics:
         - "${output_topic_name}"
   to:
