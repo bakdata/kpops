@@ -30,10 +30,6 @@ runs:
         python-version: "3.11"
         version: latest
 
-    - name: Install docs dependencies
-      shell: bash
-      run: uv sync group=docs
-
     - name: Update gh-pages branch
       shell: bash
       run: |
