@@ -33,8 +33,8 @@ class TestConnectorApiWrapper:
 
     @pytest.fixture()
     def connector_config(self) -> KafkaConnectorConfig:
-        return KafkaConnectorConfig(
-            **{  # pyright: ignore[reportArgumentType]
+        return KafkaConnectorConfig.model_validate(
+            {
                 "connector.class": "com.bakdata.connect.TestConnector",
                 "name": "test-connector",
             }
@@ -81,14 +81,16 @@ class TestConnectorApiWrapper:
         }
 
         with pytest.raises(KafkaConnectError):
-            await self.connect_wrapper.create_connector(KafkaConnectorConfig(**configs))  # pyright: ignore[reportArgumentType]
+            await self.connect_wrapper.create_connector(
+                KafkaConnectorConfig.model_validate(configs)
+            )
 
         mock_post.assert_called_with(
             url=f"{DEFAULT_HOST}/connectors",
             headers=HEADERS,
             json={
                 "name": "test-connector",
-                "config": KafkaConnectorConfig(**configs).model_dump(),  # pyright: ignore[reportArgumentType]
+                "config": KafkaConnectorConfig.model_validate(configs).model_dump(),
             },
         )
 
@@ -267,13 +269,13 @@ class TestConnectorApiWrapper:
         }
         with pytest.raises(KafkaConnectError):
             await self.connect_wrapper.update_connector_config(
-                KafkaConnectorConfig(**configs)  # pyright: ignore[reportArgumentType]
+                KafkaConnectorConfig.model_validate(configs)
             )
 
         mock_put.assert_called_with(
             url=f"{DEFAULT_HOST}/connectors/{connector_name}/config",
             headers={"Accept": "application/json", "Content-Type": "application/json"},
-            json=KafkaConnectorConfig(**configs).model_dump(),  # pyright: ignore[reportArgumentType]
+            json=KafkaConnectorConfig.model_validate(configs).model_dump(),
         )
 
     @pytest.mark.asyncio()
@@ -488,8 +490,8 @@ class TestConnectorApiWrapper:
     async def test_should_create_correct_validate_connector_config_request(
         self, mock_put: AsyncMock
     ):
-        connector_config = KafkaConnectorConfig(
-            **{  # pyright: ignore[reportArgumentType]
+        connector_config = KafkaConnectorConfig.model_validate(
+            {
                 "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
                 "name": "FileStreamSinkConnector",
                 "tasks.max": "1",
@@ -519,14 +521,14 @@ class TestConnectorApiWrapper:
         }
         with pytest.raises(KafkaConnectError):
             await self.connect_wrapper.validate_connector_config(
-                KafkaConnectorConfig(**configs)  # pyright: ignore[reportArgumentType]
+                KafkaConnectorConfig.model_validate(configs)
             )
 
         mock_put.assert_called_with(
             url=f"{DEFAULT_HOST}/connector-plugins/{connector_name}/config/validate",
             headers={"Accept": "application/json", "Content-Type": "application/json"},
-            json=KafkaConnectorConfig(
-                **{"name": connector_name, **configs}  # pyright: ignore[reportArgumentType]
+            json=KafkaConnectorConfig.model_validate(
+                {"name": connector_name, **configs}
             ).model_dump(),
         )
 
@@ -552,7 +554,7 @@ class TestConnectorApiWrapper:
             "topics": "test-topic",
         }
         errors = await self.connect_wrapper.validate_connector_config(
-            KafkaConnectorConfig(**configs)  # pyright: ignore[reportArgumentType]
+            KafkaConnectorConfig.model_validate(configs)
         )
 
         assert errors == [
