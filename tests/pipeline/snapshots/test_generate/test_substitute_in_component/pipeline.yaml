@@ -84,7 +84,7 @@
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-component-type-substitution-converter-error
         inputTopics:
-        - resources-component-type-substitution-scheduled-producer
+          - resources-component-type-substitution-scheduled-producer
         outputTopic: resources-component-type-substitution-converter
         schemaRegistryUrl: http://localhost:8081/
       resources:
@@ -133,7 +133,7 @@
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-component-type-substitution-converter-error
       inputTopics:
-      - resources-component-type-substitution-scheduled-producer
+        - resources-component-type-substitution-scheduled-producer
       outputTopic: resources-component-type-substitution-converter
       schemaRegistryUrl: http://localhost:8081/
     resources:
@@ -161,7 +161,7 @@
         maxReplicas: 4
         minReplicas: 4
         topics:
-        - resources-component-type-substitution-filter-app
+          - resources-component-type-substitution-filter-app
       commandLine:
         TYPE: nothing
       image: fake-registry/filter
@@ -173,7 +173,7 @@
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-component-type-substitution-filter-app-error
         inputTopics:
-        - resources-component-type-substitution-converter
+          - resources-component-type-substitution-converter
         outputTopic: resources-component-type-substitution-filter-app
         schemaRegistryUrl: http://localhost:8081/
       labels:
@@ -218,7 +218,7 @@
       maxReplicas: 4
       minReplicas: 4
       topics:
-      - resources-component-type-substitution-filter-app
+        - resources-component-type-substitution-filter-app
     commandLine:
       TYPE: nothing
     image: fake-registry/filter
@@ -230,7 +230,7 @@
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-component-type-substitution-filter-app-error
       inputTopics:
-      - resources-component-type-substitution-converter
+        - resources-component-type-substitution-converter
       outputTopic: resources-component-type-substitution-filter-app
       schemaRegistryUrl: http://localhost:8081/
     labels:

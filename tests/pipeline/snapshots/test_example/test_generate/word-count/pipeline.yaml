@@ -68,7 +68,7 @@
         bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         errorTopic: word-count-word-count-app-dead-letter-topic
         inputTopics:
-        - word-count-data-producer-topic
+          - word-count-data-producer-topic
         outputTopic: word-count-word-count-app-topic
       labels:
         pipeline: word-count
@@ -106,7 +106,7 @@
       bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       errorTopic: word-count-word-count-app-dead-letter-topic
       inputTopics:
-      - word-count-data-producer-topic
+        - word-count-data-producer-topic
       outputTopic: word-count-word-count-app-topic
     labels:
       pipeline: word-count

@@ -92,7 +92,7 @@
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-no-input-topic-pipeline-app2-error
         inputTopics:
-        - example-output
+          - example-output
         labeledOutputTopics:
           extra: example-output-extra
           test-output: test-output-extra
@@ -131,7 +131,7 @@
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-no-input-topic-pipeline-app2-error
       inputTopics:
-      - example-output
+        - example-output
       labeledOutputTopics:
         extra: example-output-extra
         test-output: test-output-extra

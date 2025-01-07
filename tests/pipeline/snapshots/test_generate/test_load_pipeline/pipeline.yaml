@@ -76,7 +76,7 @@
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-first-pipeline-converter-error
         inputTopics:
-        - resources-first-pipeline-scheduled-producer
+          - resources-first-pipeline-scheduled-producer
         outputTopic: resources-first-pipeline-converter
         schemaRegistryUrl: http://localhost:8081/
       resources:
@@ -125,7 +125,7 @@
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-first-pipeline-converter-error
       inputTopics:
-      - resources-first-pipeline-scheduled-producer
+        - resources-first-pipeline-scheduled-producer
       outputTopic: resources-first-pipeline-converter
       schemaRegistryUrl: http://localhost:8081/
     resources:
@@ -153,7 +153,7 @@
         maxReplicas: 4
         minReplicas: 4
         topics:
-        - resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
+          - resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
       commandLine:
         TYPE: nothing
       image: fake-registry/filter
@@ -165,7 +165,7 @@
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-error
         inputTopics:
-        - resources-first-pipeline-converter
+          - resources-first-pipeline-converter
         outputTopic: resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
         schemaRegistryUrl: http://localhost:8081/
       replicaCount: 4
@@ -204,7 +204,7 @@
       maxReplicas: 4
       minReplicas: 4
       topics:
-      - resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
+        - resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
     commandLine:
       TYPE: nothing
     image: fake-registry/filter
@@ -216,7 +216,7 @@
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-error
       inputTopics:
-      - resources-first-pipeline-converter
+        - resources-first-pipeline-converter
       outputTopic: resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
       schemaRegistryUrl: http://localhost:8081/
     replicaCount: 4

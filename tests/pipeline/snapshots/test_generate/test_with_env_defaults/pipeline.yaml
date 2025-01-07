@@ -17,7 +17,7 @@
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
         errorTopic: resources-pipeline-with-env-defaults-streams-app-development-error
         inputTopics:
-        - example-topic
+          - example-topic
         outputTopic: example-output
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
@@ -56,7 +56,7 @@
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
       errorTopic: resources-pipeline-with-env-defaults-streams-app-development-error
       inputTopics:
-      - example-topic
+        - example-topic
       outputTopic: example-output
       schemaRegistryUrl: http://localhost:8081/
     statefulSet: false

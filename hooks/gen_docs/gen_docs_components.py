@@ -185,7 +185,7 @@ def check_for_changes_in_kpops_component_structure() -> bool:
     if kpops_new_structure != kpops_structure:
         (PATH_DOCS_COMPONENTS / "dependencies").mkdir(parents=True, exist_ok=True)
         with PATH_DOCS_KPOPS_STRUCTURE.open("w+") as f:
-            yaml.dump(kpops_new_structure, f)
+            yaml.safe_dump(kpops_new_structure, f)
         PATH_DOCS_COMPONENTS_DEPENDENCIES.unlink(missing_ok=True)
         PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS.unlink(missing_ok=True)
         if ".gitignore" not in SCRIPT_ARGUMENTS:
@@ -224,9 +224,9 @@ def get_sections(component_name: str, *, exist_changes: bool) -> KpopsComponent:
             component_definition_sections_names,
         )
         with PATH_DOCS_COMPONENTS_DEPENDENCIES.open("a") as f:
-            yaml.dump({component_file_name: component_sections}, f)
+            yaml.safe_dump({component_file_name: component_sections}, f)
         with PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS.open("a") as f:
-            yaml.dump({component_file_name: component_sections_not_inherited}, f)
+            yaml.safe_dump({component_file_name: component_sections_not_inherited}, f)
     else:
         component_sections: list[str] = PIPELINE_COMPONENT_DEPENDENCIES[  # type: ignore [reportGeneralTypeIssues]
             component_file_name

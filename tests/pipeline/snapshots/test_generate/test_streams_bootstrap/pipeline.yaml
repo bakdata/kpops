@@ -14,12 +14,20 @@
         FAKE_ARG: fake-arg-value
       files:
         log4j2.xml:
-          content: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Configuration>\n\
-            \    <Appenders>\n        <Console name=\"Console\" target=\"SYSTEM_OUT\"\
-            >\n            <PatternLayout pattern=\"%d{HH:mm:ss.SSS} %-5level %logger{36}\
-            \ - %msg%n\"/>\n        </Console>\n    </Appenders>\n    <Loggers>\n\
-            \        <Root level=\"info\">\n            <AppenderRef ref=\"Console\"\
-            />\n        </Root>\n    </Loggers>\n</Configuration>\n"
+          content: |
+            <?xml version="1.0" encoding="UTF-8"?>
+            <Configuration>
+                <Appenders>
+                    <Console name="Console" target="SYSTEM_OUT">
+                        <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n"/>
+                    </Console>
+                </Appenders>
+                <Loggers>
+                    <Root level="info">
+                        <AppenderRef ref="Console"/>
+                    </Root>
+                </Loggers>
+            </Configuration>
           mountPath: app/resources
       image: my-registry/my-producer-image
       imagePullPolicy: IfNotPresent
@@ -55,12 +63,20 @@
       FAKE_ARG: fake-arg-value
     files:
       log4j2.xml:
-        content: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Configuration>\n  \
-          \  <Appenders>\n        <Console name=\"Console\" target=\"SYSTEM_OUT\"\
-          >\n            <PatternLayout pattern=\"%d{HH:mm:ss.SSS} %-5level %logger{36}\
-          \ - %msg%n\"/>\n        </Console>\n    </Appenders>\n    <Loggers>\n  \
-          \      <Root level=\"info\">\n            <AppenderRef ref=\"Console\"/>\n\
-          \        </Root>\n    </Loggers>\n</Configuration>\n"
+        content: |
+          <?xml version="1.0" encoding="UTF-8"?>
+          <Configuration>
+              <Appenders>
+                  <Console name="Console" target="SYSTEM_OUT">
+                      <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n"/>
+                  </Console>
+              </Appenders>
+              <Loggers>
+                  <Root level="info">
+                      <AppenderRef ref="Console"/>
+                  </Root>
+              </Loggers>
+          </Configuration>
         mountPath: app/resources
     image: my-registry/my-producer-image
     imagePullPolicy: IfNotPresent
@@ -88,28 +104,36 @@
       affinity:
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-          - preference:
-              matchExpressions:
-              - key: foo
-                operator: Exists
-                values: []
-            weight: 2
-          - preference:
-              matchExpressions:
-              - key: bar
-                operator: DoesNotExist
-                values: []
-            weight: 1
+            - preference:
+                matchExpressions:
+                  - key: foo
+                    operator: Exists
+                    values: []
+              weight: 2
+            - preference:
+                matchExpressions:
+                  - key: bar
+                    operator: DoesNotExist
+                    values: []
+              weight: 1
       commandLine:
         CONVERT_XML: true
       files:
         log4j2.xml:
-          content: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Configuration>\n\
-            \    <Appenders>\n        <Console name=\"Console\" target=\"SYSTEM_OUT\"\
-            >\n            <PatternLayout pattern=\"%d{HH:mm:ss.SSS} %-5level %logger{36}\
-            \ - %msg%n\"/>\n        </Console>\n    </Appenders>\n    <Loggers>\n\
-            \        <Root level=\"info\">\n            <AppenderRef ref=\"Console\"\
-            />\n        </Root>\n    </Loggers>\n</Configuration>\n"
+          content: |
+            <?xml version="1.0" encoding="UTF-8"?>
+            <Configuration>
+                <Appenders>
+                    <Console name="Console" target="SYSTEM_OUT">
+                        <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n"/>
+                    </Console>
+                </Appenders>
+                <Loggers>
+                    <Root level="info">
+                        <AppenderRef ref="Console"/>
+                    </Root>
+                </Loggers>
+            </Configuration>
           mountPath: app/resources
       image: my-registry/my-streams-app-image
       imagePullPolicy: IfNotPresent
@@ -125,12 +149,12 @@
         errorTopic: resources-streams-bootstrap-my-streams-app-error
         inputPattern: my-input-pattern
         inputTopics:
-        - my-input-topic
+          - my-input-topic
         labeledInputPatterns:
           my-input-topic-labeled-pattern: my-labeled-input-pattern
         labeledInputTopics:
           my-input-topic-label:
-          - my-labeled-input-topic
+            - my-labeled-input-topic
         labeledOutputTopics:
           my-output-topic-label: my-labeled-topic-output
         outputTopic: my-output-topic
@@ -180,28 +204,36 @@
     affinity:
       nodeAffinity:
         preferredDuringSchedulingIgnoredDuringExecution:
-        - preference:
-            matchExpressions:
-            - key: foo
-              operator: Exists
-              values: []
-          weight: 2
-        - preference:
-            matchExpressions:
-            - key: bar
-              operator: DoesNotExist
-              values: []
-          weight: 1
+          - preference:
+              matchExpressions:
+                - key: foo
+                  operator: Exists
+                  values: []
+            weight: 2
+          - preference:
+              matchExpressions:
+                - key: bar
+                  operator: DoesNotExist
+                  values: []
+            weight: 1
     commandLine:
       CONVERT_XML: true
     files:
       log4j2.xml:
-        content: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Configuration>\n  \
-          \  <Appenders>\n        <Console name=\"Console\" target=\"SYSTEM_OUT\"\
-          >\n            <PatternLayout pattern=\"%d{HH:mm:ss.SSS} %-5level %logger{36}\
-          \ - %msg%n\"/>\n        </Console>\n    </Appenders>\n    <Loggers>\n  \
-          \      <Root level=\"info\">\n            <AppenderRef ref=\"Console\"/>\n\
-          \        </Root>\n    </Loggers>\n</Configuration>\n"
+        content: |
+          <?xml version="1.0" encoding="UTF-8"?>
+          <Configuration>
+              <Appenders>
+                  <Console name="Console" target="SYSTEM_OUT">
+                      <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n"/>
+                  </Console>
+              </Appenders>
+              <Loggers>
+                  <Root level="info">
+                      <AppenderRef ref="Console"/>
+                  </Root>
+              </Loggers>
+          </Configuration>
         mountPath: app/resources
     image: my-registry/my-streams-app-image
     imagePullPolicy: IfNotPresent
@@ -217,12 +249,12 @@
       errorTopic: resources-streams-bootstrap-my-streams-app-error
       inputPattern: my-input-pattern
       inputTopics:
-      - my-input-topic
+        - my-input-topic
       labeledInputPatterns:
         my-input-topic-labeled-pattern: my-labeled-input-pattern
       labeledInputTopics:
         my-input-topic-label:
-        - my-labeled-input-topic
+          - my-labeled-input-topic
       labeledOutputTopics:
         my-output-topic-label: my-labeled-topic-output
       outputTopic: my-output-topic

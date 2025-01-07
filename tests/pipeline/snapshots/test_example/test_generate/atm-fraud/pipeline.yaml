@@ -155,7 +155,7 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         errorTopic: atm-fraud-transaction-joiner-dead-letter-topic
         inputTopics:
-        - atm-fraud-transaction-avro-producer-topic
+          - atm-fraud-transaction-avro-producer-topic
         optimizeLeaveGroupBehavior: false
         outputTopic: atm-fraud-transaction-joiner-topic
         schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
@@ -199,7 +199,7 @@
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       errorTopic: atm-fraud-transaction-joiner-dead-letter-topic
       inputTopics:
-      - atm-fraud-transaction-avro-producer-topic
+        - atm-fraud-transaction-avro-producer-topic
       optimizeLeaveGroupBehavior: false
       outputTopic: atm-fraud-transaction-joiner-topic
       schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
@@ -235,7 +235,7 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         errorTopic: atm-fraud-fraud-detector-dead-letter-topic
         inputTopics:
-        - atm-fraud-transaction-joiner-topic
+          - atm-fraud-transaction-joiner-topic
         optimizeLeaveGroupBehavior: false
         outputTopic: atm-fraud-fraud-detector-topic
         schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
@@ -279,7 +279,7 @@
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       errorTopic: atm-fraud-fraud-detector-dead-letter-topic
       inputTopics:
-      - atm-fraud-transaction-joiner-topic
+        - atm-fraud-transaction-joiner-topic
       optimizeLeaveGroupBehavior: false
       outputTopic: atm-fraud-fraud-detector-topic
       schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
@@ -316,9 +316,9 @@
         errorTopic: atm-fraud-account-linker-dead-letter-topic
         extraInputTopics:
           accounts:
-          - atm-fraud-account-producer-topic
+            - atm-fraud-account-producer-topic
         inputTopics:
-        - atm-fraud-fraud-detector-topic
+          - atm-fraud-fraud-detector-topic
         optimizeLeaveGroupBehavior: false
         outputTopic: atm-fraud-account-linker-topic
         schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
@@ -370,9 +370,9 @@
       errorTopic: atm-fraud-account-linker-dead-letter-topic
       extraInputTopics:
         accounts:
-        - atm-fraud-account-producer-topic
+          - atm-fraud-account-producer-topic
       inputTopics:
-      - atm-fraud-fraud-detector-topic
+        - atm-fraud-fraud-detector-topic
       optimizeLeaveGroupBehavior: false
       outputTopic: atm-fraud-account-linker-topic
       schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/

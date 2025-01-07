@@ -21,7 +21,7 @@ from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.dict_ops import update_nested_pair
 from kpops.utils.environment import ENV, PIPELINE_PATH
-from kpops.utils.yaml import load_yaml_file
+from kpops.utils.yaml import CustomSafeDumper, load_yaml_file
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Coroutine, Iterator
@@ -97,7 +97,10 @@ class Pipeline(BaseModel):
 
     def to_yaml(self) -> str:
         return yaml.dump(
-            self.model_dump(mode="json", by_alias=True, exclude_none=True)["components"]
+            self.model_dump(mode="json", by_alias=True, exclude_none=True)[
+                "components"
+            ],
+            Dumper=CustomSafeDumper,
         )
 
     def build_execution_graph(
