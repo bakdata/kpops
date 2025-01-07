@@ -148,10 +148,9 @@ jobs:
         run: uv build
 
       - name: Publish TestPyPI
-        run: uv publish --trusted-publishing always -r testpypi
+        run: uv publish
         env:
           UV_PUBLISH_URL: https://test.pypi.org/legacy/
-          UV_PUBLISH_USERNAME: __token__
           UV_PUBLISH_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
 
   publish-docs-from-main:
