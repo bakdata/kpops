@@ -26,7 +26,7 @@ jobs:
           - windows-2022
         python-version: ["3.11", "3.12"]
         is-draft-pr: 
-          - ${{ github.event.pull_request.draft == true }}
+          - ${{ github.event.pull_request.draft }}
         include:
           - python-version: "3.11"
             os: ubuntu-24.04
@@ -38,6 +38,12 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
+      # TODO: remove, only for debugging
+      - name: Write GitHub context to log
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
       - uses: actions/checkout@v4
 
       - name: Install uv
@@ -83,7 +89,7 @@ jobs:
           - windows-2022
         python-version: ["3.11", "3.12"]
         is-draft-pr: 
-          - ${{ github.event.pull_request.draft == true }}
+          - ${{ github.event.pull_request.draft }}
         exclude:
           # skip Windows jobs on draft PRs because they are slow
           - os: windows-2022
