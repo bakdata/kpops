@@ -82,10 +82,12 @@ jobs:
           - ubuntu-22.04
           - windows-2022
         python-version: ["3.11", "3.12"]
-        include:
-          - python-version: "3.11"
-            os: ubuntu-22.04
-            format-for-github: true
+        pr-update: 
+          - ${{ github.event.action == 'opened' || github.event.action == 'synchronize' }}
+        exclude:
+          # skip Windows jobs on draft PRs because they are slow
+          - os: windows-2022
+            pr-update: true
     runs-on: ${{ matrix.os }}
 
     steps:
