@@ -25,8 +25,8 @@ jobs:
           - ubuntu-24.04
           - windows-2022
         python-version: ["3.11", "3.12"]
-        pr-update: 
-          - ${{ github.event.action == 'opened' || github.event.action == 'synchronize' }}
+        is-draft-pr: 
+          - ${{ github.event.pull_request.draft == true }}
         include:
           - python-version: "3.11"
             os: ubuntu-24.04
@@ -34,7 +34,7 @@ jobs:
         exclude:
           # skip Windows jobs on draft PRs because they are slow
           - os: windows-2022
-            pr-update: true
+            is-draft-pr: true
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -82,12 +82,12 @@ jobs:
           - ubuntu-24.04
           - windows-2022
         python-version: ["3.11", "3.12"]
-        pr-update: 
-          - ${{ github.event.action == 'opened' || github.event.action == 'synchronize' }}
+        is-draft-pr: 
+          - ${{ github.event.pull_request.draft == true }}
         exclude:
           # skip Windows jobs on draft PRs because they are slow
           - os: windows-2022
-            pr-update: true
+            is-draft-pr: true
     runs-on: ${{ matrix.os }}
 
     steps:
