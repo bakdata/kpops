@@ -58,9 +58,6 @@ jobs:
             uv run --frozen ruff check . --config pyproject.toml --no-fix
           fi;
 
-      - name: Formatting (ruff)
-        run: uv run --frozen ruff format
-
       - name: Typing (pyright)
         run: |
           if [[ "${{ matrix.format-for-github }}" == "true" ]]
@@ -69,9 +66,21 @@ jobs:
           fi;
           uv run --frozen pyright
 
+
+  format:
+    name: Format
+    runs-on: [ubuntu-24.04]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+          version: ${{ env.UV_VERSION }}
+
       - name: Check markdown, toml, css formatting
         uses: dprint/check@v2.2
-        if: ${{ runner.os == 'Linux' }}
 
   test:
     name: Test
@@ -134,7 +143,7 @@ jobs:
 
   publish-snapshot-version:
     name: Publish snapshot to TestPyPI
-    needs: [lint, test, docs]
+    needs: [lint, format, test, docs]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -178,7 +187,7 @@ jobs:
     name: Publish docs (main)
     runs-on: ubuntu-24.04
     if: ${{ github.ref == 'refs/heads/main' }}
-    needs: [lint, test, docs]
+    needs: [lint, format, test, docs]
     steps:
       - uses: actions/checkout@v4
 
@@ -194,7 +203,7 @@ jobs:
     name: Publish docs (dev)
     runs-on: ubuntu-24.04
     if: ${{ github.event_name == 'pull_request' }}
-    needs: [lint, test, docs]
+    needs: [lint, format, test, docs]
     steps:
       - uses: actions/checkout@v4
         with:
