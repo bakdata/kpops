@@ -38,12 +38,6 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      # TODO: remove, only for debugging
-      - name: Write GitHub context to log
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
-        run: echo "$GITHUB_CONTEXT"
-
       - uses: actions/checkout@v4
 
       - name: Install uv
