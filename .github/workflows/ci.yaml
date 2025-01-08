@@ -159,6 +159,8 @@ jobs:
         with:
           release-type: patch
 
+      - run: git restore .
+
       - name: Bump version snapshot time
         uses: bakdata/ci-templates/actions/bump-version@1.50.4
         with:
