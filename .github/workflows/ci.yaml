@@ -79,7 +79,10 @@ jobs:
           python-version: "3.11"
           version: ${{ env.UV_VERSION }}
 
-      - name: Check markdown, toml, css formatting
+      - name: ruff
+        run: uv run --frozen ruff format --check
+
+      - name: dprint
         uses: dprint/check@v2.2
 
   test:
