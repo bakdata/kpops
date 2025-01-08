@@ -28,7 +28,7 @@ runs:
       uses: astral-sh/setup-uv@v5
       with:
         python-version: "3.11"
-        version: latest
+        version: "0.5.14"
 
     - name: Update gh-pages branch
       shell: bash

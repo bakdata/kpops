@@ -12,6 +12,9 @@ defaults:
   run:
     shell: bash
 
+env:
+  UV_VERSION: "0.5.14"
+
 jobs:
   lint:
     name: Lint
@@ -35,7 +38,7 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           python-version: ${{ matrix.python-version }}
-          version: latest
+          version: ${{ env.UV_VERSION }}
 
       - name: Check uv.lock
         run: uv lock --check
@@ -88,7 +91,7 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           python-version: ${{ matrix.python-version }}
-          version: latest
+          version: ${{ env.UV_VERSION }}
 
       - name: Test
         run: uv run --frozen pytest tests
@@ -104,7 +107,7 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           python-version: "3.11"
-          version: latest
+          version: ${{ env.UV_VERSION }}
 
       - name: Generate schema (kpops schema)
         run: uv run --frozen pre-commit run gen-schema --all-files --show-diff-on-failure
@@ -142,7 +145,7 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           python-version: "3.11"
-          version: latest
+          version: ${{ env.UV_VERSION }}
 
       - name: Build
         run: uv build
