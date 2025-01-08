@@ -22,14 +22,14 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-22.04
+          - ubuntu-24.04
           - windows-2022
         python-version: ["3.11", "3.12"]
         pr-update: 
           - ${{ github.event.action == 'opened' || github.event.action == 'synchronize' }}
         include:
           - python-version: "3.11"
-            os: ubuntu-22.04
+            os: ubuntu-24.04
             format-for-github: true
         exclude:
           # skip Windows jobs on draft PRs because they are slow
@@ -79,7 +79,7 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-22.04
+          - ubuntu-24.04
           - windows-2022
         python-version: ["3.11", "3.12"]
         pr-update: 
@@ -106,7 +106,7 @@ jobs:
 
   docs:
     name: Docs
-    runs-on: [ubuntu-22.04]
+    runs-on: [ubuntu-24.04]
 
     steps:
       - uses: actions/checkout@v4
@@ -135,7 +135,7 @@ jobs:
   publish-snapshot-version:
     name: Publish snapshot to TestPyPI
     needs: [lint, test, docs]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
@@ -176,7 +176,7 @@ jobs:
 
   publish-docs-from-main:
     name: Publish docs (main)
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     if: ${{ github.ref == 'refs/heads/main' }}
     needs: [lint, test, docs]
     steps:
@@ -192,7 +192,7 @@ jobs:
 
   publish-dev-docs-from-pr:
     name: Publish docs (dev)
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     if: ${{ github.event_name == 'pull_request' }}
     needs: [lint, test, docs]
     steps:
