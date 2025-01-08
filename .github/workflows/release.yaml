@@ -20,7 +20,6 @@ jobs:
     with:
       release-type: ${{ inputs.release-type }}
       changelog: true
-      changelog-config: "./.github/changelog-config.json"
       changelog-file: "./docs/docs/user/changelog.md"
     secrets:
       github-username: "${{ secrets.GH_USERNAME }}"
