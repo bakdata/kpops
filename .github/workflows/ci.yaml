@@ -147,6 +147,23 @@ jobs:
           python-version: "3.11"
           version: ${{ env.UV_VERSION }}
 
+      - name: Generate snapshot time
+        id: snapshot-time
+        run: |
+          echo snapshot_time=$(python -c "from datetime import datetime; time = datetime.now(); print(time.strftime('%Y%m%d%H%M%S'))") >> "$GITHUB_OUTPUT"
+
+      - name: Bump version patch
+        id: bump-version
+        uses: bakdata/ci-templates/actions/bump-version@v1.50.4
+        with:
+          release-type: patch
+
+      - name: Bump version snapshot time
+        uses: bakdata/ci-templates/actions/bump-version@v1.50.4
+        with:
+          release-type: patch
+          new-version: ${{ steps.bump-version.outputs.new-version }}-dev${{ steps.snapshot-time.outputs.snapshot-time }}
+
       - name: Build
         run: uv build
 
