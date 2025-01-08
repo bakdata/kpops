@@ -155,12 +155,12 @@ jobs:
 
       - name: Bump version patch
         id: bump-version
-        uses: bakdata/ci-templates/actions/bump-version@v1.50.4
+        uses: bakdata/ci-templates/actions/bump-version@1.50.4
         with:
           release-type: patch
 
       - name: Bump version snapshot time
-        uses: bakdata/ci-templates/actions/bump-version@v1.50.4
+        uses: bakdata/ci-templates/actions/bump-version@1.50.4
         with:
           release-type: patch
           new-version: ${{ steps.bump-version.outputs.new-version }}-dev${{ steps.snapshot-time.outputs.snapshot-time }}
