@@ -151,7 +151,7 @@ jobs:
         id: snapshot-time
         run: |
           snapshot_time=$(python -c "from datetime import datetime; time = datetime.now(); print(time.strftime('%Y%m%d%H%M%S'))")
-          echo "snapshot_time=${snapshot_time}" >> "$GITHUB_OUTPUT"
+          echo "snapshot-time=${snapshot_time}" >> "$GITHUB_OUTPUT"
 
       - name: Bump version patch
         id: bump-version
