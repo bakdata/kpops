@@ -163,7 +163,7 @@ jobs:
         uses: bakdata/ci-templates/actions/bump-version@1.50.4
         with:
           release-type: patch
-          new-version: ${{ steps.bump-version.outputs.new-version }}-dev${{ steps.snapshot-time.outputs.snapshot-time }}
+          new-version: ${{ steps.bump-version.outputs.release-version }}-dev${{ steps.snapshot-time.outputs.snapshot-time }}
 
       - name: Build
         run: uv build
