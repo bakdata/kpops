@@ -169,7 +169,10 @@ jobs:
         with:
           release-type: patch
 
-      - run: git restore .
+      - name: Restore clean Git working directory
+        # clean Git working directory is needed for the next bumpversion call
+        # we only need the version result from the first `patch` bump which is stored as a step output
+        run: git restore . 
 
       - name: Bump version snapshot time
         uses: bakdata/ci-templates/actions/bump-version@1.50.4
