@@ -48,7 +48,6 @@ class TestHelmApp:
             repo_config=repo_config,
         )
 
-    @pytest.mark.asyncio()
     async def test_should_lazy_load_helm_wrapper_and_not_repo_add(
         self,
         helm_app: HelmApp,
@@ -78,7 +77,6 @@ class TestHelmApp:
             HelmUpgradeInstallFlags(),
         )
 
-    @pytest.mark.asyncio()
     async def test_should_lazy_load_helm_wrapper_and_call_repo_add_when_implemented(
         self,
         helm_mock: MagicMock,
@@ -124,7 +122,6 @@ class TestHelmApp:
             ),
         ]
 
-    @pytest.mark.asyncio()
     async def test_should_deploy_app_with_local_helm_chart(
         self,
         helm_mock: MagicMock,
@@ -160,7 +157,6 @@ class TestHelmApp:
             HelmUpgradeInstallFlags(),
         )
 
-    @pytest.mark.asyncio()
     async def test_should_raise_not_implemented_error_when_helm_chart_is_not_set(
         self,
         helm_app: HelmApp,
@@ -174,7 +170,6 @@ class TestHelmApp:
             == "Please implement the helm_chart property of the kpops.components.base_components.helm_app module."
         )
 
-    @pytest.mark.asyncio()
     async def test_should_call_helm_uninstall_when_destroying_helm_app(
         self,
         helm_app: HelmApp,
@@ -192,7 +187,6 @@ class TestHelmApp:
 
         log_info_mock.assert_called_once_with(magentaify(stdout))
 
-    @pytest.mark.asyncio()
     async def test_should_call_helm_uninstall_when_resetting_helm_app(
         self,
         helm_app: HelmApp,
@@ -210,7 +204,6 @@ class TestHelmApp:
 
         log_info_mock.assert_called_once_with(magentaify(stdout))
 
-    @pytest.mark.asyncio()
     async def test_should_call_helm_uninstall_when_cleaning_helm_app(
         self,
         helm_app: HelmApp,

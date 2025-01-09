@@ -52,7 +52,6 @@ class TestHelmWrapper:
     def helm(self, mock_get_version: MagicMock) -> Helm:
         return Helm(helm_config=HelmConfig())
 
-    @pytest.mark.asyncio()
     async def test_should_call_run_command_method_when_helm_install_with_defaults(
         self, helm: Helm, run_command_async: AsyncMock
     ):
@@ -138,7 +137,6 @@ class TestHelmWrapper:
             ),
         ]
 
-    @pytest.mark.asyncio()
     async def test_should_include_configured_tls_parameters_on_update(
         self, helm: Helm, run_command_async: AsyncMock
     ):
@@ -174,7 +172,6 @@ class TestHelmWrapper:
             ],
         )
 
-    @pytest.mark.asyncio()
     async def test_should_call_run_command_method_when_helm_install_with_non_defaults(
         self, helm: Helm, run_command_async: AsyncMock
     ):
@@ -219,7 +216,6 @@ class TestHelmWrapper:
             ],
         )
 
-    @pytest.mark.asyncio()
     async def test_should_call_run_command_method_when_uninstalling_streams_app(
         self, helm: Helm, run_command_async: AsyncMock
     ):
@@ -232,7 +228,6 @@ class TestHelmWrapper:
             ["helm", "uninstall", "test-release", "--namespace", "test-namespace"],
         )
 
-    @pytest.mark.asyncio()
     async def test_should_log_warning_when_release_not_found(
         self,
         run_command_async: AsyncMock,
@@ -250,7 +245,6 @@ class TestHelmWrapper:
             "Release with name test-release not found. Could not uninstall app."
         )
 
-    @pytest.mark.asyncio()
     async def test_should_call_run_command_method_when_installing_streams_app__with_dry_run(
         self, helm: Helm, run_command_async: AsyncMock
     ):

@@ -68,7 +68,6 @@ def mock_list_pvcs(
 
 
 @pytest.mark.usefixtures("mock_list_pvcs")
-@pytest.mark.asyncio
 async def test_list_pvcs(
     pvc_handler: PVCHandler,
     mocker: MockerFixture,
@@ -81,7 +80,6 @@ async def test_list_pvcs(
 
 
 @pytest.mark.usefixtures("mock_list_pvcs")
-@pytest.mark.asyncio
 async def test_delete_pvcs_dry_run(
     pvc_handler: PVCHandler,
     mocker: MockerFixture,
@@ -99,7 +97,6 @@ async def test_delete_pvcs_dry_run(
     )
 
 
-@pytest.mark.asyncio
 async def test_delete_pvcs_dry_run_no_pvcs(
     pvc_handler: PVCHandler,
     mocker: MockerFixture,
@@ -121,7 +118,6 @@ async def test_delete_pvcs_dry_run_no_pvcs(
 
 
 @pytest.mark.usefixtures("mock_list_pvcs")
-@pytest.mark.asyncio
 async def test_delete_pvcs(
     pvc_handler: PVCHandler,
     mocker: MockerFixture,

@@ -45,7 +45,6 @@ class TestStreamsBootstrap:
         assert streams_bootstrap.namespace == "test-namespace"
         assert streams_bootstrap.values.image_tag is None
 
-    @pytest.mark.asyncio()
     async def test_should_deploy_streams_bootstrap_app(self, mocker: MockerFixture):
         streams_bootstrap = StreamsBootstrap(
             name="example-name",
@@ -95,7 +94,6 @@ class TestStreamsBootstrap:
             HelmUpgradeInstallFlags(version="3.2.1"),
         )
 
-    @pytest.mark.asyncio()
     async def test_should_raise_validation_error_for_invalid_image_tag(self):
         with pytest.raises(
             ValidationError,
@@ -113,7 +111,6 @@ class TestStreamsBootstrap:
                 }
             )
 
-    @pytest.mark.asyncio()
     async def test_should_raise_validation_error_for_invalid_helm_chart_version(self):
         with pytest.raises(
             ValueError,
