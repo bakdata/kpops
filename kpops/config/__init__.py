@@ -33,6 +33,12 @@ class StrimziTopicConfig(BaseSettings):
         description="The label to identify the KafkaTopic resources managed by the Topic Operator. This does not have to be the name of the Kafka cluster. It can be the label assigned to the KafkaTopic resource. If you deploy more than one Topic Operator, the labels must be unique for each. That is, the operators cannot manage the same resources.",
     )
 
+    namespace: str | None = Field(
+        default=None,
+        alias="namespace",
+        description="The namespace where the Topic Operator is running. This is the namespace where the KafkaTopic resources are created.",
+    )
+
     @property
     def cluster_labels(self) -> tuple[str, str]:
         """Return the defined strimzi_topic.label as a tuple."""

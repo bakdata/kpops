@@ -48,6 +48,7 @@ def test_topic_spec_validation():
 def test_strimzi_kafka_topic_from_topic(kafka_topic: KafkaTopic, mocker: MockerFixture):
     mock_config = MagicMock()
     mock_config.strimzi_topic.cluster_labels = ("bakdata.com/cluster", "my-cluster")
+    mock_config.strimzi_topic.namespace = None
     mocker.patch(
         "kpops.manifests.strimzi.kafka_topic.get_config", return_value=mock_config
     )
@@ -57,6 +58,30 @@ def test_strimzi_kafka_topic_from_topic(kafka_topic: KafkaTopic, mocker: MockerF
     # Check metadata
     assert strimzi_topic.metadata.name == kafka_topic.name
     assert strimzi_topic.metadata.labels == {"bakdata.com/cluster": "my-cluster"}
+    assert strimzi_topic.metadata.namespace is None
+
+    # Check spec
+    assert strimzi_topic.spec.partitions == kafka_topic.config.partitions_count
+    assert strimzi_topic.spec.replicas == kafka_topic.config.replication_factor
+    assert strimzi_topic.spec.config == kafka_topic.config.configs
+
+
+def test_strimzi_kafka_topic_from_topic_with_namespace(
+    kafka_topic: KafkaTopic, mocker: MockerFixture
+):
+    mock_config = MagicMock()
+    mock_config.strimzi_topic.cluster_labels = ("bakdata.com/cluster", "my-cluster")
+    mock_config.strimzi_topic.namespace = "strimzi"
+    mocker.patch(
+        "kpops.manifests.strimzi.kafka_topic.get_config", return_value=mock_config
+    )
+
+    strimzi_topic = StrimziKafkaTopic.from_topic(kafka_topic)
+
+    # Check metadata
+    assert strimzi_topic.metadata.name == kafka_topic.name
+    assert strimzi_topic.metadata.labels == {"bakdata.com/cluster": "my-cluster"}
+    assert strimzi_topic.metadata.namespace == "strimzi"
 
     # Check spec
     assert strimzi_topic.spec.partitions == kafka_topic.config.partitions_count
