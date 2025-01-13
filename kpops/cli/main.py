@@ -6,7 +6,6 @@ import typer
 
 import kpops.api as kpops
 from kpops.api import log
-from kpops.api.operation import OperationMode
 from kpops.api.options import FilterType
 from kpops.cli.utils import (
     collect_pipeline_paths,
@@ -19,6 +18,7 @@ from kpops.const.file_type import (
     PIPELINE_YAML,
     KpopsFileType,
 )
+from kpops.core.operation import OperationMode
 from kpops.utils.gen_schema import (
     gen_config_schema,
     gen_defaults_schema,

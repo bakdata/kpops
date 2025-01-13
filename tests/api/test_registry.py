@@ -6,8 +6,6 @@ from types import ModuleType
 
 import pytest
 
-from kpops.api.exception import ClassNotFoundError
-from kpops.api.registry import Registry, _find_classes, _iter_namespace, find_class
 from kpops.component_handlers.schema_handler.schema_provider import SchemaProvider
 from kpops.components.base_components.helm_app import HelmApp
 from kpops.components.base_components.kafka_app import KafkaApp
@@ -26,6 +24,8 @@ from kpops.components.streams_bootstrap import (
 from kpops.components.streams_bootstrap_v2 import StreamsBootstrapV2
 from kpops.components.streams_bootstrap_v2.producer.producer_app import ProducerAppV2
 from kpops.components.streams_bootstrap_v2.streams.streams_app import StreamsAppV2
+from kpops.core.exception import ClassNotFoundError
+from kpops.core.registry import Registry, _find_classes, _iter_namespace, find_class
 from tests.cli.resources.custom_module import CustomSchemaProvider
 
 

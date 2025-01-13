@@ -4,7 +4,6 @@ from functools import cached_property
 from pydantic import Field, ValidationError, computed_field
 from typing_extensions import override
 
-from kpops.api.operation import OperationMode
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
 from kpops.components.base_components.helm_app import HelmApp
 from kpops.components.base_components.kafka_app import KafkaAppCleaner
@@ -18,6 +17,7 @@ from kpops.components.streams_bootstrap.streams.model import (
 )
 from kpops.config import get_config
 from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
+from kpops.core.operation import OperationMode
 from kpops.manifests.argo import ArgoHook, enrich_annotations
 from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.manifests.strimzi.kafka_topic import StrimziKafkaTopic

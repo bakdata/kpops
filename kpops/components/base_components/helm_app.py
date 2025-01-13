@@ -8,7 +8,6 @@ import pydantic
 from pydantic import Field, model_serializer
 from typing_extensions import override
 
-from kpops.api import OperationMode
 from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
@@ -27,6 +26,7 @@ from kpops.components.base_components.kubernetes_app import (
     KubernetesAppValues,
 )
 from kpops.config import get_config
+from kpops.core.operation import OperationMode
 from kpops.manifests.argo import ArgoSyncWave, enrich_annotations
 from kpops.manifests.kubernetes import K8S_LABEL_MAX_LEN, KubernetesManifest
 from kpops.utils.colorify import magentaify

@@ -6,9 +6,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from kpops.api.logs import log, log_action
-from kpops.api.operation import OperationMode
 from kpops.api.options import FilterType
-from kpops.api.registry import Registry
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
     KafkaConnectHandler,
@@ -17,6 +15,8 @@ from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.config import KpopsConfig
+from kpops.core.operation import OperationMode
+from kpops.core.registry import Registry
 from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.pipeline import (
     Pipeline,

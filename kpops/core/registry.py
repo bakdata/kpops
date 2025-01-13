@@ -13,9 +13,9 @@ from typing import TYPE_CHECKING, TypeVar
 
 import typer
 
-from kpops.api.exception import ClassNotFoundError
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.const import KPOPS_MODULE
+from kpops.core.exception import ClassNotFoundError
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
