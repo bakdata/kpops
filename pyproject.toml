@@ -76,7 +76,8 @@ asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 
 [tool.pyright]
-exclude = ["**/node_modules", "**/__pycache__", "**/.*", "scratch*"]
+include = ["kpops", "tests", "hooks"]
+
 reportUnknownParameterType = "warning"
 reportUnknownArgumentType = "warning"
 reportUnknownLambdaType = "warning"
