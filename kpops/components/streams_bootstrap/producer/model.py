@@ -1,12 +1,12 @@
 from croniter import croniter
 from pydantic import ConfigDict, Field, field_validator
 
-from kpops.api.exception import ValidationError
 from kpops.components.common.kubernetes_model import RestartPolicy
 from kpops.components.streams_bootstrap.model import (
     KafkaConfig,
     StreamsBootstrapValues,
 )
+from kpops.core.exception import ValidationError
 from kpops.utils.docstring import describe_attr
 
 

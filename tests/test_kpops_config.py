@@ -5,7 +5,6 @@ import pydantic
 import pytest
 from pydantic import AnyHttpUrl, TypeAdapter
 
-from kpops.api.exception import ValidationError
 from kpops.config import (
     KafkaConnectConfig,
     KafkaRestConfig,
@@ -15,6 +14,7 @@ from kpops.config import (
     get_config,
     set_config,
 )
+from kpops.core.exception import ValidationError
 
 RESOURCES_PATH = Path(__file__).parent / "cli" / "resources"
 

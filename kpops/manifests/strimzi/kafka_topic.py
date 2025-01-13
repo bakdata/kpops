@@ -4,9 +4,9 @@ from typing import Any, Self
 
 from pydantic import ConfigDict, Field, model_validator
 
-from kpops.api.exception import ValidationError
 from kpops.components.common.topic import KafkaTopic
 from kpops.config import get_config
+from kpops.core.exception import ValidationError
 from kpops.manifests.kubernetes import KubernetesManifest, ObjectMeta
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import CamelCaseConfigModel

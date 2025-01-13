@@ -15,10 +15,10 @@ from pydantic import (
     computed_field,
 )
 
-from kpops.api.exception import ParsingException, ValidationError
-from kpops.api.registry import Registry
 from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.core.exception import ParsingException, ValidationError
+from kpops.core.registry import Registry
 from kpops.utils.dict_ops import update_nested_pair
 from kpops.utils.environment import ENV, PIPELINE_PATH
 from kpops.utils.yaml import CustomSafeDumper, load_yaml_file

@@ -8,12 +8,12 @@ from typing import TYPE_CHECKING
 from schema_registry.client import AsyncSchemaRegistryClient
 from schema_registry.client.schema import AvroSchema
 
-from kpops.api.exception import ClassNotFoundError
-from kpops.api.registry import Registry, find_class
 from kpops.component_handlers.schema_handler.schema_provider import (
     Schema,
     SchemaProvider,
 )
+from kpops.core.exception import ClassNotFoundError
+from kpops.core.registry import Registry, find_class
 from kpops.utils.colorify import greenify, magentaify, yellowify
 
 if TYPE_CHECKING:

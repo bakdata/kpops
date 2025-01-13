@@ -23,11 +23,11 @@ from pydantic_core.core_schema import (
     ModelFieldsSchema,
 )
 
-from kpops.api.registry import Registry
 from kpops.components.base_components.pipeline_component import (
     PipelineComponent,
 )
 from kpops.config import KpopsConfig
+from kpops.core.registry import Registry
 
 
 class MultiComponentGenerateJsonSchema(GenerateJsonSchema): ...

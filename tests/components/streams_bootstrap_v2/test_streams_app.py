@@ -12,7 +12,6 @@ from lightkube.models.meta_v1 import ObjectMeta
 from lightkube.resources.core_v1 import PersistentVolumeClaim
 from pytest_mock import MockerFixture
 
-from kpops.api.exception import ValidationError
 from kpops.component_handlers import get_handlers
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
@@ -35,6 +34,7 @@ from kpops.components.streams_bootstrap_v2.streams.streams_app import (
     StreamsAppCleaner,
     StreamsAppV2,
 )
+from kpops.core.exception import ValidationError
 
 RESOURCES_PATH = Path(__file__).parent / "resources"
 

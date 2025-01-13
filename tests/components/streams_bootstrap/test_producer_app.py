@@ -4,7 +4,6 @@ from unittest.mock import ANY, MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.api.exception import ValidationError
 from kpops.component_handlers import get_handlers
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
@@ -18,6 +17,7 @@ from kpops.components.streams_bootstrap.producer.producer_app import (
     ProducerApp,
     ProducerAppCleaner,
 )
+from kpops.core.exception import ValidationError
 
 PRODUCER_APP_NAME = "test-producer-app-with-long-name-0123456789abcdefghijklmnop"
 PRODUCER_APP_FULL_NAME = "${pipeline.name}-" + PRODUCER_APP_NAME

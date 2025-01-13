@@ -4,8 +4,8 @@ import pytest
 from pydantic import ValidationError as PydanticValidationError
 from pytest_mock import MockerFixture
 
-from kpops.api.exception import ValidationError
 from kpops.components.common.topic import KafkaTopic, TopicConfig
+from kpops.core.exception import ValidationError
 from kpops.manifests.strimzi.kafka_topic import StrimziKafkaTopic, TopicSpec
 
 
