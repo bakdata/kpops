@@ -29,7 +29,7 @@ pre-commit:
       run: python -m hooks.gen_docs.gen_docs_env_vars
     kpops-docs-components:
       glob: "{kpops/**/*.py,hooks/gen_docs/gen_docs_components.py}"
-      run: python -m hooks.gen_docs.gen_docs_components
+      run: python -m hooks.gen_docs.gen_docs_components {staged_files}
 
 post-checkout:
   commands:

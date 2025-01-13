@@ -76,7 +76,7 @@ DANGEROUS_FILES_TO_CHANGE = {
     PATH_DOCS_KPOPS_STRUCTURE,
 }
 # All args provided to the script
-# Pre-commit passes changed files as args
+# pre-commit/lefthook pass changed files as args
 SCRIPT_ARGUMENTS = set(sys.argv)
 
 log = logging.getLogger("DocumentationGenerator")
@@ -247,7 +247,7 @@ if __name__ == "__main__":
         # Delete the old dependency files
         for dangerous_file in DANGEROUS_FILES_TO_CHANGE:
             dangerous_file.unlink(missing_ok=True)
-        # Don't display warning if `-a` flag suspected in `pre-commit run`
+        # Don't display warning if `--all-files` flag suspected in `pre-commit run` or `lefthook run`
         if ".gitignore" not in SCRIPT_ARGUMENTS:
             log.warning(
                 redify(
