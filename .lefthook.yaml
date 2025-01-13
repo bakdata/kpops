@@ -1,0 +1,45 @@
+pre-commit:
+  parallel: true
+  commands:
+    uv-lock:
+      glob: "{pyproject.toml,uv.lock}"
+      run: uv lock --check
+    ruff-check:
+      glob: "*.py"
+      run: uv run ruff check --force-exclude --config pyproject.toml --fix --show-fixes {staged_files}
+      stage_fixed: true
+    ruff-format:
+      glob: "*.py"
+      run: uv run ruff format --force-exclude --config pyproject.toml {staged_files}
+      stage_fixed: true
+    pyright:
+      glob: "*.py"
+      run: uv run pyright
+    dprint:
+      glob: "*.{md,toml,css}"
+      run: dprint fmt
+    kpops-schema:
+      glob: "{kpops/**/*.py,hooks/gen_schema.py}"
+      run: python -m hooks.gen_schema
+    kpops-docs-cli:
+      glob: "{kpops/**/*.py,hooks/gen_docs/gen_docs_cli_usage.py}"
+      run: python -m hooks.gen_docs.gen_docs_cli_usage
+    kpops-docs-env-vars:
+      glob: "{kpops/**/*.py,hooks/gen_docs/gen_docs_env_vars.py}"
+      run: python -m hooks.gen_docs.gen_docs_env_vars
+    kpops-docs-components:
+      glob: "{kpops/**/*.py,hooks/gen_docs/gen_docs_components.py}"
+      run: python -m hooks.gen_docs.gen_docs_components
+
+post-checkout:
+  commands:
+    dependencies:
+      glob: "uv.lock"
+      run: uv sync
+
+post-merge:
+  files: "git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD"
+  commands:
+    dependencies:
+      glob: uv.lock
+      run: uv sync

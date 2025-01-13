@@ -13,6 +13,15 @@ PIPELINE_PATH = (
 PIPELINE_BASE_DIR = Path()
 
 
+def test_pipeline_path():
+    PipelineGenerator.set_pipeline_path(PIPELINE_PATH)
+
+    assert (
+        ENV["pipeline.path"]
+        == "/Users/disrupted/bakdata/kpops/some/random/path/for/testing/pipeline.yaml"
+    )
+
+
 def test_should_set_pipeline_name_with_default_base_dir():
     PipelineGenerator.set_pipeline_name_env_vars(PIPELINE_BASE_DIR, PIPELINE_PATH)
 
