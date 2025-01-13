@@ -203,11 +203,7 @@
             "type": "boolean"
         },
         "helm_config": {
-            "allOf": [
-                {
-                    "$ref": "#/$defs/HelmConfig"
-                }
-            ],
+            "$ref": "#/$defs/HelmConfig",
             "default": {
                 "api_version": null,
                 "context": null,
@@ -216,11 +212,7 @@
             "description": "Global flags for Helm."
         },
         "helm_diff_config": {
-            "allOf": [
-                {
-                    "$ref": "#/$defs/HelmDiffConfig"
-                }
-            ],
+            "$ref": "#/$defs/HelmDiffConfig",
             "default": {
                 "ignore": []
             },
@@ -235,28 +227,18 @@
             "type": "string"
         },
         "kafka_connect": {
-            "allOf": [
-                {
-                    "$ref": "#/$defs/KafkaConnectConfig"
-                }
-            ],
+            "$ref": "#/$defs/KafkaConnectConfig",
             "default": {
                 "timeout": 30,
                 "url": "http://localhost:8083/"
-            },
-            "description": "Configuration for Kafka Connect."
+            }
         },
         "kafka_rest": {
-            "allOf": [
-                {
-                    "$ref": "#/$defs/KafkaRestConfig"
-                }
-            ],
+            "$ref": "#/$defs/KafkaRestConfig",
             "default": {
                 "timeout": 30,
                 "url": "http://localhost:8082/"
-            },
-            "description": "Configuration for Kafka REST Proxy."
+            }
         },
         "pipeline_base_dir": {
             "default": ".",
@@ -272,17 +254,12 @@
             "type": "boolean"
         },
         "schema_registry": {
-            "allOf": [
-                {
-                    "$ref": "#/$defs/SchemaRegistryConfig"
-                }
-            ],
+            "$ref": "#/$defs/SchemaRegistryConfig",
             "default": {
                 "enabled": false,
                 "timeout": 30,
                 "url": "http://localhost:8081/"
-            },
-            "description": "Configuration for Schema Registry."
+            }
         },
         "strimzi_topic": {
             "anyOf": [
@@ -297,16 +274,11 @@
             "description": "Configuration for Strimzi Kafka Topics."
         },
         "topic_name_config": {
-            "allOf": [
-                {
-                    "$ref": "#/$defs/TopicNameConfig"
-                }
-            ],
+            "$ref": "#/$defs/TopicNameConfig",
             "default": {
                 "default_error_topic_name": "${pipeline.name}-${component.name}-error",
                 "default_output_topic_name": "${pipeline.name}-${component.name}"
-            },
-            "description": "Configure the topic name variables you can use in the pipeline definition."
+            }
         }
     },
     "required": [

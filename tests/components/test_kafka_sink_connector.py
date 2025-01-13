@@ -157,7 +157,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         )
         assert connector.config.topics_regex == topic_pattern
 
-    @pytest.mark.asyncio()
     async def test_deploy_order(
         self,
         connector: KafkaSinkConnector,
@@ -185,7 +184,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             mocker.call.mock_create_connector(connector.config, dry_run=dry_run),
         ]
 
-    @pytest.mark.asyncio()
     async def test_destroy(
         self,
         connector: KafkaSinkConnector,
@@ -201,7 +199,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             CONNECTOR_FULL_NAME, dry_run=True
         )
 
-    @pytest.mark.asyncio()
     async def test_reset_when_dry_run_is_true(
         self,
         connector: KafkaSinkConnector,
@@ -212,7 +209,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
 
         dry_run_handler_mock.print_helm_diff.assert_called_once()
 
-    @pytest.mark.asyncio()
     async def test_reset_when_dry_run_is_false(
         self,
         connector: KafkaSinkConnector,
@@ -287,7 +283,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         dry_run_handler_mock.print_helm_diff.assert_not_called()
         mock_delete_topic.assert_not_called()
 
-    @pytest.mark.asyncio()
     async def test_clean_when_dry_run_is_true(
         self,
         connector: KafkaSinkConnector,
@@ -298,7 +293,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         await connector.clean(dry_run=dry_run)
         dry_run_handler_mock.print_helm_diff.assert_called_once()
 
-    @pytest.mark.asyncio()
     async def test_clean_when_dry_run_is_false(
         self,
         connector: KafkaSinkConnector,
@@ -388,7 +382,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         ]
         dry_run_handler_mock.print_helm_diff.assert_not_called()
 
-    @pytest.mark.asyncio()
     async def test_clean_without_to_when_dry_run_is_true(
         self,
         dry_run_handler_mock: MagicMock,
@@ -405,7 +398,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         await connector.clean(dry_run)
         dry_run_handler_mock.print_helm_diff.assert_called_once()
 
-    @pytest.mark.asyncio()
     async def test_clean_without_to_when_dry_run_is_false(
         self,
         helm_mock: MagicMock,

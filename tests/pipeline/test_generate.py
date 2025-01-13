@@ -703,7 +703,6 @@ class TestGenerate:
         assert component == topic.removeprefix("topic-")
         assert (component, topic) in edges
 
-    @pytest.mark.asyncio()
     async def test_parallel_execution_graph(self):
         pipeline = kpops.generate(
             RESOURCE_PATH / "parallel-pipeline" / PIPELINE_YAML,
@@ -744,7 +743,6 @@ class TestGenerate:
             mock.call("s3-connector-1"),
         ]
 
-    @pytest.mark.asyncio()
     async def test_subgraph_execution(self):
         pipeline = kpops.generate(
             RESOURCE_PATH / "parallel-pipeline" / PIPELINE_YAML,
@@ -772,7 +770,6 @@ class TestGenerate:
             mock.call("s3-connector-1"),
         ]
 
-    @pytest.mark.asyncio()
     async def test_parallel_execution_graph_reverse(self):
         pipeline = kpops.generate(
             RESOURCE_PATH / "parallel-pipeline" / PIPELINE_YAML,

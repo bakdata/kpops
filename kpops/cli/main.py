@@ -132,36 +132,6 @@ def init(
 
 
 @app.command(
-    help="""
-    Generate JSON schema.
-
-    The schemas can be used to enable support for KPOps files in a text editor.
-    """
-)
-def schema(
-    scope: KpopsFileType = typer.Argument(
-        ...,
-        show_default=False,
-        help=f"""
-        Scope of the generated schema
-        \n\n\n
-        - {KpopsFileType.PIPELINE.value}: Schema of PipelineComponents for KPOps {PIPELINE_YAML}
-        \n\n
-        - {KpopsFileType.DEFAULTS.value}: Schema of PipelineComponents for KPOps {DEFAULTS_YAML}
-        \n\n
-        - {KpopsFileType.CONFIG.value}: Schema for KPOps {CONFIG_YAML}""",
-    ),
-) -> None:
-    match scope:
-        case KpopsFileType.PIPELINE:
-            gen_pipeline_schema()
-        case KpopsFileType.DEFAULTS:
-            gen_defaults_schema()
-        case KpopsFileType.CONFIG:
-            gen_config_schema()
-
-
-@app.command(
     short_help="Generate enriched pipeline representation",
     help="Enrich pipeline steps with defaults. The enriched pipeline is used for all KPOps operations (deploy, destroy, ...).",
 )
@@ -372,6 +342,36 @@ def version_callback(show_version: bool) -> None:
     if show_version:
         typer.echo(f"{KPOPS} {__version__}")
         raise typer.Exit
+
+
+@app.command(
+    help="""
+    Generate JSON schema.
+
+    The schemas can be used to enable support for KPOps files in a text editor.
+    """
+)
+def schema(
+    scope: KpopsFileType = typer.Argument(
+        ...,
+        show_default=False,
+        help=f"""
+        Scope of the generated schema
+        \n\n\n
+        - {KpopsFileType.PIPELINE.value}: Schema of PipelineComponents for KPOps {PIPELINE_YAML}
+        \n\n
+        - {KpopsFileType.DEFAULTS.value}: Schema of PipelineComponents for KPOps {DEFAULTS_YAML}
+        \n\n
+        - {KpopsFileType.CONFIG.value}: Schema for KPOps {CONFIG_YAML}""",
+    ),
+) -> None:
+    match scope:
+        case KpopsFileType.PIPELINE:
+            gen_pipeline_schema()
+        case KpopsFileType.DEFAULTS:
+            gen_defaults_schema()
+        case KpopsFileType.CONFIG:
+            gen_config_schema()
 
 
 @app.callback()

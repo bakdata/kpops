@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pydantic
 import pytest
-from pydantic import AnyHttpUrl, AnyUrl, TypeAdapter
+from pydantic import AnyHttpUrl, TypeAdapter
 
 from kpops.api.exception import ValidationError
 from kpops.config import (
@@ -31,9 +31,9 @@ def test_kpops_config_with_default_values():
         == "${pipeline.name}-${component.name}-error"
     )
     assert default_config.schema_registry.enabled is False
-    assert default_config.schema_registry.url == AnyUrl("http://localhost:8081")
-    assert default_config.kafka_rest.url == AnyUrl("http://localhost:8082")
-    assert default_config.kafka_connect.url == AnyUrl("http://localhost:8083")
+    assert default_config.schema_registry.url == AnyHttpUrl("http://localhost:8081")
+    assert default_config.kafka_rest.url == AnyHttpUrl("http://localhost:8082")
+    assert default_config.kafka_connect.url == AnyHttpUrl("http://localhost:8083")
     assert default_config.kafka_rest.timeout == 30
     assert default_config.kafka_connect.timeout == 30
     assert default_config.schema_registry.timeout == 30

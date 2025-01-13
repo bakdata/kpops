@@ -4,7 +4,7 @@ from .producer.producer_app import ProducerAppV2
 from .streams.streams_app import StreamsAppV2
 
 __all__ = (
-    "StreamsBootstrapV2",
-    "StreamsAppV2",
     "ProducerAppV2",
+    "StreamsAppV2",
+    "StreamsBootstrapV2",
 )

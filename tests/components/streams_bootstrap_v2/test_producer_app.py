@@ -116,7 +116,6 @@ class TestProducerApp:
             "first-extra-topic": KafkaTopic(name="extra-topic-1")
         }
 
-    @pytest.mark.asyncio()
     async def test_deploy_order_when_dry_run_is_false(
         self,
         producer_app: ProducerAppV2,
@@ -167,7 +166,6 @@ class TestProducerApp:
             ),
         ]
 
-    @pytest.mark.asyncio()
     async def test_destroy(
         self,
         producer_app: ProducerAppV2,
@@ -181,7 +179,6 @@ class TestProducerApp:
             "test-namespace", PRODUCER_APP_RELEASE_NAME, True
         )
 
-    @pytest.mark.asyncio()
     async def test_should_clean_producer_app(
         self,
         producer_app: ProducerAppV2,
@@ -259,7 +256,6 @@ class TestProducerApp:
             ]
         )
 
-    @pytest.mark.asyncio()
     async def test_should_clean_producer_app_and_deploy_clean_up_job_and_delete_clean_up_with_dry_run_false(
         self,
         mocker: MockerFixture,
@@ -363,7 +359,6 @@ class TestProducerApp:
             KafkaTopic(name="extra-topic-1"),
         ]
 
-    @pytest.mark.asyncio()
     async def test_should_not_deploy_clean_up_when_rest(self, mocker: MockerFixture):
         image_tag_in_cluster = "1.1.1"
         mocker.patch.object(
@@ -411,7 +406,6 @@ class TestProducerApp:
         )
         mock_helm_upgrade_install_clean_up.assert_not_called()
 
-    @pytest.mark.asyncio()
     async def test_should_deploy_clean_up_job_with_values_in_cluster_when_clean(
         self, mocker: MockerFixture
     ):
@@ -476,7 +470,6 @@ class TestProducerApp:
             HelmUpgradeInstallFlags(version="2.9.0", wait=True, wait_for_jobs=True),
         )
 
-    @pytest.mark.asyncio()
     async def test_clean_should_fall_back_to_local_values_when_validation_of_cluster_values_fails(
         self, mocker: MockerFixture, caplog: pytest.LogCaptureFixture
     ):

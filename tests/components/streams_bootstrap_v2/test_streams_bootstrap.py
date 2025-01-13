@@ -36,7 +36,6 @@ class TestStreamsBootstrap:
         assert streams_bootstrap.namespace == "test-namespace"
         assert streams_bootstrap.values.image_tag == "latest"
 
-    @pytest.mark.asyncio()
     async def test_should_deploy_streams_bootstrap_app(self, mocker: MockerFixture):
         streams_bootstrap = StreamsBootstrapV2.model_validate(
             {
@@ -84,7 +83,6 @@ class TestStreamsBootstrap:
             HelmUpgradeInstallFlags(version="1.2.3"),
         )
 
-    @pytest.mark.asyncio()
     async def test_should_raise_validation_error_for_invalid_image_tag(self):
         with pytest.raises(
             ValidationError,

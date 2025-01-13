@@ -337,7 +337,6 @@ class TestStreamsApp:
             KafkaTopic(name="a"),
         ]
 
-    @pytest.mark.asyncio()
     async def test_deploy_order_when_dry_run_is_false(self, mocker: MockerFixture):
         streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
@@ -450,7 +449,6 @@ class TestStreamsApp:
             ),
         ]
 
-    @pytest.mark.asyncio()
     async def test_destroy(
         self,
         streams_app: StreamsApp,
@@ -464,7 +462,6 @@ class TestStreamsApp:
             "test-namespace", STREAMS_APP_RELEASE_NAME, True
         )
 
-    @pytest.mark.asyncio()
     async def test_reset_when_dry_run_is_false(
         self,
         streams_app: StreamsApp,
@@ -532,7 +529,6 @@ class TestStreamsApp:
             ]
         )
 
-    @pytest.mark.asyncio()
     async def test_should_clean_streams_app_and_deploy_clean_up_job_and_delete_clean_up(
         self,
         streams_app: StreamsApp,
@@ -599,7 +595,6 @@ class TestStreamsApp:
             ]
         )
 
-    @pytest.mark.asyncio()
     async def test_should_deploy_clean_up_job_with_values_in_cluster_when_reset(
         self, mocker: MockerFixture
     ):
@@ -679,7 +674,6 @@ class TestStreamsApp:
             HelmUpgradeInstallFlags(version="3.1.0", wait=True, wait_for_jobs=True),
         )
 
-    @pytest.mark.asyncio()
     async def test_should_deploy_clean_up_job_with_values_in_cluster_when_clean(
         self, mocker: MockerFixture
     ):
@@ -759,7 +753,6 @@ class TestStreamsApp:
             HelmUpgradeInstallFlags(version="3.1.0", wait=True, wait_for_jobs=True),
         )
 
-    @pytest.mark.asyncio()
     async def test_get_input_output_topics(self):
         streams_app = StreamsApp(
             name="my-app",
@@ -866,7 +859,6 @@ class TestStreamsApp:
             PVCHandler, "list_pvcs", side_effect=async_generator_side_effect
         )
 
-    @pytest.mark.asyncio()
     @pytest.mark.usefixtures("kubeconfig")
     async def test_stateful_clean_with_dry_run_false(
         self,
@@ -941,7 +933,6 @@ class TestStreamsApp:
             ]
         )
 
-    @pytest.mark.asyncio()
     @pytest.mark.usefixtures("kubeconfig")
     async def test_stateful_clean_with_dry_run_true(
         self,
@@ -970,7 +961,6 @@ class TestStreamsApp:
             in caplog.text
         )
 
-    @pytest.mark.asyncio()
     async def test_clean_should_fall_back_to_local_values_when_validation_of_cluster_values_fails(
         self,
         mocker: MockerFixture,
