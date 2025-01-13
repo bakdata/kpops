@@ -51,12 +51,7 @@ jobs:
 
       - name: Lint (ruff)
         run: |
-          if [[ "${{ matrix.format-for-github }}" == "true" ]]
-          then
-            uv run --frozen ruff check . --config pyproject.toml --output-format=github --no-fix
-          else
-            uv run --frozen ruff check . --config pyproject.toml --no-fix
-          fi;
+            uv run --frozen ruff check . --config pyproject.toml --no-fix ${{ matrix.format-for-github && '--output-format=github' }}
 
       - name: Typing (pyright)
         run: |
