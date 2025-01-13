@@ -443,8 +443,7 @@ dev = [
     { name = "polyfactory" },
     { name = "pre-commit" },
     { name = "pyright" },
-    { name = "pytablereader" },
-    { name = "pytablewriter" },
+    { name = "pytablewriter", extra = ["from"] },
     { name = "pytest" },
     { name = "pytest-asyncio" },
     { name = "pytest-httpx" },
@@ -479,7 +478,7 @@ requires-dist = [
     { name = "python-schema-registry-client", specifier = ">=2.4.1" },
     { name = "pyyaml", specifier = ">=6.0" },
     { name = "rich", specifier = ">=12.4.4" },
-    { name = "typer", specifier = ">=0.12.5" },
+    { name = "typer", extras = ["all"], specifier = ">=0.12.5" },
 ]
 
 [package.metadata.requires-dev]
@@ -487,8 +486,7 @@ dev = [
     { name = "polyfactory", specifier = ">=2.13.0" },
     { name = "pre-commit", specifier = ">=2.19.0" },
     { name = "pyright", specifier = ">=1.1.352" },
-    { name = "pytablereader", specifier = ">=0.31.4" },
-    { name = "pytablewriter", specifier = ">=1.0.0" },
+    { name = "pytablewriter", extras = ["from"], specifier = ">=1.0.0" },
     { name = "pytest", specifier = ">=8.3.2" },
     { name = "pytest-asyncio", specifier = ">=0.23.8" },
     { name = "pytest-httpx", specifier = ">=0.30.0" },
@@ -1090,6 +1088,11 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/f6/a1/617730f290f04d347103ab40bf67d317df6691b14746f6e1ea039fb57062/pytablewriter-1.2.1.tar.gz", hash = "sha256:7bd0f4f397e070e3b8a34edcf1b9257ccbb18305493d8350a5dbc9957fced959", size = 619241 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/21/4c/c199512f01c845dfe5a7840ab3aae6c60463b5dc2a775be72502dfd9170a/pytablewriter-1.2.1-py3-none-any.whl", hash = "sha256:e906ff7ff5151d70a5f66e0f7b75642a7f2dce8d893c265b79cc9cf6bc04ddb4", size = 91083 },
+]
+
+[package.optional-dependencies]
+from = [
+    { name = "pytablereader" },
 ]
 
 [[package]]

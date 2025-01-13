@@ -32,7 +32,7 @@ dependencies = [
   "python-schema-registry-client>=2.4.1",
   "pyyaml>=6.0",
   "rich>=12.4.4",
-  "typer>=0.12.5",
+  "typer[all]>=0.12.5",
 ]
 
 [project.scripts]
@@ -43,8 +43,7 @@ dev = [
   "polyfactory>=2.13.0",
   "pre-commit>=2.19.0",
   "pyright>=1.1.352",
-  "pytablereader>=0.31.4",
-  "pytablewriter>=1.0.0",
+  "pytablewriter[from]>=1.0.0",
   "pytest>=8.3.2",
   "pytest-asyncio>=0.23.8",
   "pytest-httpx>=0.30.0",
