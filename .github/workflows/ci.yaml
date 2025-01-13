@@ -139,6 +139,7 @@ jobs:
       - name: Test docs build (mkdocs)
         run: uv run --frozen --group=docs mkdocs build -f docs/mkdocs.yml
 
+  # TODO: extract into ci-templates
   publish-snapshot-version:
     name: Publish snapshot to TestPyPI
     needs: [lint, format, test, docs]
@@ -155,7 +156,7 @@ jobs:
       - name: Generate snapshot time
         id: snapshot-time
         run: |
-          snapshot_time=$(python -c "from datetime import datetime; time = datetime.now(); print(time.strftime('%Y%m%d%H%M%S'))")
+          snapshot_time=$(date +'%Y%m%d%H%M%S')
           echo "snapshot-time=${snapshot_time}" >> "$GITHUB_OUTPUT"
 
       - name: Bump version patch
