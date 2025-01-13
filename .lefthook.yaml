@@ -28,7 +28,15 @@ pre-commit:
       glob: "{kpops/**/*.py,hooks/gen_docs/gen_docs_env_vars.py}"
       run: python -m hooks.gen_docs.gen_docs_env_vars
     kpops-docs-components:
-      glob: "{kpops/**/*.py,hooks/gen_docs/gen_docs_components.py}"
+      glob: |
+        .gitignore
+        hooks/gen_docs/gen_docs_components.py
+        docs/docs/resources/pipeline-defaults/headers/*.yaml
+        docs/docs/resources/pipeline-components/headers/*.yaml
+        docs/docs/resources/pipeline-components/sections/*.yaml
+        docs/docs/resources/pipeline-components/dependencies/*.yaml
+        kpops/cli/main.py
+        kpops/components/*.py
       run: python -m hooks.gen_docs.gen_docs_components {staged_files}
 
 post-checkout:
