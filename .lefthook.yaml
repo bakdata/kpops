@@ -33,8 +33,7 @@ pre-commit:
         # hooks/gen_docs/gen_docs_components.py -- hook's behavior is possibly changed
         # docs/.../.yaml -- examples changed or dependencies edited
         # kpops/components/... -- KPOps components possibly changed
-      run: python -m hooks.gen_docs.gen_docs_components {staged_files}
-      stage_fixed: true
+      run: python -m hooks.gen_docs.gen_docs_components {staged_files} && git add docs/docs/resources
 
 post-checkout:
   commands:
