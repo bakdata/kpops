@@ -1,6 +1,6 @@
 # Auto generation
 
-Auto generation happens mostly with Git hooks. You can find the [`lefthook`](https://evilmartians.github.io/lefthook/) configuration [here](https://github.com/bakdata/kpops/blob/main/.lefthook.yaml). These pre-commit hooks call different [Python scripts](https://github.com/bakdata/kpops/tree/main/hooks) to auto generate code for the documentation.
+Auto generation happens mostly with Git hooks. You can find the [`lefthook`](https://evilmartians.github.io/lefthook/) configuration [here](https://github.com/bakdata/kpops/blob/main/lefthook.yaml). These pre-commit hooks call different [Python scripts](https://github.com/bakdata/kpops/tree/main/hooks) to auto generate code for the documentation.
 
 ## Generation scripts and their respective files
 
