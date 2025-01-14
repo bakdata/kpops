@@ -32,7 +32,7 @@ dependencies = [
   "python-schema-registry-client>=2.4.1",
   "pyyaml>=6.0",
   "rich>=12.4.4",
-  "typer[all]>=0.12.5",
+  "typer>=0.12.5",
 ]
 
 [project.scripts]
@@ -66,11 +66,12 @@ docs = [
 [tool.uv]
 package = true
 
-[tool.setuptools]
-license-files = [] # HACK: workaround for https://github.com/astral-sh/uv/issues/9513
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-[tool.setuptools.packages.find]
-include = ["kpops"]
+[tool.hatch.build.targets.wheel]
+packages = ["kpops"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
