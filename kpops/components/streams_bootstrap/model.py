@@ -228,6 +228,15 @@ class StreamsBootstrapValues(SerializeAsOptionalModel, HelmAppValues):
         description=describe_attr("tolerations", __doc__),
     )
 
+    @pydantic.model_validator(mode="before")
+    @classmethod
+    def unsupported_attributes(cls, values: Any) -> Any:
+        for attr in ("streams",):
+            if attr in values:
+                msg = f"streams-bootstrap v3 no longer supports '{attr}' attribute."
+                raise ValueError(msg)
+        return values
+
 
 class KafkaConfig(CamelCaseConfigModel, DescConfigModel):
     """Kafka Streams config.
