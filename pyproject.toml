@@ -77,6 +77,8 @@ asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 
 [tool.pyright]
+reportImportCycles = true
+
 reportUnknownParameterType = "warning"
 reportUnknownArgumentType = "warning"
 reportUnknownLambdaType = "warning"
