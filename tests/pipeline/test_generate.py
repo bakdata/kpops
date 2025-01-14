@@ -894,9 +894,27 @@ class TestGenerate:
         )
 
         assert pipeline_original == pipeline_symlinked
-        assert len(pipeline_symlinked) == 3
-        assert [component.type for component in pipeline_symlinked.components] == [
-            "scheduled-producer",
-            "converter",
-            "filter",
-        ]
+
+    def test_symlinked_folder_renders_as_original_folder_pipeline(
+        self,
+    ):
+        pipeline_original = kpops.generate(
+            RESOURCE_PATH / "first-pipeline" / PIPELINE_YAML,
+        )
+        pipeline_symlinked = kpops.generate(
+            RESOURCE_PATH / "symlinked-folder" / PIPELINE_YAML,
+        )
+
+        assert pipeline_original == pipeline_symlinked
+
+    def test_symlinked_folder_and_pipelines_with_normal_pipeline_render_as_original(
+        self,
+    ):
+        pipeline_original = kpops.generate(
+            RESOURCE_PATH / "pipeline-folders" / PIPELINE_YAML,
+        )
+        pipeline_symlinked = kpops.generate(
+            RESOURCE_PATH / "pipeline-folders-with-symlinks" / PIPELINE_YAML,
+        )
+
+        assert pipeline_original == pipeline_symlinked
