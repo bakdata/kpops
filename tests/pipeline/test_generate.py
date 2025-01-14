@@ -882,3 +882,21 @@ class TestGenerate:
         assert result.exit_code == 0, result.stdout
 
         snapshot.assert_match(result.stdout, PIPELINE_YAML)
+
+    def test_symlinked_pipeline_as_original_pipeline(
+        self,
+    ):
+        pipeline_original = kpops.generate(
+            RESOURCE_PATH / "first-pipeline" / PIPELINE_YAML,
+        )
+        pipeline_symlinked = kpops.generate(
+            RESOURCE_PATH / "pipeline-symlinked" / PIPELINE_YAML,
+        )
+
+        assert pipeline_original == pipeline_symlinked
+        assert len(pipeline_symlinked) == 3
+        assert [component.type for component in pipeline_symlinked.components] == [
+            "scheduled-producer",
+            "converter",
+            "filter",
+        ]
