@@ -78,6 +78,8 @@ asyncio_default_fixture_loop_scope = "function"
 [tool.pyright]
 include = ["kpops", "tests", "hooks"]
 
+reportImportCycles = true
+
 reportUnknownParameterType = "warning"
 reportUnknownArgumentType = "warning"
 reportUnknownLambdaType = "warning"

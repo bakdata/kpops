@@ -9,7 +9,7 @@ from kpops.components.base_components.helm_app import HelmApp
 from kpops.components.base_components.kafka_app import KafkaAppCleaner
 from kpops.components.common.app_type import AppType
 from kpops.components.common.topic import KafkaTopic
-from kpops.components.streams_bootstrap_v2 import StreamsBootstrapV2
+from kpops.components.streams_bootstrap_v2.base import StreamsBootstrapV2
 from kpops.components.streams_bootstrap_v2.streams.model import (
     StreamsAppV2Values,
 )
