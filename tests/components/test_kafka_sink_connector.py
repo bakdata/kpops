@@ -99,8 +99,11 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         topic_pattern = ".*"
         connector = KafkaSinkConnector(
             name=CONNECTOR_NAME,
-            config=KafkaConnectorConfig(
-                **{**connector_config.model_dump(), "topics.regex": topic_pattern}
+            config=KafkaConnectorConfig.model_validate(
+                {
+                    **connector_config.model_dump(),
+                    "topics.regex": topic_pattern,
+                }
             ),
             resetter_namespace=RESETTER_NAMESPACE,
         )

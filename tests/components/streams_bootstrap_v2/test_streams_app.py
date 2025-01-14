@@ -65,9 +65,9 @@ class TestStreamsApp:
 
     @pytest.fixture()
     def streams_app(self) -> StreamsAppV2:
-        return StreamsAppV2(
-            name=STREAMS_APP_NAME,
-            **{
+        return StreamsAppV2.model_validate(
+            {
+                "name": STREAMS_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "streams": {"brokers": "fake-broker:9092"},
@@ -84,9 +84,9 @@ class TestStreamsApp:
 
     @pytest.fixture()
     def stateful_streams_app(self) -> StreamsAppV2:
-        return StreamsAppV2(
-            name=STREAMS_APP_NAME,
-            **{
+        return StreamsAppV2.model_validate(
+            {
+                "name": STREAMS_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "statefulSet": True,
@@ -175,9 +175,9 @@ class TestStreamsApp:
         )
 
     def test_set_topics(self):
-        streams_app = StreamsAppV2(
-            name=STREAMS_APP_NAME,
-            **{
+        streams_app = StreamsAppV2.model_validate(
+            {
+                "name": STREAMS_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "streams": {"brokers": "fake-broker:9092"},
@@ -221,9 +221,9 @@ class TestStreamsApp:
         assert "extraInputPatterns" in streams_config
 
     def test_no_empty_input_topic(self):
-        streams_app = StreamsAppV2(
-            name=STREAMS_APP_NAME,
-            **{
+        streams_app = StreamsAppV2.model_validate(
+            {
+                "name": STREAMS_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "streams": {"brokers": "fake-broker:9092"},
@@ -252,9 +252,9 @@ class TestStreamsApp:
         with pytest.raises(
             ValueError, match="Define label only if `type` is `pattern` or `None`"
         ):
-            StreamsAppV2(
-                name=STREAMS_APP_NAME,
-                **{
+            assert StreamsAppV2.model_validate(
+                {
+                    "name": STREAMS_APP_NAME,
                     "namespace": "test-namespace",
                     "values": {
                         "streams": {"brokers": "fake-broker:9092"},
@@ -274,9 +274,9 @@ class TestStreamsApp:
         with pytest.raises(
             ValueError, match="Define `label` only if `type` is undefined"
         ):
-            StreamsAppV2(
-                name=STREAMS_APP_NAME,
-                **{
+            assert StreamsAppV2.model_validate(
+                {
+                    "name": STREAMS_APP_NAME,
                     "namespace": "test-namespace",
                     "values": {
                         "streams": {"brokers": "fake-broker:9092"},
@@ -293,9 +293,9 @@ class TestStreamsApp:
             )
 
     def test_set_streams_output_from_to(self):
-        streams_app = StreamsAppV2(
-            name=STREAMS_APP_NAME,
-            **{
+        streams_app = StreamsAppV2.model_validate(
+            {
+                "name": STREAMS_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "streams": {"brokers": "fake-broker:9092"},
@@ -332,9 +332,9 @@ class TestStreamsApp:
         )
 
     def test_weave_inputs_from_prev_component(self):
-        streams_app = StreamsAppV2(
-            name=STREAMS_APP_NAME,
-            **{
+        streams_app = StreamsAppV2.model_validate(
+            {
+                "name": STREAMS_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "streams": {"brokers": "fake-broker:9092"},
@@ -368,9 +368,9 @@ class TestStreamsApp:
         ]
 
     async def test_deploy_order_when_dry_run_is_false(self, mocker: MockerFixture):
-        streams_app = StreamsAppV2(
-            name=STREAMS_APP_NAME,
-            **{
+        streams_app = StreamsAppV2.model_validate(
+            {
+                "name": STREAMS_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "streams": {"brokers": "fake-broker:9092"},
@@ -643,9 +643,9 @@ class TestStreamsApp:
                 },
             },
         )
-        streams_app = StreamsAppV2(
-            name=STREAMS_APP_NAME,
-            **{
+        streams_app = StreamsAppV2.model_validate(
+            {
+                "name": STREAMS_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "imageTag": "2.2.2",
@@ -721,9 +721,9 @@ class TestStreamsApp:
                 },
             },
         )
-        streams_app = StreamsAppV2(
-            name=STREAMS_APP_NAME,
-            **{
+        streams_app = StreamsAppV2.model_validate(
+            {
+                "name": STREAMS_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "imageTag": "2.2.2",
@@ -778,9 +778,9 @@ class TestStreamsApp:
         )
 
     async def test_get_input_output_topics(self):
-        streams_app = StreamsAppV2(
-            name="my-app",
-            **{
+        streams_app = StreamsAppV2.model_validate(
+            {
+                "name": "my-app",
                 "namespace": "test-namespace",
                 "values": {
                     "streams": {"brokers": "fake-broker:9092"},
@@ -1020,9 +1020,9 @@ class TestStreamsApp:
             },
         )
 
-        streams_app = StreamsAppV2(
-            name=STREAMS_APP_NAME,
-            **{
+        streams_app = StreamsAppV2.model_validate(
+            {
+                "name": STREAMS_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "image": "registry/streams-app",

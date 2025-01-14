@@ -29,7 +29,7 @@ class TestHelmApp:
 
     @pytest.fixture()
     def app_values(self) -> HelmAppValues:
-        return HelmAppValues(**{"foo": "test-value"})
+        return HelmAppValues.model_validate({"foo": "test-value"})
 
     @pytest.fixture()
     def repo_config(self) -> HelmRepoConfig:

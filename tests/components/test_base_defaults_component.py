@@ -114,61 +114,61 @@ class TestBaseDefaultsComponent:
         ENV["environment"] = "development"
         component = Child()
 
-        assert (
-            component.name == "fake-child-name"
-        ), "Child default should overwrite parent default"
-        assert component.nice == {
-            "fake-value": "fake"
-        }, "Field introduce by child should be added"
-        assert (
-            component.value == 2.0
-        ), "Environment tmp_defaults should always overwrite"
-        assert (
-            component.another_hard_coded == "another_hard_coded_value"
-        ), "Defaults in code should be kept for childs"
-        assert (
-            component.hard_coded == "hard_coded_value"
-        ), "Defaults in code should be kept for parents"
+        assert component.name == "fake-child-name", (
+            "Child default should overwrite parent default"
+        )
+        assert component.nice == {"fake-value": "fake"}, (
+            "Field introduce by child should be added"
+        )
+        assert component.value == 2.0, (
+            "Environment tmp_defaults should always overwrite"
+        )
+        assert component.another_hard_coded == "another_hard_coded_value", (
+            "Defaults in code should be kept for childs"
+        )
+        assert component.hard_coded == "hard_coded_value", (
+            "Defaults in code should be kept for parents"
+        )
 
     def test_inherit(self):
         component = Child(
             name="name-defined-in-pipeline_parser",
         )
 
-        assert (
-            component.name == "name-defined-in-pipeline_parser"
-        ), "Kwargs should should overwrite all other values"
-        assert component.nice == {
-            "fake-value": "fake"
-        }, "Field introduce by child should be added"
-        assert (
-            component.value == 2.0
-        ), "Environment tmp_defaults should always overwrite"
-        assert (
-            component.another_hard_coded == "another_hard_coded_value"
-        ), "Defaults in code should be kept for childs"
-        assert (
-            component.hard_coded == "hard_coded_value"
-        ), "Defaults in code should be kept for parents"
+        assert component.name == "name-defined-in-pipeline_parser", (
+            "Kwargs should should overwrite all other values"
+        )
+        assert component.nice == {"fake-value": "fake"}, (
+            "Field introduce by child should be added"
+        )
+        assert component.value == 2.0, (
+            "Environment tmp_defaults should always overwrite"
+        )
+        assert component.another_hard_coded == "another_hard_coded_value", (
+            "Defaults in code should be kept for childs"
+        )
+        assert component.hard_coded == "hard_coded_value", (
+            "Defaults in code should be kept for parents"
+        )
 
     def test_multiple_generations(self):
         component = GrandChild()
 
-        assert (
-            component.name == "fake-child-name"
-        ), "Child default should overwrite parent default"
-        assert component.nice == {
-            "fake-value": "fake"
-        }, "Field introduce by child should be added"
-        assert (
-            component.value == 2.0
-        ), "Environment tmp_defaults should always overwrite"
-        assert (
-            component.another_hard_coded == "another_hard_coded_value"
-        ), "Defaults in code should be kept for childs"
-        assert (
-            component.hard_coded == "hard_coded_value"
-        ), "Defaults in code should be kept for parents"
+        assert component.name == "fake-child-name", (
+            "Child default should overwrite parent default"
+        )
+        assert component.nice == {"fake-value": "fake"}, (
+            "Field introduce by child should be added"
+        )
+        assert component.value == 2.0, (
+            "Environment tmp_defaults should always overwrite"
+        )
+        assert component.another_hard_coded == "another_hard_coded_value", (
+            "Defaults in code should be kept for childs"
+        )
+        assert component.hard_coded == "hard_coded_value", (
+            "Defaults in code should be kept for parents"
+        )
         assert component.grand_child == "grand-child-value"
 
     def test_env_var_substitution(self):
@@ -177,14 +177,14 @@ class TestBaseDefaultsComponent:
 
         assert component.name
 
-        assert (
-            Path(component.name) == RESOURCES_PATH
-        ), "Environment variables should be substituted"
+        assert Path(component.name) == RESOURCES_PATH, (
+            "Environment variables should be substituted"
+        )
 
     def test_merge_defaults(self):
-        component = GrandChild(nested=Nested(**{"bar": False}))
+        component = GrandChild(nested=Nested.model_validate({"bar": False}))
         assert isinstance(component.nested, Nested)
-        assert component.nested == Nested(**{"foo": "foo", "bar": False})
+        assert component.nested == Nested.model_validate({"foo": "foo", "bar": False})
 
     @pytest.mark.parametrize(
         ("pipeline_path", "environment", "expected_default_paths"),
