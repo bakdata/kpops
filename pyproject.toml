@@ -66,11 +66,12 @@ docs = [
 [tool.uv]
 package = true
 
-[tool.setuptools]
-license-files = [] # HACK: workaround for https://github.com/astral-sh/uv/issues/9513
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-[tool.setuptools.packages.find]
-include = ["kpops"]
+[tool.hatch.build.targets.wheel]
+packages = ["kpops"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
