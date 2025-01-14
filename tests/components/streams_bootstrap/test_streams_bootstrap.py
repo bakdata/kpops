@@ -133,6 +133,27 @@ class TestStreamsBootstrap:
                 },
             )
 
+    def test_should_raise_validation_error_for_unsupported_attribute(self):
+        with pytest.raises(
+            ValueError,
+            match=re.escape(
+                "streams-bootstrap v3 no longer supports 'streams' attribute."
+            ),
+        ):
+            assert StreamsBootstrap.model_validate(
+                {
+                    "name": "example-name",
+                    "namespace": "test-namespace",
+                    "values": {
+                        "image": "streamsBootstrap",
+                        "kafka": {
+                            "bootstrapServers": "localhost:9092",
+                        },
+                        "streams": {},
+                    },
+                },
+            )
+
     @pytest.mark.parametrize(
         ("input", "expectation"),
         [
