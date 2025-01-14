@@ -404,6 +404,7 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "lefthook" },
     { name = "polyfactory" },
     { name = "pyright" },
     { name = "pytablewriter", extra = ["from"] },
@@ -446,6 +447,7 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "lefthook", specifier = ">=1.10.4" },
     { name = "polyfactory", specifier = ">=2.13.0" },
     { name = "pyright", specifier = ">=1.1.352" },
     { name = "pytablewriter", extras = ["from"], specifier = ">=1.0.0" },
@@ -466,6 +468,15 @@ docs = [
     { name = "mkdocs-macros-plugin", specifier = ">=1.0.5" },
     { name = "mkdocs-material", specifier = ">=9.0.0" },
     { name = "mkdocstrings", extras = ["python"], specifier = ">=0.25.1" },
+]
+
+[[package]]
+name = "lefthook"
+version = "1.10.4"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/aa/dc/4598b5bb73d89cd6e2609e2337175cfd6c4489d2a2cd383ace1b7ef1563a/lefthook-1.10.4.tar.gz", hash = "sha256:4d762695df77e7ffb1209a23e9b280e17049f90e5c74eb64720049944f84b854", size = 46420212 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/53/14/edadd722a0a58323a3d4ef5f7303ec0398f6aca4189d3f7664a2bb61bd59/lefthook-1.10.4-py3-none-any.whl", hash = "sha256:7d596ecde07a8b5268e2a450afeed7c1ba39942b45cbf3de1f54920c4bcccfe4", size = 46646881 },
 ]
 
 [[package]]
