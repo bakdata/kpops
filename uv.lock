@@ -442,7 +442,7 @@ requires-dist = [
     { name = "python-schema-registry-client", specifier = ">=2.4.1" },
     { name = "pyyaml", specifier = ">=6.0" },
     { name = "rich", specifier = ">=12.4.4" },
-    { name = "typer", extras = ["all"], specifier = ">=0.12.5" },
+    { name = "typer", specifier = ">=0.12.5" },
 ]
 
 [package.metadata.requires-dev]
