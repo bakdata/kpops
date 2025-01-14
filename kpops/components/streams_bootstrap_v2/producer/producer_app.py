@@ -13,7 +13,7 @@ from kpops.components.common.topic import (
     OutputTopicTypes,
     TopicConfig,
 )
-from kpops.components.streams_bootstrap_v2 import StreamsBootstrapV2
+from kpops.components.streams_bootstrap_v2.base import StreamsBootstrapV2
 from kpops.components.streams_bootstrap_v2.producer.model import ProducerAppV2Values
 from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
 from kpops.utils.docstring import describe_attr
