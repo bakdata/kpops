@@ -20,7 +20,7 @@ pre-commit:
       run: dprint fmt
     kpops-schema:
       glob: "{uv.lock,kpops/**/*.py,hooks/gen_schema.py}"
-      run: python -m hooks.gen_schema && git add docs/docs/schema
+      run: python -m hooks.gen_schema && git add -u docs/docs/schema
     kpops-docs-cli:
       glob: "{uv.lock,kpops/cli/main.py,hooks/gen_docs/gen_docs_cli_usage.py}"
       run: python -m hooks.gen_docs.gen_docs_cli_usage
