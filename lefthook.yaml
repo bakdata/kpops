@@ -30,7 +30,16 @@ pre-commit:
       glob: "{uv.lock,kpops/**/*.py,hooks/gen_docs/gen_docs_env_vars.py}"
       run: python -m hooks.gen_docs.gen_docs_env_vars
     kpops-docs-components:
-      glob: "{.gitignore,uv.lock,hooks/gen_docs/gen_docs_components.py,docs/docs/resources/pipeline-defaults/headers/*.yaml,docs/docs/resources/pipeline-components/headers/*.yaml,docs/docs/resources/pipeline-components/sections/*.yaml,docs/docs/resources/pipeline-components/dependencies/*.yaml,kpops/components/*.py}"
+      glob: "{\
+        .gitignore,\
+        uv.lock,\
+        hooks/gen_docs/gen_docs_components.py,\
+        docs/docs/resources/pipeline-defaults/headers/*.yaml,\
+        docs/docs/resources/pipeline-components/headers/*.yaml,\
+        docs/docs/resources/pipeline-components/sections/*.yaml,\
+        docs/docs/resources/pipeline-components/dependencies/*.yaml,\
+        kpops/components/*.py\
+        }"
         # .gitignore -- indicates whether the script is ran with `--all-files`
         # hooks/gen_docs/gen_docs_components.py -- hook's behavior is possibly changed
         # docs/.../.yaml -- examples changed or dependencies edited
