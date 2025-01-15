@@ -1,0 +1,54 @@
+# Kafka connector
+#
+# Parent of: KafkaSinkConnector, KafkaSourceConnector
+# Child of: PipelineComponent
+kafka-connector:
+  # Pipeline prefix that will prefix every component name. If you wish to not
+  # have any prefix you can specify an empty string.
+  prefix: ${pipeline.name}-
+  from: # Must not be null
+    topics: # read from topic
+      ${pipeline.name}-input-topic:
+        type: input # Implied when role is NOT specified
+      ${pipeline.name}-extra-topic:
+        role: topic-role # Implies `type` to be extra
+      ${pipeline.name}-input-pattern-topic:
+        type: pattern # Implied to be an input pattern if `role` is undefined
+      ${pipeline.name}-extra-pattern-topic:
+        type: pattern # Implied to be an extra pattern if `role` is defined
+        role: some-role
+    components: # read from specific component
+      account-producer:
+        type: input # Implied when role is NOT specified
+      other-producer:
+        role: some-role # Implies `type` to be extra
+      component-as-input-pattern:
+        type: pattern # Implied to be an input pattern if `role` is undefined
+      component-as-extra-pattern:
+        type: pattern # Implied to be an extra pattern if `role` is defined
+        role: some-role
+  # Topic(s) into which the component will write output
+  to:
+    topics:
+      ${pipeline.name}-output-topic:
+        type: output # Implied when role is NOT specified
+      ${pipeline.name}-extra-topic:
+        role: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
+      ${pipeline.name}-error-topic:
+        type: error
+        # Currently KPOps supports Avro and JSON schemas.
+        key_schema: key-schema # must implement SchemaProvider to use
+        value_schema: value-schema
+        partitions_count: 1
+        replication_factor: 1
+        configs: # https://kafka.apache.org/documentation/#topicconfigs
+          cleanup.policy: compact
+    models: # SchemaProvider is initiated with the values given here
+      model: model
+  # Full documentation on connectors: https://kafka.apache.org/documentation/#connectconfigs
+  config: # required
+    tasks.max: 1
+  # Overriding Kafka Connect Resetter Helm values. E.g. to override the
+  # Image Tag etc.
+  resetter_values:
+    imageTag: "1.2.3"
