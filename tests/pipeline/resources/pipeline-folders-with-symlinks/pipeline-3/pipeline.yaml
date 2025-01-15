@@ -1,0 +1,12 @@
+- type: filter
+  name: "a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name"
+  values:
+    commandLine:
+      TYPE: "nothing"
+    resources:
+      requests:
+        memory: 3G
+    replicaCount: 4
+    autoscaling:
+      minReplicas: 4
+      maxReplicas: 4
