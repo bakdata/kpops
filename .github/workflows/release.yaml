@@ -15,7 +15,7 @@ on:
 
 jobs:
   create-github-release-push-tag:
-    uses: ./.github/workflows/python-uv-release
+    uses: ./.github/workflows/python-uv-release.yaml
     name: Release
     with:
       release-type: ${{ inputs.release-type }}
