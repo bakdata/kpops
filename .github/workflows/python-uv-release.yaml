@@ -64,8 +64,8 @@ jobs:
     runs-on: ubuntu-22.04
     # Map the job outputs to step outputs
     outputs:
-      release-version: ${{ steps.bump-version.outputs.release-version }}
-      old-version: ${{ steps.bump-version.outputs.old-version }}
+      release-version: ${{ steps.bump-version-release.outputs.release-version }}
+      old-version: ${{ steps.bump-version-dev.outputs.old-version }}
 
     steps:
       - name: Install uv
@@ -82,13 +82,14 @@ jobs:
           fetch-depth: 0 # required for changelog generation
 
       - name: Bump version
+        id: bump-version-dev
         uses: bakdata/ci-templates/actions/bump-version@v1.21.2
         with:
           release-type: ${{ inputs.release-type }}
           working-directory: ${{ inputs.working-directory }}
 
       - name: Bump version release
-        id: bump-version
+        id: bump-version-release
         uses: bakdata/ci-templates/actions/bump-version@v1.21.2
         with:
           release-type: release --allow-dirty
@@ -103,14 +104,14 @@ jobs:
         if: ${{ inputs.changelog }}
         with:
           github-token: ${{ secrets.github-token }}
-          tag: ${{ steps.bump-version.outputs.release-version }}
+          tag: ${{ steps.bump-version-release.outputs.release-version }}
           changelog-file: ${{ inputs.changelog-file }}
 
       - name: Commit and push changes including .bumpversion.cfg file
         uses: bakdata/ci-templates/actions/commit-and-push@1.25.2
         with:
           ref: ${{ github.event.repository.default_branch }}
-          commit-message: "Bump version ${{ steps.bump-version.outputs.old-version }} → ${{ steps.bump-version.outputs.release-version }}"
+          commit-message: "Bump version ${{ steps.bump-version-dev.outputs.old-version }} → ${{ steps.bump-version-release.outputs.release-version }}"
           github-username: ${{ secrets.github-username }}
           github-email: ${{ secrets.github-email }}
           github-token: ${{ secrets.github-token }}
@@ -118,9 +119,9 @@ jobs:
       - name: Tag and release
         uses: bakdata/ci-templates/actions/tag-and-release@v1.22.0
         with:
-          tag: "${{ steps.bump-version.outputs.release-version }}"
+          tag: "${{ steps.bump-version-release.outputs.release-version }}"
           github-username: ${{ secrets.github-username }}
           github-email: ${{ secrets.github-email }}
           github-token: ${{ secrets.github-token }}
-          release-title: "${{ steps.bump-version.outputs.release-version }}"
+          release-title: "${{ steps.bump-version-release.outputs.release-version }}"
           release-body: "${{ steps.build-changelog.outputs.single-changelog }}"
