@@ -141,7 +141,7 @@ jobs:
           lefthook run pre-commit --commands kpops-docs-components --force
 
       - name: Test docs build (mkdocs)
-        run: uv run --frozen --group=docs \
+        run: uv run --frozen --group=docs
           mkdocs build -f docs/mkdocs.yml
 
   # TODO: extract into ci-templates
