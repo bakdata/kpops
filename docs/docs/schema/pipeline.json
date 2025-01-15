@@ -1248,17 +1248,7 @@
                     "anyOf": [
                         {
                             "additionalProperties": {
-                                "anyOf": [
-                                    {
-                                        "type": "string"
-                                    },
-                                    {
-                                        "type": "boolean"
-                                    },
-                                    {
-                                        "type": "integer"
-                                    }
-                                ]
+                                "type": "string"
                             },
                             "type": "object"
                         },
@@ -2375,17 +2365,7 @@
                     "anyOf": [
                         {
                             "additionalProperties": {
-                                "anyOf": [
-                                    {
-                                        "type": "string"
-                                    },
-                                    {
-                                        "type": "boolean"
-                                    },
-                                    {
-                                        "type": "integer"
-                                    }
-                                ]
+                                "type": "string"
                             },
                             "type": "object"
                         },
