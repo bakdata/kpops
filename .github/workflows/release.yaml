@@ -15,7 +15,7 @@ on:
 
 jobs:
   create-github-release-push-tag:
-    uses: bakdata/ci-templates/.github/workflows/bump-version-release.yaml@1.51.0
+    uses: bakdata/ci-templates/.github/workflows/bump-version-release.yaml@1.52.1
     name: Release
     with:
       release-type: ${{ inputs.release-type }}
