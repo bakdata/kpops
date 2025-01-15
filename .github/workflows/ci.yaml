@@ -125,19 +125,19 @@ jobs:
           version: ${{ env.UV_VERSION }}
 
       - name: Generate schema (kpops schema)
-        run: uv run --frozen \
+        run: uv run --frozen
           lefthook run pre-commit --commands kpops-schema --force
 
       - name: Generate CLI Usage docs (typer-cli)
-        run: uv run --frozen \
+        run: uv run --frozen
           lefthook run pre-commit --commands kpops-docs-cli --force
 
       - name: Generate Environment variable docs
-        run: uv run --frozen \
+        run: uv run --frozen
           lefthook run pre-commit --commands kpops-docs-env-vars --force
 
       - name: Generate pipeline definitions
-        run: uv run --frozen \
+        run: uv run --frozen
           lefthook run pre-commit --commands kpops-docs-components --force
 
       - name: Test docs build (mkdocs)
