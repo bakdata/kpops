@@ -4,11 +4,7 @@
   "markdown": {},
   "toml": {},
   "malva": {},
-  "includes": [
-    "**/*.{md}",
-    "**/*.{toml}",
-    "**/*.{css}"
-  ],
+  "includes": ["**/*.{md,toml,css}"],
   "excludes": [
     ".pytest_cache/**",
     ".mypy_cache/**",

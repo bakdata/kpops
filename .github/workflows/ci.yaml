@@ -125,19 +125,24 @@ jobs:
           version: ${{ env.UV_VERSION }}
 
       - name: Generate schema (kpops schema)
-        run: uv run --frozen pre-commit run gen-schema --all-files --show-diff-on-failure
+        run: uv run --frozen
+          lefthook run pre-commit --commands kpops-schema --force
 
       - name: Generate CLI Usage docs (typer-cli)
-        run: uv run --frozen pre-commit run gen-docs-cli --all-files --show-diff-on-failure
+        run: uv run --frozen
+          lefthook run pre-commit --commands kpops-docs-cli --force
 
       - name: Generate Environment variable docs
-        run: uv run --frozen pre-commit run gen-docs-env-vars --all-files --show-diff-on-failure
+        run: uv run --frozen
+          lefthook run pre-commit --commands kpops-docs-env-vars --force
 
       - name: Generate pipeline definitions
-        run: uv run --frozen pre-commit run gen-docs-components --all-files --show-diff-on-failure
+        run: uv run --frozen
+          lefthook run pre-commit --commands kpops-docs-components --force
 
       - name: Test docs build (mkdocs)
-        run: uv run --frozen --group=docs mkdocs build -f docs/mkdocs.yml
+        run: uv run --frozen --group=docs
+          mkdocs build -f docs/mkdocs.yml
 
   # TODO: extract into ci-templates
   publish-snapshot-version:

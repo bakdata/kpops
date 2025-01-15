@@ -40,8 +40,8 @@ kpops = "kpops.cli.main:app"
 
 [dependency-groups]
 dev = [
+  "lefthook>=1.10.4",
   "polyfactory>=2.13.0",
-  "pre-commit>=2.19.0",
   "pyright>=1.1.352",
   "pytablewriter[from]>=1.0.0",
   "pytest>=8.3.2",
@@ -79,6 +79,8 @@ asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 
 [tool.pyright]
+include = ["kpops", "tests", "hooks"]
+
 reportImportCycles = true
 
 reportUnknownParameterType = "warning"
