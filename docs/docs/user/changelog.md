@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [9.2.1](https://github.com/bakdata/kpops/tree/9.2.1) - 2025-01-15
+### What's changed
+
+* Fix CI release and changelog by @disrupted in [#590](https://github.com/bakdata/kpops/pull/590)
+
+
+**Full Changelog**: https://github.com/bakdata/kpops/compare/9.2.0-dev...9.2.1
+
 ## [9.2.0-dev](https://github.com/bakdata/kpops/tree/9.2.0-dev) - 2025-01-14
 ### What's changed
 
@@ -16,6 +24,8 @@ All notable changes to this project will be documented in this file.
 * Fix kpops package build by @disrupted in [#588](https://github.com/bakdata/kpops/pull/588)
 
 * Fail if streams-boostrap v3 model is instantiated with v2 attribute by @disrupted in [#587](https://github.com/bakdata/kpops/pull/587)
+
+* Bump version 9.1.0 → 9.2.0-dev by @bakdata-bot
 
 
 **Full Changelog**: https://github.com/bakdata/kpops/compare/9.1.0...9.2.0-dev
