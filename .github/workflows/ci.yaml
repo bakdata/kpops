@@ -25,7 +25,7 @@ jobs:
           - ubuntu-24.04
           - windows-2022
         python-version: ["3.11", "3.12"]
-        is-draft-pr: 
+        is-draft-pr:
           - ${{ github.event.pull_request.draft }}
         include:
           - python-version: "3.11"
@@ -51,7 +51,7 @@ jobs:
 
       - name: Lint (ruff)
         run: |
-            uv run --frozen ruff check . --config pyproject.toml --no-fix ${{ matrix.format-for-github && '--output-format=github' }}
+          uv run --frozen ruff check . --config pyproject.toml --no-fix ${{ matrix.format-for-github && '--output-format=github' }}
 
       - name: Typing (pyright)
         run: |
@@ -89,7 +89,7 @@ jobs:
           - ubuntu-24.04
           - windows-2022
         python-version: ["3.11", "3.12"]
-        is-draft-pr: 
+        is-draft-pr:
           - ${{ github.event.pull_request.draft }}
         exclude:
           # skip Windows jobs on draft PRs because they are slow
@@ -144,6 +144,8 @@ jobs:
     name: Publish snapshot to TestPyPI
     needs: [lint, format, test, docs]
     runs-on: ubuntu-24.04
+    permissions:
+      id-token: write
     steps:
       - uses: actions/checkout@v4
 
@@ -168,7 +170,7 @@ jobs:
       - name: Restore clean Git working directory
         # clean Git working directory is needed for the next bumpversion call
         # we only need the version result from the first `patch` bump which is stored as a step output
-        run: git restore . 
+        run: git restore .
 
       - name: Bump version snapshot time
         uses: bakdata/ci-templates/actions/bump-version@1.50.4
@@ -183,7 +185,6 @@ jobs:
         run: uv publish
         env:
           UV_PUBLISH_URL: https://test.pypi.org/legacy/
-          UV_PUBLISH_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
 
   publish-docs-from-main:
     name: Publish docs (main)
