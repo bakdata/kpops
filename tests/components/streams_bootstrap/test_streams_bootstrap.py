@@ -25,9 +25,9 @@ from kpops.components.streams_bootstrap.model import StreamsBootstrapValues
 @pytest.mark.usefixtures("mock_env")
 class TestStreamsBootstrap:
     def test_default_configs(self):
-        streams_bootstrap = StreamsBootstrap(
-            name="example-name",
-            **{
+        streams_bootstrap = StreamsBootstrap.model_validate(
+            {
+                "name": "example-name",
                 "namespace": "test-namespace",
                 "values": {
                     "image": "streamsBootstrap",
@@ -46,9 +46,9 @@ class TestStreamsBootstrap:
         assert streams_bootstrap.values.image_tag is None
 
     async def test_should_deploy_streams_bootstrap_app(self, mocker: MockerFixture):
-        streams_bootstrap = StreamsBootstrap(
-            name="example-name",
-            **{
+        streams_bootstrap = StreamsBootstrap.model_validate(
+            {
+                "name": "example-name",
                 "namespace": "test-namespace",
                 "values": {
                     "image": "streamsBootstrap",
@@ -101,8 +101,8 @@ class TestStreamsBootstrap:
                 "1 validation error for StreamsBootstrapValues\nimageTag\n  String should match pattern '^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$'"
             ),
         ):
-            StreamsBootstrapValues(
-                **{
+            assert StreamsBootstrapValues.model_validate(
+                {
                     "image": "streamsBootstrap",
                     "imageTag": "invalid image tag!",
                     "kafka": {
@@ -118,9 +118,9 @@ class TestStreamsBootstrap:
                 "When using the streams-bootstrap component your version ('2.1.0') must be at least 3.0.1."
             ),
         ):
-            StreamsBootstrap(
-                name="example-name",
-                **{
+            assert StreamsBootstrap.model_validate(
+                {
+                    "name": "example-name",
                     "namespace": "test-namespace",
                     "values": {
                         "imageTag": "1.0.0",

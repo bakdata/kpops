@@ -151,8 +151,8 @@ def test_compare_single_config_correctly():
 
 
 def test_get_effective_config():
-    topic_config_response = BrokerConfigResponse(
-        **{
+    topic_config_response = BrokerConfigResponse.model_validate(
+        {
             "kind": "KafkaBrokerConfigList",
             "metadata": {
                 "self": "https://pkc-00000.region.provider.confluent.cloud/kafka/v3/clusters/cluster-1/brokers/-/configs",

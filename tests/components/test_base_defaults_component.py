@@ -182,9 +182,9 @@ class TestBaseDefaultsComponent:
         ), "Environment variables should be substituted"
 
     def test_merge_defaults(self):
-        component = GrandChild(nested=Nested(**{"bar": False}))
+        component = GrandChild(nested=Nested.model_validate({"bar": False}))
         assert isinstance(component.nested, Nested)
-        assert component.nested == Nested(**{"foo": "foo", "bar": False})
+        assert component.nested == Nested.model_validate({"foo": "foo", "bar": False})
 
     @pytest.mark.parametrize(
         ("pipeline_path", "environment", "expected_default_paths"),
