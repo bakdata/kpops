@@ -8,6 +8,8 @@ jobs:
   publish:
     name: Publish to PyPI
     runs-on: ubuntu-24.04
+    permissions:
+      id-token: write
     steps:
       - uses: actions/checkout@v4
 
@@ -22,5 +24,3 @@ jobs:
 
       - name: Publish
         run: uv publish
-        env:
-          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}

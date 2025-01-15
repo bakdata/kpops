@@ -65,6 +65,7 @@ docs = [
 
 [tool.uv]
 package = true
+trusted-publishing = "always"
 
 [build-system]
 requires = ["hatchling"]
