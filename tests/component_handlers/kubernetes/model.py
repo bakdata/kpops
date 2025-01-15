@@ -22,8 +22,8 @@ class TestKubernetesManifest:
                     """
                 ),
                 [
-                    KubernetesManifest(
-                        **{
+                    KubernetesManifest.model_validate(
+                        {
                             "apiVersion": "v1",
                             "kind": "ServiceAccount",
                             "metadata": {"labels": {"foo": "bar"}},

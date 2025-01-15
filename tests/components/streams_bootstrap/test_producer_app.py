@@ -124,9 +124,9 @@ class TestProducerApp:
         )
 
     def test_output_topics(self):
-        producer_app = ProducerApp(
-            name=PRODUCER_APP_NAME,
-            **{
+        producer_app = ProducerApp.model_validate(
+            {
+                "name": PRODUCER_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "namespace": "test-namespace",
@@ -366,9 +366,9 @@ class TestProducerApp:
         )
 
     def test_get_output_topics(self):
-        producer_app = ProducerApp(
-            name="my-producer",
-            **{
+        producer_app = ProducerApp.model_validate(
+            {
+                "name": "my-producer",
                 "namespace": "test-namespace",
                 "values": {
                     "image": "producer-app",
@@ -418,9 +418,9 @@ class TestProducerApp:
                 },
             },
         )
-        producer_app = ProducerApp(
-            name=PRODUCER_APP_NAME,
-            **{
+        producer_app = ProducerApp.model_validate(
+            {
+                "name": PRODUCER_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "image": "registry/producer-app",
@@ -468,9 +468,9 @@ class TestProducerApp:
                 },
             },
         )
-        producer_app = ProducerApp(
-            name=PRODUCER_APP_NAME,
-            **{
+        producer_app = ProducerApp.model_validate(
+            {
+                "name": PRODUCER_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "image": "registry/producer-app",
@@ -536,9 +536,9 @@ class TestProducerApp:
         )
 
         # user defined model
-        producer_app = ProducerApp(
-            name=PRODUCER_APP_NAME,
-            **{
+        producer_app = ProducerApp.model_validate(
+            {
+                "name": PRODUCER_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "image": "registry/producer-app",
@@ -586,9 +586,9 @@ class TestProducerApp:
 
     def test_validate_cron_expression(self):
         with pytest.raises(ValidationError):
-            ProducerApp(
-                name=PRODUCER_APP_NAME,
-                **{
+            assert ProducerApp.model_validate(
+                {
+                    "name": PRODUCER_APP_NAME,
                     "namespace": "test-namespace",
                     "values": {
                         "image": "registry/producer-app",

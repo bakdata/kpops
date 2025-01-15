@@ -1,1309 +1,1528 @@
 # Changelog
-## [9.1.0](https://github.com/bakdata/kpops/releases/tag/9.1.0) - Release Date: [2025-01-07]
 
-### 🏭 Refactor
+All notable changes to this project will be documented in this file.
 
-- Represent multiline strings using YAML block style - [#574](https://github.com/bakdata/kpops/pull/574)
+## [9.2.1](https://github.com/bakdata/kpops/tree/9.2.1) - 2025-01-15
+### What's changed
 
-- Indent sequence items to follow style recommendations - [#575](https://github.com/bakdata/kpops/pull/575)
+* Fix CI release and changelog by @disrupted in [#590](https://github.com/bakdata/kpops/pull/590)
 
 
-### 🌀 Miscellaneous
+**Full Changelog**: https://github.com/bakdata/kpops/compare/9.2.0-dev...9.2.1
 
-- Update CODEOWNERS - [#572](https://github.com/bakdata/kpops/pull/572)
+## [9.2.0-dev](https://github.com/bakdata/kpops/tree/9.2.0-dev) - 2025-01-14
+### What's changed
 
-- Update test components to streams-bootstrap v3 - [#576](https://github.com/bakdata/kpops/pull/576)
+* Improve Pyright matcher by @disrupted in [#579](https://github.com/bakdata/kpops/pull/579)
 
-- Silence deprecation warnings for streams-bootstrap v2 in tests - [#577](https://github.com/bakdata/kpops/pull/577)
+* Migrate from Poetry to uv by @disrupted in [#578](https://github.com/bakdata/kpops/pull/578)
 
+* Fix circular imports when running individual tests by @disrupted in [#583](https://github.com/bakdata/kpops/pull/583)
 
+* Configure Pyright to report import cycles by @disrupted in [#585](https://github.com/bakdata/kpops/pull/585)
 
+* Fix kpops package build by @disrupted in [#588](https://github.com/bakdata/kpops/pull/588)
 
+* Fail if streams-boostrap v3 model is instantiated with v2 attribute by @disrupted in [#587](https://github.com/bakdata/kpops/pull/587)
 
+* Bump version 9.1.0 → 9.2.0-dev by @bakdata-bot
 
-## [9.0.1](https://github.com/bakdata/kpops/releases/tag/9.0.1) - Release Date: [2024-12-20]
 
-### 🐛 Fixes
+**Full Changelog**: https://github.com/bakdata/kpops/compare/9.1.0...9.2.0-dev
 
-- Add operation-mode documentation to mkdocs index - [#573](https://github.com/bakdata/kpops/pull/573)
+## [9.1.0](https://github.com/bakdata/kpops/tree/9.1.0) - 2025-01-07
+### What's changed
 
+* Update CODEOWNERS by @raminqaf in [#572](https://github.com/bakdata/kpops/pull/572)
 
+* Update test components to streams-bootstrap v3 by @disrupted in [#576](https://github.com/bakdata/kpops/pull/576)
 
+* Silence deprecation warnings for streams-bootstrap v2 in tests by @disrupted in [#577](https://github.com/bakdata/kpops/pull/577)
 
+* Represent multiline strings using YAML block style by @disrupted in [#574](https://github.com/bakdata/kpops/pull/574)
 
+* Indent sequence items to follow style recommendations by @disrupted in [#575](https://github.com/bakdata/kpops/pull/575)
 
-## [9.0.0](https://github.com/bakdata/kpops/releases/tag/9.0.0) - Release Date: [2024-12-20]
+* Bump version 9.0.1 → 9.1.0 by @bakdata-bot
 
-### 🏗️ Breaking changes
 
-- Introduce KPOps operation and manifest resources for deployment - [#541](https://github.com/bakdata/kpops/pull/541)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/9.0.1...9.1.0
 
-- Drop support for Python 3.10 - [#561](https://github.com/bakdata/kpops/pull/561)
+## [9.0.1](https://github.com/bakdata/kpops/tree/9.0.1) - 2024-12-20
+### What's changed
 
-- KPOps V9 - [#558](https://github.com/bakdata/kpops/pull/558)
+* Add operation-mode documentation to mkdocs index by @raminqaf in [#573](https://github.com/bakdata/kpops/pull/573)
 
+* Bump version 9.0.0 → 9.0.1 by @bakdata-bot
 
-### 🚀 Features
 
-- Introduce KPOps operation and manifest resources for deployment - [#541](https://github.com/bakdata/kpops/pull/541)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/9.0.0...9.0.1
 
-- Define Pydantic model to representing Kubernetes manifest - [#546](https://github.com/bakdata/kpops/pull/546)
+## [9.0.0](https://github.com/bakdata/kpops/tree/9.0.0) - 2024-12-20
+### What's changed
 
-- Manifest toSection with Strimzi KafkaTopic - [#545](https://github.com/bakdata/kpops/pull/545)
+* Merge main by @raminqaf
 
-- Manifest Kubernetes resources for `destroy` command - [#552](https://github.com/bakdata/kpops/pull/552)
+* Add topic manifestation of ProducerApps for reset command by @raminqaf in [#566](https://github.com/bakdata/kpops/pull/566)
 
-- Manifest Kubernetes resources for `clean` command - [#559](https://github.com/bakdata/kpops/pull/559)
+* Add documentation for operation-mode in KPOps by @raminqaf in [#565](https://github.com/bakdata/kpops/pull/565)
 
-- Manifest Kubernetes resources for `reset` command - [#563](https://github.com/bakdata/kpops/pull/563)
+* Merge branch 'main' into v9 by @raminqaf
 
-- KPOps V9 - [#558](https://github.com/bakdata/kpops/pull/558)
+* Merge branch 'v9' of github.com:bakdata/kpops into v9 by @raminqaf
 
+* Set Python target version to 3.11 by @disrupted
 
-### 🐛 Fixes
+* Hide `operation_mode` from KPOps config by @raminqaf in [#571](https://github.com/bakdata/kpops/pull/571)
 
-- Hide `operation_mode` from KPOps config - [#571](https://github.com/bakdata/kpops/pull/571)
+* Add migration guide v8-v9 by @raminqaf in [#562](https://github.com/bakdata/kpops/pull/562)
 
+* KPOps V9 by @raminqaf in [#558](https://github.com/bakdata/kpops/pull/558)
 
-### 📝 Documentation
+* Bump version 8.4.0 → 9.0.0 by @bakdata-bot
 
-- Add documentation for operation-mode in KPOps - [#565](https://github.com/bakdata/kpops/pull/565)
 
-- Add migration guide v8-v9 - [#562](https://github.com/bakdata/kpops/pull/562)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/8.4.0...9.0.0
 
+## [8.4.0](https://github.com/bakdata/kpops/tree/8.4.0) - 2024-12-18
+### What's changed
 
-### 🌀 Miscellaneous
+* Create generic `SerializeAsOptional` type for Pydantic by @disrupted in [#564](https://github.com/bakdata/kpops/pull/564)
 
-- Add topic manifestation of ProducerApps for reset command - [#566](https://github.com/bakdata/kpops/pull/566)
+* Bump version 8.3.2 → 8.4.0 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/8.3.2...8.4.0
 
+## [8.3.2](https://github.com/bakdata/kpops/tree/8.3.2) - 2024-12-17
+### What's changed
 
+* Fix allow optional resources requests and limits by @disrupted in [#570](https://github.com/bakdata/kpops/pull/570)
 
+* Bump version 8.3.1 → 8.3.2 by @bakdata-bot
 
-## [8.4.0](https://github.com/bakdata/kpops/releases/tag/8.4.0) - Release Date: [2024-12-18]
 
-### 🏭 Refactor
+**Full Changelog**: https://github.com/bakdata/kpops/compare/8.3.1...8.3.2
 
-- Create generic `SerializeAsOptional` type for Pydantic - [#564](https://github.com/bakdata/kpops/pull/564)
+## [8.3.1](https://github.com/bakdata/kpops/tree/8.3.1) - 2024-12-17
+### What's changed
 
+* Fix Kubernetes memory not accepting decimal values by @disrupted in [#568](https://github.com/bakdata/kpops/pull/568)
 
+* Add ephemeral storage to Kubernetes resource requests and limits by @disrupted in [#569](https://github.com/bakdata/kpops/pull/569)
 
+* Bump version 8.3.0 → 8.3.1 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/8.3.0...8.3.1
 
-## [8.3.2](https://github.com/bakdata/kpops/releases/tag/8.3.2) - Release Date: [2024-12-17]
+## [8.3.0](https://github.com/bakdata/kpops/tree/8.3.0) - 2024-12-17
+### What's changed
 
-### 🐛 Fixes
+* Merge branch 'main' into v9 by @raminqaf
 
-- Fix allow optional resources requests and limits - [#570](https://github.com/bakdata/kpops/pull/570)
+* Drop support for Python 3.10 by @disrupted in [#561](https://github.com/bakdata/kpops/pull/561)
 
+* Manifest Kubernetes resources for `reset` command by @raminqaf in [#563](https://github.com/bakdata/kpops/pull/563)
 
+* Add Kubernetes affinity and tolerations to streams-bootstrap v2 values by @disrupted in [#567](https://github.com/bakdata/kpops/pull/567)
 
+* Bump version 8.2.0 → 8.3.0 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/8.2.0...8.3.0
 
-## [8.3.1](https://github.com/bakdata/kpops/releases/tag/8.3.1) - Release Date: [2024-12-17]
+## [8.2.0](https://github.com/bakdata/kpops/tree/8.2.0) - 2024-12-12
+### What's changed
 
-### 🐛 Fixes
+* merge by @raminqaf
 
-- Fix Kubernetes memory not accepting decimal values - [#568](https://github.com/bakdata/kpops/pull/568)
+* Manifest toSection with Strimzi KafkaTopic by @raminqaf in [#545](https://github.com/bakdata/kpops/pull/545)
 
-- Add ephemeral storage to Kubernetes resource requests and limits - [#569](https://github.com/bakdata/kpops/pull/569)
+* Manifest Kubernetes resources for `destroy` command by @raminqaf in [#552](https://github.com/bakdata/kpops/pull/552)
 
+* Bump streams-bootstrap to 3.1.0 by @disrupted in [#557](https://github.com/bakdata/kpops/pull/557)
 
+* Merge branch 'main' into v9 by @raminqaf
 
+* Manifest Kubernetes resources for `clean` command by @raminqaf in [#559](https://github.com/bakdata/kpops/pull/559)
 
+* Update KPOps example snapshots and fix broken link to defaults.yaml by @raminqaf in [#560](https://github.com/bakdata/kpops/pull/560)
 
+* Merge branch 'main' into v9 by @raminqaf
 
-## [8.3.0](https://github.com/bakdata/kpops/releases/tag/8.3.0) - Release Date: [2024-12-17]
+* Add Pydantic models for Kubernetes Affinity by @disrupted in [#555](https://github.com/bakdata/kpops/pull/555)
 
-### 🌀 Miscellaneous
+* Bump version 8.1.4 → 8.2.0 by @bakdata-bot
 
-- Add Kubernetes affinity and tolerations to streams-bootstrap v2 values - [#567](https://github.com/bakdata/kpops/pull/567)
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/8.1.4...8.2.0
 
+## [8.1.4](https://github.com/bakdata/kpops/tree/8.1.4) - 2024-12-09
+### What's changed
 
+* Fix `kpops --version` by @disrupted in [#551](https://github.com/bakdata/kpops/pull/551)
 
+* Trim Helm name override for Producer CronJob to 52 characters by @disrupted in [#550](https://github.com/bakdata/kpops/pull/550)
 
+* Bump version 8.1.3 → 8.1.4 by @bakdata-bot
 
-## [8.2.0](https://github.com/bakdata/kpops/releases/tag/8.2.0) - Release Date: [2024-12-12]
 
-### 🐛 Fixes
+**Full Changelog**: https://github.com/bakdata/kpops/compare/8.1.3...8.1.4
 
-- Update KPOps example snapshots and fix broken link to defaults.yaml - [#560](https://github.com/bakdata/kpops/pull/560)
+## [8.1.3](https://github.com/bakdata/kpops/tree/8.1.3) - 2024-12-05
+### What's changed
 
+* Merge branch 'main' of github.com:bakdata/kpops into v9 by @raminqaf
 
-### 📝 Documentation
+* Remove repeated defaults from streams-bootstrap values by @disrupted in [#547](https://github.com/bakdata/kpops/pull/547)
 
-- Update KPOps example snapshots and fix broken link to defaults.yaml - [#560](https://github.com/bakdata/kpops/pull/560)
+* Bump version 8.1.2 → 8.1.3 by @bakdata-bot
 
 
-### 🌀 Miscellaneous
+**Full Changelog**: https://github.com/bakdata/kpops/compare/8.1.2...8.1.3
 
-- Bump streams-bootstrap to 3.1.0 - [#557](https://github.com/bakdata/kpops/pull/557)
+## [8.1.2](https://github.com/bakdata/kpops/tree/8.1.2) - 2024-12-04
+### What's changed
 
-- Add Pydantic models for Kubernetes Affinity - [#555](https://github.com/bakdata/kpops/pull/555)
+* Introduce KPOps operation and manifest resources for deployment by @raminqaf in [#541](https://github.com/bakdata/kpops/pull/541)
 
+* Define Pydantic model to representing Kubernetes manifest by @raminqaf in [#546](https://github.com/bakdata/kpops/pull/546)
 
+* Convert all values of Kafka connector and topic config to string by @disrupted in [#544](https://github.com/bakdata/kpops/pull/544)
 
+* Bump version 8.1.1 → 8.1.2 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/8.1.1...8.1.2
 
-## [8.1.4](https://github.com/bakdata/kpops/releases/tag/8.1.4) - Release Date: [2024-12-09]
+## [8.1.1](https://github.com/bakdata/kpops/tree/8.1.1) - 2024-12-02
+### What's changed
 
-### 🐛 Fixes
+* Fix `files` field value type in Streamsboostrap component by @raminqaf in [#542](https://github.com/bakdata/kpops/pull/542)
 
-- Fix `kpops --version` - [#551](https://github.com/bakdata/kpops/pull/551)
+* Fix: Use enum values when dumping models by @raminqaf in [#543](https://github.com/bakdata/kpops/pull/543)
 
+* Bump version 8.1.0 → 8.1.1 by @bakdata-bot
 
-### 🌀 Miscellaneous
 
-- Trim Helm name override for Producer CronJob to 52 characters - [#550](https://github.com/bakdata/kpops/pull/550)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/8.1.0...8.1.1
 
+## [8.1.0](https://github.com/bakdata/kpops/tree/8.1.0) - 2024-10-25
+### What's changed
 
+* Upgrade typer to support union types by @raminqaf in [#533](https://github.com/bakdata/kpops/pull/533)
 
+* Extend StreamsBootstrap model by @raminqaf in [#534](https://github.com/bakdata/kpops/pull/534)
 
+* Bump version 8.0.1 → 8.1.0 by @bakdata-bot
 
 
-## [8.1.3](https://github.com/bakdata/kpops/releases/tag/8.1.3) - Release Date: [2024-12-05]
+**Full Changelog**: https://github.com/bakdata/kpops/compare/8.0.1...8.1.0
 
-### 🌀 Miscellaneous
+## [8.0.1](https://github.com/bakdata/kpops/tree/8.0.1) - 2024-08-22
+### What's changed
 
-- Remove repeated defaults from streams-bootstrap values - [#547](https://github.com/bakdata/kpops/pull/547)
+* Fix changelog in docs by @raminqaf in [#532](https://github.com/bakdata/kpops/pull/532)
 
+* Bump version 8.0.0 → 8.0.1 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/8.0.0...8.0.1
 
+## [8.0.0](https://github.com/bakdata/kpops/tree/8.0.0) - 2024-08-21
+### What's changed
 
+* Make KafkaApp responsible of deploying/cleaning streams bootstrap components (#522) by @raminqaf
 
-## [8.1.2](https://github.com/bakdata/kpops/releases/tag/8.1.2) - Release Date: [2024-12-04]
+* Add support for streams-bootstrap v3 (#519) by @raminqaf
 
-### 🌀 Miscellaneous
+* Rename role to label (#525) by @raminqaf
 
-- Convert all values of Kafka connector and topic config to string - [#544](https://github.com/bakdata/kpops/pull/544)
+* Fix Pyright warning about type override without default value (#524) by @disrupted
 
+* Remove v3 and suffix old streams bootstrap with v2 (#526) by @raminqaf
 
+* KPOps `8.0.0` by @raminqaf in [#531](https://github.com/bakdata/kpops/pull/531)
 
+* Bump version 7.1.0 → 8.0.0 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/7.1.0...8.0.0
 
-## [8.1.1](https://github.com/bakdata/kpops/releases/tag/8.1.1) - Release Date: [2024-12-02]
+## [7.1.0](https://github.com/bakdata/kpops/tree/7.1.0) - 2024-08-15
+### What's changed
 
-### 🐛 Fixes
+* Improve incomplete type hints by @disrupted in [#515](https://github.com/bakdata/kpops/pull/515)
 
-- Fix `files` field value type in Streamsboostrap component - [#542](https://github.com/bakdata/kpops/pull/542)
+* Fallback to user defined model when the validation of cluster model fails by @raminqaf in [#521](https://github.com/bakdata/kpops/pull/521)
 
-- Fix: Use enum values when dumping models - [#543](https://github.com/bakdata/kpops/pull/543)
+* Fix incorrect parameter type annotation by @disrupted in [#523](https://github.com/bakdata/kpops/pull/523)
 
+* Update pytest by @disrupted in [#527](https://github.com/bakdata/kpops/pull/527)
 
+* Replace kubernetes-asyncio with lightkube by @disrupted in [#517](https://github.com/bakdata/kpops/pull/517)
 
+* Bump version 7.0.0 → 7.1.0 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/7.0.0...7.1.0
 
-## [8.1.0](https://github.com/bakdata/kpops/releases/tag/8.1.0) - Release Date: [2024-10-25]
+## [7.0.0](https://github.com/bakdata/kpops/tree/7.0.0) - 2024-07-23
+### What's changed
 
-### 🧪 Dependencies
+* Merge remote-tracking branch 'origin/main' into v7 by @disrupted
 
-- Upgrade typer to support union types - [#533](https://github.com/bakdata/kpops/pull/533)
+* Call destroy from inside of reset or clean by @raminqaf in [#501](https://github.com/bakdata/kpops/pull/501)
 
+* clean/reset streams-bootstrap components with cluster values by @raminqaf in [#498](https://github.com/bakdata/kpops/pull/498)
 
-### 🌀 Miscellaneous
+* Rename app field by @disrupted in [#506](https://github.com/bakdata/kpops/pull/506)
 
-- Extend StreamsBootstrap model - [#534](https://github.com/bakdata/kpops/pull/534)
+* Fix circular dependency when running individual tests by @raminqaf
 
+* Add tests for global config & handlers by @disrupted
 
+* Update examples by @disrupted
 
+* Bump version 6.1.0 → 7.0.0 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/6.1.0...7.0.0
 
-## [8.0.1](https://github.com/bakdata/kpops/releases/tag/8.0.1) - Release Date: [2024-08-22]
+## [6.1.0](https://github.com/bakdata/kpops/tree/6.1.0) - 2024-07-09
+### What's changed
 
-### 📝 Documentation
+* Add image tag field to streams-bootstrap app values by @raminqaf in [#499](https://github.com/bakdata/kpops/pull/499)
 
-- Fix changelog in docs - [#532](https://github.com/bakdata/kpops/pull/532)
+* Automatic loading of namespaced custom components by @disrupted in [#500](https://github.com/bakdata/kpops/pull/500)
 
+* Improve dataclass instance check by @disrupted in [#507](https://github.com/bakdata/kpops/pull/507)
 
+* Delete ignored keys from diff by @disrupted in [#510](https://github.com/bakdata/kpops/pull/510)
 
+* Bump version 6.0.2 → 6.1.0 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/6.0.2...6.1.0
 
-## [8.0.0](https://github.com/bakdata/kpops/releases/tag/8.0.0) - Release Date: [2024-08-21]
+## [6.0.2](https://github.com/bakdata/kpops/tree/6.0.2) - 2024-07-04
+### What's changed
 
-### 🏗️ Breaking changes
-- Make KafkaApp responsible for deploying/cleaning streams bootstrap components - https://github.com/bakdata/kpops/pull/522
-- Rename role to label - https://github.com/bakdata/kpops/pull/525
-- Fix Pyright warning about type override without default value - https://github.com/bakdata/kpops/pull/524
-- Remove -v3 suffix and suffix old streams bootstrap with -v2 - https://github.com/bakdata/kpops/pull/526
+* Update codeowners by @disrupted in [#504](https://github.com/bakdata/kpops/pull/504)
 
-### 🚀 Features
-- Add support for streams-bootstrap v3 - https://github.com/bakdata/kpops/pull/519
+* Generate developer docs for Python API by @sujuka99 in [#503](https://github.com/bakdata/kpops/pull/503)
 
-### 🏭 Refactor
-- Rename role to label - https://github.com/bakdata/kpops/pull/525
-- Fix Pyright warning about type override without default value - https://github.com/bakdata/kpops/pull/524
+* Bump version 6.0.1 → 6.0.2 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/6.0.1...6.0.2
 
+## [6.0.1](https://github.com/bakdata/kpops/tree/6.0.1) - 2024-06-12
+### What's changed
 
+* Fix connector resetter offset topic by @disrupted in [#497](https://github.com/bakdata/kpops/pull/497)
 
+* Bump version 6.0.0 → 6.0.1 by @bakdata-bot
 
-## [7.1.0](https://github.com/bakdata/kpops/releases/tag/7.1.0) - Release Date: [2024-08-15]
 
-### 🧪 Dependencies
+**Full Changelog**: https://github.com/bakdata/kpops/compare/6.0.0...6.0.1
 
-- Update pytest - [#527](https://github.com/bakdata/kpops/pull/527)
+## [6.0.0](https://github.com/bakdata/kpops/tree/6.0.0) - 2024-06-06
+### What's changed
 
+* KPOps `6.0.0` by @raminqaf in [#496](https://github.com/bakdata/kpops/pull/496)
 
-### 🏭 Refactor
+* Bump version 5.1.1 → 6.0.0 by @bakdata-bot
 
-- Improve incomplete type hints - [#515](https://github.com/bakdata/kpops/pull/515)
 
-- Fallback to user defined model when the validation of cluster model fails - [#521](https://github.com/bakdata/kpops/pull/521)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/5.1.1...6.0.0
 
-- Replace kubernetes-asyncio with lightkube - [#517](https://github.com/bakdata/kpops/pull/517)
+## [5.1.1](https://github.com/bakdata/kpops/tree/5.1.1) - 2024-05-22
+### What's changed
 
+* Add YAML separator (---) to stdout by @raminqaf in [#491](https://github.com/bakdata/kpops/pull/491)
 
-### 🌀 Miscellaneous
+* Bump version 5.1.0 → 5.1.1 by @bakdata-bot
 
-- Fix incorrect parameter type annotation - [#523](https://github.com/bakdata/kpops/pull/523)
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/5.1.0...5.1.1
 
+## [5.1.0](https://github.com/bakdata/kpops/tree/5.1.0) - 2024-05-22
+### What's changed
 
+* Add computed field for Helm release name and name override by @disrupted in [#490](https://github.com/bakdata/kpops/pull/490)
 
+* Bump version 5.0.1 → 5.1.0 by @bakdata-bot
 
 
-## [7.0.0](https://github.com/bakdata/kpops/releases/tag/7.0.0) - Release Date: [2024-07-23]
+**Full Changelog**: https://github.com/bakdata/kpops/compare/5.0.1...5.1.0
 
-### 🏗️ Breaking changes
+## [5.0.1](https://github.com/bakdata/kpops/tree/5.0.1) - 2024-05-15
+### What's changed
 
-- Automatic loading of namespaced custom components - [#500](https://github.com/bakdata/kpops/pull/500)
+* Fix missing await on Kubernetes API by @raminqaf in [#488](https://github.com/bakdata/kpops/pull/488)
 
-- Call destroy from inside of reset or clean - [#501](https://github.com/bakdata/kpops/pull/501)
+* Bump version 5.0.0 → 5.0.1 by @bakdata-bot
 
-- Rename app field - [#506](https://github.com/bakdata/kpops/pull/506)
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/5.0.0...5.0.1
 
-### 🚀 Features
+## [5.0.0](https://github.com/bakdata/kpops/tree/5.0.0) - 2024-05-02
+### What's changed
 
-- clean/reset streams-bootstrap components with cluster values - [#498](https://github.com/bakdata/kpops/pull/498)
+* Update examples for v4 by @disrupted in [#486](https://github.com/bakdata/kpops/pull/486)
 
+* Allow custom timeout for external services by @disrupted in [#485](https://github.com/bakdata/kpops/pull/485)
 
-### 🏭 Refactor
+* Bump version 4.2.1 → 5.0.0 by @bakdata-bot
 
-- Call destroy from inside of reset or clean - [#501](https://github.com/bakdata/kpops/pull/501)
 
-- Rename app field - [#506](https://github.com/bakdata/kpops/pull/506)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/4.2.1...5.0.0
 
+## [4.2.1](https://github.com/bakdata/kpops/tree/4.2.1) - 2024-04-25
+### What's changed
 
+* Add support for cleaning StatefulSets with PVCs by @raminqaf in [#482](https://github.com/bakdata/kpops/pull/482)
 
+* Bump version 4.2.0 → 4.2.1 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/4.2.0...4.2.1
 
-## [6.1.0](https://github.com/bakdata/kpops/releases/tag/6.1.0) - Release Date: [2024-07-09]
+## [4.2.0](https://github.com/bakdata/kpops/tree/4.2.0) - 2024-04-25
+### What's changed
 
-### 🚀 Features
+* Update Ruff by @disrupted in [#475](https://github.com/bakdata/kpops/pull/475)
 
-- Add image tag field to streams-bootstrap app values - [#499](https://github.com/bakdata/kpops/pull/499)
+* Improve type annotations for parallel pipeline jobs by @disrupted in [#476](https://github.com/bakdata/kpops/pull/476)
 
-- Delete ignored keys from diff - [#510](https://github.com/bakdata/kpops/pull/510)
+* Set Pyright to warn on unknown types by @disrupted in [#480](https://github.com/bakdata/kpops/pull/480)
 
+* Quiet faker debug logs in tests by @disrupted in [#483](https://github.com/bakdata/kpops/pull/483)
 
-### 🏭 Refactor
+* Add pyright matcher by @sujuka99 in [#481](https://github.com/bakdata/kpops/pull/481)
 
-- Improve dataclass instance check - [#507](https://github.com/bakdata/kpops/pull/507)
+* Bump version 4.1.2 → 4.2.0 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/4.1.2...4.2.0
 
+## [4.1.2](https://github.com/bakdata/kpops/tree/4.1.2) - 2024-03-11
+### What's changed
 
+* fix(docs): Correct `from.components.<component-name>.type` to input by @raminqaf in [#473](https://github.com/bakdata/kpops/pull/473)
 
+* Bump version 4.1.1 → 4.1.2 by @bakdata-bot
 
-## [6.0.2](https://github.com/bakdata/kpops/releases/tag/6.0.2) - Release Date: [2024-07-04]
 
-### 📝 Documentation
+**Full Changelog**: https://github.com/bakdata/kpops/compare/4.1.1...4.1.2
 
-- Generate developer docs for Python API - [#503](https://github.com/bakdata/kpops/pull/503)
+## [4.1.1](https://github.com/bakdata/kpops/tree/4.1.1) - 2024-03-11
+### What's changed
 
+* Update httpx by @disrupted in [#471](https://github.com/bakdata/kpops/pull/471)
 
-### 🌀 Miscellaneous
+* Fix import errors by @sujuka99 in [#472](https://github.com/bakdata/kpops/pull/472)
 
-- Update codeowners - [#504](https://github.com/bakdata/kpops/pull/504)
+* Bump version 4.1.0 → 4.1.1 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/4.1.0...4.1.1
 
+## [4.1.0](https://github.com/bakdata/kpops/tree/4.1.0) - 2024-03-07
+### What's changed
 
+* Document precedence between env vars and config.yaml by @JakobEdding in [#465](https://github.com/bakdata/kpops/pull/465)
 
+* Create init command by @sujuka99 in [#394](https://github.com/bakdata/kpops/pull/394)
 
-## [6.0.1](https://github.com/bakdata/kpops/releases/tag/6.0.1) - Release Date: [2024-06-12]
+* Bump version 4.0.2 → 4.1.0 by @bakdata-bot
 
-### 🐛 Fixes
 
-- Fix connector resetter offset topic - [#497](https://github.com/bakdata/kpops/pull/497)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/4.0.2...4.1.0
 
+## [4.0.2](https://github.com/bakdata/kpops/tree/4.0.2) - 2024-03-04
+### What's changed
 
+* Add support for Python 3.12 by @disrupted in [#467](https://github.com/bakdata/kpops/pull/467)
 
+* Update Pyright by @disrupted in [#468](https://github.com/bakdata/kpops/pull/468)
 
+* Remove package classifiers that are automatically assigned by Poetry by @disrupted in [#469](https://github.com/bakdata/kpops/pull/469)
 
+* Reference editor plugin for Neovim in docs by @disrupted in [#464](https://github.com/bakdata/kpops/pull/464)
 
-## [6.0.0](https://github.com/bakdata/kpops/releases/tag/6.0.0) - Release Date: [2024-06-06]
+* Validate autoscaling mandatory fields when enabled by @raminqaf in [#470](https://github.com/bakdata/kpops/pull/470)
 
-### 🏗️ Breaking changes
+* Bump version 4.0.1 → 4.0.2 by @bakdata-bot
 
-- KPOps `6.0.0` - [#496](https://github.com/bakdata/kpops/pull/496)
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/4.0.1...4.0.2
 
-### 🚀 Features
+## [4.0.1](https://github.com/bakdata/kpops/tree/4.0.1) - 2024-02-29
+### What's changed
 
-- KPOps `6.0.0` - [#496](https://github.com/bakdata/kpops/pull/496)
+* Set supported Python cutoff to 3.11 by @disrupted in [#466](https://github.com/bakdata/kpops/pull/466)
 
+* Bump version 4.0.0 → 4.0.1 by @bakdata-bot
 
-### 🏭 Refactor
 
-- KPOps `6.0.0` - [#496](https://github.com/bakdata/kpops/pull/496)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/4.0.0...4.0.1
 
+## [4.0.0](https://github.com/bakdata/kpops/tree/4.0.0) - 2024-02-27
+### What's changed
 
+* Distribute defaults across multiple files by @raminqaf in [#438](https://github.com/bakdata/kpops/pull/438)
 
+* Bump version 3.2.4 → 4.0.0 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/3.2.4...4.0.0
 
-## [5.1.1](https://github.com/bakdata/kpops/releases/tag/5.1.1) - Release Date: [2024-05-22]
+## [3.2.4](https://github.com/bakdata/kpops/tree/3.2.4) - 2024-02-26
+### What's changed
 
-### 🐛 Fixes
+* Refactor Kafka topics by @disrupted in [#447](https://github.com/bakdata/kpops/pull/447)
 
-- Add YAML separator (---) to stdout - [#491](https://github.com/bakdata/kpops/pull/491)
+* Fix docs CI to include the latest changes to a tagged version in the changelog by @sujuka99 in [#459](https://github.com/bakdata/kpops/pull/459)
 
+* Refactor PipelineGenerator to use component ids by @disrupted in [#460](https://github.com/bakdata/kpops/pull/460)
 
+* Fix tempfile creation by @sujuka99 in [#461](https://github.com/bakdata/kpops/pull/461)
 
+* Fix symbolic link to CONTRIBUTING.md and parallel option in action.yaml by @raminqaf in [#462](https://github.com/bakdata/kpops/pull/462)
 
+* Bump version 3.2.3 → 3.2.4 by @bakdata-bot
 
 
-## [5.1.0](https://github.com/bakdata/kpops/releases/tag/5.1.0) - Release Date: [2024-05-22]
+**Full Changelog**: https://github.com/bakdata/kpops/compare/3.2.3...3.2.4
 
-### 🌀 Miscellaneous
+## [3.2.3](https://github.com/bakdata/kpops/tree/3.2.3) - 2024-02-19
+### What's changed
 
-- Add computed field for Helm release name and name override - [#490](https://github.com/bakdata/kpops/pull/490)
+* Trim and hash Helm name override to 63 characters by @disrupted in [#456](https://github.com/bakdata/kpops/pull/456)
 
+* Bump version 3.2.2 → 3.2.3 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/3.2.2...3.2.3
 
+## [3.2.2](https://github.com/bakdata/kpops/tree/3.2.2) - 2024-02-12
+### What's changed
 
+* Fix nested substitution by @sujuka99 in [#451](https://github.com/bakdata/kpops/pull/451)
 
-## [5.0.1](https://github.com/bakdata/kpops/releases/tag/5.0.1) - Release Date: [2024-05-15]
+* Bump version 3.2.1 → 3.2.2 by @bakdata-bot
 
-### 🐛 Fixes
 
-- Fix missing await on Kubernetes API - [#488](https://github.com/bakdata/kpops/pull/488)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/3.2.1...3.2.2
 
+## [3.2.1](https://github.com/bakdata/kpops/tree/3.2.1) - 2024-02-08
+### What's changed
 
+* Simplify execution graph logic by @disrupted in [#446](https://github.com/bakdata/kpops/pull/446)
 
+* Fix order of pipeline steps for clean/reset by @disrupted in [#450](https://github.com/bakdata/kpops/pull/450)
 
+* Fix substitution by @sujuka99 in [#449](https://github.com/bakdata/kpops/pull/449)
 
+* Fix cleaner inheritance, parent model should be aliased during instantiation by @disrupted in [#452](https://github.com/bakdata/kpops/pull/452)
 
-## [5.0.0](https://github.com/bakdata/kpops/releases/tag/5.0.0) - Release Date: [2024-05-02]
+* Bump version 3.2.0 → 3.2.1 by @bakdata-bot
 
-### 🏗️ Breaking changes
 
-- Allow custom timeout for external services - [#485](https://github.com/bakdata/kpops/pull/485)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/3.2.0...3.2.1
 
+## [3.2.0](https://github.com/bakdata/kpops/tree/3.2.0) - 2024-02-01
+### What's changed
 
-### 🌀 Miscellaneous
+* Improve Sphinx docs highlighting using RST markup by @disrupted in [#443](https://github.com/bakdata/kpops/pull/443)
 
-- Update examples for v4 - [#486](https://github.com/bakdata/kpops/pull/486)
+* Refactor enrichment using Pydantic model validator by @disrupted in [#444](https://github.com/bakdata/kpops/pull/444)
 
+* Refactor pipeline filter and add to public API by @disrupted in [#405](https://github.com/bakdata/kpops/pull/405)
 
+* Bump version 3.1.0 → 3.2.0 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/3.1.0...3.2.0
 
+## [3.1.0](https://github.com/bakdata/kpops/tree/3.1.0) - 2024-01-30
+### What's changed
 
-## [4.2.1](https://github.com/bakdata/kpops/releases/tag/4.2.1) - Release Date: [2024-04-25]
+* Simplify loading of defaults by @disrupted in [#435](https://github.com/bakdata/kpops/pull/435)
 
-### 🚀 Features
+* Update poetry publish workflow version to latest by @raminqaf in [#430](https://github.com/bakdata/kpops/pull/430)
 
-- Add support for cleaning StatefulSets with PVCs - [#482](https://github.com/bakdata/kpops/pull/482)
+* Add support for pipeline steps parallelization by @irux in [#312](https://github.com/bakdata/kpops/pull/312)
 
+* Add custom PascalCase to snake_case alias generator by @disrupted in [#436](https://github.com/bakdata/kpops/pull/436)
 
+* Add parallel flag support to kpops runner by @irux in [#439](https://github.com/bakdata/kpops/pull/439)
 
+* Bump version 3.0.2 → 3.1.0 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/3.0.2...3.1.0
 
-## [4.2.0](https://github.com/bakdata/kpops/releases/tag/4.2.0) - Release Date: [2024-04-25]
+## [3.0.2](https://github.com/bakdata/kpops/tree/3.0.2) - 2024-01-23
+### What's changed
 
-### 🏭 Refactor
+* Add step for submodule initialization on the docs by @irux in [#431](https://github.com/bakdata/kpops/pull/431)
 
-- Improve type annotations for parallel pipeline jobs - [#476](https://github.com/bakdata/kpops/pull/476)
+* Add message if examples git submodule is not initialized by @disrupted in [#432](https://github.com/bakdata/kpops/pull/432)
 
+* Update type annotation for deserialized pipeline by @disrupted in [#433](https://github.com/bakdata/kpops/pull/433)
 
-### 🌀 Miscellaneous
+* Fix Helm diff output by @disrupted in [#434](https://github.com/bakdata/kpops/pull/434)
 
-- Update Ruff - [#475](https://github.com/bakdata/kpops/pull/475)
+* Bump version 3.0.1 → 3.0.2 by @bakdata-bot
 
-- Set Pyright to warn on unknown types - [#480](https://github.com/bakdata/kpops/pull/480)
 
-- Quiet faker debug logs in tests - [#483](https://github.com/bakdata/kpops/pull/483)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/3.0.1...3.0.2
 
-- Add pyright matcher - [#481](https://github.com/bakdata/kpops/pull/481)
+## [3.0.1](https://github.com/bakdata/kpops/tree/3.0.1) - 2024-01-19
+### What's changed
 
+* Update pydantic dependency by @sujuka99 in [#422](https://github.com/bakdata/kpops/pull/422)
 
+* Update docs of word-count example for v3 & new folder structure by @disrupted in [#423](https://github.com/bakdata/kpops/pull/423)
 
+* Move ATM fraud to examples repo by @disrupted in [#425](https://github.com/bakdata/kpops/pull/425)
 
+* Fix broken doc link by @raminqaf in [#427](https://github.com/bakdata/kpops/pull/427)
 
+* Add warning log if SR handler is disabled but URL is set by @raminqaf in [#428](https://github.com/bakdata/kpops/pull/428)
 
-## [4.1.2](https://github.com/bakdata/kpops/releases/tag/4.1.2) - Release Date: [2024-03-11]
+* Add git submodule instructions to the contributing.md by @raminqaf in [#429](https://github.com/bakdata/kpops/pull/429)
 
-### 📝 Documentation
+* Bump version 3.0.0 → 3.0.1 by @bakdata-bot
 
-- fix(docs): Correct `from.components.<component-name>.type` to input - [#473](https://github.com/bakdata/kpops/pull/473)
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/3.0.0...3.0.1
 
+## [3.0.0](https://github.com/bakdata/kpops/tree/3.0.0) - 2024-01-17
+### What's changed
 
+* Merge remote-tracking branch 'origin/main' into v3 by @disrupted
 
+* Fix test by @disrupted
 
+* Add missing HelmApp docs by @disrupted
 
-## [4.1.1](https://github.com/bakdata/kpops/releases/tag/4.1.1) - Release Date: [2024-03-11]
+* Replace black with ruff by @sujuka99 in [#365](https://github.com/bakdata/kpops/pull/365)
 
-### 🐛 Fixes
+* Add toml formatter to dprint by @sujuka99 in [#386](https://github.com/bakdata/kpops/pull/386)
 
-- Fix import errors - [#472](https://github.com/bakdata/kpops/pull/472)
+* Add malva to dprint by @sujuka99 in [#385](https://github.com/bakdata/kpops/pull/385)
 
+* Merge branch 'main' of github.com:bakdata/kpops into v3 by @raminqaf
 
-### 🏭 Refactor
+* Migrate to Pydantic v2 by @sujuka99 in [#347](https://github.com/bakdata/kpops/pull/347)
 
-- Fix import errors - [#472](https://github.com/bakdata/kpops/pull/472)
+* Allow overriding config files by @sujuka99 in [#391](https://github.com/bakdata/kpops/pull/391)
 
+* Change substitution variables separator to `.` by @sujuka99 in [#388](https://github.com/bakdata/kpops/pull/388)
 
-### 🌀 Miscellaneous
+* Refactor pipeline generator & representation by @disrupted in [#392](https://github.com/bakdata/kpops/pull/392)
 
-- Update httpx - [#471](https://github.com/bakdata/kpops/pull/471)
+* Define custom components module & pipeline base dir globally by @disrupted in [#387](https://github.com/bakdata/kpops/pull/387)
 
+* Update KPOps runner with the new options by @raminqaf in [#395](https://github.com/bakdata/kpops/pull/395)
 
+* Add steps for KubernetesApp->HelmApp to migration guide by @disrupted
 
+* Fix KPOps action to get package from testPyPI by @raminqaf in [#396](https://github.com/bakdata/kpops/pull/396)
 
+* Use hash and trim long Helm release names instead of only trimming by @raminqaf in [#390](https://github.com/bakdata/kpops/pull/390)
 
+* Refactor Helm `nameOverride` by @disrupted in [#397](https://github.com/bakdata/kpops/pull/397)
 
-## [4.1.0](https://github.com/bakdata/kpops/releases/tag/4.1.0) - Release Date: [2024-03-07]
+* Mark component type as computed Pydantic field by @disrupted in [#399](https://github.com/bakdata/kpops/pull/399)
 
-### 📝 Documentation
+* Fix missing component type in pipeline schema by @disrupted in [#401](https://github.com/bakdata/kpops/pull/401)
 
-- Document precedence between env vars and config.yaml - [#465](https://github.com/bakdata/kpops/pull/465)
+* Refactor generate template for Python API usage by @disrupted in [#380](https://github.com/bakdata/kpops/pull/380)
 
+* Generate defaults schema by @disrupted in [#402](https://github.com/bakdata/kpops/pull/402)
 
-### 🌀 Miscellaneous
+* Update docs for substitution variable usage in v3 by @sujuka99 in [#409](https://github.com/bakdata/kpops/pull/409)
 
-- Create init command - [#394](https://github.com/bakdata/kpops/pull/394)
+* Namespace substitution vars by @sujuka99 in [#408](https://github.com/bakdata/kpops/pull/408)
 
+* Support multiple inheritance for doc generation by @sujuka99 in [#406](https://github.com/bakdata/kpops/pull/406)
 
+* Refactor streams-bootstrap cleanup jobs as individual HelmApp by @disrupted in [#398](https://github.com/bakdata/kpops/pull/398)
 
+* Update docs for v3 by @sujuka99 in [#416](https://github.com/bakdata/kpops/pull/416)
 
+* Refactor Kafka Connector resetter as individual HelmApp by @disrupted in [#400](https://github.com/bakdata/kpops/pull/400)
 
+* Update tests resources by @sujuka99 in [#417](https://github.com/bakdata/kpops/pull/417)
 
-## [4.0.2](https://github.com/bakdata/kpops/releases/tag/4.0.2) - Release Date: [2024-03-04]
+* Fix enrichment of nested Pydantic BaseModel by @disrupted in [#415](https://github.com/bakdata/kpops/pull/415)
 
-### 📝 Documentation
+* Summarize all breaking changes in diffs at the top of the migration guide by @sujuka99 in [#419](https://github.com/bakdata/kpops/pull/419)
 
-- Reference editor plugin for Neovim in docs - [#464](https://github.com/bakdata/kpops/pull/464)
+* Fix wrong Helm release name character limit by @disrupted in [#418](https://github.com/bakdata/kpops/pull/418)
 
+* KPOps 3.0 by @disrupted in [#420](https://github.com/bakdata/kpops/pull/420)
 
-### 🌀 Miscellaneous
+* Update release workflow template to support custom changelog file path by @disrupted in [#421](https://github.com/bakdata/kpops/pull/421)
 
-- Add support for Python 3.12 - [#467](https://github.com/bakdata/kpops/pull/467)
+* Bump version 2.0.11 → 3.0.0 by @bakdata-bot
 
-- Update Pyright - [#468](https://github.com/bakdata/kpops/pull/468)
 
-- Remove package classifiers that are automatically assigned by Poetry - [#469](https://github.com/bakdata/kpops/pull/469)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/2.0.11...3.0.0
 
-- Validate autoscaling mandatory fields when enabled - [#470](https://github.com/bakdata/kpops/pull/470)
+## [2.0.11](https://github.com/bakdata/kpops/tree/2.0.11) - 2023-10-24
+### What's changed
 
+* Merge remote-tracking branch 'origin/main' into v3 by @disrupted
 
+* Create HelmApp component by @disrupted in [#370](https://github.com/bakdata/kpops/pull/370)
 
+* Fix early exit upon Helm exit code 1 (#376) by @sujuka99
 
+* Migrate deprecated mkdocs-material-extensions (#378) by @disrupted
 
+* Fix docs setup page list indentation (#377) by @sujuka99
 
-## [4.0.1](https://github.com/bakdata/kpops/releases/tag/4.0.1) - Release Date: [2024-02-29]
+* Exclude resources from docs search (#371) by @disrupted
 
-### 🐛 Fixes
+* Bump version 2.0.10 → 2.0.11 by @bakdata-bot
 
-- Set supported Python cutoff to 3.11 - [#466](https://github.com/bakdata/kpops/pull/466)
+* Fix early exit upon Helm exit code 1 by @sujuka99 in [#376](https://github.com/bakdata/kpops/pull/376)
 
+* Migrate deprecated mkdocs-material-extensions by @disrupted in [#378](https://github.com/bakdata/kpops/pull/378)
 
+* Fix docs setup page list indentation by @sujuka99 in [#377](https://github.com/bakdata/kpops/pull/377)
 
+* Exclude resources from docs search by @disrupted in [#371](https://github.com/bakdata/kpops/pull/371)
 
+* Bump version 2.0.10 → 2.0.11 by @bakdata-bot
 
 
-## [4.0.0](https://github.com/bakdata/kpops/releases/tag/4.0.0) - Release Date: [2024-02-27]
+**Full Changelog**: https://github.com/bakdata/kpops/compare/2.0.10...2.0.11
 
-### 🏗️ Breaking changes
+## [2.0.10](https://github.com/bakdata/kpops/tree/2.0.10) - 2023-10-12
+### What's changed
 
-- Distribute defaults across multiple files - [#438](https://github.com/bakdata/kpops/pull/438)
+* Fix environment variables documentation generation by @sujuka99 in [#362](https://github.com/bakdata/kpops/pull/362)
 
+* Merge branch 'main' of github.com:bakdata/kpops into v3 by @raminqaf
 
-### 🚀 Features
+* Make Kafka REST Proxy & Kafka Connect hosts default and improve Schema Registry config by @raminqaf in [#354](https://github.com/bakdata/kpops/pull/354)
 
-- Distribute defaults across multiple files - [#438](https://github.com/bakdata/kpops/pull/438)
+* Introduce ruff by @sujuka99 in [#363](https://github.com/bakdata/kpops/pull/363)
 
+* Print details on connector name mismatch error by @disrupted in [#369](https://github.com/bakdata/kpops/pull/369)
 
+* Enable transparent OS environment lookups from internal environment by @disrupted in [#368](https://github.com/bakdata/kpops/pull/368)
 
+* Bump version 2.0.9 → 2.0.10 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/2.0.9...2.0.10
 
-## [3.2.4](https://github.com/bakdata/kpops/releases/tag/3.2.4) - Release Date: [2024-02-26]
+## [2.0.9](https://github.com/bakdata/kpops/tree/2.0.9) - 2023-09-19
+### What's changed
 
-### 🐛 Fixes
+* Move GitHub action to repository root by @disrupted in [#356](https://github.com/bakdata/kpops/pull/356)
 
-- Fix docs CI to include the latest changes to a tagged version in the changelog - [#459](https://github.com/bakdata/kpops/pull/459)
+* Fix link to kpops-examples by @sujuka99 in [#357](https://github.com/bakdata/kpops/pull/357)
 
-- Fix tempfile creation - [#461](https://github.com/bakdata/kpops/pull/461)
+* Fix Kafka connect config name for deletion by @raminqaf in [#361](https://github.com/bakdata/kpops/pull/361)
 
-- Fix symbolic link to CONTRIBUTING.md and parallel option in action.yaml - [#462](https://github.com/bakdata/kpops/pull/462)
+* Bump version 2.0.8 → 2.0.9 by @bakdata-bot
 
 
-### 🏭 Refactor
+**Full Changelog**: https://github.com/bakdata/kpops/compare/2.0.8...2.0.9
 
-- Refactor Kafka topics - [#447](https://github.com/bakdata/kpops/pull/447)
+## [2.0.8](https://github.com/bakdata/kpops/tree/2.0.8) - 2023-09-06
+### What's changed
 
-- Refactor PipelineGenerator to use component ids - [#460](https://github.com/bakdata/kpops/pull/460)
+* Refactor component prefix & name by @disrupted in [#326](https://github.com/bakdata/kpops/pull/326)
 
+* Remove unnecessary condition during inflate by @disrupted in [#328](https://github.com/bakdata/kpops/pull/328)
 
-### 📝 Documentation
+* Fix config.yaml overriding environment variables by @sujuka99 in [#353](https://github.com/bakdata/kpops/pull/353)
 
-- Fix docs CI to include the latest changes to a tagged version in the changelog - [#459](https://github.com/bakdata/kpops/pull/459)
+* Bump version 2.0.7 → 2.0.8 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/2.0.7...2.0.8
 
+## [2.0.7](https://github.com/bakdata/kpops/tree/2.0.7) - 2023-08-31
+### What's changed
 
+* Print only rendered templates when `--template` flag is set by @raminqaf in [#350](https://github.com/bakdata/kpops/pull/350)
 
+* Add migration guide by @raminqaf in [#352](https://github.com/bakdata/kpops/pull/352)
 
-## [3.2.3](https://github.com/bakdata/kpops/releases/tag/3.2.3) - Release Date: [2024-02-19]
+* Bump version 2.0.6 → 2.0.7 by @bakdata-bot
 
-### 🐛 Fixes
 
-- Trim and hash Helm name override to 63 characters - [#456](https://github.com/bakdata/kpops/pull/456)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/2.0.6...2.0.7
 
+## [2.0.6](https://github.com/bakdata/kpops/tree/2.0.6) - 2023-08-30
+### What's changed
 
+* Simplify deployment with local Helm charts by @raminqaf in [#349](https://github.com/bakdata/kpops/pull/349)
 
+* Bump version 2.0.5 → 2.0.6 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/2.0.5...2.0.6
 
-## [3.2.2](https://github.com/bakdata/kpops/releases/tag/3.2.2) - Release Date: [2024-02-12]
+## [2.0.5](https://github.com/bakdata/kpops/tree/2.0.5) - 2023-08-30
+### What's changed
 
-### 🐛 Fixes
+* Fix versioning of docs when releasing by @raminqaf in [#346](https://github.com/bakdata/kpops/pull/346)
 
-- Fix nested substitution - [#451](https://github.com/bakdata/kpops/pull/451)
+* Bump version 2.0.4 → 2.0.5 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/2.0.4...2.0.5
 
+## [2.0.4](https://github.com/bakdata/kpops/tree/2.0.4) - 2023-08-29
+### What's changed
 
+* Exclude abstract components from pipeline schema by @disrupted in [#332](https://github.com/bakdata/kpops/pull/332)
 
+* Add `dprint` as the markdown formatter by @raminqaf in [#337](https://github.com/bakdata/kpops/pull/337)
 
-## [3.2.1](https://github.com/bakdata/kpops/releases/tag/3.2.1) - Release Date: [2024-02-08]
+* Publish pre-release docs for PRs & main branch by @raminqaf in [#339](https://github.com/bakdata/kpops/pull/339)
 
-### 🐛 Fixes
+* Fix GitHub ref variable for pushing docs to main branch by @raminqaf in [#343](https://github.com/bakdata/kpops/pull/343)
 
-- Fix order of pipeline steps for clean/reset - [#450](https://github.com/bakdata/kpops/pull/450)
+* Align docs colours by @raminqaf in [#345](https://github.com/bakdata/kpops/pull/345)
 
-- Fix substitution - [#449](https://github.com/bakdata/kpops/pull/449)
+* Bump version 2.0.3 → 2.0.4 by @bakdata-bot
 
-- Fix cleaner inheritance, parent model should be aliased during instantiation - [#452](https://github.com/bakdata/kpops/pull/452)
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/2.0.3...2.0.4
 
-### 🏭 Refactor
+## [2.0.3](https://github.com/bakdata/kpops/tree/2.0.3) - 2023-08-24
+### What's changed
 
-- Simplify execution graph logic - [#446](https://github.com/bakdata/kpops/pull/446)
+* Lint GitHub action by @disrupted in [#342](https://github.com/bakdata/kpops/pull/342)
 
+* Fix GitHub action error in non-Python projects by @disrupted in [#340](https://github.com/bakdata/kpops/pull/340)
 
+* Bump version 2.0.2 → 2.0.3 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/2.0.2...2.0.3
 
+## [2.0.2](https://github.com/bakdata/kpops/tree/2.0.2) - 2023-08-23
+### What's changed
 
-## [3.2.0](https://github.com/bakdata/kpops/releases/tag/3.2.0) - Release Date: [2024-02-01]
+* Add version dropdown to the documentation by @raminqaf in [#336](https://github.com/bakdata/kpops/pull/336)
 
-### 🚀 Features
+* Break the documentation down into smaller subsection by @raminqaf in [#329](https://github.com/bakdata/kpops/pull/329)
 
-- Refactor pipeline filter and add to public API - [#405](https://github.com/bakdata/kpops/pull/405)
+* Bump version 2.0.1 → 2.0.2 by @bakdata-bot
 
 
-### 🏭 Refactor
+**Full Changelog**: https://github.com/bakdata/kpops/compare/2.0.1...2.0.2
 
-- Refactor enrichment using Pydantic model validator - [#444](https://github.com/bakdata/kpops/pull/444)
+## [2.0.1](https://github.com/bakdata/kpops/tree/2.0.1) - 2023-08-22
+### What's changed
 
-- Refactor pipeline filter and add to public API - [#405](https://github.com/bakdata/kpops/pull/405)
+* Fix optional flags in GitHub action by @disrupted in [#334](https://github.com/bakdata/kpops/pull/334)
 
+* Bump version 2.0.0 → 2.0.1 by @bakdata-bot
 
-### 📝 Documentation
 
-- Improve Sphinx docs highlighting using RST markup - [#443](https://github.com/bakdata/kpops/pull/443)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/2.0.0...2.0.1
 
+## [2.0.0](https://github.com/bakdata/kpops/tree/2.0.0) - 2023-08-17
+### What's changed
 
+* Merge remote-tracking branch 'origin/main' into v2 by @disrupted
 
+* v2 by @disrupted in [#321](https://github.com/bakdata/kpops/pull/321)
 
+* Bump version 1.7.2 → 2.0.0 by @bakdata-bot
 
 
-## [3.1.0](https://github.com/bakdata/kpops/releases/tag/3.1.0) - Release Date: [2024-01-30]
+**Full Changelog**: https://github.com/bakdata/kpops/compare/1.7.2...2.0.0
 
-### 🚀 Features
+## [1.7.2](https://github.com/bakdata/kpops/tree/1.7.2) - 2023-08-16
+### What's changed
 
-- Add support for pipeline steps parallelization  - [#312](https://github.com/bakdata/kpops/pull/312)
+* Merge remote-tracking branch 'origin/main' into v2 by @disrupted
 
+* Refactor input/output types by @sujuka99 in [#232](https://github.com/bakdata/kpops/pull/232)
 
-### 🐛 Fixes
+* Fix editor integration example in docs by @sujuka99 in [#273](https://github.com/bakdata/kpops/pull/273)
 
-- Update poetry publish workflow version to latest - [#430](https://github.com/bakdata/kpops/pull/430)
+* Add KPOps Runner GitHub Action to the documentation by @raminqaf in [#325](https://github.com/bakdata/kpops/pull/325)
 
+* Refactor Kafka Connect handler by @disrupted in [#322](https://github.com/bakdata/kpops/pull/322)
 
-### 🏭 Refactor
+* Remove `:type` and `:rtype` from docstrings by @raminqaf in [#324](https://github.com/bakdata/kpops/pull/324)
 
-- Simplify loading of defaults - [#435](https://github.com/bakdata/kpops/pull/435)
+* Merge remote-tracking branch 'origin/main' into v2 by @disrupted
 
+* Bump version 1.7.1 → 1.7.2 by @bakdata-bot
 
-### 🌀 Miscellaneous
 
-- Add custom PascalCase to snake_case alias generator - [#436](https://github.com/bakdata/kpops/pull/436)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/1.7.1...1.7.2
 
-- Add parallel flag support to kpops runner - [#439](https://github.com/bakdata/kpops/pull/439)
+## [1.7.1](https://github.com/bakdata/kpops/tree/1.7.1) - 2023-08-15
+### What's changed
 
+* Modularize and autogenerate examples for the documentation by @sujuka99 in [#267](https://github.com/bakdata/kpops/pull/267)
 
+* Update the variable documentation by @sujuka99 in [#266](https://github.com/bakdata/kpops/pull/266)
 
+* Merge remote-tracking branch 'origin/main' into v2 by @disrupted
 
+* Update docs generation by @disrupted
 
+* Bump version 1.7.0 → 1.7.1 by @bakdata-bot
 
-## [3.0.2](https://github.com/bakdata/kpops/releases/tag/3.0.2) - Release Date: [2024-01-23]
 
-### 🐛 Fixes
+**Full Changelog**: https://github.com/bakdata/kpops/compare/1.7.0...1.7.1
 
-- Fix Helm diff output - [#434](https://github.com/bakdata/kpops/pull/434)
+## [1.7.0](https://github.com/bakdata/kpops/tree/1.7.0) - 2023-08-15
+### What's changed
 
+* Add flag to exclude pipeline steps by @raminqaf in [#300](https://github.com/bakdata/kpops/pull/300)
 
-### 📝 Documentation
+* Bump version 1.6.0 → 1.7.0 by @bakdata-bot
 
-- Add step for submodule initialization on the docs - [#431](https://github.com/bakdata/kpops/pull/431)
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/1.6.0...1.7.0
 
-### 🌀 Miscellaneous
+## [1.6.0](https://github.com/bakdata/kpops/tree/1.6.0) - 2023-08-10
+### What's changed
 
-- Add message if examples git submodule is not initialized - [#432](https://github.com/bakdata/kpops/pull/432)
+* Refactor handling of Helm flags by @disrupted in [#319](https://github.com/bakdata/kpops/pull/319)
 
-- Update type annotation for deserialized pipeline - [#433](https://github.com/bakdata/kpops/pull/433)
+* Bump version 1.5.0 → 1.6.0 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/1.5.0...1.6.0
 
+## [1.5.0](https://github.com/bakdata/kpops/tree/1.5.0) - 2023-08-10
+### What's changed
 
+* Remove camel case conversion of internal models by @disrupted in [#308](https://github.com/bakdata/kpops/pull/308)
 
+* Automatically support schema generation for custom components by @disrupted in [#307](https://github.com/bakdata/kpops/pull/307)
 
-## [3.0.1](https://github.com/bakdata/kpops/releases/tag/3.0.1) - Release Date: [2024-01-19]
+* Derive component type automatically from class name by @disrupted in [#309](https://github.com/bakdata/kpops/pull/309)
 
-### 🐛 Fixes
+* Refactor Helm wrapper and add `--set-file` flag by @disrupted in [#311](https://github.com/bakdata/kpops/pull/311)
 
-- Fix broken doc link - [#427](https://github.com/bakdata/kpops/pull/427)
+* Set default for ToSection topics by @disrupted in [#313](https://github.com/bakdata/kpops/pull/313)
 
-- Add warning log if SR handler is disabled but URL is set - [#428](https://github.com/bakdata/kpops/pull/428)
+* Annotate types for ToSection models mapping by @disrupted in [#315](https://github.com/bakdata/kpops/pull/315)
 
+* Check Poetry lock file consistency by @disrupted in [#316](https://github.com/bakdata/kpops/pull/316)
 
-### 📝 Documentation
+* Bump version 1.4.0 → 1.5.0 by @bakdata-bot
 
-- Update docs of word-count example for v3 & new folder structure - [#423](https://github.com/bakdata/kpops/pull/423)
 
-- Move ATM fraud to examples repo - [#425](https://github.com/bakdata/kpops/pull/425)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/1.4.0...1.5.0
 
-- Fix broken doc link - [#427](https://github.com/bakdata/kpops/pull/427)
+## [1.4.0](https://github.com/bakdata/kpops/tree/1.4.0) - 2023-08-02
+### What's changed
 
+* Update Black by @disrupted in [#294](https://github.com/bakdata/kpops/pull/294)
 
-### 🌀 Miscellaneous
+* Fix vulnerability in mkdocs-material by @disrupted in [#295](https://github.com/bakdata/kpops/pull/295)
 
-- Update pydantic dependency - [#422](https://github.com/bakdata/kpops/pull/422)
+* Move breaking changes section upper in the change log config by @raminqaf in [#287](https://github.com/bakdata/kpops/pull/287)
 
-- Add git submodule instructions to the contributing.md - [#429](https://github.com/bakdata/kpops/pull/429)
+* Order PipelineComponent fields by @disrupted in [#290](https://github.com/bakdata/kpops/pull/290)
 
+* Migrate requests to httpx by @irux in [#302](https://github.com/bakdata/kpops/pull/302)
 
+* Validate unique step names by @disrupted in [#292](https://github.com/bakdata/kpops/pull/292)
 
+* Refactor CLI using dtyper by @disrupted in [#306](https://github.com/bakdata/kpops/pull/306)
 
+* Bump version 1.3.2 → 1.4.0 by @bakdata-bot
 
 
-## [3.0.0](https://github.com/bakdata/kpops/releases/tag/3.0.0) - Release Date: [2024-01-17]
+**Full Changelog**: https://github.com/bakdata/kpops/compare/1.3.2...1.4.0
 
-### 🏗️ Breaking changes
+## [1.3.2](https://github.com/bakdata/kpops/tree/1.3.2) - 2023-07-13
+### What's changed
 
-- Move GitHub action to repository root - [#356](https://github.com/bakdata/kpops/pull/356)
+* Exclude Helm tests from dry-run diff by @raminqaf in [#293](https://github.com/bakdata/kpops/pull/293)
 
-- Make Kafka REST Proxy & Kafka Connect hosts default and improve Schema Registry config - [#354](https://github.com/bakdata/kpops/pull/354)
+* Bump version 1.3.1 → 1.3.2 by @bakdata-bot
 
-- Create HelmApp component - [#370](https://github.com/bakdata/kpops/pull/370)
 
-- Change substitution variables separator to `.` - [#388](https://github.com/bakdata/kpops/pull/388)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/1.3.1...1.3.2
 
-- Refactor pipeline generator & representation - [#392](https://github.com/bakdata/kpops/pull/392)
+## [1.3.1](https://github.com/bakdata/kpops/tree/1.3.1) - 2023-07-11
+### What's changed
 
-- Define custom components module & pipeline base dir globally - [#387](https://github.com/bakdata/kpops/pull/387)
+* Update codeowners by @disrupted in [#281](https://github.com/bakdata/kpops/pull/281)
 
-- Use hash and trim long Helm release names instead of only trimming - [#390](https://github.com/bakdata/kpops/pull/390)
+* Reactivate Windows CI by @irux in [#255](https://github.com/bakdata/kpops/pull/255)
 
-- Refactor generate template for Python API usage - [#380](https://github.com/bakdata/kpops/pull/380)
+* Downgrade Poetry version on the Windows CI pipeline by @irux in [#286](https://github.com/bakdata/kpops/pull/286)
 
-- Namespace substitution vars - [#408](https://github.com/bakdata/kpops/pull/408)
+* Remove workaround for pipeline steps by @disrupted in [#276](https://github.com/bakdata/kpops/pull/276)
 
-- Refactor streams-bootstrap cleanup jobs as individual HelmApp - [#398](https://github.com/bakdata/kpops/pull/398)
+* Set ANSI theme for output of `kpops generate` by @disrupted in [#289](https://github.com/bakdata/kpops/pull/289)
 
-- Refactor Kafka Connector resetter as individual HelmApp - [#400](https://github.com/bakdata/kpops/pull/400)
+* Bump version 1.3.0 → 1.3.1 by @bakdata-bot
 
-- Fix wrong Helm release name character limit - [#418](https://github.com/bakdata/kpops/pull/418)
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/1.3.0...1.3.1
 
-### 🚀 Features
+## [1.3.0](https://github.com/bakdata/kpops/tree/1.3.0) - 2023-07-07
+### What's changed
 
-- Allow overriding config files - [#391](https://github.com/bakdata/kpops/pull/391)
+* Update KPOps runner readme for dev versions by @raminqaf in [#279](https://github.com/bakdata/kpops/pull/279)
 
-- Generate defaults schema - [#402](https://github.com/bakdata/kpops/pull/402)
+* Add breaking changes section to change log config by @raminqaf in [#280](https://github.com/bakdata/kpops/pull/280)
 
+* Plural broker field in pipeline config by @raminqaf in [#278](https://github.com/bakdata/kpops/pull/278)
 
-### 🐛 Fixes
+* Bump version 1.2.4 → 1.3.0 by @bakdata-bot
 
-- Fix missing component type in pipeline schema - [#401](https://github.com/bakdata/kpops/pull/401)
 
-- Fix enrichment of nested Pydantic BaseModel - [#415](https://github.com/bakdata/kpops/pull/415)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/1.2.4...1.3.0
 
-- Fix wrong Helm release name character limit - [#418](https://github.com/bakdata/kpops/pull/418)
+## [1.2.4](https://github.com/bakdata/kpops/tree/1.2.4) - 2023-06-27
+### What's changed
 
-- Update release workflow template to support custom changelog file path - [#421](https://github.com/bakdata/kpops/pull/421)
+* Update changelog action to contain miscellaneous PRs by @raminqaf in [#269](https://github.com/bakdata/kpops/pull/269)
 
+* Bump version 1.2.3 → 1.2.4 by @bakdata-bot
 
-### 🧪 Dependencies
 
-- Migrate to Pydantic v2 - [#347](https://github.com/bakdata/kpops/pull/347)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/1.2.3...1.2.4
 
+## [1.2.3](https://github.com/bakdata/kpops/tree/1.2.3) - 2023-06-22
+### What's changed
 
-### 🏭 Refactor
+* Refactor custom component validation & hide field from kpops output by @disrupted in [#265](https://github.com/bakdata/kpops/pull/265)
 
-- Make Kafka REST Proxy & Kafka Connect hosts default and improve Schema Registry config - [#354](https://github.com/bakdata/kpops/pull/354)
+* Bump version 1.2.2 → 1.2.3 by @bakdata-bot
 
-- Migrate to Pydantic v2 - [#347](https://github.com/bakdata/kpops/pull/347)
 
-- Refactor pipeline generator & representation - [#392](https://github.com/bakdata/kpops/pull/392)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/1.2.2...1.2.3
 
-- Use hash and trim long Helm release names instead of only trimming - [#390](https://github.com/bakdata/kpops/pull/390)
+## [1.2.2](https://github.com/bakdata/kpops/tree/1.2.2) - 2023-06-21
+### What's changed
 
-- Refactor Helm `nameOverride` - [#397](https://github.com/bakdata/kpops/pull/397)
+* Create workflow to lint CI by @disrupted in [#260](https://github.com/bakdata/kpops/pull/260)
 
-- Mark component type as computed Pydantic field - [#399](https://github.com/bakdata/kpops/pull/399)
+* Fix update docs when releasing by @irux in [#261](https://github.com/bakdata/kpops/pull/261)
 
-- Refactor generate template for Python API usage - [#380](https://github.com/bakdata/kpops/pull/380)
+* Rename change log message for uncategorized issues by @raminqaf in [#262](https://github.com/bakdata/kpops/pull/262)
 
-- Support multiple inheritance for doc generation - [#406](https://github.com/bakdata/kpops/pull/406)
+* Bump version 1.2.1 → 1.2.2 by @bakdata-bot
 
-- Refactor streams-bootstrap cleanup jobs as individual HelmApp - [#398](https://github.com/bakdata/kpops/pull/398)
 
-- Refactor Kafka Connector resetter as individual HelmApp - [#400](https://github.com/bakdata/kpops/pull/400)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/1.2.1...1.2.2
 
+## [1.2.1](https://github.com/bakdata/kpops/tree/1.2.1) - 2023-06-21
+### What's changed
 
-### 📝 Documentation
+* Fix update docs in release workflow by @irux in [#258](https://github.com/bakdata/kpops/pull/258)
 
-- Move GitHub action to repository root - [#356](https://github.com/bakdata/kpops/pull/356)
+* Bump version 1.2.0 → 1.2.1 by @bakdata-bot
 
-- Create HelmApp component - [#370](https://github.com/bakdata/kpops/pull/370)
 
--  Update docs for substitution variable usage in v3 - [#409](https://github.com/bakdata/kpops/pull/409)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/1.2.0...1.2.1
 
-- Support multiple inheritance for doc generation - [#406](https://github.com/bakdata/kpops/pull/406)
+## [1.2.0](https://github.com/bakdata/kpops/tree/1.2.0) - 2023-06-21
+### What's changed
 
-- Update docs for v3 - [#416](https://github.com/bakdata/kpops/pull/416)
+* Add background to docs home page by @disrupted in [#236](https://github.com/bakdata/kpops/pull/236)
 
-- Update tests resources - [#417](https://github.com/bakdata/kpops/pull/417)
+* Remove enable option from helm diff by @raminqaf in [#235](https://github.com/bakdata/kpops/pull/235)
 
-- Summarize all breaking changes in diffs at the top of the migration guide - [#419](https://github.com/bakdata/kpops/pull/419)
+* add --namespace option to Helm template command by @raminqaf in [#237](https://github.com/bakdata/kpops/pull/237)
 
+* Add missing type annotation for Pydantic attributes by @disrupted in [#238](https://github.com/bakdata/kpops/pull/238)
 
-### 🌀 Miscellaneous
+* Add `helm repo update <repo-name>` for Helm >3.7 by @raminqaf in [#239](https://github.com/bakdata/kpops/pull/239)
 
-- Replace black with ruff - [#365](https://github.com/bakdata/kpops/pull/365)
+* Fix helm version check by @sujuka99 in [#242](https://github.com/bakdata/kpops/pull/242)
 
-- Add toml formatter to dprint - [#386](https://github.com/bakdata/kpops/pull/386)
+* Refactor variable substitution by @sujuka99 in [#198](https://github.com/bakdata/kpops/pull/198)
 
-- Add malva to dprint - [#385](https://github.com/bakdata/kpops/pull/385)
+* Fix Helm Version Check by @sujuka99 in [#244](https://github.com/bakdata/kpops/pull/244)
 
-- Update KPOps runner with the new options - [#395](https://github.com/bakdata/kpops/pull/395)
+* Update Poetry version in CI by @sujuka99 in [#247](https://github.com/bakdata/kpops/pull/247)
 
-- Fix KPOps action to get package from testPyPI - [#396](https://github.com/bakdata/kpops/pull/396)
+* Add pip cache in KPOps runner action by @raminqaf in [#249](https://github.com/bakdata/kpops/pull/249)
 
-- KPOps 3.0 - [#420](https://github.com/bakdata/kpops/pull/420)
+* Check types using Pyright by @disrupted in [#251](https://github.com/bakdata/kpops/pull/251)
 
+* Remove MyPy by @disrupted in [#252](https://github.com/bakdata/kpops/pull/252)
 
+* Disable broken Windows CI temporarily by @sujuka99 in [#253](https://github.com/bakdata/kpops/pull/253)
 
+* Update release and publish workflows by @irux in [#254](https://github.com/bakdata/kpops/pull/254)
 
+* Fix import from external module by @disrupted in [#256](https://github.com/bakdata/kpops/pull/256)
 
+* Fix release & publish workflows by @irux in [#257](https://github.com/bakdata/kpops/pull/257)
 
-## [2.0.11](https://github.com/bakdata/kpops/releases/tag/2.0.11) - Release Date: [2023-10-24]
+* Bump version 1.1.5 → 1.2.0 by @bakdata-bot
 
-### 🐛 Fixes
 
-- Fix early exit upon Helm exit code 1 - [#376](https://github.com/bakdata/kpops/pull/376)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/1.1.5...1.2.0
 
-- Fix docs setup page list indentation - [#377](https://github.com/bakdata/kpops/pull/377)
+## [1.1.5](https://github.com/bakdata/kpops/tree/1.1.5) - 2023-06-07
+### What's changed
 
+* Fix links to ATM-fraud defaults by @sujuka99 in [#219](https://github.com/bakdata/kpops/pull/219)
 
-### 📝 Documentation
+* Exclude pytest snapshots from pre-commit hook by @sujuka99 in [#226](https://github.com/bakdata/kpops/pull/226)
 
-- Migrate deprecated mkdocs-material-extensions - [#378](https://github.com/bakdata/kpops/pull/378)
+* Add Windows support by @irux in [#217](https://github.com/bakdata/kpops/pull/217)
 
-- Fix docs setup page list indentation - [#377](https://github.com/bakdata/kpops/pull/377)
+* Fix missing extra input topics by @disrupted in [#230](https://github.com/bakdata/kpops/pull/230)
 
-- Exclude resources from docs search - [#371](https://github.com/bakdata/kpops/pull/371)
+* Bump version 1.1.4 → 1.1.5 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/1.1.4...1.1.5
 
+## [1.1.4](https://github.com/bakdata/kpops/tree/1.1.4) - 2023-05-22
+### What's changed
 
+* Document environment-specific pipeline definitions by @sujuka99 in [#210](https://github.com/bakdata/kpops/pull/210)
 
+* Set up Helm inside composite action & install latest KPOps by default by @disrupted in [#211](https://github.com/bakdata/kpops/pull/211)
 
-## [2.0.10](https://github.com/bakdata/kpops/releases/tag/2.0.10) - Release Date: [2023-10-12]
+* Update example pipeline by @sujuka99 in [#216](https://github.com/bakdata/kpops/pull/216)
 
-### 🌀 Miscellaneous
+* Bump version 1.1.3 → 1.1.4 by @bakdata-bot
 
-- Fix environment variables documentation generation - [#362](https://github.com/bakdata/kpops/pull/362)
 
-- Introduce ruff - [#363](https://github.com/bakdata/kpops/pull/363)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/1.1.3...1.1.4
 
-- Print details on connector name mismatch error - [#369](https://github.com/bakdata/kpops/pull/369)
+## [1.1.3](https://github.com/bakdata/kpops/tree/1.1.3) - 2023-05-04
+### What's changed
 
-- Enable transparent OS environment lookups from internal environment - [#368](https://github.com/bakdata/kpops/pull/368)
+* Rewrite bash pre-commit hooks in Python by @sujuka99 in [#207](https://github.com/bakdata/kpops/pull/207)
 
+* Collapse pip install output for GitHub action by @disrupted in [#209](https://github.com/bakdata/kpops/pull/209)
 
+* Fix misleading error of 'File or directory not found' by @irux in [#208](https://github.com/bakdata/kpops/pull/208)
 
+* Bump version 1.1.2 → 1.1.3 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/1.1.2...1.1.3
 
-## [2.0.9](https://github.com/bakdata/kpops/releases/tag/2.0.9) - Release Date: [2023-09-19]
+## [1.1.2](https://github.com/bakdata/kpops/tree/1.1.2) - 2023-04-27
+### What's changed
 
-### 🐛 Fixes
+* Add titles and descriptions to Pydantic model fields by @sujuka99 in [#191](https://github.com/bakdata/kpops/pull/191)
 
-- Fix Kafka connect config name for deletion - [#361](https://github.com/bakdata/kpops/pull/361)
+* Respect object docstring titles by @sujuka99 in [#196](https://github.com/bakdata/kpops/pull/196)
 
+* Allow manually running the CI by @sujuka99 in [#204](https://github.com/bakdata/kpops/pull/204)
 
-### 📝 Documentation
+* Generate schema in CI by @sujuka99 in [#197](https://github.com/bakdata/kpops/pull/197)
 
-- Fix link to kpops-examples - [#357](https://github.com/bakdata/kpops/pull/357)
+* Add `kpops --version` command by @disrupted in [#206](https://github.com/bakdata/kpops/pull/206)
 
+* Bump version 1.1.1 → 1.1.2 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/1.1.1...1.1.2
 
+## [1.1.1](https://github.com/bakdata/kpops/tree/1.1.1) - 2023-04-17
+### What's changed
 
+* Expose pipeline component by @irux in [#192](https://github.com/bakdata/kpops/pull/192)
 
-## [2.0.8](https://github.com/bakdata/kpops/releases/tag/2.0.8) - Release Date: [2023-09-06]
+* Bump version 1.1.0 → 1.1.1 by @bakdata-bot
 
-### 🐛 Fixes
 
-- Fix config.yaml overriding environment variables - [#353](https://github.com/bakdata/kpops/pull/353)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/1.1.0...1.1.1
 
+## [1.1.0](https://github.com/bakdata/kpops/tree/1.1.0) - 2023-04-11
+### What's changed
 
-### 🏭 Refactor
+* Error when running generate with --steps by @sujuka99 in [#169](https://github.com/bakdata/kpops/pull/169)
 
-- Refactor component prefix & name - [#326](https://github.com/bakdata/kpops/pull/326)
+* Make schema generation a builtin CLI command by @sujuka99 in [#166](https://github.com/bakdata/kpops/pull/166)
 
-- Remove unnecessary condition during inflate - [#328](https://github.com/bakdata/kpops/pull/328)
+* Add CLI Usage doc generation to CI by @sujuka99 in [#174](https://github.com/bakdata/kpops/pull/174)
 
+* Add new badges to readme and improve KubernetesApp docs by @raminqaf in [#186](https://github.com/bakdata/kpops/pull/186)
 
+* Read from component by @disrupted in [#193](https://github.com/bakdata/kpops/pull/193)
 
+* Bump version 1.0.1 → 1.1.0 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/1.0.1...1.1.0
 
-## [2.0.7](https://github.com/bakdata/kpops/releases/tag/2.0.7) - Release Date: [2023-08-31]
+## [1.0.1](https://github.com/bakdata/kpops/tree/1.0.1) - 2023-03-23
+### What's changed
 
-### 🐛 Fixes
+* fix(README): documentation leads to user-guide by @sujuka99 in [#163](https://github.com/bakdata/kpops/pull/163)
 
-- Print only rendered templates when `--template` flag is set - [#350](https://github.com/bakdata/kpops/pull/350)
+* Fix serialization of `pathlib.Path` type on model export by @disrupted in [#168](https://github.com/bakdata/kpops/pull/168)
 
+* Bump version 1.0.0 → 1.0.1 by @bakdata-bot
 
-### 📝 Documentation
 
-- Add migration guide - [#352](https://github.com/bakdata/kpops/pull/352)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/1.0.0...1.0.1
 
+## [1.0.0](https://github.com/bakdata/kpops/tree/1.0.0) - 2023-03-20
+### What's changed
 
+* Update "What is KPOps" section to be more catchy by @sujuka99 in [#148](https://github.com/bakdata/kpops/pull/148)
 
+* Fix broken links in README by @raminqaf in [#160](https://github.com/bakdata/kpops/pull/160)
 
+* Update CLI usage Reference by @sujuka99 in [#152](https://github.com/bakdata/kpops/pull/152)
 
+* Fix config.yaml `defaults_path` being overridden by CLI by @sujuka99 in [#151](https://github.com/bakdata/kpops/pull/151)
 
-## [2.0.6](https://github.com/bakdata/kpops/releases/tag/2.0.6) - Release Date: [2023-08-30]
+* Bump version 0.12.0 → 1.0.0 by @bakdata-bot
 
-### 🏭 Refactor
 
-- Simplify deployment with local Helm charts - [#349](https://github.com/bakdata/kpops/pull/349)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/0.12.0...1.0.0
 
+## [0.12.0](https://github.com/bakdata/kpops/tree/0.12.0) - 2023-03-15
+### What's changed
 
+* Create documentation for defaults.yaml by @sujuka99 in [#146](https://github.com/bakdata/kpops/pull/146)
 
+* Rename `kafka-connect` to `kafka-connector` by @sujuka99 in [#150](https://github.com/bakdata/kpops/pull/150)
 
+* Set schema for Kafka Connect config by @disrupted in [#132](https://github.com/bakdata/kpops/pull/132)
 
+* Fix missing enum keys in Kafka REST proxy response model by @irux in [#135](https://github.com/bakdata/kpops/pull/135)
 
-## [2.0.5](https://github.com/bakdata/kpops/releases/tag/2.0.5) - Release Date: [2023-08-30]
+* Bump version 0.11.2 → 0.12.0 by @bakdata-bot
 
-### 🐛 Fixes
 
-- Fix versioning of docs when releasing - [#346](https://github.com/bakdata/kpops/pull/346)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/0.11.2...0.12.0
 
+## [0.11.2](https://github.com/bakdata/kpops/tree/0.11.2) - 2023-03-07
+### What's changed
 
+* Create documentation of KPOps components by @sujuka99 in [#112](https://github.com/bakdata/kpops/pull/112)
 
+* Helm diff should not render NOTES.txt by @sujuka99 in [#130](https://github.com/bakdata/kpops/pull/130)
 
+* Improve inflate example & enum comparison in test by @disrupted in [#104](https://github.com/bakdata/kpops/pull/104)
 
+* Remove duplicate documentation about CLI environment variables by @disrupted in [#140](https://github.com/bakdata/kpops/pull/140)
 
-## [2.0.4](https://github.com/bakdata/kpops/releases/tag/2.0.4) - Release Date: [2023-08-29]
+* Provide documentation for editor integration by @sujuka99 in [#137](https://github.com/bakdata/kpops/pull/137)
 
-### 🐛 Fixes
+* Create documentation of `config.yaml` by @sujuka99 in [#138](https://github.com/bakdata/kpops/pull/138)
 
-- Fix GitHub ref variable for pushing docs to main branch - [#343](https://github.com/bakdata/kpops/pull/343)
+* Refactor loading of component defaults to independent function by @disrupted in [#147](https://github.com/bakdata/kpops/pull/147)
 
+* Bump version 0.11.1 → 0.11.2 by @bakdata-bot
 
-### 📝 Documentation
 
-- Add `dprint` as the markdown formatter - [#337](https://github.com/bakdata/kpops/pull/337)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/0.11.1...0.11.2
 
-- Publish pre-release docs for PRs & main branch - [#339](https://github.com/bakdata/kpops/pull/339)
+## [0.11.1](https://github.com/bakdata/kpops/tree/0.11.1) - 2023-02-23
+### What's changed
 
-- Align docs colours - [#345](https://github.com/bakdata/kpops/pull/345)
+* Skip FromSection for producers by @disrupted in [#125](https://github.com/bakdata/kpops/pull/125)
 
+* Fix pipeline environment override by @disrupted in [#127](https://github.com/bakdata/kpops/pull/127)
 
-### 🌀 Miscellaneous
+* Bump version 0.11.0 → 0.11.1 by @bakdata-bot
 
-- Exclude abstract components from pipeline schema - [#332](https://github.com/bakdata/kpops/pull/332)
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/0.11.0...0.11.1
 
+## [0.11.0](https://github.com/bakdata/kpops/tree/0.11.0) - 2023-02-22
+### What's changed
 
+* Bump version 0.10.4 → 0.11.0 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/0.10.4...0.11.0
 
-## [2.0.3](https://github.com/bakdata/kpops/releases/tag/2.0.3) - Release Date: [2023-08-24]
+## [0.10.4](https://github.com/bakdata/kpops/tree/0.10.4) - 2023-02-22
+### What's changed
 
-### 🐛 Fixes
+* Fix enrichment of inflated components by @disrupted in [#118](https://github.com/bakdata/kpops/pull/118)
 
-- Fix GitHub action error in non-Python projects - [#340](https://github.com/bakdata/kpops/pull/340)
+* Assign default reviewers through codeowners by @disrupted in [#124](https://github.com/bakdata/kpops/pull/124)
 
+* Update streams-bootstrap autoscaling config by @disrupted in [#122](https://github.com/bakdata/kpops/pull/122)
 
-### 🌀 Miscellaneous
+* Bump version 0.10.3 → 0.10.4 by @bakdata-bot
 
-- Lint GitHub action - [#342](https://github.com/bakdata/kpops/pull/342)
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/0.10.3...0.10.4
 
+## [0.10.3](https://github.com/bakdata/kpops/tree/0.10.3) - 2023-02-16
+### What's changed
 
+* Update screenshot of word count pipeline by @disrupted in [#116](https://github.com/bakdata/kpops/pull/116)
 
+* Fix topic name substitution of `${component_name}` in ToSection by @disrupted in [#117](https://github.com/bakdata/kpops/pull/117)
 
+* Bump version 0.10.2 → 0.10.3 by @bakdata-bot
 
-## [2.0.2](https://github.com/bakdata/kpops/releases/tag/2.0.2) - Release Date: [2023-08-23]
 
-### 📝 Documentation
+**Full Changelog**: https://github.com/bakdata/kpops/compare/0.10.2...0.10.3
 
-- Add version dropdown to the documentation - [#336](https://github.com/bakdata/kpops/pull/336)
+## [0.10.2](https://github.com/bakdata/kpops/tree/0.10.2) - 2023-02-15
+### What's changed
 
-- Break the documentation down into smaller subsection - [#329](https://github.com/bakdata/kpops/pull/329)
+* Create deployment documentation for Word Count pipeline by @sujuka99 in [#107](https://github.com/bakdata/kpops/pull/107)
 
+* Delete leftover pipeline prefix config by @disrupted in [#111](https://github.com/bakdata/kpops/pull/111)
 
+* Remove `poetry run` from Quickstart doc by @sujuka99 in [#114](https://github.com/bakdata/kpops/pull/114)
 
+* Fix incomplete inflate component by @disrupted in [#105](https://github.com/bakdata/kpops/pull/105)
 
+* Bump version 0.10.1 → 0.10.2 by @bakdata-bot
 
 
-## [2.0.1](https://github.com/bakdata/kpops/releases/tag/2.0.1) - Release Date: [2023-08-22]
+**Full Changelog**: https://github.com/bakdata/kpops/compare/0.10.1...0.10.2
 
-### 🐛 Fixes
+## [0.10.1](https://github.com/bakdata/kpops/tree/0.10.1) - 2023-02-13
+### What's changed
 
-- Fix optional flags in GitHub action - [#334](https://github.com/bakdata/kpops/pull/334)
+* Add name to connector dry-run diff by @philipp94831 in [#108](https://github.com/bakdata/kpops/pull/108)
 
+* Bump version 0.10.0 → 0.10.1 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/0.10.0...0.10.1
 
+## [0.10.0](https://github.com/bakdata/kpops/tree/0.10.0) - 2023-02-13
+### What's changed
 
+* Fix diff not shown for new Helm releases by @disrupted in [#92](https://github.com/bakdata/kpops/pull/92)
 
-## [2.0.0](https://github.com/bakdata/kpops/releases/tag/2.0.0) - Release Date: [2023-08-17]
+* Fix ATM fraud example by @disrupted in [#95](https://github.com/bakdata/kpops/pull/95)
 
-### 🏗️ Breaking changes
+* Fix kpops version in pyproject.toml by @raminqaf in [#99](https://github.com/bakdata/kpops/pull/99)
 
-- Remove camel case conversion of internal models - [#308](https://github.com/bakdata/kpops/pull/308)
+* Clean up dry-run logging by @philipp94831 in [#100](https://github.com/bakdata/kpops/pull/100)
 
-- Derive component type automatically from class name - [#309](https://github.com/bakdata/kpops/pull/309)
+* Refactor integration test by @disrupted in [#96](https://github.com/bakdata/kpops/pull/96)
 
-- Refactor input/output types - [#232](https://github.com/bakdata/kpops/pull/232)
+* Refactor change calculation by @disrupted in [#88](https://github.com/bakdata/kpops/pull/88)
 
-- v2 - [#321](https://github.com/bakdata/kpops/pull/321)
+* Support printing final Kubernetes resources with kpops generate by @sujuka99 in [#69](https://github.com/bakdata/kpops/pull/69)
 
+* Set Kafka Connect config name from component by @irux in [#98](https://github.com/bakdata/kpops/pull/98)
 
-### 🚀 Features
+* Add prefix as an option to customize by @irux in [#97](https://github.com/bakdata/kpops/pull/97)
 
-- Automatically support schema generation for custom components - [#307](https://github.com/bakdata/kpops/pull/307)
+* Bump version 0.9.0 → 0.10.0 by @bakdata-bot
 
-- Derive component type automatically from class name - [#309](https://github.com/bakdata/kpops/pull/309)
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/0.9.0...0.10.0
 
-### 🏭 Refactor
+## [0.9.0](https://github.com/bakdata/kpops/tree/0.9.0) - 2023-02-03
+### What's changed
 
-- Refactor input/output types - [#232](https://github.com/bakdata/kpops/pull/232)
+* Remove mike set-default command by @raminqaf in [#86](https://github.com/bakdata/kpops/pull/86)
 
+* Add --create-namespace option to helm by @raminqaf in [#91](https://github.com/bakdata/kpops/pull/91)
 
-### 📝 Documentation
 
-- Fix editor integration example in docs - [#273](https://github.com/bakdata/kpops/pull/273)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/0.8.3...0.9.0
 
+## [0.8.3](https://github.com/bakdata/kpops/tree/0.8.3) - 2023-02-01
+### What's changed
 
+* Correct push flag of mike by @raminqaf in [#84](https://github.com/bakdata/kpops/pull/84)
 
+* Bump version 0.8.2 → 0.8.3 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/0.8.2...0.8.3
 
-## [1.7.2](https://github.com/bakdata/kpops/releases/tag/1.7.2) - Release Date: [2023-08-16]
+## [0.8.2](https://github.com/bakdata/kpops/tree/0.8.2) - 2023-02-01
+### What's changed
 
-### 🏭 Refactor
+* Add `--push` flag to mike by @raminqaf in [#83](https://github.com/bakdata/kpops/pull/83)
 
-- Refactor Kafka Connect handler - [#322](https://github.com/bakdata/kpops/pull/322)
+* Bump version 0.8.1 → 0.8.2 by @bakdata-bot
 
 
-### 📝 Documentation
+**Full Changelog**: https://github.com/bakdata/kpops/compare/0.8.1...0.8.2
 
-- Add KPOps Runner GitHub Action to the documentation - [#325](https://github.com/bakdata/kpops/pull/325)
+## [0.8.1](https://github.com/bakdata/kpops/tree/0.8.1) - 2023-02-01
+### What's changed
 
-- Remove `:type` and `:rtype` from docstrings - [#324](https://github.com/bakdata/kpops/pull/324)
+* Tidy user guide by @disrupted in [#81](https://github.com/bakdata/kpops/pull/81)
 
+* Fix typo and metrics replication factor in Kafka values by @yannick-roeder in [#82](https://github.com/bakdata/kpops/pull/82)
 
+* Bump version 0.8.0 → 0.8.1 by @bakdata-bot
 
 
+### New Contributors
+* @yannick-roeder made their first contribution in [#82](https://github.com/bakdata/kpops/pull/82)
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/0.8.0...0.8.1
 
-## [1.7.1](https://github.com/bakdata/kpops/releases/tag/1.7.1) - Release Date: [2023-08-15]
+## [0.8.0](https://github.com/bakdata/kpops/tree/0.8.0) - 2023-01-30
+### What's changed
 
-### 📝 Documentation
+* Generate schema for pipeline.yaml and config.yaml by @disrupted in [#70](https://github.com/bakdata/kpops/pull/70)
 
-- Modularize and autogenerate examples for the documentation - [#267](https://github.com/bakdata/kpops/pull/267)
+* Bump version 0.7.0 → 0.8.0 by @bakdata-bot
 
-- Update the variable documentation - [#266](https://github.com/bakdata/kpops/pull/266)
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/0.7.0...0.8.0
 
+## [0.7.0](https://github.com/bakdata/kpops/tree/0.7.0) - 2023-01-19
+### What's changed
 
+* Update setup.cfg by @sujuka99 in [#65](https://github.com/bakdata/kpops/pull/65)
 
+* Refactor component configs by @raminqaf in [#63](https://github.com/bakdata/kpops/pull/63)
 
+* Bump version 0.6.1 → 0.7.0 by @bakdata-bot
 
-## [1.7.0](https://github.com/bakdata/kpops/releases/tag/1.7.0) - Release Date: [2023-08-15]
 
-### 🚀 Features
+**Full Changelog**: https://github.com/bakdata/kpops/compare/0.6.1...0.7.0
 
-- Add flag to exclude pipeline steps - [#300](https://github.com/bakdata/kpops/pull/300)
+## [0.6.1](https://github.com/bakdata/kpops/tree/0.6.1) - 2023-01-12
+### What's changed
 
+* Refactor Kubernetes app properties by @disrupted in [#60](https://github.com/bakdata/kpops/pull/60)
 
+* Fix Helm release name trimming of cleanup jobs by @disrupted in [#61](https://github.com/bakdata/kpops/pull/61)
 
+* Bump version 0.6.0 → 0.6.1 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/0.6.0...0.6.1
 
-## [1.6.0](https://github.com/bakdata/kpops/releases/tag/1.6.0) - Release Date: [2023-08-10]
+## [0.6.0](https://github.com/bakdata/kpops/tree/0.6.0) - 2023-01-09
+### What's changed
 
-### 🏭 Refactor
+* Separate clean, reset, and destroy logic by @raminqaf in [#57](https://github.com/bakdata/kpops/pull/57)
 
-- Refactor handling of Helm flags - [#319](https://github.com/bakdata/kpops/pull/319)
+* Fix trigger CI job once on release workflow by @raminqaf in [#58](https://github.com/bakdata/kpops/pull/58)
 
+* Fix double push of docs to GitHub pages by @raminqaf in [#59](https://github.com/bakdata/kpops/pull/59)
 
+* Bump version 0.5.0 → 0.6.0 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/0.5.0...0.6.0
 
+## [0.5.0](https://github.com/bakdata/kpops/tree/0.5.0) - 2023-01-05
+### What's changed
 
-## [1.5.0](https://github.com/bakdata/kpops/releases/tag/1.5.0) - Release Date: [2023-08-10]
+* Fix release version for TestPyPI by @philipp94831 in [#48](https://github.com/bakdata/kpops/pull/48)
 
-### 🚀 Features
+* Change topic_name variable to output_topic_name by @MichaelKora in [#50](https://github.com/bakdata/kpops/pull/50)
 
-- Refactor Helm wrapper and add `--set-file` flag - [#311](https://github.com/bakdata/kpops/pull/311)
+* Improve exception output for integration tests by @disrupted in [#51](https://github.com/bakdata/kpops/pull/51)
 
+* Refactor usage of Pydantic aliases by @disrupted in [#52](https://github.com/bakdata/kpops/pull/52)
 
-### 🏭 Refactor
+* Add MyPy plugin for Pydantic by @disrupted in [#56](https://github.com/bakdata/kpops/pull/56)
 
-- Refactor Helm wrapper and add `--set-file` flag - [#311](https://github.com/bakdata/kpops/pull/311)
+* Use component name instead of type to set default output topic name by @MichaelKora in [#53](https://github.com/bakdata/kpops/pull/53)
 
-- Set default for ToSection topics - [#313](https://github.com/bakdata/kpops/pull/313)
+* Refactor Helm Wrapper by @raminqaf in [#47](https://github.com/bakdata/kpops/pull/47)
 
-- Annotate types for ToSection models mapping - [#315](https://github.com/bakdata/kpops/pull/315)
+* Bump version 0.4.1 → 0.5.0 by @bakdata-bot
 
 
-### 🌀 Miscellaneous
+### New Contributors
+* @MichaelKora made their first contribution in [#53](https://github.com/bakdata/kpops/pull/53)
 
-- Check Poetry lock file consistency - [#316](https://github.com/bakdata/kpops/pull/316)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/0.4.1...0.5.0
 
+## [0.4.1](https://github.com/bakdata/kpops/tree/0.4.1) - 2022-12-22
+### What's changed
 
+* Fix link for getting started in readme by @torbsto in [#34](https://github.com/bakdata/kpops/pull/34)
 
+* Use new Helm repositories for streams-bootstrap and Kafka Connect resetter by @philipp94831 in [#36](https://github.com/bakdata/kpops/pull/36)
 
+* Fix spelling of PyPI by @disrupted in [#33](https://github.com/bakdata/kpops/pull/33)
 
+* Fix typo in docs by @disrupted in [#38](https://github.com/bakdata/kpops/pull/38)
 
-## [1.4.0](https://github.com/bakdata/kpops/releases/tag/1.4.0) - Release Date: [2023-08-02]
+* Fix broken links in the documentation by @raminqaf in [#39](https://github.com/bakdata/kpops/pull/39)
 
-### 🐛 Fixes
+* Fix generate connecting to Kafka REST proxy by @disrupted in [#41](https://github.com/bakdata/kpops/pull/41)
 
-- Validate unique step names - [#292](https://github.com/bakdata/kpops/pull/292)
+* Bump version 0.4.0 → 0.4.1 by @bakdata-bot
 
 
-### 🏭 Refactor
+### New Contributors
+* @torbsto made their first contribution in [#34](https://github.com/bakdata/kpops/pull/34)
 
-- Order PipelineComponent fields - [#290](https://github.com/bakdata/kpops/pull/290)
+**Full Changelog**: https://github.com/bakdata/kpops/compare/0.4.0...0.4.1
 
-- Migrate requests to httpx - [#302](https://github.com/bakdata/kpops/pull/302)
+## [0.4.0](https://github.com/bakdata/kpops/tree/0.4.0) - 2022-12-21
+### What's changed
 
-- Refactor CLI using dtyper - [#306](https://github.com/bakdata/kpops/pull/306)
+* Add installation instructions to README by @raminqaf in [#30](https://github.com/bakdata/kpops/pull/30)
 
+* Fix usage of template workflow for Poetry release by @disrupted in [#25](https://github.com/bakdata/kpops/pull/25)
 
-### 🌀 Miscellaneous
+* Set default value of retain clean jobs flag to false by @raminqaf in [#31](https://github.com/bakdata/kpops/pull/31)
 
-- Update Black - [#294](https://github.com/bakdata/kpops/pull/294)
+* Refactor component handlers by @disrupted in [#3](https://github.com/bakdata/kpops/pull/3)
 
-- Fix vulnerability in mkdocs-material - [#295](https://github.com/bakdata/kpops/pull/295)
+* Bump version 0.3.0 → 0.3.1 by @bakdata-bot
 
-- Move breaking changes section upper in the change log config - [#287](https://github.com/bakdata/kpops/pull/287)
+* Bump version 0.3.1 → 0.4.0 by @bakdata-bot
 
 
+**Full Changelog**: https://github.com/bakdata/kpops/compare/0.3.0...0.4.0
 
+## [0.3.0](https://github.com/bakdata/kpops/tree/0.3.0) - 2022-12-21
+### What's changed
 
+* Initial commit by @philipp94831
 
+* Add source code of KPOps by @raminqaf in [#1](https://github.com/bakdata/kpops/pull/1)
 
-## [1.3.2](https://github.com/bakdata/kpops/releases/tag/1.3.2) - Release Date: [2023-07-13]
+* Add GitHub action by @philipp94831 in [#2](https://github.com/bakdata/kpops/pull/2)
 
-### 🐛 Fixes
+* Update project version by @raminqaf in [#4](https://github.com/bakdata/kpops/pull/4)
 
-- Exclude Helm tests from dry-run diff - [#293](https://github.com/bakdata/kpops/pull/293)
+* Update project version by @raminqaf in [#5](https://github.com/bakdata/kpops/pull/5)
 
+* Remove workflow and add release actions by @raminqaf in [#8](https://github.com/bakdata/kpops/pull/8)
 
+* Fix env variable in GitHub actions by @raminqaf in [#9](https://github.com/bakdata/kpops/pull/9)
 
+* Bump version 0.2.2 → 0.2.3 by @bakdata-bot
 
+* Remove credential flag from checkout in update docs by @raminqaf in [#10](https://github.com/bakdata/kpops/pull/10)
 
+* Bump version 0.2.3 → 0.2.4 by @bakdata-bot
 
-## [1.3.1](https://github.com/bakdata/kpops/releases/tag/1.3.1) - Release Date: [2023-07-11]
+* Update version in actions readme by @JakobEdding in [#11](https://github.com/bakdata/kpops/pull/11)
 
-### 🏭 Refactor
+* Bump version 0.2.4 → 0.2.5 by @bakdata-bot
 
-- Remove workaround for pipeline steps - [#276](https://github.com/bakdata/kpops/pull/276)
+* Remove push tag step by @raminqaf in [#13](https://github.com/bakdata/kpops/pull/13)
 
+* Bump version 0.2.5 → 0.2.6 by @bakdata-bot
 
-### 🌀 Miscellaneous
+* Bump version 0.2.6 → 0.3.0 by @bakdata-bot
 
-- Update codeowners - [#281](https://github.com/bakdata/kpops/pull/281)
 
-- Reactivate Windows CI - [#255](https://github.com/bakdata/kpops/pull/255)
-
-- Downgrade Poetry version on the Windows CI pipeline - [#286](https://github.com/bakdata/kpops/pull/286)
-
-- Set ANSI theme for output of `kpops generate` - [#289](https://github.com/bakdata/kpops/pull/289)
-
-
-
-
-
-
-## [1.3.0](https://github.com/bakdata/kpops/releases/tag/1.3.0) - Release Date: [2023-07-07]
-
-### 🏭 Refactor
-
-- Plural broker field in pipeline config - [#278](https://github.com/bakdata/kpops/pull/278)
-
-
-### 📝 Documentation
-
-- Update KPOps runner readme for dev versions - [#279](https://github.com/bakdata/kpops/pull/279)
-
-
-### 🏗️ Breaking changes
-
-- Plural broker field in pipeline config - [#278](https://github.com/bakdata/kpops/pull/278)
-
-
-### 🌀 Miscellaneous
-
-- Add breaking changes section to change log config - [#280](https://github.com/bakdata/kpops/pull/280)
-
-
-
-
-
-
-## [1.2.4](https://github.com/bakdata/kpops/releases/tag/1.2.4) - Release Date: [2023-06-27]
-
-### 🌀 Miscellaneous
-
-- Update changelog action to contain miscellaneous PRs - [#269](https://github.com/bakdata/kpops/pull/269)
-
-
-
-
-
-
-## [1.2.3](https://github.com/bakdata/kpops/releases/tag/1.2.3) - Release Date: [2023-06-22]
-
-### 🐛 Fixes
-
-- Refactor custom component validation & hide field from kpops output - [#265](https://github.com/bakdata/kpops/pull/265)
-
-
-### 🏭 Refactor
-
-- Refactor custom component validation & hide field from kpops output - [#265](https://github.com/bakdata/kpops/pull/265)
-
-
-
-
-### 🌀 Miscellaneous
-
-
-
-## [1.2.2](https://github.com/bakdata/kpops/releases/tag/1.2.2) - Release Date: [2023-06-21]
-
-
-
-### 🌀 Miscellaneous
-
-- Create workflow to lint CI - [#260](https://github.com/bakdata/kpops/pull/260)
-
-- Fix update docs when releasing - [#261](https://github.com/bakdata/kpops/pull/261)
-
-- Rename change log message for uncategorized issues - [#262](https://github.com/bakdata/kpops/pull/262)
-
-
-
-## [1.2.1](https://github.com/bakdata/kpops/releases/tag/1.2.1) - Release Date: [2023-06-21]
-
-
-
-<summary>Uncategorized</summary>
-
-- Fix update docs in release workflow - [#258](https://github.com/bakdata/kpops/pull/258)
-
-
-
-## [1.2.0](https://github.com/bakdata/kpops/releases/tag/1.2.0) - Release Date: [2023-06-21]
-
-### 🚀 Features
-
-- Add `helm repo update <repo-name>` for Helm >3.7 - [#239](https://github.com/bakdata/kpops/pull/239)
-
-
-### 🐛 Fixes
-
-- add --namespace option to Helm template command - [#237](https://github.com/bakdata/kpops/pull/237)
-
-- Add missing type annotation for Pydantic attributes - [#238](https://github.com/bakdata/kpops/pull/238)
-
-- Fix helm version check - [#242](https://github.com/bakdata/kpops/pull/242)
-
-- Fix Helm Version Check - [#244](https://github.com/bakdata/kpops/pull/244)
-
-- Fix import from external module - [#256](https://github.com/bakdata/kpops/pull/256)
-
-
-### 🏭 Refactor
-
-- Remove enable option from helm diff - [#235](https://github.com/bakdata/kpops/pull/235)
-
-- Refactor variable substitution - [#198](https://github.com/bakdata/kpops/pull/198)
-
-
-
-
-<summary>Uncategorized</summary>
-
-- Add background to docs home page - [#236](https://github.com/bakdata/kpops/pull/236)
-
-- Update Poetry version in CI - [#247](https://github.com/bakdata/kpops/pull/247)
-
-- Add pip cache in KPOps runner action - [#249](https://github.com/bakdata/kpops/pull/249)
-
-- Check types using Pyright - [#251](https://github.com/bakdata/kpops/pull/251)
-
-- Remove MyPy - [#252](https://github.com/bakdata/kpops/pull/252)
-
-- Disable broken Windows CI temporarily - [#253](https://github.com/bakdata/kpops/pull/253)
-
-- Update release and publish workflows - [#254](https://github.com/bakdata/kpops/pull/254)
-
-- Fix release & publish workflows - [#257](https://github.com/bakdata/kpops/pull/257)
-
-
-
-
+<!-- generated by git-cliff -->

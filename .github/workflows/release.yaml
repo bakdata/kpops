@@ -15,10 +15,12 @@ on:
 
 jobs:
   create-github-release-push-tag:
-    uses: bakdata/ci-templates/.github/workflows/bump-version-release.yaml@1.51.0
+    uses: ./.github/workflows/python-uv-release.yaml
     name: Release
     with:
       release-type: ${{ inputs.release-type }}
+      python-version: "3.11"
+      uv-version: "0.5.14"
       changelog: true
       changelog-file: "./docs/docs/user/changelog.md"
     secrets:

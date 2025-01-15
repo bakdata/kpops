@@ -62,9 +62,9 @@ class TestStreamsApp:
 
     @pytest.fixture()
     def streams_app(self) -> StreamsApp:
-        return StreamsApp(
-            name=STREAMS_APP_NAME,
-            **{
+        return StreamsApp.model_validate(
+            {
+                "name": STREAMS_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "image": "streamsApp",
@@ -82,9 +82,9 @@ class TestStreamsApp:
 
     @pytest.fixture()
     def stateful_streams_app(self) -> StreamsApp:
-        return StreamsApp(
-            name=STREAMS_APP_NAME,
-            **{
+        return StreamsApp.model_validate(
+            {
+                "name": STREAMS_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "image": "streamsApp",
@@ -141,9 +141,9 @@ class TestStreamsApp:
         )
 
     def test_set_topics(self):
-        streams_app = StreamsApp(
-            name=STREAMS_APP_NAME,
-            **{
+        streams_app = StreamsApp.model_validate(
+            {
+                "name": STREAMS_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "image": "streamsApp",
@@ -188,9 +188,9 @@ class TestStreamsApp:
         assert "labeledInputPatterns" in kafka_config
 
     def test_no_empty_input_topic(self):
-        streams_app = StreamsApp(
-            name=STREAMS_APP_NAME,
-            **{
+        streams_app = StreamsApp.model_validate(
+            {
+                "name": STREAMS_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "image": "streamsApp",
@@ -220,9 +220,9 @@ class TestStreamsApp:
         with pytest.raises(
             ValueError, match="Define label only if `type` is `pattern` or `None`"
         ):
-            StreamsApp(
-                name=STREAMS_APP_NAME,
-                **{
+            assert StreamsApp.model_validate(
+                {
+                    "name": STREAMS_APP_NAME,
                     "namespace": "test-namespace",
                     "values": {
                         "kafka": {"bootstrapServers": "fake-broker:9092"},
@@ -242,9 +242,9 @@ class TestStreamsApp:
         with pytest.raises(
             ValueError, match="Define `label` only if `type` is undefined"
         ):
-            StreamsApp(
-                name=STREAMS_APP_NAME,
-                **{
+            assert StreamsApp.model_validate(
+                {
+                    "name": STREAMS_APP_NAME,
                     "namespace": "test-namespace",
                     "values": {
                         "kafka": {"bootstrapServers": "fake-broker:9092"},
@@ -261,9 +261,9 @@ class TestStreamsApp:
             )
 
     def test_set_streams_output_from_to(self):
-        streams_app = StreamsApp(
-            name=STREAMS_APP_NAME,
-            **{
+        streams_app = StreamsApp.model_validate(
+            {
+                "name": STREAMS_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "image": "streamsApp",
@@ -301,9 +301,9 @@ class TestStreamsApp:
         )
 
     def test_weave_inputs_from_prev_component(self):
-        streams_app = StreamsApp(
-            name=STREAMS_APP_NAME,
-            **{
+        streams_app = StreamsApp.model_validate(
+            {
+                "name": STREAMS_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "image": "streamsApp",
@@ -338,9 +338,9 @@ class TestStreamsApp:
         ]
 
     async def test_deploy_order_when_dry_run_is_false(self, mocker: MockerFixture):
-        streams_app = StreamsApp(
-            name=STREAMS_APP_NAME,
-            **{
+        streams_app = StreamsApp.model_validate(
+            {
+                "name": STREAMS_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "image": "streamsApp",
@@ -617,9 +617,9 @@ class TestStreamsApp:
                 },
             },
         )
-        streams_app = StreamsApp(
-            name=STREAMS_APP_NAME,
-            **{
+        streams_app = StreamsApp.model_validate(
+            {
+                "name": STREAMS_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "image": "registry/streams-app",
@@ -696,9 +696,9 @@ class TestStreamsApp:
                 },
             },
         )
-        streams_app = StreamsApp(
-            name=STREAMS_APP_NAME,
-            **{
+        streams_app = StreamsApp.model_validate(
+            {
+                "name": STREAMS_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "image": "registry/streams-app",
@@ -754,9 +754,9 @@ class TestStreamsApp:
         )
 
     async def test_get_input_output_topics(self):
-        streams_app = StreamsApp(
-            name="my-app",
-            **{
+        streams_app = StreamsApp.model_validate(
+            {
+                "name": "my-app",
                 "namespace": "test-namespace",
                 "values": {
                     "image": "registry/streams-app",
@@ -985,9 +985,9 @@ class TestStreamsApp:
             },
         )
 
-        streams_app = StreamsApp(
-            name=STREAMS_APP_NAME,
-            **{
+        streams_app = StreamsApp.model_validate(
+            {
+                "name": STREAMS_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "image": "registry/streams-app",

@@ -43,9 +43,9 @@ class TestProducerApp:
 
     @pytest.fixture()
     def producer_app(self) -> ProducerAppV2:
-        return ProducerAppV2(
-            name=PRODUCER_APP_NAME,
-            **{
+        return ProducerAppV2.model_validate(
+            {
+                "name": PRODUCER_APP_NAME,
                 "version": "2.4.2",
                 "namespace": "test-namespace",
                 "values": {
@@ -87,9 +87,9 @@ class TestProducerApp:
         )
 
     def test_output_topics(self):
-        producer_app = ProducerAppV2(
-            name=PRODUCER_APP_NAME,
-            **{
+        producer_app = ProducerAppV2.model_validate(
+            {
+                "name": PRODUCER_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "namespace": "test-namespace",
@@ -325,9 +325,9 @@ class TestProducerApp:
         )
 
     def test_get_output_topics(self):
-        producer_app = ProducerAppV2(
-            name="my-producer",
-            **{
+        producer_app = ProducerAppV2.model_validate(
+            {
+                "name": "my-producer",
                 "namespace": "test-namespace",
                 "values": {
                     "namespace": "test-namespace",
@@ -376,9 +376,9 @@ class TestProducerApp:
                 },
             },
         )
-        producer_app = ProducerAppV2(
-            name=PRODUCER_APP_NAME,
-            **{
+        producer_app = ProducerAppV2.model_validate(
+            {
+                "name": PRODUCER_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "imageTag": "2.2.2",
@@ -425,9 +425,9 @@ class TestProducerApp:
                 },
             },
         )
-        producer_app = ProducerAppV2(
-            name=PRODUCER_APP_NAME,
-            **{
+        producer_app = ProducerAppV2.model_validate(
+            {
+                "name": PRODUCER_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "imageTag": "2.2.2",
@@ -492,9 +492,9 @@ class TestProducerApp:
         )
 
         # user defined model
-        producer_app = ProducerAppV2(
-            name=PRODUCER_APP_NAME,
-            **{
+        producer_app = ProducerAppV2.model_validate(
+            {
+                "name": PRODUCER_APP_NAME,
                 "namespace": "test-namespace",
                 "values": {
                     "image": "registry/producer-app",

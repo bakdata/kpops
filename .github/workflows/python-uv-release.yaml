@@ -1,0 +1,127 @@
+name: Python uv release
+# Reusable workflow for building and releasing Python uv packages
+
+on:
+  workflow_call:
+    inputs:
+      release-type:
+        description: "Scope of the release (major, minor or patch)."
+        required: true
+        type: string
+      uv-version:
+        description: "The uv version to be installed. (Default is 0.5.14)"
+        required: false
+        default: "0.5.14"
+        type: string
+      python-version:
+        description: "The Python version for setting up uv. (Default is 3.11)"
+        required: false
+        default: "3.11"
+        type: string
+      changelog:
+        description: "Create changelog for release."
+        required: false
+        default: true
+        type: boolean
+      changelog-file:
+        description: Path to the changelog file in the GitHub repository
+        required: false
+        default: "CHANGELOG.md"
+        type: string
+      changelog-config:
+        description: "Changelog config path."
+        required: false
+        default: ""
+        type: string
+      working-directory:
+        description: "Working directory containing `.bumpversion.cfg`. (Default is .)"
+        required: false
+        default: "."
+        type: string
+
+    secrets:
+      github-username:
+        description: "The GitHub username for committing the changes."
+        required: true
+      github-email:
+        description: "The GitHub email for committing the changes."
+        required: true
+      github-token:
+        description: "The GitHub token for committing the changes."
+        required: true
+
+    # Map the workflow outputs to job outputs
+    outputs:
+      release-version:
+        description: "The bumped version."
+        value: ${{ jobs.release.outputs.release-version }}
+      old-version:
+        description: "The old version in your `.bumpversion.cfg` file."
+        value: ${{ jobs.release.outputs.old-version }}
+
+jobs:
+  release:
+    runs-on: ubuntu-22.04
+    # Map the job outputs to step outputs
+    outputs:
+      release-version: ${{ steps.bump-version-release.outputs.release-version }}
+      old-version: ${{ steps.bump-version-dev.outputs.old-version }}
+
+    steps:
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+          version: ${{ inputs.uv-version }}
+
+      - name: Check out repository
+        uses: bakdata/ci-templates/actions/checkout@1.49.0
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false # required for pushing to protected branch later
+          fetch-depth: 0 # required for changelog generation
+
+      - name: Bump version
+        id: bump-version-dev
+        uses: bakdata/ci-templates/actions/bump-version@v1.21.2
+        with:
+          release-type: ${{ inputs.release-type }}
+          working-directory: ${{ inputs.working-directory }}
+
+      - name: Bump version release
+        id: bump-version-release
+        uses: bakdata/ci-templates/actions/bump-version@v1.21.2
+        with:
+          release-type: release --allow-dirty
+          working-directory: ${{ inputs.working-directory }}
+
+      - name: Apply version bump to uv lock
+        run: uv lock --no-refresh
+
+      - name: Create changelog
+        id: build-changelog
+        uses: bakdata/ci-templates/actions/changelog-generate@1.50.0
+        if: ${{ inputs.changelog }}
+        with:
+          github-token: ${{ secrets.github-token }}
+          tag: ${{ steps.bump-version-release.outputs.release-version }}
+          changelog-file: ${{ inputs.changelog-file }}
+
+      - name: Commit and push changes including .bumpversion.cfg file
+        uses: bakdata/ci-templates/actions/commit-and-push@1.25.2
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          commit-message: "Bump version ${{ steps.bump-version-dev.outputs.old-version }} → ${{ steps.bump-version-release.outputs.release-version }}"
+          github-username: ${{ secrets.github-username }}
+          github-email: ${{ secrets.github-email }}
+          github-token: ${{ secrets.github-token }}
+
+      - name: Tag and release
+        uses: bakdata/ci-templates/actions/tag-and-release@v1.22.0
+        with:
+          tag: "${{ steps.bump-version-release.outputs.release-version }}"
+          github-username: ${{ secrets.github-username }}
+          github-email: ${{ secrets.github-email }}
+          github-token: ${{ secrets.github-token }}
+          release-title: "${{ steps.bump-version-release.outputs.release-version }}"
+          release-body: "${{ steps.build-changelog.outputs.single-changelog }}"
