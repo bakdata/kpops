@@ -3,7 +3,10 @@
     image: "my-registry/my-producer-image"
     imageTag: "1.0.0"
     commandLine:
-      FAKE_ARG: "fake-arg-value"
+      STR: "fake-arg-value"
+      BOOL: true
+      INT: 1
+      FLOAT: 0.1
     schedule: "30 3/8 * * *"
 
   to:

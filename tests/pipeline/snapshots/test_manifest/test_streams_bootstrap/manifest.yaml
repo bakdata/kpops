@@ -52,7 +52,13 @@ spec:
                   value: my-producer-app-output-topic
                 - name: APP_LABELED_OUTPUT_TOPICS
                   value: my-producer-app-output-topic-label=my-labeled-producer-app-topic-output,
-                - name: APP_FAKE_ARG
+                - name: APP_BOOL
+                  value: 'true'
+                - name: APP_FLOAT
+                  value: '0.1'
+                - name: APP_INT
+                  value: '1'
+                - name: APP_STR
                   value: fake-arg-value
                 - name: JAVA_TOOL_OPTIONS
                   value: '-XX:MaxRAMPercentage=75.0 '

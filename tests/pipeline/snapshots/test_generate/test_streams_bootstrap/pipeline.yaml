@@ -11,7 +11,10 @@
     type: producer-app-cleaner
     values:
       commandLine:
-        FAKE_ARG: fake-arg-value
+        BOOL: true
+        FLOAT: 0.1
+        INT: 1
+        STR: fake-arg-value
       files:
         log4j2.xml:
           content: |
@@ -60,7 +63,10 @@
   type: my-producer-app
   values:
     commandLine:
-      FAKE_ARG: fake-arg-value
+      BOOL: true
+      FLOAT: 0.1
+      INT: 1
+      STR: fake-arg-value
     files:
       log4j2.xml:
         content: |
