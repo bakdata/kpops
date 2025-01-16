@@ -16,7 +16,6 @@
       my-labeled-producer-app-topic-output:
         label: my-producer-app-output-topic-label
 
-
 - type: my-streams-app
   values:
     image: "my-registry/my-streams-app-image"
@@ -25,17 +24,17 @@
       applicationId: "my-streams-app-id"
     affinity:
       nodeAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - preference:
-                matchExpressions:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
                 - key: foo
                   operator: Exists
-              weight: 2
-            - preference:
-                matchExpressions:
+            weight: 2
+          - preference:
+              matchExpressions:
                 - key: bar
                   operator: DoesNotExist
-              weight: 1
+            weight: 1
     commandLine:
       CONVERT_XML: true
     javaOptions:

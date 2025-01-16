@@ -4,7 +4,7 @@ on:
   push:
     tags:
       # Push events to semver tags
-      - '[0-9]+.[0-9]+.[0-9]+'
+      - "[0-9]+.[0-9]+.[0-9]+"
 
 jobs:
   update-docs:

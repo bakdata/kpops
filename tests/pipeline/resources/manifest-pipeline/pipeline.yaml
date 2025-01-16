@@ -10,7 +10,6 @@
       my-labeled-producer-app-topic-output:
         label: my-producer-app-output-topic-label
 
-
 - type: my-streams-app
   values:
     image: "my-registry/my-streams-app-image"

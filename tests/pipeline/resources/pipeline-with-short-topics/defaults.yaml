@@ -15,7 +15,6 @@ producer-app:
       ${output_topic_name}:
         partitions_count: 3
 
-
 streams-app: # inherits from streams-bootstrap
   values:
     kafka:
