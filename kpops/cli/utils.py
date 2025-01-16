@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Iterator
-from pathlib import Path
 from glob import glob
+from pathlib import Path
 
 from kpops.const.file_type import PIPELINE_YAML
 
@@ -25,7 +25,10 @@ def collect_pipeline_paths(pipeline_paths: Iterable[Path]) -> Iterator[Path]:
             # docs.python.org/3.13#pathlib.Path.glob, probably it make sense to use it after ugprading,
             # likely the code will look like:
             # yield from sorted(pipeline_path.glob(f"**/{PIPELINE_YAML}", recurse_symlinks=True))
-            yield from sorted(Path(p).resolve() for p in glob(f"{pipeline_path}/**/{PIPELINE_YAML}", recursive=True))
+            yield from sorted(
+                Path(p).resolve()
+                for p in glob(f"{pipeline_path}/**/{PIPELINE_YAML}", recursive=True)  # noqa: PTH207
+            )
         else:
             msg = f"The entered pipeline path '{pipeline_path}' should be a directory or file."
             raise ValueError(msg)
