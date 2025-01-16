@@ -1585,6 +1585,9 @@
                                     },
                                     {
                                         "type": "integer"
+                                    },
+                                    {
+                                        "type": "number"
                                     }
                                 ]
                             },
@@ -2712,6 +2715,9 @@
                                     },
                                     {
                                         "type": "integer"
+                                    },
+                                    {
+                                        "type": "number"
                                     }
                                 ]
                             },
@@ -3329,6 +3335,9 @@
                                     },
                                     {
                                         "type": "integer"
+                                    },
+                                    {
+                                        "type": "number"
                                     }
                                 ]
                             },
