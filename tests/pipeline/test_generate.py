@@ -882,3 +882,39 @@ class TestGenerate:
         assert result.exit_code == 0, result.stdout
 
         snapshot.assert_match(result.stdout, PIPELINE_YAML)
+
+    def test_symlinked_pipeline_as_original_pipeline(
+        self,
+    ):
+        pipeline_original = kpops.generate(
+            RESOURCE_PATH / "first-pipeline" / PIPELINE_YAML,
+        )
+        pipeline_symlinked = kpops.generate(
+            RESOURCE_PATH / "pipeline-symlinked" / PIPELINE_YAML,
+        )
+
+        assert pipeline_original == pipeline_symlinked
+
+    def test_symlinked_folder_renders_as_original_folder_pipeline(
+        self,
+    ):
+        pipeline_original = kpops.generate(
+            RESOURCE_PATH / "first-pipeline" / PIPELINE_YAML,
+        )
+        pipeline_symlinked = kpops.generate(
+            RESOURCE_PATH / "symlinked-folder" / PIPELINE_YAML,
+        )
+
+        assert pipeline_original == pipeline_symlinked
+
+    def test_symlinked_folder_and_pipelines_with_normal_pipeline_render_as_original(
+        self,
+    ):
+        pipeline_original = kpops.generate(
+            RESOURCE_PATH / "pipeline-folders" / PIPELINE_YAML,
+        )
+        pipeline_symlinked = kpops.generate(
+            RESOURCE_PATH / "pipeline-folders-with-symlinks" / PIPELINE_YAML,
+        )
+
+        assert pipeline_original == pipeline_symlinked
