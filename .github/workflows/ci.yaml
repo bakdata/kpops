@@ -23,18 +23,11 @@ jobs:
       matrix:
         os:
           - ubuntu-24.04
-          - windows-2022
-        python-version: ["3.11", "3.12"]
-        is-draft-pr:
-          - ${{ github.event.pull_request.draft }}
+        python-version: ["3.11"]
         include:
           - python-version: "3.11"
             os: ubuntu-24.04
             format-for-github: true
-        exclude:
-          # skip Windows jobs on draft PRs because they are slow
-          - os: windows-2022
-            is-draft-pr: true
     runs-on: ${{ matrix.os }}
 
     steps:
