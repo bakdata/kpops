@@ -18,7 +18,7 @@ pre-commit:
       glob: "*.py"
       run: uv run pyright
     dprint:
-      glob: "*.{md,toml,css}"
+      glob: "*.{json,jsonc,yaml,yml,md,toml,css}"
       run: dprint fmt
     kpops-schema:
       glob: "{uv.lock,kpops/**/*.py,hooks/gen_schema.py}"
@@ -40,10 +40,10 @@ pre-commit:
         docs/docs/resources/pipeline-components/dependencies/*.yaml,\
         kpops/components/*.py\
         }"
-        # .gitignore -- indicates whether the script is ran with `--all-files`
-        # hooks/gen_docs/gen_docs_components.py -- hook's behavior is possibly changed
-        # docs/.../.yaml -- examples changed or dependencies edited
-        # kpops/components/... -- KPOps components possibly changed
+      # .gitignore -- indicates whether the script is ran with `--all-files`
+      # hooks/gen_docs/gen_docs_components.py -- hook's behavior is possibly changed
+      # docs/.../.yaml -- examples changed or dependencies edited
+      # kpops/components/... -- KPOps components possibly changed
       run: python -m hooks.gen_docs.gen_docs_components {staged_files}
 
 post-checkout:

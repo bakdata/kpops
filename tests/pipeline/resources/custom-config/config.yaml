@@ -13,5 +13,5 @@ helm_config:
   api_version: "2.1.1"
 pipeline_base_dir: tests/pipeline
 strimzi_topic:
-  label: 
+  label:
     bakdata.com/cluster: my-cluster

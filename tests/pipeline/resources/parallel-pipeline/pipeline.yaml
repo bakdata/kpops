@@ -44,7 +44,6 @@
   config:
     connector.class: io.confluent.connect.s3.S3SinkConnector
 
-
 - type: kafka-sink-connector
   name: s3-connector-2
   from:

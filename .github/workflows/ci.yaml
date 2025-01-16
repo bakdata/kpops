@@ -54,7 +54,6 @@ jobs:
           fi;
           uv run --frozen pyright
 
-
   format:
     name: Format
     runs-on: [ubuntu-24.04]
