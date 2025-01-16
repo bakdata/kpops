@@ -18,7 +18,7 @@ pre-commit:
       glob: "*.py"
       run: uv run pyright
     dprint:
-      glob: "*.{md,toml,css}"
+      glob: "*.{json,jsonc,yaml,yml,md,toml,css}"
       run: dprint fmt
     kpops-schema:
       glob: "{uv.lock,kpops/**/*.py,hooks/gen_schema.py}"
