@@ -163,7 +163,7 @@ class StreamsBootstrapValues(SerializeAsOptionalModel, HelmAppValues):
         description=describe_attr("configuration_env_prefix", __doc__),
     )
 
-    command_line: SerializeAsOptional[dict[str, str | bool | int]] = Field(
+    command_line: SerializeAsOptional[dict[str, str | bool | int | float]] = Field(
         default={},
         description=describe_attr("command_line", __doc__),
     )
