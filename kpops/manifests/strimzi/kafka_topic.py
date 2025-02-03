@@ -63,12 +63,22 @@ class StrimziKafkaTopic(KubernetesManifest):
             msg = "When manifesting KafkaTopic you must define 'strimzi_topic.label' in the config.yaml"
             raise ValidationError(msg)
         cluster_domain, cluster_name = strimzi_topic.cluster_labels
-        metadata = ObjectMeta.model_validate(
-            {
-                "name": topic.name,
-                "labels": {cluster_domain: cluster_name},
-                "namespace": strimzi_topic.namespace,
-            }
+
+        metadata = (
+            ObjectMeta.model_validate(
+                {
+                    "name": topic.name,
+                    "labels": {cluster_domain: cluster_name},
+                    "namespace": strimzi_topic.namespace,
+                }
+            )
+            if strimzi_topic.namespace is not None
+            else ObjectMeta.model_validate(
+                {
+                    "name": topic.name,
+                    "labels": {cluster_domain: cluster_name},
+                }
+            )
         )
         spec = TopicSpec.model_validate(
             {

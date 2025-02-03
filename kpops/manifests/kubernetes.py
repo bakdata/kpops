@@ -6,7 +6,7 @@ import yaml
 from pydantic import ConfigDict, Field
 from typing_extensions import override
 
-from kpops.utils.pydantic import CamelCaseConfigModel, by_alias, exclude_by_value
+from kpops.utils.pydantic import CamelCaseConfigModel, by_alias
 
 K8S_LABEL_MAX_LEN = 63
 # https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs
@@ -39,7 +39,7 @@ class ObjectMeta(CamelCaseConfigModel):
         default_serialize_handler: pydantic.SerializerFunctionWrapHandler,
         info: pydantic.SerializationInfo,
     ) -> dict[str, Any]:
-        result = exclude_by_value(default_serialize_handler(self), None)
+        result = default_serialize_handler(self)
         return {
             by_alias(self, name): value
             for name, value in result.items()

@@ -97,6 +97,7 @@ def test_strimzi_kafka_topic_missing_config(kafka_topic, mocker):
     )
 
     with pytest.raises(
-        ValidationError, match="must define 'strimzi_topic.resource_label'"
+        ValidationError,
+        match="When manifesting KafkaTopic you must define 'strimzi_topic.label' in the config.yaml",
     ):
         StrimziKafkaTopic.from_topic(kafka_topic)
