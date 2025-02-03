@@ -117,8 +117,9 @@ jobs:
           version: ${{ env.UV_VERSION }}
 
       - name: Generate schema (kpops schema)
-        run: uv run --frozen
-          lefthook run pre-commit --commands kpops-schema --force
+        run: |
+          python -m hooks.gen_schema
+          git diff --quiet HEAD -- docs/docs/schema
 
       - name: Generate CLI Usage docs (typer-cli)
         run: uv run --frozen
