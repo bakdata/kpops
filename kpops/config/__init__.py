@@ -35,7 +35,6 @@ class StrimziTopicConfig(BaseSettings):
 
     namespace: str | None = Field(
         default=None,
-        alias="namespace",
         description="The namespace where the Topic Operator is running. This is the namespace where the KafkaTopic resources are created.",
     )
 
@@ -168,7 +167,6 @@ class KpopsConfig(BaseSettings):
         description="The operation mode of KPOps (managed, manifest, argo).",
         exclude=True,
     )
-
     model_config = SettingsConfigDict(
         env_prefix=ENV_PREFIX,
         env_nested_delimiter="__",
