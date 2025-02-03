@@ -2,10 +2,41 @@
 
 All notable changes to this project will be documented in this file.
 
+## [9.3.0](https://github.com/bakdata/kpops/tree/9.3.0) - 2025-02-03
+### What's changed
+
+* Use Pydantic `model_validate` to avoid Pyright warnings by @disrupted in [#586](https://github.com/bakdata/kpops/pull/586)
+
+* Fix release commit message by @disrupted in [#591](https://github.com/bakdata/kpops/pull/591)
+
+* Configure PyPI trusted publishing by @yannick-roeder in [#592](https://github.com/bakdata/kpops/pull/592)
+
+* Migrate pre-commit hooks to lefthook by @disrupted in [#584](https://github.com/bakdata/kpops/pull/584)
+
+* feat: support symbolic linked pipelines to avoid repetition by @daconstenla in [#580](https://github.com/bakdata/kpops/pull/580)
+
+* fix: address CI warnings introduced by #580 by @disrupted in [#594](https://github.com/bakdata/kpops/pull/594)
+
+* feat(streams-bootstrap): allow float values in command line by @disrupted in [#593](https://github.com/bakdata/kpops/pull/593)
+
+* ci: run lint job only for target Python version on Linux by @disrupted in [#596](https://github.com/bakdata/kpops/pull/596)
+
+* style: format YAML & JSON by @disrupted in [#595](https://github.com/bakdata/kpops/pull/595)
+
+* feat: support custom namespace configuration for `StrimziKafkaTopic` by @daconstenla in [#581](https://github.com/bakdata/kpops/pull/581)
+
+
+### New Contributors
+* @daconstenla made their first contribution in [#581](https://github.com/bakdata/kpops/pull/581)
+
+**Full Changelog**: https://github.com/bakdata/kpops/compare/9.2.1...9.3.0
+
 ## [9.2.1](https://github.com/bakdata/kpops/tree/9.2.1) - 2025-01-15
 ### What's changed
 
 * Fix CI release and changelog by @disrupted in [#590](https://github.com/bakdata/kpops/pull/590)
+
+* Bump version 9.2.1-dev → 9.2.1 by @bakdata-bot
 
 
 **Full Changelog**: https://github.com/bakdata/kpops/compare/9.2.0-dev...9.2.1
@@ -1371,9 +1402,6 @@ All notable changes to this project will be documented in this file.
 
 * Bump version 0.8.0 → 0.8.1 by @bakdata-bot
 
-
-### New Contributors
-* @yannick-roeder made their first contribution in [#82](https://github.com/bakdata/kpops/pull/82)
 
 **Full Changelog**: https://github.com/bakdata/kpops/compare/0.8.0...0.8.1
 
