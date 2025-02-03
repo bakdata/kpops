@@ -118,7 +118,7 @@ jobs:
 
       - name: Generate schema (kpops schema)
         run: |
-          python -m hooks.gen_schema
+          uv run --frozen -m hooks.gen_schema
           git diff --quiet HEAD -- docs/docs/schema
 
       - name: Generate CLI Usage docs (typer-cli)
