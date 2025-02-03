@@ -52,7 +52,7 @@ class StrimziTopicConfig(BaseSettings):
             raise ValidationError(msg)
         if len(label) > 1:
             log.warning(
-                "'resource_label' only reads the first entry in the dictionary. Other defined labels will be ignored."
+                "'strimzi_topic.label' only reads the first entry in the dictionary. Other defined labels will be ignored."
             )
 
         return label
