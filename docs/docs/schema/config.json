@@ -164,6 +164,19 @@
                     "description": "The label to identify the KafkaTopic resources managed by the Topic Operator. This does not have to be the name of the Kafka cluster. It can be the label assigned to the KafkaTopic resource. If you deploy more than one Topic Operator, the labels must be unique for each. That is, the operators cannot manage the same resources.",
                     "title": "Label",
                     "type": "object"
+                },
+                "namespace": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The namespace where the Topic Operator is running. This is the namespace where the KafkaTopic resources are created.",
+                    "title": "Namespace"
                 }
             },
             "required": [
