@@ -107,3 +107,21 @@ def test_model_dump_json_output(example_manifest: KubernetesManifest):
         },
     }
     assert dumped == expected_dumped
+
+
+def test_objectmeta_serialization():
+    """Test ObjectMeta serialization with optional fields."""
+    metadata = ObjectMeta(
+        name="example",
+        namespace="default",
+        labels={"app": "test"},
+        annotations=None,  # This field should be included
+    )
+    serialized = metadata.model_dump()
+    expected_serialized = {
+        "annotations": None,
+        "name": "example",
+        "namespace": "default",
+        "labels": {"app": "test"},
+    }
+    assert serialized == expected_serialized
