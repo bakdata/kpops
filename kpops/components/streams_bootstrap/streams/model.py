@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import enum
 from typing import Any
 
 import pydantic
@@ -281,13 +282,23 @@ class PrometheusExporterConfig(CamelCaseConfigModel, DescConfigModel):
     )
 
 
+class JmxRuleType(str, enum.Enum):
+    GAUGE = "GAUGE"
+    COUNTER = "COUNTER"
+    UNTYPED = "UNTYPED"
+
+
 class JMXRule(SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigModel):
     """JMX rule.
 
     :param pattern: The rule pattern.
-    :param type: Type of the rule.
     :param name: Name of the rule.
+    :param value: Value of the rule.
+    :param value_factor: Value factor of the rule.
     :param help: Help for the rule.
+    :param attr_name_snake_case: ???
+    :param cache: Enable caching.
+    :param type: Type of the rule.
     :param labels: Labels for the rule.
     """
 
@@ -295,22 +306,34 @@ class JMXRule(SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigModel):
         default=None,
         description=describe_attr("pattern", __doc__),
     )
-
-    type: str | None = Field(
-        default=None,
-        description=describe_attr("type", __doc__),
-    )
-
     name: str | None = Field(
+        default=None,
+        description=describe_attr("value", __doc__),
+    )
+    value: str | None = Field(
         default=None,
         description=describe_attr("name", __doc__),
     )
-
+    value_factor: float | None = Field(
+        default=None,
+        description=describe_attr("value_factor", __doc__),
+    )
     help: str | None = Field(
         default=None,
         description=describe_attr("help", __doc__),
     )
-
+    attr_name_snake_case: bool | None = Field(
+        default=None,
+        description=describe_attr("attr_name_snake_case", __doc__),
+    )
+    cache: bool | None = Field(
+        default=None,
+        description=describe_attr("cache", __doc__),
+    )
+    type: JmxRuleType | None = Field(
+        default=None,
+        description=describe_attr("type", __doc__),
+    )
     labels: SerializeAsOptional[dict[str, str]] = Field(
         default={},
         description=describe_attr("labels", __doc__),

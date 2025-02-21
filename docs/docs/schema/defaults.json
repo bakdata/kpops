@@ -312,6 +312,32 @@
         "JMXRule": {
             "description": "JMX rule.",
             "properties": {
+                "attrNameSnakeCase": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "???",
+                    "title": "Attrnamesnakecase"
+                },
+                "cache": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Enable caching.",
+                    "title": "Cache"
+                },
                 "help": {
                     "anyOf": [
                         {
@@ -351,7 +377,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Name of the rule.",
+                    "description": "Value of the rule.",
                     "title": "Name"
                 },
                 "pattern": {
@@ -370,6 +396,18 @@
                 "type": {
                     "anyOf": [
                         {
+                            "$ref": "#/$defs/JmxRuleType"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Type of the rule."
+                },
+                "value": {
+                    "anyOf": [
+                        {
                             "type": "string"
                         },
                         {
@@ -377,8 +415,21 @@
                         }
                     ],
                     "default": null,
-                    "description": "Type of the rule.",
-                    "title": "Type"
+                    "description": "Name of the rule.",
+                    "title": "Value"
+                },
+                "valueFactor": {
+                    "anyOf": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Value factor of the rule.",
+                    "title": "Valuefactor"
                 }
             },
             "title": "JMXRule",
@@ -411,6 +462,15 @@
             },
             "title": "JavaOptions",
             "type": "object"
+        },
+        "JmxRuleType": {
+            "enum": [
+                "GAUGE",
+                "COUNTER",
+                "UNTYPED"
+            ],
+            "title": "JmxRuleType",
+            "type": "string"
         },
         "KafkaApp": {
             "additionalProperties": true,
