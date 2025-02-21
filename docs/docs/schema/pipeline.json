@@ -325,6 +325,22 @@
                     "description": "Help for the rule.",
                     "title": "Help"
                 },
+                "labels": {
+                    "anyOf": [
+                        {
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": {},
+                    "description": "Labels for the rule.",
+                    "title": "Labels"
+                },
                 "name": {
                     "anyOf": [
                         {

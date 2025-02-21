@@ -281,13 +281,14 @@ class PrometheusExporterConfig(CamelCaseConfigModel, DescConfigModel):
     )
 
 
-class JMXRule(CamelCaseConfigModel, DescConfigModel):
+class JMXRule(SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigModel):
     """JMX rule.
 
     :param pattern: The rule pattern.
     :param type: Type of the rule.
     :param name: Name of the rule.
     :param help: Help for the rule.
+    :param labels: Labels for the rule.
     """
 
     pattern: str | None = Field(
@@ -308,6 +309,11 @@ class JMXRule(CamelCaseConfigModel, DescConfigModel):
     help: str | None = Field(
         default=None,
         description=describe_attr("help", __doc__),
+    )
+
+    labels: SerializeAsOptional[dict[str, str]] = Field(
+        default={},
+        description=describe_attr("labels", __doc__),
     )
 
 
