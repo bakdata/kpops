@@ -322,7 +322,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "???",
+                    "description": "Converts the attribute name to snake case. This is seen in the names matched by the pattern and the default format. For example, anAttrName to an_attr_name.",
                     "title": "Attrnamesnakecase"
                 },
                 "cache": {
@@ -335,7 +335,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Enable caching.",
+                    "description": "Whether to cache bean name expressions to rule computation (match and mismatch). Not recommended for rules matching on bean value, as only the value from the first scrape will be cached and re-used. This can increase performance when collecting a lot of mbeans.",
                     "title": "Cache"
                 },
                 "help": {
@@ -348,7 +348,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Help for the rule.",
+                    "description": "Help text for the metric. Capture groups from pattern can be used. name must be set to use this. Defaults to the mBean attribute description, domain, and name of the attribute.",
                     "title": "Help"
                 },
                 "labels": {
@@ -364,7 +364,7 @@
                         }
                     ],
                     "default": {},
-                    "description": "Labels for the rule.",
+                    "description": "A map of label name to label value pairs. Capture groups from pattern can be used in each. name must be set to use this. Empty names and values are ignored. If not specified and the default format is not being used, no labels are set.",
                     "title": "Labels"
                 },
                 "name": {
@@ -377,7 +377,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Value of the rule.",
+                    "description": "Value for the metric. Static values and capture groups from the pattern can be used. If not specified the scraped mBean value will be used.",
                     "title": "Name"
                 },
                 "pattern": {
@@ -390,7 +390,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "The rule pattern.",
+                    "description": "Regex pattern to match against each bean attribute. The pattern is not anchored. Capture groups can be used in other options. Defaults to matching everything.",
                     "title": "Pattern"
                 },
                 "type": {
@@ -403,7 +403,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Type of the rule."
+                    "description": "The type of the metric. name must be set to use this."
                 },
                 "value": {
                     "anyOf": [
@@ -415,7 +415,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Name of the rule.",
+                    "description": "The metric name to set. Capture groups from the pattern can be used. If not specified, the default format will be used. If it evaluates to empty, processing of this attribute stops with no output. An Additional suffix may be added to this name (e.g _total for type COUNTER)",
                     "title": "Value"
                 },
                 "valueFactor": {
@@ -428,7 +428,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Value factor of the rule.",
+                    "description": "Optional number that value (or the scraped mBean value if value is not specified) is multiplied by, mainly used to convert mBean values from milliseconds to seconds.",
                     "title": "Valuefactor"
                 }
             },
