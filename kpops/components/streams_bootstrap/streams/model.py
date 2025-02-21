@@ -281,6 +281,36 @@ class PrometheusExporterConfig(CamelCaseConfigModel, DescConfigModel):
     )
 
 
+class JMXRule(CamelCaseConfigModel, DescConfigModel):
+    """JMX rule.
+
+    :param pattern: The rule pattern.
+    :param type: Type of the rule.
+    :param name: Name of the rule.
+    :param help: Help for the rule.
+    """
+
+    pattern: str | None = Field(
+        default=None,
+        description=describe_attr("pattern", __doc__),
+    )
+
+    type: str | None = Field(
+        default=None,
+        description=describe_attr("type", __doc__),
+    )
+
+    name: str | None = Field(
+        default=None,
+        description=describe_attr("name", __doc__),
+    )
+
+    help: str | None = Field(
+        default=None,
+        description=describe_attr("help", __doc__),
+    )
+
+
 class JMXConfig(SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigModel):
     """JMX configuration options.
 
@@ -293,7 +323,7 @@ class JMXConfig(SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigModel)
         description=describe_attr("port", __doc__),
     )
 
-    metric_rules: SerializeAsOptional[list[str]] = Field(
+    metric_rules: SerializeAsOptional[list[JMXRule]] = Field(
         default=[],
         description=describe_attr("metric_rules", __doc__),
     )
