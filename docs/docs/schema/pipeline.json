@@ -280,7 +280,7 @@
                     "anyOf": [
                         {
                             "items": {
-                                "type": "string"
+                                "$ref": "#/$defs/JMXRule"
                             },
                             "type": "array"
                         },
@@ -307,6 +307,65 @@
                 }
             },
             "title": "JMXConfig",
+            "type": "object"
+        },
+        "JMXRule": {
+            "description": "JMX rule.",
+            "properties": {
+                "help": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Help for the rule.",
+                    "title": "Help"
+                },
+                "name": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Name of the rule.",
+                    "title": "Name"
+                },
+                "pattern": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The rule pattern.",
+                    "title": "Pattern"
+                },
+                "type": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Type of the rule.",
+                    "title": "Type"
+                }
+            },
+            "title": "JMXRule",
             "type": "object"
         },
         "JavaOptions": {
