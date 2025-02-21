@@ -411,6 +411,15 @@
                             "type": "string"
                         },
                         {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
                             "type": "null"
                         }
                     ],

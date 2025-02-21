@@ -310,7 +310,7 @@ class JMXRule(SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigModel):
         default=None,
         description=describe_attr("value", __doc__),
     )
-    value: str | None = Field(
+    value: str | bool | int | float | None = Field(
         default=None,
         description=describe_attr("name", __doc__),
     )
