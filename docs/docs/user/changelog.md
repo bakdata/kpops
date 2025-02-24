@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [9.4.0](https://github.com/bakdata/kpops/tree/9.4.0) - 2025-02-24
+### What's changed
+
+* refactor(streams-bootstrap): update JMX specification by @philipp94831 in [#597](https://github.com/bakdata/kpops/pull/597)
+
+
+**Full Changelog**: https://github.com/bakdata/kpops/compare/9.3.0...9.4.0
+
 ## [9.3.0](https://github.com/bakdata/kpops/tree/9.3.0) - 2025-02-03
 ### What's changed
 
@@ -24,6 +32,8 @@ All notable changes to this project will be documented in this file.
 * style: format YAML & JSON by @disrupted in [#595](https://github.com/bakdata/kpops/pull/595)
 
 * feat: support custom namespace configuration for `StrimziKafkaTopic` by @daconstenla in [#581](https://github.com/bakdata/kpops/pull/581)
+
+* Bump version 9.2.1 → 9.3.0 by @bakdata-bot
 
 
 ### New Contributors
