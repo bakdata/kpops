@@ -276,22 +276,6 @@
         "JMXConfig": {
             "description": "JMX configuration options.",
             "properties": {
-                "metricRules": {
-                    "anyOf": [
-                        {
-                            "items": {
-                                "$ref": "#/$defs/JMXRule"
-                            },
-                            "type": "array"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": [],
-                    "description": "List of JMX metric rules.",
-                    "title": "Metricrules"
-                },
                 "port": {
                     "anyOf": [
                         {
@@ -377,7 +361,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Value for the metric. Static values and capture groups from the pattern can be used. If not specified the scraped mBean value will be used.",
+                    "description": "The metric name to set. Capture groups from the pattern can be used. If not specified, the default format will be used. If it evaluates to empty, processing of this attribute stops with no output. An Additional suffix may be added to this name (e.g _total for type COUNTER)",
                     "title": "Name"
                 },
                 "pattern": {
@@ -424,7 +408,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "The metric name to set. Capture groups from the pattern can be used. If not specified, the default format will be used. If it evaluates to empty, processing of this attribute stops with no output. An Additional suffix may be added to this name (e.g _total for type COUNTER)",
+                    "description": "Value for the metric. Static values and capture groups from the pattern can be used. If not specified the scraped mBean value will be used.",
                     "title": "Value"
                 },
                 "valueFactor": {
@@ -1968,6 +1952,22 @@
                     "default": null,
                     "description": "Docker Image Tag for Prometheus JMX Exporter container.",
                     "title": "Imagetag"
+                },
+                "metricRules": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/JMXRule"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": [],
+                    "description": "",
+                    "title": "Metricrules"
                 },
                 "port": {
                     "anyOf": [
