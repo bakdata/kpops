@@ -8,6 +8,7 @@ metadata:
     app: resources-manifest-pipeline-my-producer-app
     chart: producer-app-3.6.0
     release: resources-manifest-pipeline-my-producer-app
+    streams-bootstrap/kind: producer-app
   name: resources-manifest-pipeline-my-producer-app
 spec:
   backoffLimit: 6
@@ -16,6 +17,7 @@ spec:
       labels:
         app: resources-manifest-pipeline-my-producer-app
         release: resources-manifest-pipeline-my-producer-app
+        streams-bootstrap/kind: producer-app
     spec:
       containers:
         - env:
@@ -126,6 +128,7 @@ metadata:
     app: resources-manifest-pipeline-my-streams-app
     chart: streams-app-3.6.0
     release: resources-manifest-pipeline-my-streams-app
+    streams-bootstrap/kind: streams-app
   name: resources-manifest-pipeline-my-streams-app
 spec:
   replicas: 1
@@ -138,6 +141,7 @@ spec:
       labels:
         app: resources-manifest-pipeline-my-streams-app
         release: resources-manifest-pipeline-my-streams-app
+        streams-bootstrap/kind: streams-app
     spec:
       containers:
         - env:

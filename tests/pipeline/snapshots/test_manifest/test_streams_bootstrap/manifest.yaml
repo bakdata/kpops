@@ -27,6 +27,7 @@ metadata:
     app: resources-streams-bootstrap-my-producer-app
     chart: producer-app-3.6.0
     release: resources-streams-bootstrap-my-producer-app
+    streams-bootstrap/kind: producer-app
   name: resources-streams-bootstrap-my-producer-app
 spec:
   concurrencyPolicy: Replace
@@ -39,6 +40,7 @@ spec:
           labels:
             app: resources-streams-bootstrap-my-producer-app
             release: resources-streams-bootstrap-my-producer-app
+            streams-bootstrap/kind: producer-app
         spec:
           containers:
             - env:
@@ -131,25 +133,6 @@ metadata:
   name: resources-streams-bootstrap-my-streams-app
 
 ---
-apiVersion: v1
-data:
-  jmx-kafka-streams-app-prometheus.yml: |
-    jmxUrl: service:jmx:rmi:///jndi/rmi://localhost:5555/jmxrmi
-    lowercaseOutputName: true
-    lowercaseOutputLabelNames: true
-    ssl: false
-    rules:
-      - pattern: ".*"
-kind: ConfigMap
-metadata:
-  labels:
-    app: resources-streams-bootstrap-my-streams-app
-    chart: streams-app-3.6.0
-    heritage: Helm
-    release: resources-streams-bootstrap-my-streams-app
-  name: resources-streams-bootstrap-my-streams-app-jmx-configmap
-
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -159,6 +142,7 @@ metadata:
     app: resources-streams-bootstrap-my-streams-app
     chart: streams-app-3.6.0
     release: resources-streams-bootstrap-my-streams-app
+    streams-bootstrap/kind: streams-app
   name: resources-streams-bootstrap-my-streams-app
 spec:
   replicas: 1
@@ -170,11 +154,10 @@ spec:
     metadata:
       annotations:
         checksum/config: 7fa55f62bffb69b723535187aa4e5ee14a91be308d56f5a8ca49c3159bf80aef
-        prometheus.io/port: '5556'
-        prometheus.io/scrape: 'true'
       labels:
         app: resources-streams-bootstrap-my-streams-app
         release: resources-streams-bootstrap-my-streams-app
+        streams-bootstrap/kind: streams-app
     spec:
       affinity:
         nodeAffinity:
@@ -195,8 +178,6 @@ spec:
               value: APP_
             - name: KAFKA_LARGE_MESSAGE_ID_GENERATOR
               value: com.bakdata.kafka.MurmurHashIdGenerator
-            - name: KAFKA_JMX_PORT
-              value: '5555'
             - name: APP_VOLATILE_GROUP_INSTANCE_ID
               value: 'true'
             - name: APP_BOOTSTRAP_SERVERS
@@ -227,9 +208,6 @@ spec:
           image: my-registry/my-streams-app-image:1.0.0
           imagePullPolicy: IfNotPresent
           name: resources-streams-bootstrap-my-streams-app
-          ports:
-            - containerPort: 5555
-              name: jmx
           resources:
             limits:
               cpu: 500m
@@ -241,35 +219,8 @@ spec:
             - mountPath: app/resources/log4j2.xml
               name: config
               subPath: log4j2.xml
-        - command:
-            - java
-            - -XX:+UnlockExperimentalVMOptions
-            - -XX:+UseCGroupMemoryLimitForHeap
-            - -XX:MaxRAMFraction=1
-            - -XshowSettings:vm
-            - -jar
-            - jmx_prometheus_httpserver.jar
-            - '5556'
-            - /etc/jmx-streams-app/jmx-kafka-streams-app-prometheus.yml
-          image: solsson/kafka-prometheus-jmx-exporter@sha256:6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e78946143
-          name: prometheus-jmx-exporter
-          ports:
-            - containerPort: 5556
-          resources:
-            limits:
-              cpu: 300m
-              memory: 2G
-            requests:
-              cpu: 100m
-              memory: 500Mi
-          volumeMounts:
-            - mountPath: /etc/jmx-streams-app
-              name: jmx-config
       terminationGracePeriodSeconds: 300
       volumes:
-        - configMap:
-            name: resources-streams-bootstrap-my-streams-app-jmx-configmap
-          name: jmx-config
         - configMap:
             name: resources-streams-bootstrap-my-streams-app
           name: config
