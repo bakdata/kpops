@@ -2294,7 +2294,7 @@
                         }
                     ],
                     "default": [],
-                    "description": "",
+                    "description": "List of JMX metric rules.",
                     "title": "Metricrules"
                 },
                 "port": {
