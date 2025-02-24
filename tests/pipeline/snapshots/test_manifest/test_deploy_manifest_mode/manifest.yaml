@@ -4,7 +4,7 @@ kind: Job
 metadata:
   labels:
     app: resources-manifest-pipeline-my-producer-app
-    chart: producer-app-3.1.0
+    chart: producer-app-3.6.0
     release: resources-manifest-pipeline-my-producer-app
   name: resources-manifest-pipeline-my-producer-app
 spec:
@@ -73,7 +73,7 @@ metadata:
     consumerGroup: my-streams-app-id
   labels:
     app: resources-manifest-pipeline-my-streams-app
-    chart: streams-app-3.1.0
+    chart: streams-app-3.6.0
     release: resources-manifest-pipeline-my-streams-app
   name: resources-manifest-pipeline-my-streams-app
 spec:

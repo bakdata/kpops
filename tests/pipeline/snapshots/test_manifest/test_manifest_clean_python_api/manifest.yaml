@@ -4,7 +4,7 @@ kind: Job
 metadata:
   labels:
     app: resources-manifest-pipeline-my-producer-app-clean
-    chart: producer-app-cleanup-job-3.1.0
+    chart: producer-app-cleanup-job-3.6.0
     release: resources-manifest-pipeline-my-producer-app-clean
   name: resources-manifest-pipeline-my-producer-app-clean
 spec:
@@ -50,7 +50,7 @@ kind: Job
 metadata:
   labels:
     app: resources-manifest-pipeline-my-streams-app-clean
-    chart: streams-app-cleanup-job-3.1.0
+    chart: streams-app-cleanup-job-3.6.0
     release: resources-manifest-pipeline-my-streams-app-clean
   name: resources-manifest-pipeline-my-streams-app-clean
 spec:

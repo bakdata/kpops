@@ -19,7 +19,7 @@
         outputTopic: resources-pipeline-folders-pipeline-1-scheduled-producer
         schemaRegistryUrl: http://localhost:8081/
       schedule: 30 3/8 * * *
-    version: 3.1.0
+    version: 3.6.0
   name: scheduled-producer
   namespace: example-namespace
   prefix: resources-pipeline-folders-pipeline-1-
@@ -49,7 +49,7 @@
       outputTopic: resources-pipeline-folders-pipeline-1-scheduled-producer
       schemaRegistryUrl: http://localhost:8081/
     schedule: 30 3/8 * * *
-  version: 3.1.0
+  version: 3.6.0
 
 - _cleaner:
     name: converter
@@ -84,7 +84,7 @@
         requests:
           memory: 2G
       statefulSet: false
-    version: 3.1.0
+    version: 3.6.0
   name: converter
   namespace: example-namespace
   prefix: resources-pipeline-folders-pipeline-2-
@@ -131,7 +131,7 @@
       requests:
         memory: 2G
     statefulSet: false
-  version: 3.1.0
+  version: 3.6.0
 
 - _cleaner:
     name: a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
@@ -169,7 +169,7 @@
         requests:
           memory: 3G
       statefulSet: false
-    version: 3.1.0
+    version: 3.6.0
   name: a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
   namespace: example-namespace
   prefix: resources-pipeline-folders-pipeline-3-
@@ -218,5 +218,5 @@
       requests:
         memory: 3G
     statefulSet: false
-  version: 3.1.0
+  version: 3.6.0
 

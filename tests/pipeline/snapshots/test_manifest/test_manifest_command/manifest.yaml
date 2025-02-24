@@ -4,7 +4,7 @@ kind: Job
 metadata:
   labels:
     app: resources-custom-config-app1
-    chart: producer-app-3.1.0
+    chart: producer-app-3.6.0
     release: resources-custom-config-app1
   name: resources-custom-config-app1
 spec:
@@ -65,7 +65,7 @@ kind: ConfigMap
 metadata:
   labels:
     app: resources-custom-config-app2
-    chart: streams-app-3.1.0
+    chart: streams-app-3.6.0
     heritage: Helm
     release: resources-custom-config-app2
   name: resources-custom-config-app2-jmx-configmap
@@ -76,7 +76,7 @@ kind: Deployment
 metadata:
   labels:
     app: resources-custom-config-app2
-    chart: streams-app-3.1.0
+    chart: streams-app-3.6.0
     pipeline: resources-custom-config
     release: resources-custom-config-app2
   name: resources-custom-config-app2
