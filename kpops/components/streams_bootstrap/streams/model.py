@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import enum
+from enum import StrEnum
 from typing import Any
 
 import pydantic
@@ -233,7 +233,7 @@ class PersistenceConfig(BaseModel):
     )
 
 
-class JmxRuleType(str, enum.Enum):
+class JmxRuleType(StrEnum):
     GAUGE = "GAUGE"
     COUNTER = "COUNTER"
     UNTYPED = "UNTYPED"
@@ -309,6 +309,7 @@ class PrometheusExporterConfig(CamelCaseConfigModel, DescConfigModel):
         :param image_pull_policy: Docker Image Pull Policy for Prometheus JMX Exporter container.
         :param port: JMX Exporter Port which exposes metrics in Prometheus format for scraping.
         :param resources: JMX Exporter resources configuration.
+        :param metric_rules: List of JMX metric rules.
         """
 
         enabled: bool | None = Field(
@@ -350,7 +351,6 @@ class JMXConfig(CamelCaseConfigModel, DescConfigModel):
     """JMX configuration options.
 
     :param port: The jmx port which JMX style metrics are exposed.
-    :param metric_rules: List of JMX metric rules.
     """
 
     port: int | None = Field(
