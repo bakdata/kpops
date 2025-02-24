@@ -6,7 +6,7 @@ streams-bootstrap:
     kafka:
       bootstrapServers: "${config.kafka_brokers}"
       schema_registry_url: "${schema_registry_url}"
-  version: "3.1.0"
+  version: "3.6.0"
 
 streams-app: # inherits from streams-bootstrap
   values:

@@ -11,7 +11,7 @@ stream-bootstrap:
 producer-app: {} # inherits from streams-bootstrap
 
 streams-app: # inherits from streams-bootstrap
-  version: "3.1.0"
+  version: "3.6.0"
   values:
     kafka:
       config:
