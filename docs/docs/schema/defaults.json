@@ -276,22 +276,6 @@
         "JMXConfig": {
             "description": "JMX configuration options.",
             "properties": {
-                "metricRules": {
-                    "anyOf": [
-                        {
-                            "items": {
-                                "type": "string"
-                            },
-                            "type": "array"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": [],
-                    "description": "List of JMX metric rules.",
-                    "title": "Metricrules"
-                },
                 "port": {
                     "anyOf": [
                         {
@@ -307,6 +291,141 @@
                 }
             },
             "title": "JMXConfig",
+            "type": "object"
+        },
+        "JMXRule": {
+            "description": "JMX rule.",
+            "properties": {
+                "attrNameSnakeCase": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Converts the attribute name to snake case. This is seen in the names matched by the pattern and the default format. For example, anAttrName to an_attr_name.",
+                    "title": "Attrnamesnakecase"
+                },
+                "cache": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Whether to cache bean name expressions to rule computation (match and mismatch). Not recommended for rules matching on bean value, as only the value from the first scrape will be cached and re-used. This can increase performance when collecting a lot of mbeans.",
+                    "title": "Cache"
+                },
+                "help": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Help text for the metric. Capture groups from pattern can be used. name must be set to use this. Defaults to the mBean attribute description, domain, and name of the attribute.",
+                    "title": "Help"
+                },
+                "labels": {
+                    "anyOf": [
+                        {
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": {},
+                    "description": "A map of label name to label value pairs. Capture groups from pattern can be used in each. name must be set to use this. Empty names and values are ignored. If not specified and the default format is not being used, no labels are set.",
+                    "title": "Labels"
+                },
+                "name": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The metric name to set. Capture groups from the pattern can be used. If not specified, the default format will be used. If it evaluates to empty, processing of this attribute stops with no output. An Additional suffix may be added to this name (e.g _total for type COUNTER)",
+                    "title": "Name"
+                },
+                "pattern": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Regex pattern to match against each bean attribute. The pattern is not anchored. Capture groups can be used in other options. Defaults to matching everything.",
+                    "title": "Pattern"
+                },
+                "type": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/JmxRuleType"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The type of the metric. name must be set to use this."
+                },
+                "value": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Value for the metric. Static values and capture groups from the pattern can be used. If not specified the scraped mBean value will be used.",
+                    "title": "Value"
+                },
+                "valueFactor": {
+                    "anyOf": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Optional number that value (or the scraped mBean value if value is not specified) is multiplied by, mainly used to convert mBean values from milliseconds to seconds.",
+                    "title": "Valuefactor"
+                }
+            },
+            "title": "JMXRule",
             "type": "object"
         },
         "JavaOptions": {
@@ -336,6 +455,15 @@
             },
             "title": "JavaOptions",
             "type": "object"
+        },
+        "JmxRuleType": {
+            "enum": [
+                "GAUGE",
+                "COUNTER",
+                "UNTYPED"
+            ],
+            "title": "JmxRuleType",
+            "type": "string"
         },
         "KafkaApp": {
             "additionalProperties": true,
@@ -1377,7 +1505,7 @@
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
-                    "default": "3.1.0",
+                    "default": "3.6.0",
                     "description": "Helm chart version",
                     "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
                     "title": "Version",
@@ -2153,6 +2281,22 @@
                     "description": "Docker Image Tag for Prometheus JMX Exporter container.",
                     "title": "Imagetag"
                 },
+                "metricRules": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/JMXRule"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": [],
+                    "description": "List of JMX metric rules.",
+                    "title": "Metricrules"
+                },
                 "port": {
                     "anyOf": [
                         {
@@ -2474,7 +2618,7 @@
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
-                    "default": "3.1.0",
+                    "default": "3.6.0",
                     "description": "Helm chart version",
                     "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
                     "title": "Version",
@@ -3140,7 +3284,7 @@
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
-                    "default": "3.1.0",
+                    "default": "3.6.0",
                     "description": "Helm chart version",
                     "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
                     "title": "Version",

@@ -511,7 +511,7 @@ class TestProducerApp:
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            HelmUpgradeInstallFlags(version="3.1.0", wait=True, wait_for_jobs=True),
+            HelmUpgradeInstallFlags(version="3.6.0", wait=True, wait_for_jobs=True),
         )
 
     async def test_clean_should_fall_back_to_local_values_when_validation_of_cluster_values_fails(
@@ -581,7 +581,7 @@ class TestProducerApp:
                     "outputTopic": "test-output-topic",
                 },
             },
-            HelmUpgradeInstallFlags(version="3.1.0", wait=True, wait_for_jobs=True),
+            HelmUpgradeInstallFlags(version="3.6.0", wait=True, wait_for_jobs=True),
         )
 
     def test_validate_cron_expression(self):
