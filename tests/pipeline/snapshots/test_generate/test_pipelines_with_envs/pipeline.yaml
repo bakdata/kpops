@@ -19,7 +19,7 @@
         outputTopic: resources-pipeline-with-envs-input-producer
         schemaRegistryUrl: http://localhost:8081/
       schedule: 20 3/8 * * *
-    version: 3.6.0
+    version: 3.1.0
   name: input-producer
   namespace: example-namespace
   prefix: resources-pipeline-with-envs-
@@ -49,7 +49,7 @@
       outputTopic: resources-pipeline-with-envs-input-producer
       schemaRegistryUrl: http://localhost:8081/
     schedule: 20 3/8 * * *
-  version: 3.6.0
+  version: 3.1.0
 - _cleaner:
     name: converter
     namespace: example-namespace
@@ -85,7 +85,7 @@
         requests:
           memory: 2G
       statefulSet: false
-    version: 3.6.0
+    version: 3.1.0
   name: converter
   namespace: example-namespace
   prefix: resources-pipeline-with-envs-
@@ -134,7 +134,7 @@
       requests:
         memory: 2G
     statefulSet: false
-  version: 3.6.0
+  version: 3.1.0
 - _cleaner:
     name: filter
     namespace: example-namespace
@@ -173,7 +173,7 @@
         requests:
           memory: 3G
       statefulSet: false
-    version: 3.6.0
+    version: 3.1.0
   name: filter
   namespace: example-namespace
   prefix: resources-pipeline-with-envs-
@@ -224,5 +224,5 @@
       requests:
         memory: 3G
     statefulSet: false
-  version: 3.6.0
+  version: 3.1.0
 

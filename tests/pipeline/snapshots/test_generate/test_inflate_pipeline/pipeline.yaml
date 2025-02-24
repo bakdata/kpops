@@ -19,7 +19,7 @@
         outputTopic: resources-pipeline-with-inflate-scheduled-producer
         schemaRegistryUrl: http://localhost:8081/
       schedule: 30 3/8 * * *
-    version: 3.6.0
+    version: 3.1.0
   name: scheduled-producer
   namespace: example-namespace
   prefix: resources-pipeline-with-inflate-
@@ -49,7 +49,7 @@
       outputTopic: resources-pipeline-with-inflate-scheduled-producer
       schemaRegistryUrl: http://localhost:8081/
     schedule: 30 3/8 * * *
-  version: 3.6.0
+  version: 3.1.0
 - _cleaner:
     name: converter
     namespace: example-namespace
@@ -85,7 +85,7 @@
         requests:
           memory: 2G
       statefulSet: false
-    version: 3.6.0
+    version: 3.1.0
   name: converter
   namespace: example-namespace
   prefix: resources-pipeline-with-inflate-
@@ -134,7 +134,7 @@
       requests:
         memory: 2G
     statefulSet: false
-  version: 3.6.0
+  version: 3.1.0
 - _cleaner:
     name: should-inflate
     namespace: example-namespace
@@ -173,7 +173,7 @@
         requests:
           memory: 3G
       statefulSet: false
-    version: 3.6.0
+    version: 3.1.0
   name: should-inflate
   namespace: example-namespace
   prefix: resources-pipeline-with-inflate-
@@ -224,7 +224,7 @@
       requests:
         memory: 3G
     statefulSet: false
-  version: 3.6.0
+  version: 3.1.0
 - _resetter:
     name: should-inflate-inflated-sink-connector
     namespace: example-namespace
@@ -292,7 +292,7 @@
         outputTopic: resources-pipeline-with-inflate-should-inflate-should-inflate-inflated-streams-app
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
-    version: 3.6.0
+    version: 3.1.0
   name: should-inflate-inflated-streams-app
   namespace: example-namespace
   prefix: resources-pipeline-with-inflate-
@@ -326,5 +326,5 @@
       outputTopic: resources-pipeline-with-inflate-should-inflate-should-inflate-inflated-streams-app
       schemaRegistryUrl: http://localhost:8081/
     statefulSet: false
-  version: 3.6.0
+  version: 3.1.0
 

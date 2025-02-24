@@ -23,7 +23,7 @@
         app_schedule: 30 3/8 * * *
         app_type: scheduled-producer
       schedule: 30 3/8 * * *
-    version: 3.6.0
+    version: 3.1.0
   name: scheduled-producer
   namespace: example-namespace
   prefix: resources-component-type-substitution-
@@ -57,7 +57,7 @@
       app_schedule: 30 3/8 * * *
       app_type: scheduled-producer
     schedule: 30 3/8 * * *
-  version: 3.6.0
+  version: 3.1.0
 - _cleaner:
     name: converter
     namespace: example-namespace
@@ -93,7 +93,7 @@
         requests:
           memory: 2G
       statefulSet: false
-    version: 3.6.0
+    version: 3.1.0
   name: converter
   namespace: example-namespace
   prefix: resources-component-type-substitution-
@@ -142,7 +142,7 @@
       requests:
         memory: 2G
     statefulSet: false
-  version: 3.6.0
+  version: 3.1.0
 - _cleaner:
     name: filter-app
     namespace: example-namespace
@@ -187,7 +187,7 @@
         requests:
           memory: 3G
       statefulSet: false
-    version: 3.6.0
+    version: 3.1.0
   name: filter-app
   namespace: example-namespace
   prefix: resources-component-type-substitution-
@@ -244,5 +244,5 @@
       requests:
         memory: 3G
     statefulSet: false
-  version: 3.6.0
+  version: 3.1.0
 

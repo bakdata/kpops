@@ -1505,7 +1505,7 @@
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
-                    "default": "3.1.0",
+                    "default": "3.6.0",
                     "description": "Helm chart version",
                     "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
                     "title": "Version",
@@ -2618,7 +2618,7 @@
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
-                    "default": "3.1.0",
+                    "default": "3.6.0",
                     "description": "Helm chart version",
                     "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
                     "title": "Version",
@@ -3284,7 +3284,7 @@
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
-                    "default": "3.1.0",
+                    "default": "3.6.0",
                     "description": "Helm chart version",
                     "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
                     "title": "Version",
