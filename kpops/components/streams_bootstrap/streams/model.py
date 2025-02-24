@@ -298,7 +298,9 @@ class PrometheusExporterConfig(CamelCaseConfigModel, DescConfigModel):
 
     """
 
-    class PrometheusJMXExporterConfig(SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigModel):
+    class PrometheusJMXExporterConfig(
+        SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigModel
+    ):
         """Prometheus JMX exporter configuration.
 
         :param enabled: Whether to install Prometheus JMX Exporter as a sidecar container and expose JMX metrics to Prometheus.
