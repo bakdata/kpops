@@ -22,7 +22,7 @@ STREAMS_BOOTSTRAP_HELM_REPO = HelmRepoConfig(
     url="https://bakdata.github.io/streams-bootstrap/",
 )
 
-STREAMS_BOOTSTRAP_VERSION = "3.6.0"
+STREAMS_BOOTSTRAP_VERSION = "3.6.1"
 STREAMS_BOOTSTRAP_VERSION_PATTERN = r"^(\d+)\.(\d+)\.(\d+)(-[a-zA-Z]+(\.[a-zA-Z]+)?)?$"
 COMPILED_VERSION_PATTERN = re.compile(STREAMS_BOOTSTRAP_VERSION_PATTERN)
 
@@ -35,7 +35,7 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
     :param values: streams-bootstrap Helm values
     :param repo_config: Configuration of the Helm chart repo to be used for
         deploying the component, defaults to streams-bootstrap Helm repo
-    :param version: Helm chart version, defaults to "3.6.0"
+    :param version: Helm chart version, defaults to "3.6.1"
     """
 
     values: StreamsBootstrapValues = Field(

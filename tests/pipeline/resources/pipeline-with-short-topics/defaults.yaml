@@ -7,7 +7,7 @@ streams-bootstrap:
     kafka:
       bootstrapServers: "${config.kafka_brokers}"
       schema_registry_url: "${config.schema_registry.url}"
-  version: "3.6.0"
+  version: "3.6.1"
 
 producer-app:
   to:
