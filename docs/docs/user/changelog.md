@@ -2,10 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [9.4.1](https://github.com/bakdata/kpops/tree/9.4.1) - 2025-02-26
+### What's changed
+
+* refactor(streams-bootstrap): update JMX remote specification by @philipp94831 in [#599](https://github.com/bakdata/kpops/pull/599)
+
+
+**Full Changelog**: https://github.com/bakdata/kpops/compare/9.4.0...9.4.1
+
 ## [9.4.0](https://github.com/bakdata/kpops/tree/9.4.0) - 2025-02-24
 ### What's changed
 
 * refactor(streams-bootstrap): update JMX specification by @philipp94831 in [#597](https://github.com/bakdata/kpops/pull/597)
+
+* Bump version 9.3.0 → 9.4.0 by @bakdata-bot
 
 
 **Full Changelog**: https://github.com/bakdata/kpops/compare/9.3.0...9.4.0
