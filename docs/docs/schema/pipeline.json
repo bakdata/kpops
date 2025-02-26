@@ -276,6 +276,32 @@
         "JMXConfig": {
             "description": "JMX configuration options.",
             "properties": {
+                "enabled": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Whether or not to open JMX port for remote access (e.g., for debugging)",
+                    "title": "Enabled"
+                },
+                "host": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The host to use for JMX remote access.",
+                    "title": "Host"
+                },
                 "port": {
                     "anyOf": [
                         {
@@ -286,7 +312,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "The jmx port which JMX style metrics are exposed.",
+                    "description": "The JMX port which JMX style metrics are exposed.",
                     "title": "Port"
                 }
             },
@@ -1177,7 +1203,7 @@
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
-                    "default": "3.6.0",
+                    "default": "3.6.1",
                     "description": "Helm chart version",
                     "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
                     "title": "Version",
@@ -2290,7 +2316,7 @@
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
-                    "default": "3.6.0",
+                    "default": "3.6.1",
                     "description": "Helm chart version",
                     "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
                     "title": "Version",

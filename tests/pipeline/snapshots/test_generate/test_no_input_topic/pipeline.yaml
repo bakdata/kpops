@@ -27,7 +27,7 @@
         requests:
           memory: 2G
       statefulSet: false
-    version: 3.6.0
+    version: 3.6.1
   from:
     components: {}
     topics:
@@ -72,7 +72,7 @@
       requests:
         memory: 2G
     statefulSet: false
-  version: 3.6.0
+  version: 3.6.1
 - _cleaner:
     name: app2
     namespace: example-namespace
@@ -98,7 +98,7 @@
           test-output: test-output-extra
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
-    version: 3.6.0
+    version: 3.6.1
   name: app2
   namespace: example-namespace
   prefix: resources-no-input-topic-pipeline-
@@ -137,5 +137,5 @@
         test-output: test-output-extra
       schemaRegistryUrl: http://localhost:8081/
     statefulSet: false
-  version: 3.6.0
+  version: 3.6.1
 
