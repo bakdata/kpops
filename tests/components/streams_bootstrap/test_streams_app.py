@@ -442,7 +442,7 @@ class TestStreamsApp:
                     ca_file=None,
                     insecure_skip_tls_verify=False,
                     timeout="5m0s",
-                    version="3.6.1",
+                    version="3.6.1-SNAPSHOT",
                     wait=True,
                     wait_for_jobs=False,
                 ),
@@ -518,7 +518,7 @@ class TestStreamsApp:
                         },
                     },
                     HelmUpgradeInstallFlags(
-                        version="3.6.1", wait=True, wait_for_jobs=True
+                        version="3.6.1-SNAPSHOT", wait=True, wait_for_jobs=True
                     ),
                 ),
                 mocker.call.helm_uninstall(
@@ -584,7 +584,7 @@ class TestStreamsApp:
                         },
                     },
                     HelmUpgradeInstallFlags(
-                        version="3.6.1", wait=True, wait_for_jobs=True
+                        version="3.6.1-SNAPSHOT", wait=True, wait_for_jobs=True
                     ),
                 ),
                 mocker.call.helm_uninstall(
@@ -671,7 +671,7 @@ class TestStreamsApp:
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            HelmUpgradeInstallFlags(version="3.6.1", wait=True, wait_for_jobs=True),
+            HelmUpgradeInstallFlags(version="3.6.1-SNAPSHOT", wait=True, wait_for_jobs=True),
         )
 
     async def test_should_deploy_clean_up_job_with_values_in_cluster_when_clean(
@@ -750,7 +750,7 @@ class TestStreamsApp:
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            HelmUpgradeInstallFlags(version="3.6.1", wait=True, wait_for_jobs=True),
+            HelmUpgradeInstallFlags(version="3.6.1-SNAPSHOT", wait=True, wait_for_jobs=True),
         )
 
     async def test_get_input_output_topics(self):
@@ -919,7 +919,7 @@ class TestStreamsApp:
                         "persistence": {"enabled": True, "size": "5Gi"},
                     },
                     HelmUpgradeInstallFlags(
-                        version="3.6.1", wait=True, wait_for_jobs=True
+                        version="3.6.1-SNAPSHOT", wait=True, wait_for_jobs=True
                     ),
                 ),
                 mocker.call.helm_uninstall(
@@ -1041,5 +1041,5 @@ class TestStreamsApp:
                     "deleteOutput": True,
                 },
             },
-            HelmUpgradeInstallFlags(version="3.6.1", wait=True, wait_for_jobs=True),
+            HelmUpgradeInstallFlags(version="3.6.1-SNAPSHOT", wait=True, wait_for_jobs=True),
         )

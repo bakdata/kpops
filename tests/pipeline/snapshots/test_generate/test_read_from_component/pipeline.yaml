@@ -15,7 +15,7 @@
         bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         outputTopic: resources-read-from-component-producer1
         schemaRegistryUrl: http://localhost:8081/
-    version: 3.6.1
+    version: 3.6.1-SNAPSHOT
   name: producer1
   namespace: example-namespace
   prefix: resources-read-from-component-
@@ -37,7 +37,7 @@
       bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       outputTopic: resources-read-from-component-producer1
       schemaRegistryUrl: http://localhost:8081/
-  version: 3.6.1
+  version: 3.6.1-SNAPSHOT
 - _cleaner:
     name: producer2
     namespace: example-namespace
@@ -55,7 +55,7 @@
         bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         outputTopic: resources-read-from-component-producer2
         schemaRegistryUrl: http://localhost:8081/
-    version: 3.6.1
+    version: 3.6.1-SNAPSHOT
   name: producer2
   namespace: example-namespace
   prefix: ''
@@ -77,7 +77,7 @@
       bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       outputTopic: resources-read-from-component-producer2
       schemaRegistryUrl: http://localhost:8081/
-  version: 3.6.1
+  version: 3.6.1-SNAPSHOT
 - _cleaner:
     name: inflate-step
     namespace: example-namespace
@@ -109,7 +109,7 @@
         outputTopic: resources-read-from-component-inflate-step
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
-    version: 3.6.1
+    version: 3.6.1-SNAPSHOT
   name: inflate-step
   namespace: example-namespace
   prefix: resources-read-from-component-
@@ -153,7 +153,7 @@
       outputTopic: resources-read-from-component-inflate-step
       schemaRegistryUrl: http://localhost:8081/
     statefulSet: false
-  version: 3.6.1
+  version: 3.6.1-SNAPSHOT
 - _resetter:
     name: inflate-step-inflated-sink-connector
     namespace: example-namespace
@@ -221,7 +221,7 @@
         outputTopic: resources-read-from-component-inflate-step-inflate-step-inflated-streams-app
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
-    version: 3.6.1
+    version: 3.6.1-SNAPSHOT
   name: inflate-step-inflated-streams-app
   namespace: example-namespace
   prefix: resources-read-from-component-
@@ -255,7 +255,7 @@
       outputTopic: resources-read-from-component-inflate-step-inflate-step-inflated-streams-app
       schemaRegistryUrl: http://localhost:8081/
     statefulSet: false
-  version: 3.6.1
+  version: 3.6.1-SNAPSHOT
 - _cleaner:
     name: inflate-step-without-prefix
     namespace: example-namespace
@@ -287,7 +287,7 @@
         outputTopic: resources-read-from-component-inflate-step-without-prefix
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
-    version: 3.6.1
+    version: 3.6.1-SNAPSHOT
   name: inflate-step-without-prefix
   namespace: example-namespace
   prefix: ''
@@ -331,7 +331,7 @@
       outputTopic: resources-read-from-component-inflate-step-without-prefix
       schemaRegistryUrl: http://localhost:8081/
     statefulSet: false
-  version: 3.6.1
+  version: 3.6.1-SNAPSHOT
 - _resetter:
     name: inflate-step-without-prefix-inflated-sink-connector
     namespace: example-namespace
@@ -399,7 +399,7 @@
         outputTopic: inflate-step-without-prefix-inflate-step-without-prefix-inflated-streams-app
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
-    version: 3.6.1
+    version: 3.6.1-SNAPSHOT
   name: inflate-step-without-prefix-inflated-streams-app
   namespace: example-namespace
   prefix: resources-read-from-component-
@@ -433,7 +433,7 @@
       outputTopic: inflate-step-without-prefix-inflate-step-without-prefix-inflated-streams-app
       schemaRegistryUrl: http://localhost:8081/
     statefulSet: false
-  version: 3.6.1
+  version: 3.6.1-SNAPSHOT
 - _cleaner:
     name: consumer1
     namespace: example-namespace
@@ -457,7 +457,7 @@
         outputTopic: resources-read-from-component-consumer1
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
-    version: 3.6.1
+    version: 3.6.1-SNAPSHOT
   from:
     components:
       producer1:
@@ -496,7 +496,7 @@
       outputTopic: resources-read-from-component-consumer1
       schemaRegistryUrl: http://localhost:8081/
     statefulSet: false
-  version: 3.6.1
+  version: 3.6.1-SNAPSHOT
 - _cleaner:
     name: consumer2
     namespace: example-namespace
@@ -520,7 +520,7 @@
           - resources-read-from-component-consumer1
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
-    version: 3.6.1
+    version: 3.6.1-SNAPSHOT
   from:
     components:
       consumer1:
@@ -558,7 +558,7 @@
         - resources-read-from-component-consumer1
       schemaRegistryUrl: http://localhost:8081/
     statefulSet: false
-  version: 3.6.1
+  version: 3.6.1-SNAPSHOT
 - _cleaner:
     name: consumer3
     namespace: example-namespace
@@ -582,7 +582,7 @@
           - resources-read-from-component-producer2
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
-    version: 3.6.1
+    version: 3.6.1-SNAPSHOT
   from:
     components:
       producer2:
@@ -620,7 +620,7 @@
         - resources-read-from-component-producer2
       schemaRegistryUrl: http://localhost:8081/
     statefulSet: false
-  version: 3.6.1
+  version: 3.6.1-SNAPSHOT
 - _cleaner:
     name: consumer4
     namespace: example-namespace
@@ -643,7 +643,7 @@
           - resources-read-from-component-inflate-step-inflate-step-inflated-streams-app
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
-    version: 3.6.1
+    version: 3.6.1-SNAPSHOT
   from:
     components:
       inflate-step:
@@ -678,7 +678,7 @@
         - resources-read-from-component-inflate-step-inflate-step-inflated-streams-app
       schemaRegistryUrl: http://localhost:8081/
     statefulSet: false
-  version: 3.6.1
+  version: 3.6.1-SNAPSHOT
 - _cleaner:
     name: consumer5
     namespace: example-namespace
@@ -701,7 +701,7 @@
           - inflate-step-without-prefix-inflate-step-without-prefix-inflated-streams-app
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
-    version: 3.6.1
+    version: 3.6.1-SNAPSHOT
   from:
     components:
       inflate-step-without-prefix:
@@ -736,5 +736,5 @@
         - inflate-step-without-prefix-inflate-step-without-prefix-inflated-streams-app
       schemaRegistryUrl: http://localhost:8081/
     statefulSet: false
-  version: 3.6.1
+  version: 3.6.1-SNAPSHOT
 

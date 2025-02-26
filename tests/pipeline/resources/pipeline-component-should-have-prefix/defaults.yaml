@@ -5,7 +5,7 @@ kubernetes-app:
   namespace: ${NAMESPACE}
 
 streams-bootstrap:
-  version: "3.6.1"
+  version: "3.6.1-SNAPSHOT"
   values:
     kafka:
       bootstrapServers: ${config.kafka_brokers}

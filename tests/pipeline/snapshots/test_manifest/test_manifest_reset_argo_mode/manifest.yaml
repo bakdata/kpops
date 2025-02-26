@@ -28,7 +28,7 @@ kind: Job
 metadata:
   labels:
     app: resources-manifest-pipeline-my-streams-app-clean
-    chart: streams-app-cleanup-job-3.6.1
+    chart: streams-app-cleanup-job-3.6.1-SNAPSHOT
     release: resources-manifest-pipeline-my-streams-app-clean
   name: resources-manifest-pipeline-my-streams-app-clean
 spec:

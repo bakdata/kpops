@@ -1,5 +1,5 @@
 streams-bootstrap:
-  version: "3.6.1"
+  version: "3.6.1-SNAPSHOT"
   values:
     imagePullPolicy: IfNotPresent
     files:
