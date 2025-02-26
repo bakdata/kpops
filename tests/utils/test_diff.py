@@ -45,6 +45,21 @@ from kpops.utils.dict_differ import Change, Diff, DiffType, render_diff
             "\x1b[0m\x1b[31m- c: 3\n"
             "\x1b[0m",
         ),
+        pytest.param(
+            {"a": {"a.foo/bar": 1, "b": 2, "c": 3}, "b": 2, "c": 3},
+            {"a": {"a.foo/bar": 9, "b": 8}, "d": 1},
+            [("a", "a.foo/bar")],
+            "  a:\n"
+            "\x1b[31m-   b: 2\n"
+            "\x1b[0m\x1b[33m?      ^\n"
+            "\x1b[0m\x1b[32m+   b: 8\n"
+            "\x1b[0m\x1b[33m?      ^\n"
+            "\x1b[0m\x1b[32m+ d: 1\n"
+            "\x1b[0m\x1b[31m-   c: 3\n"
+            "\x1b[0m\x1b[31m- b: 2\n"
+            "\x1b[0m\x1b[31m- c: 3\n"
+            "\x1b[0m",
+        ),
     ],
 )
 def test_render_diff(
