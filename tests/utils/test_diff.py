@@ -2,7 +2,7 @@ from typing import Any
 
 import pytest
 
-from kpops.component_handlers.helm_wrapper.model import IgnoreKeyPath
+from kpops.component_handlers.helm_wrapper.model import KeyPath
 from kpops.utils.dict_differ import Change, Diff, DiffType, render_diff
 
 
@@ -65,7 +65,7 @@ from kpops.utils.dict_differ import Change, Diff, DiffType, render_diff
 def test_render_diff(
     d1: dict[str, Any],
     d2: dict[str, Any],
-    ignore: list[IgnoreKeyPath] | None,
+    ignore: list[KeyPath] | None,
     output: str | None,
 ):
     assert render_diff(d1, d2, ignore) == output
