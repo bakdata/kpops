@@ -20,7 +20,7 @@
           memory: 2G
         requests:
           memory: 2G
-    version: 3.6.1-SNAPSHOT
+    version: 3.6.0
   name: app1
   namespace: development-namespace
   prefix: resources-custom-config-
@@ -48,7 +48,7 @@
         memory: 2G
       requests:
         memory: 2G
-  version: 3.6.1-SNAPSHOT
+  version: 3.6.0
 - _cleaner:
     name: app2
     namespace: development-namespace
@@ -74,7 +74,7 @@
       labels:
         pipeline: resources-custom-config
       statefulSet: false
-    version: 3.6.1-SNAPSHOT
+    version: 3.6.0
   name: app2
   namespace: development-namespace
   prefix: resources-custom-config-
@@ -111,5 +111,5 @@
     labels:
       pipeline: resources-custom-config
     statefulSet: false
-  version: 3.6.1-SNAPSHOT
+  version: 3.6.0
 

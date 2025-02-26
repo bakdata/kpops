@@ -6,7 +6,7 @@ metadata:
     argocd.argoproj.io/sync-wave: '1'
   labels:
     app: resources-manifest-pipeline-my-producer-app
-    chart: producer-app-3.6.1-SNAPSHOT
+    chart: producer-app-3.6.0
     release: resources-manifest-pipeline-my-producer-app
     streams-bootstrap/kind: producer-app
   name: resources-manifest-pipeline-my-producer-app
@@ -77,7 +77,7 @@ metadata:
     argocd.argoproj.io/hook: PostDelete
   labels:
     app: resources-manifest-pipeline-my-producer-app-clean
-    chart: producer-app-cleanup-job-3.6.1-SNAPSHOT
+    chart: producer-app-cleanup-job-3.6.0
     release: resources-manifest-pipeline-my-producer-app-clean
   name: resources-manifest-pipeline-my-producer-app-clean
 spec:
@@ -126,7 +126,7 @@ metadata:
     consumerGroup: my-streams-app-id
   labels:
     app: resources-manifest-pipeline-my-streams-app
-    chart: streams-app-3.6.1-SNAPSHOT
+    chart: streams-app-3.6.0
     release: resources-manifest-pipeline-my-streams-app
     streams-bootstrap/kind: streams-app
   name: resources-manifest-pipeline-my-streams-app
@@ -243,7 +243,7 @@ metadata:
     argocd.argoproj.io/hook: PostDelete
   labels:
     app: resources-manifest-pipeline-my-streams-app-clean
-    chart: streams-app-cleanup-job-3.6.1-SNAPSHOT
+    chart: streams-app-cleanup-job-3.6.0
     release: resources-manifest-pipeline-my-streams-app-clean
   name: resources-manifest-pipeline-my-streams-app-clean
 spec:

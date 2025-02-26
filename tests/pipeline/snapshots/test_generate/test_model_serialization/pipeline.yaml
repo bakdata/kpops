@@ -18,7 +18,7 @@
         bootstrapServers: test
         outputTopic: out
         schemaRegistryUrl: http://localhost:8081/
-    version: 3.6.1-SNAPSHOT
+    version: 3.6.0
   name: account-producer
   namespace: test
   prefix: resources-pipeline-with-paths-
@@ -37,5 +37,5 @@
       bootstrapServers: test
       outputTopic: out
       schemaRegistryUrl: http://localhost:8081/
-  version: 3.6.1-SNAPSHOT
+  version: 3.6.0
 

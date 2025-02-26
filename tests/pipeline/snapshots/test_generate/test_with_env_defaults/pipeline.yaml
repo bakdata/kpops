@@ -21,7 +21,7 @@
         outputTopic: example-output
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
-    version: 3.6.1-SNAPSHOT
+    version: 3.6.0
   from:
     components: {}
     topics:
@@ -60,7 +60,7 @@
       outputTopic: example-output
       schemaRegistryUrl: http://localhost:8081/
     statefulSet: false
-  version: 3.6.1-SNAPSHOT
+  version: 3.6.0
 - _resetter:
     name: es-sink-connector
     namespace: development-namespace
