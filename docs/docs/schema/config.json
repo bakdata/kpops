@@ -45,16 +45,28 @@
         "HelmDiffConfig": {
             "properties": {
                 "ignore": {
-                    "description": "Set of keys that should not be checked.",
+                    "description": "List of keypaths that should be excluded from the diff.",
                     "examples": [
-                        "- name\n- imageTag"
+                        [
+                            "name"
+                        ],
+                        [
+                            "imageTag"
+                        ],
+                        [
+                            "metadata",
+                            "labels",
+                            "helm.sh/chart"
+                        ]
                     ],
                     "items": {
-                        "type": "string"
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
                     },
                     "title": "Ignore",
-                    "type": "array",
-                    "uniqueItems": true
+                    "type": "array"
                 }
             },
             "title": "HelmDiffConfig",

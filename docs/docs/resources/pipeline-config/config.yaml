@@ -40,8 +40,9 @@ helm_config:
 helm_diff_config:
   # Set of keys that should not be checked.
   ignore:
-    - name
-    - imageTag
+    - ["name"]
+    - ["imageTag"]
+    - ["metadata", "labels", "helm.sh/chart"]
 # Whether to retain clean up jobs in the cluster or uninstall the, after
 # completion.
 retain_clean_jobs: false

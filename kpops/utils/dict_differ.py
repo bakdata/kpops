@@ -10,6 +10,8 @@ import typer
 import yaml
 from dictdiffer import diff, patch
 
+from kpops.component_handlers.helm_wrapper.model import IgnoreKeyPath
+
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator, Sequence
 
@@ -85,13 +87,12 @@ class Diff(Generic[_O, _N]):
 def render_diff(
     d1: MutableMapping[str, Any],
     d2: MutableMapping[str, Any],
-    ignore: set[str] | None = None,
+    ignore: list[IgnoreKeyPath] | None = None,
 ) -> str | None:
     def del_ignored_keys(d: MutableMapping[str, Any]) -> None:
         """Delete key to be ignored, dictionary is modified in-place."""
         if ignore:
-            for i in ignore:
-                key_path = i.split(".")
+            for key_path in ignore:
                 nested = d
                 try:
                     for key in key_path[:-1]:
