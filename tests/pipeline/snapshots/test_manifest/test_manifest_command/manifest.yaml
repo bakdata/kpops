@@ -4,7 +4,7 @@ kind: Job
 metadata:
   labels:
     app: resources-custom-config-app1
-    chart: producer-app-3.6.0
+    chart: producer-app-3.6.1
     release: resources-custom-config-app1
     streams-bootstrap/kind: producer-app
   name: resources-custom-config-app1
@@ -59,7 +59,7 @@ kind: Deployment
 metadata:
   labels:
     app: resources-custom-config-app2
-    chart: streams-app-3.6.0
+    chart: streams-app-3.6.1
     pipeline: resources-custom-config
     release: resources-custom-config-app2
     streams-bootstrap/kind: streams-app

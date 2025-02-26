@@ -350,12 +350,22 @@ class PrometheusExporterConfig(CamelCaseConfigModel, DescConfigModel):
 class JMXConfig(CamelCaseConfigModel, DescConfigModel):
     """JMX configuration options.
 
-    :param port: The jmx port which JMX style metrics are exposed.
+    :param port: The JMX port which JMX style metrics are exposed.
+    :param enabled: Whether or not to open JMX port for remote access (e.g., for debugging)
+    :param host: The host to use for JMX remote access.
     """
 
     port: int | None = Field(
         default=None,
         description=describe_attr("port", __doc__),
+    )
+    enabled: bool | None = Field(
+        default=None,
+        description=describe_attr("enabled", __doc__),
+    )
+    host: str | None = Field(
+        default=None,
+        description=describe_attr("host", __doc__),
     )
 
 
