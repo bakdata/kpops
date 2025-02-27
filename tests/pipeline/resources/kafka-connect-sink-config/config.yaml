@@ -2,8 +2,6 @@ kafka_brokers: "broker:9092"
 topic_name_config:
   default_error_topic_name: ${component.type}-error-topic
   default_output_topic_name: ${component.type}-output-topic
-helm_diff_config:
-  enable: false
 kafka_connect:
   url: "http://kafka_connect_url:8083"
 kafka_rest:

@@ -41,7 +41,6 @@ def test_kpops_config_with_default_values():
     assert default_config.helm_config.context is None
     assert default_config.helm_config.debug is False
     assert default_config.helm_config.api_version is None
-    assert default_config.helm_diff_config.ignore == []
     assert default_config.retain_clean_jobs is False
 
 

@@ -14,7 +14,7 @@ from pydantic_settings import (
 )
 from typing_extensions import override
 
-from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
+from kpops.component_handlers.helm_wrapper.model import HelmConfig
 from kpops.core.exception import ValidationError
 from kpops.core.operation import OperationMode
 from kpops.utils.docstring import describe_object
@@ -149,10 +149,6 @@ class KpopsConfig(BaseSettings):
     helm_config: HelmConfig = Field(
         default=HelmConfig(),
         description="Global flags for Helm.",
-    )
-    helm_diff_config: HelmDiffConfig = Field(
-        default=HelmDiffConfig(),
-        description="Configure Helm Diff.",
     )
     retain_clean_jobs: bool = Field(
         default=False,

@@ -42,36 +42,6 @@
             "title": "HelmConfig",
             "type": "object"
         },
-        "HelmDiffConfig": {
-            "properties": {
-                "ignore": {
-                    "description": "List of keypaths that should be excluded from the diff.",
-                    "examples": [
-                        [
-                            "name"
-                        ],
-                        [
-                            "imageTag"
-                        ],
-                        [
-                            "metadata",
-                            "labels",
-                            "helm.sh/chart"
-                        ]
-                    ],
-                    "items": {
-                        "items": {
-                            "type": "string"
-                        },
-                        "type": "array"
-                    },
-                    "title": "Ignore",
-                    "type": "array"
-                }
-            },
-            "title": "HelmDiffConfig",
-            "type": "object"
-        },
         "KafkaConnectConfig": {
             "additionalProperties": false,
             "description": "Configuration for Kafka Connect.",
@@ -235,13 +205,6 @@
                 "debug": false
             },
             "description": "Global flags for Helm."
-        },
-        "helm_diff_config": {
-            "$ref": "#/$defs/HelmDiffConfig",
-            "default": {
-                "ignore": []
-            },
-            "description": "Configure Helm Diff."
         },
         "kafka_brokers": {
             "description": "The comma separated Kafka brokers address.",
