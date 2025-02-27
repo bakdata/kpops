@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import logging
 from functools import cached_property
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, final
 
 from schema_registry.client import AsyncSchemaRegistryClient
 from schema_registry.client.schema import AvroSchema
@@ -23,6 +23,7 @@ if TYPE_CHECKING:
 log = logging.getLogger("SchemaHandler")
 
 
+@final
 class SchemaHandler:
     def __init__(self, kpops_config: KpopsConfig) -> None:
         self.schema_registry_client = AsyncSchemaRegistryClient(

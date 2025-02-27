@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, final
 
 import httpx
 
@@ -26,6 +26,7 @@ HEADERS = {"Accept": "application/json", "Content-Type": "application/json"}
 log = logging.getLogger("KafkaConnectAPI")
 
 
+@final
 class ConnectWrapper:
     """Wraps Kafka Connect APIs."""
 

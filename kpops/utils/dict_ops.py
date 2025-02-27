@@ -77,7 +77,7 @@ def flatten_mapping(
         if prefix:
             key = prefix + separator + key
         if isinstance(value, Mapping):
-            nested_mapping = flatten_mapping(value, key, separator)
+            nested_mapping = flatten_mapping(value, key, separator)  # pyright: ignore[reportAssignmentType,reportUnknownArgumentType]
             top = update_nested_pair(top, nested_mapping)
         else:
             top[key] = value

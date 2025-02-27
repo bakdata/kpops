@@ -1,5 +1,6 @@
 import logging
 from collections.abc import AsyncIterable
+from typing import final
 
 from lightkube.core.async_client import AsyncClient
 from lightkube.resources.core_v1 import PersistentVolumeClaim
@@ -7,6 +8,7 @@ from lightkube.resources.core_v1 import PersistentVolumeClaim
 log = logging.getLogger("PVC_handler")
 
 
+@final
 class PVCHandler:
     def __init__(self, app_name: str, namespace: str) -> None:
         self.app_name = app_name

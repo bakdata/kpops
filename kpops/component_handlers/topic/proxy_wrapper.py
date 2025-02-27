@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from functools import cached_property
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, final
 
 import httpx
 
@@ -27,6 +27,7 @@ log = logging.getLogger("KafkaRestProxy")
 HEADERS = {"Content-Type": "application/json"}
 
 
+@final
 class ProxyWrapper:
     """Wraps Kafka REST Proxy APIs."""
 

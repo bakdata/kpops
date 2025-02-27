@@ -220,7 +220,9 @@ class PipelineGenerator:
     registry: Registry
     handlers: ComponentHandlers
     pipeline: Pipeline = field(init=False, default_factory=Pipeline)
-    env_components_index: dict[str, dict[str, Any]] = {}
+    env_components_index: dict[str, dict[str, Any]] = field(
+        init=False, default_factory=dict
+    )
 
     def parse(
         self,
