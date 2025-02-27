@@ -52,10 +52,10 @@ class TestStreamsBootstrap:
             },
         )
         helm_upgrade_install = mocker.patch.object(
-            streams_bootstrap.helm, "upgrade_install"
+            streams_bootstrap._helm, "upgrade_install"
         )
         print_helm_diff = mocker.patch.object(
-            streams_bootstrap.dry_run_handler, "print_helm_diff"
+            streams_bootstrap._dry_run_handler, "print_helm_diff"
         )
         mocker.patch.object(
             StreamsBootstrapV2,

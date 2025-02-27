@@ -5,7 +5,7 @@ from functools import cached_property
 from typing import Annotated, Any
 
 import pydantic
-from pydantic import Field, model_serializer
+from pydantic import Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
@@ -32,7 +32,6 @@ from kpops.manifests.argo import ArgoSyncWave, enrich_annotations
 from kpops.manifests.kubernetes import K8S_LABEL_MAX_LEN, KubernetesManifest
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import exclude_by_name
 
 log = logging.getLogger("HelmApp")
 
@@ -89,7 +88,7 @@ class HelmApp(KubernetesApp):
     )
 
     @cached_property
-    def helm(self) -> Helm:
+    def _helm(self) -> Helm:
         """Helm object that contains component-specific config such as repo."""
         helm = Helm(get_config().helm_config)
         if self.repo_config is not None:
@@ -101,13 +100,13 @@ class HelmApp(KubernetesApp):
         return helm
 
     @cached_property
-    def helm_diff(self) -> HelmDiff:
+    def _helm_diff(self) -> HelmDiff:
         """Helm diff object of last and current release of this component."""
         return HelmDiff(self.diff_config)
 
     @cached_property
-    def dry_run_handler(self) -> DryRunHandler:
-        return DryRunHandler(self.helm, self.helm_diff, self.namespace)
+    def _dry_run_handler(self) -> DryRunHandler:
+        return DryRunHandler(self._helm, self._helm_diff, self.namespace)
 
     @property
     def helm_release_name(self) -> str:
@@ -154,7 +153,7 @@ class HelmApp(KubernetesApp):
             sync_wave = ArgoSyncWave(sync_wave=1)
             values = enrich_annotations(values, sync_wave.key, sync_wave.value)
 
-        return self.helm.template(
+        return self._helm.template(
             self.helm_release_name,
             self.helm_chart,
             self.namespace,
@@ -169,7 +168,7 @@ class HelmApp(KubernetesApp):
 
     @override
     async def deploy(self, dry_run: bool) -> None:
-        stdout = await self.helm.upgrade_install(
+        stdout = await self._helm.upgrade_install(
             self.helm_release_name,
             self.helm_chart,
             dry_run,
@@ -178,11 +177,11 @@ class HelmApp(KubernetesApp):
             self.deploy_flags,
         )
         if dry_run:
-            self.dry_run_handler.print_helm_diff(stdout, self.helm_release_name, log)
+            self._dry_run_handler.print_helm_diff(stdout, self.helm_release_name, log)
 
     @override
     async def destroy(self, dry_run: bool) -> None:
-        stdout = await self.helm.uninstall(
+        stdout = await self._helm.uninstall(
             self.namespace,
             self.helm_release_name,
             dry_run,
@@ -206,21 +205,11 @@ class HelmApp(KubernetesApp):
         :param stdout: The output of a Helm command that installs or upgrades the release
         """
         current_release = list(
-            self.helm.get_manifest(self.helm_release_name, self.namespace)
+            self._helm.get_manifest(self.helm_release_name, self.namespace)
         )
         if current_release:
             log.info(f"Helm release {self.helm_release_name} already exists")
         else:
             log.info(f"Helm release {self.helm_release_name} does not exist")
         new_release = Helm.load_manifest(stdout)
-        self.helm_diff.log_helm_diff(log, current_release, new_release)
-
-    # HACK: workaround for Pydantic to exclude cached properties during model export
-    # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
-    @model_serializer(mode="wrap", when_used="always")
-    def serialize_model(
-        self,
-        default_serialize_handler: pydantic.SerializerFunctionWrapHandler,
-        info: pydantic.SerializationInfo,
-    ) -> dict[str, Any]:
-        return exclude_by_name(default_serialize_handler(self), "helm", "helm_diff")
+        self._helm_diff.log_helm_diff(log, current_release, new_release)
