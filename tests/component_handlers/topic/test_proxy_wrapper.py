@@ -52,7 +52,7 @@ class TestProxyWrapper:
 
     @patch("httpx.AsyncClient.post")
     async def test_should_create_topic_with_all_topic_configuration(
-        self, proxy_wrapper: ProxyWrapper, mock_post: AsyncMock
+        self, mock_post: AsyncMock, proxy_wrapper: ProxyWrapper
     ):
         topic_spec = {
             "topic_name": "topic-X",
@@ -77,7 +77,7 @@ class TestProxyWrapper:
 
     @patch("httpx.AsyncClient.post")
     async def test_should_create_topic_with_no_configuration(
-        self, proxy_wrapper: ProxyWrapper, mock_post: AsyncMock
+        self, mock_post: AsyncMock, proxy_wrapper: ProxyWrapper
     ):
         topic_spec: dict[str, Any] = {"topic_name": "topic-X"}
 
@@ -94,7 +94,7 @@ class TestProxyWrapper:
 
     @patch("httpx.AsyncClient.get")
     async def test_should_call_get_topic(
-        self, proxy_wrapper: ProxyWrapper, mock_get: AsyncMock
+        self, mock_get: AsyncMock, proxy_wrapper: ProxyWrapper
     ):
         topic_name = "topic-X"
 
@@ -108,7 +108,7 @@ class TestProxyWrapper:
 
     @patch("httpx.AsyncClient.post")
     async def test_should_call_batch_alter_topic_config(
-        self, proxy_wrapper: ProxyWrapper, mock_put: AsyncMock
+        self, mock_put: AsyncMock, proxy_wrapper: ProxyWrapper
     ):
         topic_name = "topic-X"
 
@@ -134,7 +134,7 @@ class TestProxyWrapper:
 
     @patch("httpx.AsyncClient.delete")
     async def test_should_call_delete_topic(
-        self, proxy_wrapper: ProxyWrapper, mock_delete: AsyncMock
+        self, mock_delete: AsyncMock, proxy_wrapper: ProxyWrapper
     ):
         topic_name = "topic-X"
 
@@ -148,7 +148,7 @@ class TestProxyWrapper:
 
     @patch("httpx.AsyncClient.get")
     async def test_should_call_get_broker_config(
-        self, proxy_wrapper: ProxyWrapper, mock_get: AsyncMock
+        self, mock_get: AsyncMock, proxy_wrapper: ProxyWrapper
     ):
         with pytest.raises(KafkaRestProxyError):
             await proxy_wrapper.get_broker_config()
