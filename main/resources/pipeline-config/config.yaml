@@ -36,13 +36,6 @@ helm_config:
   debug: false
   # Kubernetes API version used for Capabilities.APIVersions
   api_version: null
-# Configure Helm Diff.
-helm_diff_config:
-  # Set of keys that should not be checked.
-  ignore:
-    - ["name"]
-    - ["imageTag"]
-    - ["metadata", "labels", "helm.sh/chart"]
 # Whether to retain clean up jobs in the cluster or uninstall the, after
 # completion.
 retain_clean_jobs: false
