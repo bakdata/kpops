@@ -130,6 +130,7 @@ class ProducerApp(StreamsBootstrap):
     def helm_chart(self) -> str:
         return f"{self.repo_config.repository_name}/{AppType.PRODUCER_APP.value}"
 
+    @override
     async def reset(self, dry_run: bool) -> None:
         """Reset not necessary, since producer app has no consumer group offsets."""
         await super().reset(dry_run)

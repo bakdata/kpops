@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 import typer
 
@@ -10,7 +10,8 @@ if TYPE_CHECKING:
 
 
 class CustomFormatter(logging.Formatter):
-    def format(self, record):
+    @override
+    def format(self, record) -> str:
         message_format = "%(name)s - %(message)s"
 
         if record.name == "root":
