@@ -64,7 +64,9 @@ class TestProxyWrapper:
         }
 
         with pytest.raises(KafkaRestProxyError):
-            await self.proxy_wrapper.create_topic(topic_spec=TopicSpec(**topic_spec))
+            await self.proxy_wrapper.create_topic(
+                topic_spec=TopicSpec.model_validate(topic_spec)
+            )
 
         mock_post.assert_called_with(
             url=f"{DEFAULT_HOST}/v3/clusters/{self.proxy_wrapper.cluster_id}/topics",
@@ -79,7 +81,9 @@ class TestProxyWrapper:
         topic_spec: dict[str, Any] = {"topic_name": "topic-X"}
 
         with pytest.raises(KafkaRestProxyError):
-            await self.proxy_wrapper.create_topic(topic_spec=TopicSpec(**topic_spec))
+            await self.proxy_wrapper.create_topic(
+                topic_spec=TopicSpec.model_validate(topic_spec)
+            )
 
         mock_post.assert_called_with(
             url=f"{DEFAULT_HOST}/v3/clusters/{self.proxy_wrapper.cluster_id}/topics",
@@ -165,7 +169,9 @@ class TestProxyWrapper:
             headers=HEADERS,
             status_code=201,
         )
-        await self.proxy_wrapper.create_topic(topic_spec=TopicSpec(**topic_spec))
+        await self.proxy_wrapper.create_topic(
+            topic_spec=TopicSpec.model_validate(topic_spec)
+        )
         log_info_mock.assert_called_once_with("Topic topic-X created.")
 
     async def test_should_log_topic_deletion(
@@ -200,7 +206,7 @@ class TestProxyWrapper:
             "configs": {"related": ""},
             "partition_reassignments": {"related": ""},
         }
-        topic_response = TopicResponse(**res)
+        topic_response = TopicResponse.model_validate(res)
 
         topic_name = "topic-X"
 

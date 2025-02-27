@@ -139,7 +139,7 @@ class KafkaConnector(PipelineComponent, ABC):
             msg = f"Connector name '{connector_name}' should be the same as component name '{component_name}'"
             raise ValueError(msg)
         config["name"] = component_name
-        return KafkaConnectorConfig(**config)
+        return KafkaConnectorConfig.model_validate(config)
 
     @cached_property
     def _resetter(self) -> KafkaConnectorResetter:

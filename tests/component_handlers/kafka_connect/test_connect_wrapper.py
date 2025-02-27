@@ -321,7 +321,7 @@ class TestConnectorApiWrapper:
         expected_response = await connect_wrapper.update_connector_config(
             connector_config
         )
-        assert KafkaConnectResponse(**actual_response) == expected_response
+        assert KafkaConnectResponse.model_validate(actual_response) == expected_response
         log_info.assert_called_once_with(
             f"Config for connector {connector_name} updated."
         )
@@ -364,7 +364,7 @@ class TestConnectorApiWrapper:
         expected_response = await connect_wrapper.update_connector_config(
             connector_config
         )
-        assert KafkaConnectResponse(**actual_response) == expected_response
+        assert KafkaConnectResponse.model_validate(actual_response) == expected_response
         log_info.assert_called_once_with(f"Connector {connector_name} created.")
 
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")

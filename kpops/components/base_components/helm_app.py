@@ -160,7 +160,7 @@ class HelmApp(KubernetesApp):
     @property
     def deploy_flags(self) -> HelmUpgradeInstallFlags:
         """Return flags for Helm upgrade install command."""
-        return HelmUpgradeInstallFlags(**self.helm_flags.model_dump())
+        return HelmUpgradeInstallFlags.model_validate(self.helm_flags.model_dump())
 
     @override
     async def deploy(self, dry_run: bool) -> None:

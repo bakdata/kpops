@@ -120,7 +120,7 @@ class ProxyWrapper:
         if response.status_code == httpx.codes.OK:
             log.debug(f"Topic {topic_name} found.")
             log.debug(response.json())
-            return TopicResponse(**response.json())
+            return TopicResponse.model_validate(response.json())
 
         elif (
             response.status_code == httpx.codes.NOT_FOUND
@@ -150,7 +150,7 @@ class ProxyWrapper:
         if response.status_code == httpx.codes.OK:
             log.debug(f"Configs for {topic_name} found.")
             log.debug(response.json())
-            return TopicConfigResponse(**response.json())
+            return TopicConfigResponse.model_validate(response.json())
 
         elif (
             response.status_code == httpx.codes.NOT_FOUND
@@ -203,6 +203,6 @@ class ProxyWrapper:
         if response.status_code == httpx.codes.OK:
             log.debug("Broker configs found.")
             log.debug(response.json())
-            return BrokerConfigResponse(**response.json())
+            return BrokerConfigResponse.model_validate(response.json())
 
         raise KafkaRestProxyError(response)

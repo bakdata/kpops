@@ -230,4 +230,4 @@ class TopicHandler:
             configs.append({"name": config_name, "value": config_value})
         topic_spec_json["configs"] = configs
         topic_spec_json["topic_name"] = topic.name
-        return TopicSpec(**topic_spec_json)
+        return TopicSpec.model_validate(topic_spec_json)
