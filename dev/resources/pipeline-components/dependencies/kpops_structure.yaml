@@ -7,6 +7,7 @@ kpops_components_fields:
   - namespace
   - values
   - repo_config
+  - diff_config
   - version
   kafka-app:
   - name
@@ -58,6 +59,7 @@ kpops_components_fields:
   - namespace
   - values
   - repo_config
+  - diff_config
   - version
   producer-app-v2:
   - name
@@ -67,6 +69,7 @@ kpops_components_fields:
   - namespace
   - values
   - repo_config
+  - diff_config
   - version
   streams-app:
   - name
@@ -76,6 +79,7 @@ kpops_components_fields:
   - namespace
   - values
   - repo_config
+  - diff_config
   - version
   streams-app-v2:
   - name
@@ -85,6 +89,7 @@ kpops_components_fields:
   - namespace
   - values
   - repo_config
+  - diff_config
   - version
   streams-bootstrap:
   - name
@@ -94,6 +99,7 @@ kpops_components_fields:
   - namespace
   - values
   - repo_config
+  - diff_config
   - version
   streams-bootstrap-v2:
   - name
@@ -103,6 +109,7 @@ kpops_components_fields:
   - namespace
   - values
   - repo_config
+  - diff_config
   - version
 kpops_components_inheritance_ref:
   helm-app:
