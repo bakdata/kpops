@@ -199,6 +199,7 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
         :param file: Path to a ``config*.yaml``
         :return: Dict containing the config or empty dict if file doesn't exist
         """
+        # TODO: remove isinstance check, let Pydantic handle the validation of the file contents
         if file.exists() and isinstance((loaded_file := load_yaml_file(file)), dict):
             return loaded_file
         return {}
