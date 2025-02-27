@@ -38,7 +38,7 @@ class Pipeline(BaseModel):
     """Pipeline representation."""
 
     _component_index: dict[str, PipelineComponent] = {}
-    _graph: nx.DiGraph = nx.DiGraph()
+    _graph: nx.DiGraph[str] = nx.DiGraph()
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -121,7 +121,7 @@ class Pipeline(BaseModel):
             for pending_task in pending_tasks:
                 await pending_task
 
-        graph: nx.DiGraph = self._graph.copy()  # pyright: ignore[reportAssignmentType, reportGeneralTypeIssues] imprecise type hint in networkx
+        graph: nx.DiGraph[str] = self._graph.copy()
 
         # We add an extra node to the graph, connecting all the leaf nodes to it
         # in that way we make this node the root of the graph, avoiding backtracking
