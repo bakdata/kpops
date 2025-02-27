@@ -193,7 +193,7 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
         self.config = update_nested_pair(env_config, default_config)
 
     @staticmethod
-    def load_config(file: Path) -> dict:
+    def load_config(file: Path) -> dict[str, Any]:
         """Load YAML file if it exists.
 
         :param file: Path to a ``config*.yaml``

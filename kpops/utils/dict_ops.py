@@ -124,7 +124,7 @@ class ImprovedTemplate(Template):
             mapping = _ChainMap(kws, mapping)
 
         # Helper function for .sub()
-        def convert(mo: re.Match):
+        def convert(mo: re.Match[str]):
             named = mo.group("named") or mo.group("braced")
             if named is not None:
                 try:
