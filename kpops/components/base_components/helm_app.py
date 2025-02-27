@@ -5,7 +5,7 @@ from functools import cached_property
 from typing import Annotated, Any
 
 import pydantic
-from pydantic import Field, model_serializer
+from pydantic import Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
@@ -32,7 +32,6 @@ from kpops.manifests.argo import ArgoSyncWave, enrich_annotations
 from kpops.manifests.kubernetes import K8S_LABEL_MAX_LEN, KubernetesManifest
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import exclude_by_name
 
 log = logging.getLogger("HelmApp")
 
@@ -214,13 +213,3 @@ class HelmApp(KubernetesApp):
             log.info(f"Helm release {self.helm_release_name} does not exist")
         new_release = Helm.load_manifest(stdout)
         self._helm_diff.log_helm_diff(log, current_release, new_release)
-
-    # HACK: workaround for Pydantic to exclude cached properties during model export
-    # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
-    @model_serializer(mode="wrap", when_used="always")
-    def serialize_model(
-        self,
-        default_serialize_handler: pydantic.SerializerFunctionWrapHandler,
-        info: pydantic.SerializationInfo,
-    ) -> dict[str, Any]:
-        return exclude_by_name(default_serialize_handler(self), "helm", "helm_diff")
