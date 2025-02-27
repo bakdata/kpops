@@ -2,10 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [10.0.0](https://github.com/bakdata/kpops/tree/10.0.0) - 2025-02-27
+### What's changed
+
+* refactor(helm-diff)!: define ignore keypath as array by @disrupted in [#600](https://github.com/bakdata/kpops/pull/600)
+
+* refactor(helm-diff)!: configure on HelmApp component level by @disrupted in [#601](https://github.com/bakdata/kpops/pull/601)
+
+* docs: create migration guide for v10 by @disrupted in [#603](https://github.com/bakdata/kpops/pull/603)
+
+
+**Full Changelog**: https://github.com/bakdata/kpops/compare/9.4.1...10.0.0
+
 ## [9.4.1](https://github.com/bakdata/kpops/tree/9.4.1) - 2025-02-26
 ### What's changed
 
 * refactor(streams-bootstrap): update JMX remote specification by @philipp94831 in [#599](https://github.com/bakdata/kpops/pull/599)
+
+* Bump version 9.4.0 → 9.4.1 by @bakdata-bot
 
 
 **Full Changelog**: https://github.com/bakdata/kpops/compare/9.4.0...9.4.1
