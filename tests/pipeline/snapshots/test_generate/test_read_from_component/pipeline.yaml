@@ -1,4 +1,6 @@
 - _cleaner:
+    diff_config:
+      ignore: []
     name: producer1
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -16,6 +18,8 @@
         outputTopic: resources-read-from-component-producer1
         schemaRegistryUrl: http://localhost:8081/
     version: 3.6.1
+  diff_config:
+    ignore: []
   name: producer1
   namespace: example-namespace
   prefix: resources-read-from-component-
@@ -39,6 +43,8 @@
       schemaRegistryUrl: http://localhost:8081/
   version: 3.6.1
 - _cleaner:
+    diff_config:
+      ignore: []
     name: producer2
     namespace: example-namespace
     prefix: ''
@@ -56,6 +62,8 @@
         outputTopic: resources-read-from-component-producer2
         schemaRegistryUrl: http://localhost:8081/
     version: 3.6.1
+  diff_config:
+    ignore: []
   name: producer2
   namespace: example-namespace
   prefix: ''
@@ -79,6 +87,8 @@
       schemaRegistryUrl: http://localhost:8081/
   version: 3.6.1
 - _cleaner:
+    diff_config:
+      ignore: []
     name: inflate-step
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -110,6 +120,8 @@
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
     version: 3.6.1
+  diff_config:
+    ignore: []
   name: inflate-step
   namespace: example-namespace
   prefix: resources-read-from-component-
@@ -155,6 +167,8 @@
     statefulSet: false
   version: 3.6.1
 - _resetter:
+    diff_config:
+      ignore: []
     name: inflate-step-inflated-sink-connector
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -199,6 +213,8 @@
         type: output
   type: kafka-sink-connector
 - _cleaner:
+    diff_config:
+      ignore: []
     name: inflate-step-inflated-streams-app
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -222,6 +238,8 @@
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
     version: 3.6.1
+  diff_config:
+    ignore: []
   name: inflate-step-inflated-streams-app
   namespace: example-namespace
   prefix: resources-read-from-component-
@@ -257,6 +275,8 @@
     statefulSet: false
   version: 3.6.1
 - _cleaner:
+    diff_config:
+      ignore: []
     name: inflate-step-without-prefix
     namespace: example-namespace
     prefix: ''
@@ -288,6 +308,8 @@
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
     version: 3.6.1
+  diff_config:
+    ignore: []
   name: inflate-step-without-prefix
   namespace: example-namespace
   prefix: ''
@@ -333,6 +355,8 @@
     statefulSet: false
   version: 3.6.1
 - _resetter:
+    diff_config:
+      ignore: []
     name: inflate-step-without-prefix-inflated-sink-connector
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -377,6 +401,8 @@
         type: output
   type: kafka-sink-connector
 - _cleaner:
+    diff_config:
+      ignore: []
     name: inflate-step-without-prefix-inflated-streams-app
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -400,6 +426,8 @@
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
     version: 3.6.1
+  diff_config:
+    ignore: []
   name: inflate-step-without-prefix-inflated-streams-app
   namespace: example-namespace
   prefix: resources-read-from-component-
@@ -435,6 +463,8 @@
     statefulSet: false
   version: 3.6.1
 - _cleaner:
+    diff_config:
+      ignore: []
     name: consumer1
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -458,6 +488,8 @@
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
     version: 3.6.1
+  diff_config:
+    ignore: []
   from:
     components:
       producer1:
@@ -498,6 +530,8 @@
     statefulSet: false
   version: 3.6.1
 - _cleaner:
+    diff_config:
+      ignore: []
     name: consumer2
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -521,6 +555,8 @@
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
     version: 3.6.1
+  diff_config:
+    ignore: []
   from:
     components:
       consumer1:
@@ -560,6 +596,8 @@
     statefulSet: false
   version: 3.6.1
 - _cleaner:
+    diff_config:
+      ignore: []
     name: consumer3
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -583,6 +621,8 @@
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
     version: 3.6.1
+  diff_config:
+    ignore: []
   from:
     components:
       producer2:
@@ -622,6 +662,8 @@
     statefulSet: false
   version: 3.6.1
 - _cleaner:
+    diff_config:
+      ignore: []
     name: consumer4
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -644,6 +686,8 @@
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
     version: 3.6.1
+  diff_config:
+    ignore: []
   from:
     components:
       inflate-step:
@@ -680,6 +724,8 @@
     statefulSet: false
   version: 3.6.1
 - _cleaner:
+    diff_config:
+      ignore: []
     name: consumer5
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -702,6 +748,8 @@
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
     version: 3.6.1
+  diff_config:
+    ignore: []
   from:
     components:
       inflate-step-without-prefix:

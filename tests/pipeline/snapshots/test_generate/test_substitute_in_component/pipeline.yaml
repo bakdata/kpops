@@ -1,4 +1,6 @@
 - _cleaner:
+    diff_config:
+      ignore: []
     name: scheduled-producer
     namespace: example-namespace
     prefix: resources-component-type-substitution-
@@ -24,6 +26,8 @@
         app_type: scheduled-producer
       schedule: 30 3/8 * * *
     version: 3.6.1
+  diff_config:
+    ignore: []
   name: scheduled-producer
   namespace: example-namespace
   prefix: resources-component-type-substitution-
@@ -59,6 +63,8 @@
     schedule: 30 3/8 * * *
   version: 3.6.1
 - _cleaner:
+    diff_config:
+      ignore: []
     name: converter
     namespace: example-namespace
     prefix: resources-component-type-substitution-
@@ -94,6 +100,8 @@
           memory: 2G
       statefulSet: false
     version: 3.6.1
+  diff_config:
+    ignore: []
   name: converter
   namespace: example-namespace
   prefix: resources-component-type-substitution-
@@ -144,6 +152,8 @@
     statefulSet: false
   version: 3.6.1
 - _cleaner:
+    diff_config:
+      ignore: []
     name: filter-app
     namespace: example-namespace
     prefix: resources-component-type-substitution-
@@ -188,6 +198,8 @@
           memory: 3G
       statefulSet: false
     version: 3.6.1
+  diff_config:
+    ignore: []
   name: filter-app
   namespace: example-namespace
   prefix: resources-component-type-substitution-

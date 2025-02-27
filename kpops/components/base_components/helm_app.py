@@ -12,6 +12,7 @@ from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
 from kpops.component_handlers.helm_wrapper.model import (
+    HelmDiffConfig,
     HelmFlags,
     HelmRepoConfig,
     HelmTemplateFlags,
@@ -66,6 +67,7 @@ class HelmApp(KubernetesApp):
     :param repo_config: Configuration of the Helm chart repo to be used for
         deploying the component, defaults to None this means that the command "helm repo add" is not called and Helm
         expects a path to local Helm chart.
+    :param diff_config: Helm diff config
     :param version: Helm chart version, defaults to None
     :param values: Helm app values
     """
@@ -73,6 +75,10 @@ class HelmApp(KubernetesApp):
     repo_config: HelmRepoConfig | None = Field(
         default=None,
         description=describe_attr("repo_config", __doc__),
+    )
+    diff_config: HelmDiffConfig = Field(
+        default=HelmDiffConfig(),
+        description=describe_attr("diff_config", __doc__),
     )
     version: str | None = Field(
         default=None,
@@ -97,12 +103,11 @@ class HelmApp(KubernetesApp):
     @cached_property
     def helm_diff(self) -> HelmDiff:
         """Helm diff object of last and current release of this component."""
-        return HelmDiff(get_config().helm_diff_config)
+        return HelmDiff(self.diff_config)
 
     @cached_property
     def dry_run_handler(self) -> DryRunHandler:
-        helm_diff = HelmDiff(get_config().helm_diff_config)
-        return DryRunHandler(self.helm, helm_diff, self.namespace)
+        return DryRunHandler(self.helm, self.helm_diff, self.namespace)
 
     @property
     def helm_release_name(self) -> str:

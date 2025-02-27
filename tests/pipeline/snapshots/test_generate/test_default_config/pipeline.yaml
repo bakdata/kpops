@@ -1,4 +1,6 @@
 - _cleaner:
+    diff_config:
+      ignore: []
     name: app1
     namespace: development-namespace
     prefix: resources-custom-config-
@@ -21,6 +23,8 @@
         requests:
           memory: 2G
     version: 3.6.1
+  diff_config:
+    ignore: []
   name: app1
   namespace: development-namespace
   prefix: resources-custom-config-
@@ -50,6 +54,8 @@
         memory: 2G
   version: 3.6.1
 - _cleaner:
+    diff_config:
+      ignore: []
     name: app2
     namespace: development-namespace
     prefix: resources-custom-config-
@@ -75,6 +81,8 @@
         pipeline: resources-custom-config
       statefulSet: false
     version: 3.6.1
+  diff_config:
+    ignore: []
   name: app2
   namespace: development-namespace
   prefix: resources-custom-config-
