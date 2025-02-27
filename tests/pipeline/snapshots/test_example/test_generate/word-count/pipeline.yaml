@@ -1,4 +1,6 @@
 - _cleaner:
+    diff_config:
+      ignore: []
     name: data-producer
     namespace: ${NAMESPACE}
     prefix: word-count-
@@ -22,6 +24,8 @@
           enabled: false
       replicaCount: 1
     version: 3.1.0
+  diff_config:
+    ignore: []
   name: data-producer
   namespace: ${NAMESPACE}
   prefix: word-count-
@@ -51,6 +55,8 @@
     replicaCount: 1
   version: 3.1.0
 - _cleaner:
+    diff_config:
+      ignore: []
     name: word-count-app
     namespace: ${NAMESPACE}
     prefix: word-count-
@@ -78,6 +84,8 @@
       replicaCount: 1
       statefulSet: false
     version: 3.1.0
+  diff_config:
+    ignore: []
   name: word-count-app
   namespace: ${NAMESPACE}
   prefix: word-count-
@@ -117,6 +125,8 @@
     statefulSet: false
   version: 3.1.0
 - _resetter:
+    diff_config:
+      ignore: []
     name: redis-sink-connector
     namespace: ${NAMESPACE}
     prefix: word-count-

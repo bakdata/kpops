@@ -1,4 +1,6 @@
 - _cleaner:
+    diff_config:
+      ignore: []
     name: account-producer
     namespace: test
     prefix: resources-pipeline-with-paths-
@@ -19,6 +21,8 @@
         outputTopic: out
         schemaRegistryUrl: http://localhost:8081/
     version: 3.6.1
+  diff_config:
+    ignore: []
   name: account-producer
   namespace: test
   prefix: resources-pipeline-with-paths-

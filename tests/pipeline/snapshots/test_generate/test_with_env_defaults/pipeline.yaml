@@ -1,4 +1,6 @@
 - _cleaner:
+    diff_config:
+      ignore: []
     name: streams-app-development
     namespace: development-namespace
     prefix: resources-pipeline-with-env-defaults-
@@ -22,6 +24,8 @@
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
     version: 3.6.1
+  diff_config:
+    ignore: []
   from:
     components: {}
     topics:
@@ -62,6 +66,8 @@
     statefulSet: false
   version: 3.6.1
 - _resetter:
+    diff_config:
+      ignore: []
     name: es-sink-connector
     namespace: development-namespace
     prefix: resources-pipeline-with-env-defaults-

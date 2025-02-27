@@ -1,4 +1,6 @@
 - _cleaner:
+    diff_config:
+      ignore: []
     name: app1
     namespace: example-namespace
     prefix: resources-no-input-topic-pipeline-
@@ -28,6 +30,8 @@
           memory: 2G
       statefulSet: false
     version: 3.6.1
+  diff_config:
+    ignore: []
   from:
     components: {}
     topics:
@@ -74,6 +78,8 @@
     statefulSet: false
   version: 3.6.1
 - _cleaner:
+    diff_config:
+      ignore: []
     name: app2
     namespace: example-namespace
     prefix: resources-no-input-topic-pipeline-
@@ -99,6 +105,8 @@
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
     version: 3.6.1
+  diff_config:
+    ignore: []
   name: app2
   namespace: example-namespace
   prefix: resources-no-input-topic-pipeline-
