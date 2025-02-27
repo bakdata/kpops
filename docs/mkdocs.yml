@@ -133,6 +133,7 @@ nav:
               - Migrate from v6 to v7: user/migration-guide/v6-v7.md
               - Migrate from v7 to v8: user/migration-guide/v7-v8.md
               - Migrate from v8 to v9: user/migration-guide/v8-v9.md
+              - Migrate from v9 to v10: user/migration-guide/v9-v10.md
           - CLI usage: user/references/cli-commands.md
           - Editor integration: user/references/editor-integration.md
           - CI integration:
