@@ -5,7 +5,7 @@ from pathlib import Path
 import typer
 
 import kpops.api as kpops
-from kpops.api import log
+from kpops.api.logs import log
 from kpops.api.options import FilterType
 from kpops.cli.utils import (
     collect_pipeline_paths,
