@@ -63,7 +63,7 @@ def create_config(file_name: str, dir_path: Path, include_optional: bool) -> Non
         conf.write(yaml.safe_dump(required))
 
         if include_optional:
-            dump = KpopsConfig(**non_required).model_dump(
+            dump = KpopsConfig.model_validate(non_required).model_dump(
                 mode="json", exclude_none=False
             )
             for k in required:

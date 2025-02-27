@@ -856,7 +856,7 @@ class TestGenerate:
         assert pipeline.components[0].name == "es-sink-connector"
         assert pipeline.components[0]._resetter.name == "es-sink-connector"
         assert hasattr(pipeline.components[0]._resetter.values, "label")
-        assert pipeline.components[0]._resetter.values.label == "es-sink-connector"  # type: ignore[reportGeneralTypeIssues]
+        assert pipeline.components[0]._resetter.values.label == "es-sink-connector"  # pyright: ignore[reportAttributeAccessIssue,reportUnknownMemberType]
 
         enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(pipeline.to_yaml())
         assert enriched_pipeline[0]["name"] == "es-sink-connector"

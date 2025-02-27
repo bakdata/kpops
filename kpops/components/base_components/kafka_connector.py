@@ -50,10 +50,10 @@ class KafkaConnectorResetter(Cleaner, ABC):
     :param version: Helm chart version, defaults to "1.0.4"
     """
 
-    from_: None = None
-    to: None = None
-    values: KafkaConnectorResetterValues
-    repo_config: HelmRepoConfig = Field(
+    from_: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
+    to: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
+    values: KafkaConnectorResetterValues  # pyright: ignore[reportIncompatibleVariableOverride]
+    repo_config: HelmRepoConfig = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         default=HelmRepoConfig(
             repository_name="bakdata-kafka-connect-resetter",
             url="https://bakdata.github.io/kafka-connect-resetter/",
@@ -139,7 +139,7 @@ class KafkaConnector(PipelineComponent, ABC):
             msg = f"Connector name '{connector_name}' should be the same as component name '{component_name}'"
             raise ValueError(msg)
         config["name"] = component_name
-        return KafkaConnectorConfig(**config)
+        return KafkaConnectorConfig.model_validate(config)
 
     @cached_property
     def _resetter(self) -> KafkaConnectorResetter:

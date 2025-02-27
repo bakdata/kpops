@@ -71,10 +71,8 @@ class HelmRepoConfig(DescConfigModel):
     :param repo_auth_flags: Authorisation-related flags
     """
 
-    repository_name: str = Field(
-        default=..., description=describe_attr("repository_name", __doc__)
-    )
-    url: str = Field(default=..., description=describe_attr("url", __doc__))
+    repository_name: str = Field(description=describe_attr("repository_name", __doc__))
+    url: str = Field(description=describe_attr("url", __doc__))
     repo_auth_flags: RepoAuthFlags = Field(
         default=RepoAuthFlags(), description=describe_attr("repo_auth_flags", __doc__)
     )

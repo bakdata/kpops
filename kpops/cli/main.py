@@ -5,7 +5,7 @@ from pathlib import Path
 import typer
 
 import kpops.api as kpops
-from kpops.api import log
+from kpops.api.logs import log
 from kpops.api.options import FilterType
 from kpops.cli.utils import (
     collect_pipeline_paths,
@@ -51,7 +51,6 @@ CONFIG_PATH_OPTION: Path = typer.Option(
 )
 
 PIPELINE_PATHS_ARG: list[Path] = typer.Argument(
-    default=...,
     exists=True,
     file_okay=True,
     dir_okay=True,
@@ -61,7 +60,6 @@ PIPELINE_PATHS_ARG: list[Path] = typer.Argument(
 )
 
 PROJECT_PATH: Path = typer.Argument(
-    default=...,
     exists=False,
     file_okay=False,
     dir_okay=True,
@@ -333,8 +331,8 @@ def clean(
                         print_yaml(rendered_manifest.model_dump())
         case OperationMode.ARGO:
             log.warning(
-                "No cleanup jobs are manifested in Argo mode. The cleanup jobs with Argo hooks are manifested with 'deploy' command. \n"
-                " If you wish to see the cleanup job manifest use the 'manifest' operation mode."
+                "No cleanup jobs are manifested in Argo mode. The cleanup jobs with Argo hooks are manifested with 'deploy' command.\n"
+                "If you wish to see the cleanup job manifest use the 'manifest' operation mode."
             )
 
 

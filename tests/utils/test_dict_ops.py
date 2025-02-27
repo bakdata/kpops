@@ -1,4 +1,5 @@
 import json
+from typing import Any
 from unittest import mock
 
 import pytest
@@ -23,7 +24,7 @@ class TestDictOps:
         )
         update_nested_pair_mock.return_value = expected
 
-        actual = update_nested(*dicts)
+        actual = update_nested(*dicts)  # pyright: ignore[reportArgumentType]
 
         update_nested_pair_mock.assert_has_calls(
             [
@@ -90,7 +91,7 @@ class TestDictOps:
         class SimpleModel(BaseModel):
             name: str
             type_: str
-            field_nested_dict: dict
+            field_nested_dict: dict[str, Any]
             problems: int
 
         model = json.loads(

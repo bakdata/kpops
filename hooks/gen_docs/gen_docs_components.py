@@ -228,12 +228,10 @@ def get_sections(component_name: str, *, exist_changes: bool) -> KpopsComponent:
         with PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS.open("a") as f:
             yaml.safe_dump({component_file_name: component_sections_not_inherited}, f)
     else:
-        component_sections: list[str] = PIPELINE_COMPONENT_DEPENDENCIES[  # type: ignore [reportGeneralTypeIssues]
+        component_sections = PIPELINE_COMPONENT_DEPENDENCIES[component_file_name]
+        component_sections_not_inherited = DEFAULTS_PIPELINE_COMPONENT_DEPENDENCIES[
             component_file_name
         ]
-        component_sections_not_inherited: list[str] = (
-            DEFAULTS_PIPELINE_COMPONENT_DEPENDENCIES[component_file_name]
-        )  # type: ignore [reportGeneralTypeIssues]
     return KpopsComponent(component_sections, component_sections_not_inherited)
 
 
@@ -267,10 +265,10 @@ if __name__ == "__main__":
 
     # If some or all of dependencies cannot be loaded, likely relevant changes are present
     try:
-        PIPELINE_COMPONENT_DEPENDENCIES = load_yaml_file(
-            PATH_DOCS_COMPONENTS_DEPENDENCIES,
+        PIPELINE_COMPONENT_DEPENDENCIES: dict[str, list[str]] = load_yaml_file(
+            PATH_DOCS_COMPONENTS_DEPENDENCIES
         )
-        DEFAULTS_PIPELINE_COMPONENT_DEPENDENCIES = load_yaml_file(
+        DEFAULTS_PIPELINE_COMPONENT_DEPENDENCIES: dict[str, list[str]] = load_yaml_file(
             PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS,
         )
     except OSError:

@@ -49,7 +49,7 @@ def test_kpops_config_with_different_invalid_urls():
         KpopsConfig(
             kafka_brokers="http://broker:9092",
             kafka_connect=KafkaConnectConfig(
-                url=TypeAdapter(AnyHttpUrl).validate_python("invalid-host")  # pyright: ignore[reportCallIssue,reportArgumentType]
+                url=TypeAdapter(AnyHttpUrl).validate_python("invalid-host")
             ),
         )
 
@@ -57,7 +57,7 @@ def test_kpops_config_with_different_invalid_urls():
         KpopsConfig(
             kafka_brokers="http://broker:9092",
             kafka_rest=KafkaRestConfig(
-                url=TypeAdapter(AnyHttpUrl).validate_python("invalid-host")  # pyright: ignore[reportCallIssue,reportArgumentType]
+                url=TypeAdapter(AnyHttpUrl).validate_python("invalid-host")
             ),
         )
 
@@ -66,7 +66,7 @@ def test_kpops_config_with_different_invalid_urls():
             kafka_brokers="http://broker:9092",
             schema_registry=SchemaRegistryConfig(
                 enabled=True,
-                url=TypeAdapter(AnyHttpUrl).validate_python("invalid-host"),  # pyright: ignore[reportCallIssue,reportArgumentType]
+                url=TypeAdapter(AnyHttpUrl).validate_python("invalid-host"),
             ),
         )
 

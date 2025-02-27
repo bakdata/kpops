@@ -66,10 +66,12 @@ class TestTopicHandler:
         response_topic_config = json.loads(content)
 
         wrapper = AsyncMock()
-        wrapper.get_topic.return_value = TopicResponse(**response)
-        wrapper.get_broker_config.return_value = BrokerConfigResponse(**broker_response)
-        wrapper.get_topic_config.return_value = TopicConfigResponse(
-            **response_topic_config
+        wrapper.get_topic.return_value = TopicResponse.model_validate(response)
+        wrapper.get_broker_config.return_value = BrokerConfigResponse.model_validate(
+            broker_response
+        )
+        wrapper.get_topic_config.return_value = TopicConfigResponse.model_validate(
+            response_topic_config
         )
         return wrapper
 
@@ -87,8 +89,10 @@ class TestTopicHandler:
         broker_response = json.loads(content)
 
         wrapper = AsyncMock()
-        wrapper.get_topic.return_value = TopicResponse(**response)
-        wrapper.get_broker_config.return_value = BrokerConfigResponse(**broker_response)
+        wrapper.get_topic.return_value = TopicResponse.model_validate(response)
+        wrapper.get_broker_config.return_value = BrokerConfigResponse.model_validate(
+            broker_response
+        )
         return wrapper
 
     def test_convert_config_values_to_str(self):
@@ -137,7 +141,9 @@ class TestTopicHandler:
             ],
         }
 
-        wrapper.create_topic.assert_called_once_with(TopicSpec(**topic_spec))
+        wrapper.create_topic.assert_called_once_with(
+            TopicSpec.model_validate(topic_spec)
+        )
         wrapper.__dry_run_topic_creation.assert_not_called()
 
     async def test_should_call_update_topic_config_when_topic_exists_and_with_dry_run_false(

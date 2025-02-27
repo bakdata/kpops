@@ -27,9 +27,9 @@ log = logging.getLogger("StreamsApp")
 
 
 class StreamsAppCleaner(KafkaAppCleaner, StreamsBootstrap):
-    from_: None = None
-    to: None = None
-    values: StreamsAppValues
+    from_: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
+    to: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
+    values: StreamsAppValues  # pyright: ignore[reportIncompatibleVariableOverride]
 
     @property
     @override
@@ -92,7 +92,7 @@ class StreamsApp(StreamsBootstrap):
     :param values: streams-bootstrap Helm values
     """
 
-    values: StreamsAppValues = Field(
+    values: StreamsAppValues = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         description=describe_attr("values", __doc__),
     )
 

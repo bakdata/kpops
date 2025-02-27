@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 import pydantic
 import pytest
@@ -28,7 +29,7 @@ class Nested(pydantic.BaseModel):
 
 class Child(Parent):
     __test__ = False
-    nice: dict | None = None
+    nice: dict[str, str] | None = None
     another_hard_coded: str = "another_hard_coded_value"
     nested: Nested | None = None
 
@@ -72,7 +73,7 @@ class TestBaseDefaultsComponent:
         ],
     )
     def test_load_defaults(
-        self, component_class: type[BaseDefaultsComponent], defaults: dict
+        self, component_class: type[BaseDefaultsComponent], defaults: dict[str, Any]
     ):
         assert component_class.load_defaults(RESOURCES_PATH / DEFAULTS_YAML) == defaults
 
@@ -99,7 +100,7 @@ class TestBaseDefaultsComponent:
         ],
     )
     def test_load_defaults_with_environment(
-        self, component_class: type[BaseDefaultsComponent], defaults: dict
+        self, component_class: type[BaseDefaultsComponent], defaults: dict[str, Any]
     ):
         assert (
             component_class.load_defaults(
@@ -114,61 +115,61 @@ class TestBaseDefaultsComponent:
         ENV["environment"] = "development"
         component = Child()
 
-        assert (
-            component.name == "fake-child-name"
-        ), "Child default should overwrite parent default"
-        assert component.nice == {
-            "fake-value": "fake"
-        }, "Field introduce by child should be added"
-        assert (
-            component.value == 2.0
-        ), "Environment tmp_defaults should always overwrite"
-        assert (
-            component.another_hard_coded == "another_hard_coded_value"
-        ), "Defaults in code should be kept for childs"
-        assert (
-            component.hard_coded == "hard_coded_value"
-        ), "Defaults in code should be kept for parents"
+        assert component.name == "fake-child-name", (
+            "Child default should overwrite parent default"
+        )
+        assert component.nice == {"fake-value": "fake"}, (
+            "Field introduce by child should be added"
+        )
+        assert component.value == 2.0, (
+            "Environment tmp_defaults should always overwrite"
+        )
+        assert component.another_hard_coded == "another_hard_coded_value", (
+            "Defaults in code should be kept for childs"
+        )
+        assert component.hard_coded == "hard_coded_value", (
+            "Defaults in code should be kept for parents"
+        )
 
     def test_inherit(self):
         component = Child(
             name="name-defined-in-pipeline_parser",
         )
 
-        assert (
-            component.name == "name-defined-in-pipeline_parser"
-        ), "Kwargs should should overwrite all other values"
-        assert component.nice == {
-            "fake-value": "fake"
-        }, "Field introduce by child should be added"
-        assert (
-            component.value == 2.0
-        ), "Environment tmp_defaults should always overwrite"
-        assert (
-            component.another_hard_coded == "another_hard_coded_value"
-        ), "Defaults in code should be kept for childs"
-        assert (
-            component.hard_coded == "hard_coded_value"
-        ), "Defaults in code should be kept for parents"
+        assert component.name == "name-defined-in-pipeline_parser", (
+            "Kwargs should should overwrite all other values"
+        )
+        assert component.nice == {"fake-value": "fake"}, (
+            "Field introduce by child should be added"
+        )
+        assert component.value == 2.0, (
+            "Environment tmp_defaults should always overwrite"
+        )
+        assert component.another_hard_coded == "another_hard_coded_value", (
+            "Defaults in code should be kept for childs"
+        )
+        assert component.hard_coded == "hard_coded_value", (
+            "Defaults in code should be kept for parents"
+        )
 
     def test_multiple_generations(self):
         component = GrandChild()
 
-        assert (
-            component.name == "fake-child-name"
-        ), "Child default should overwrite parent default"
-        assert component.nice == {
-            "fake-value": "fake"
-        }, "Field introduce by child should be added"
-        assert (
-            component.value == 2.0
-        ), "Environment tmp_defaults should always overwrite"
-        assert (
-            component.another_hard_coded == "another_hard_coded_value"
-        ), "Defaults in code should be kept for childs"
-        assert (
-            component.hard_coded == "hard_coded_value"
-        ), "Defaults in code should be kept for parents"
+        assert component.name == "fake-child-name", (
+            "Child default should overwrite parent default"
+        )
+        assert component.nice == {"fake-value": "fake"}, (
+            "Field introduce by child should be added"
+        )
+        assert component.value == 2.0, (
+            "Environment tmp_defaults should always overwrite"
+        )
+        assert component.another_hard_coded == "another_hard_coded_value", (
+            "Defaults in code should be kept for childs"
+        )
+        assert component.hard_coded == "hard_coded_value", (
+            "Defaults in code should be kept for parents"
+        )
         assert component.grand_child == "grand-child-value"
 
     def test_env_var_substitution(self):
@@ -177,9 +178,9 @@ class TestBaseDefaultsComponent:
 
         assert component.name
 
-        assert (
-            Path(component.name) == RESOURCES_PATH
-        ), "Environment variables should be substituted"
+        assert Path(component.name) == RESOURCES_PATH, (
+            "Environment variables should be substituted"
+        )
 
     def test_merge_defaults(self):
         component = GrandChild(nested=Nested.model_validate({"bar": False}))
@@ -250,7 +251,7 @@ class TestBaseDefaultsComponent:
         environment: str | None,
         expected_default_paths: list[Path],
     ):
-        config = KpopsConfig()
+        config = KpopsConfig()  # pyright: ignore[reportCallIssue]
         config.pipeline_base_dir = PIPELINE_BASE_DIR
         actual_default_paths = get_defaults_file_paths(
             pipeline_path,

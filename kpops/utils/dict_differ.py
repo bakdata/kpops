@@ -108,7 +108,7 @@ def render_diff(
     if not differences:
         return None
 
-    d2_filtered: Mapping = patch(differences, d1)
+    d2_filtered: Mapping[str, Any] = patch(differences, d1)
     return "".join(
         colorize_diff(
             differ.compare(
@@ -134,5 +134,5 @@ def colorize_line(line: str) -> str:
     return line
 
 
-def to_yaml(data: Mapping) -> Sequence[str]:
+def to_yaml(data: Mapping[str, Any]) -> Sequence[str]:
     return yaml.safe_dump(data, sort_keys=True).splitlines(keepends=True)

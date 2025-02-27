@@ -38,7 +38,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         defaults to None
     """
 
-    name: str = Field(default=..., description=describe_attr("name", __doc__))
+    name: str = Field(description=describe_attr("name", __doc__))
     prefix: str = Field(
         default="${pipeline.name}-",
         description=describe_attr("prefix", __doc__),

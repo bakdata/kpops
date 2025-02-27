@@ -6,7 +6,7 @@ import re
 import subprocess
 import tempfile
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, final
 
 import yaml
 
@@ -29,6 +29,7 @@ if TYPE_CHECKING:
 log = logging.getLogger("Helm")
 
 
+@final
 class Helm:
     def __init__(self, helm_config: HelmConfig) -> None:
         self._context = helm_config.context

@@ -120,7 +120,6 @@ class KpopsConfig(BaseSettings):
         description="Base directory to the pipelines (default is current working directory)",
     )
     kafka_brokers: str = Field(
-        default=...,
         examples=[
             "broker1:9092,broker2:9092,broker3:9092",
         ],

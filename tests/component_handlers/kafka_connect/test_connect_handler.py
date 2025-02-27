@@ -100,7 +100,7 @@ class TestConnectorHandler:
             "topics": TOPIC_NAME,
         }
 
-        config = KafkaConnectorConfig(**configs)  # pyright: ignore[reportArgumentType]
+        config = KafkaConnectorConfig.model_validate(configs)
         await handler.create_connector(config, dry_run=True)
         connector_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
         connector_wrapper.validate_connector_config.assert_called_once_with(config)
@@ -129,8 +129,8 @@ class TestConnectorHandler:
             },
             "tasks": [],
         }
-        connector_wrapper.get_connector.return_value = KafkaConnectResponse(
-            **actual_response
+        connector_wrapper.get_connector.return_value = (
+            KafkaConnectResponse.model_validate(actual_response)
         )
 
         configs = {
@@ -140,7 +140,7 @@ class TestConnectorHandler:
             "topics": TOPIC_NAME,
         }
 
-        connector_config = KafkaConnectorConfig(**configs)  # pyright: ignore[reportArgumentType]
+        connector_config = KafkaConnectorConfig.model_validate(configs)
         await handler.create_connector(connector_config, dry_run=True)
         connector_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
         connector_wrapper.validate_connector_config.assert_called_once_with(

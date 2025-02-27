@@ -17,8 +17,8 @@ class ProducerAppV2Values(StreamsBootstrapV2Values):
     :param streams: Kafka Streams settings
     """
 
-    streams: ProducerStreamsConfig = Field(
-        default=..., description=describe_attr("streams", __doc__)
+    streams: ProducerStreamsConfig = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
+        description=describe_attr("streams", __doc__)
     )
 
     model_config = ConfigDict(extra="allow")

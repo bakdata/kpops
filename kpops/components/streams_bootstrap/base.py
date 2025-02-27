@@ -38,16 +38,16 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
     :param version: Helm chart version, defaults to "3.6.1"
     """
 
-    values: StreamsBootstrapValues = Field(
+    values: StreamsBootstrapValues = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         description=describe_attr("values", __doc__),
     )
 
-    repo_config: HelmRepoConfig = Field(
+    repo_config: HelmRepoConfig = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         default=STREAMS_BOOTSTRAP_HELM_REPO,
         description=describe_attr("repo_config", __doc__),
     )
 
-    version: str = Field(
+    version: str = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         default=STREAMS_BOOTSTRAP_VERSION,
         pattern=STREAMS_BOOTSTRAP_VERSION_PATTERN,
         description=describe_attr("version", __doc__),
