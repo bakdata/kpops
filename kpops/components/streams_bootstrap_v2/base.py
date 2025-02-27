@@ -44,7 +44,7 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
     :param output_topic: Output topic, defaults to None
     """
 
-    brokers: str = Field(default=..., description=describe_attr("brokers", __doc__))
+    brokers: str = Field(description=describe_attr("brokers", __doc__))
     schema_registry_url: str | None = Field(
         default=None,
         validation_alias=AliasChoices(

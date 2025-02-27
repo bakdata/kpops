@@ -51,7 +51,6 @@ CONFIG_PATH_OPTION: Path = typer.Option(
 )
 
 PIPELINE_PATHS_ARG: list[Path] = typer.Argument(
-    default=...,
     exists=True,
     file_okay=True,
     dir_okay=True,
@@ -61,7 +60,6 @@ PIPELINE_PATHS_ARG: list[Path] = typer.Argument(
 )
 
 PROJECT_PATH: Path = typer.Argument(
-    default=...,
     exists=False,
     file_okay=False,
     dir_okay=True,

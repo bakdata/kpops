@@ -18,7 +18,7 @@ class ProducerAppV2Values(StreamsBootstrapV2Values):
     """
 
     streams: ProducerStreamsConfig = Field(
-        default=..., description=describe_attr("streams", __doc__)
+        description=describe_attr("streams", __doc__)
     )
 
     model_config = ConfigDict(extra="allow")

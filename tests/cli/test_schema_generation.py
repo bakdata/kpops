@@ -67,9 +67,7 @@ class SubPipelineComponentCorrectDocstr(SubPipelineComponent):
     :param error_marker: error_marker
     """
 
-    example_attr: str = Field(
-        default=..., description=describe_attr("example_attr", __doc__)
-    )
+    example_attr: str = Field(description=describe_attr("example_attr", __doc__))
 
 
 @pytest.mark.filterwarnings(
