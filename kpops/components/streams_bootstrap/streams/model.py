@@ -383,7 +383,7 @@ class StreamsAppValues(StreamsBootstrapValues):
     :param termination_grace_period_seconds: Delay for graceful application shutdown in seconds: https://pracucci.com/graceful-shutdown-of-kubernetes-pods.html
     """
 
-    kafka: StreamsConfig = Field(
+    kafka: StreamsConfig = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         description=describe_attr("kafka", __doc__),
     )
 

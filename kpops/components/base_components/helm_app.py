@@ -78,7 +78,7 @@ class HelmApp(KubernetesApp):
         default=None,
         description=describe_attr("version", __doc__),
     )
-    values: HelmAppValues = Field(
+    values: HelmAppValues = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         description=describe_attr("values", __doc__),
     )
 

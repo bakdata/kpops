@@ -245,7 +245,7 @@ class StreamsAppV2Values(StreamsBootstrapV2Values):
     :param autoscaling: Kubernetes event-driven autoscaling config, defaults to None
     """
 
-    streams: StreamsConfig = Field(
+    streams: StreamsConfig = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         description=describe_attr("streams", __doc__),
     )
     autoscaling: StreamsAppAutoScaling | None = Field(

@@ -132,11 +132,11 @@ class StreamsBootstrapV2(KafkaApp, HelmApp, ABC):
     :param version: Helm chart version, defaults to "2.9.0"
     """
 
-    values: StreamsBootstrapV2Values = Field(
+    values: StreamsBootstrapV2Values = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         description=describe_attr("values", __doc__),
     )
 
-    repo_config: HelmRepoConfig = Field(
+    repo_config: HelmRepoConfig = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         default=STREAMS_BOOTSTRAP_HELM_REPO,
         description=describe_attr("repo_config", __doc__),
     )

@@ -27,8 +27,8 @@ from kpops.utils.docstring import describe_attr
 log = logging.getLogger("ProducerApp")
 
 
-class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrap):
-    values: ProducerAppValues
+class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrap):  # pyright: ignore[reportIncompatibleVariableOverride]
+    values: ProducerAppValues  # pyright: ignore[reportIncompatibleVariableOverride]
 
     @property
     @override
@@ -65,10 +65,10 @@ class ProducerApp(StreamsBootstrap):
     :param from_: Producer doesn't support FromSection, defaults to None
     """
 
-    values: ProducerAppValues = Field(
+    values: ProducerAppValues = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         description=describe_attr("values", __doc__),
     )
-    from_: None = Field(
+    from_: None = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         default=None,
         alias="from",
         title="From",
