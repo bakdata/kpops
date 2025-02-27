@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://bakdata.github.io/kpops/main/user/migration-guide/v8-v9/">
+        <link rel="canonical" href="https://bakdata.github.io/kpops/main/user/migration-guide/v9-v10/">
       
       
-        <link rel="prev" href="../v7-v8/">
+        <link rel="prev" href="../v8-v9/">
       
       
-        <link rel="next" href="../v9-v10/">
+        <link rel="next" href="../../references/cli-commands/">
       
       
       <link rel="icon" href="../../../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>Migrate from v8 to v9 - KPOps</title>
+        <title>Migrate from v9 to v10 - KPOps</title>
       
     
     
@@ -77,7 +77,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#migrate-from-v8-to-v9" class="md-skip">
+        <a href="#migrate-from-v9-to-v10" class="md-skip">
           Skip to content
         </a>
       
@@ -115,7 +115,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Migrate from v8 to v9
+              Migrate from v9 to v10
             
           </span>
         </div>
@@ -1409,6 +1409,27 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../v8-v9/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Migrate from v8 to v9
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -1425,7 +1446,7 @@
           
   
   <span class="md-ellipsis">
-    Migrate from v8 to v9
+    Migrate from v9 to v10
   </span>
   
 
@@ -1436,7 +1457,7 @@
         
   
   <span class="md-ellipsis">
-    Migrate from v8 to v9
+    Migrate from v9 to v10
   </span>
   
 
@@ -1458,39 +1479,36 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#introduce-kpops-operation-and-manifest-resources-for-deployment" class="md-nav__link">
+  <a href="#helm-diff-config" class="md-nav__link">
     <span class="md-ellipsis">
-      Introduce KPOps operation and manifest resources for deployment
+      Helm diff config
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#manifest-tosection-with-strimzi-kafkatopic" class="md-nav__link">
-    <span class="md-ellipsis">
-      Manifest toSection with Strimzi KafkaTopic
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#drop-support-for-python-310" class="md-nav__link">
-    <span class="md-ellipsis">
-      Drop support for Python 3.10
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Drop support for Python 3.10">
+    <nav class="md-nav" aria-label="Helm diff config">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#action-required" class="md-nav__link">
+  <a href="#example" class="md-nav__link">
     <span class="md-ellipsis">
-      Action Required:
+      Example
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Example">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defaultsyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      defaults.yaml
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -1503,27 +1521,6 @@
   
 </nav>
       
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../v9-v10/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Migrate from v9 to v10
-  </span>
-  
-
-      </a>
     </li>
   
 
@@ -1887,39 +1884,36 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#introduce-kpops-operation-and-manifest-resources-for-deployment" class="md-nav__link">
+  <a href="#helm-diff-config" class="md-nav__link">
     <span class="md-ellipsis">
-      Introduce KPOps operation and manifest resources for deployment
+      Helm diff config
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#manifest-tosection-with-strimzi-kafkatopic" class="md-nav__link">
-    <span class="md-ellipsis">
-      Manifest toSection with Strimzi KafkaTopic
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#drop-support-for-python-310" class="md-nav__link">
-    <span class="md-ellipsis">
-      Drop support for Python 3.10
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Drop support for Python 3.10">
+    <nav class="md-nav" aria-label="Helm diff config">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#action-required" class="md-nav__link">
+  <a href="#example" class="md-nav__link">
     <span class="md-ellipsis">
-      Action Required:
+      Example
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Example">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defaultsyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      defaults.yaml
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -1946,44 +1940,23 @@
   
 
 
-<h1 id="migrate-from-v8-to-v9">Migrate from V8 to V9<a class="headerlink" href="#migrate-from-v8-to-v9" title="Permanent link">&para;</a></h1>
-<h2 id="introduce-kpops-operation-and-manifest-resources-for-deployment"><a href="https://github.com/bakdata/kpops/pull/541">Introduce KPOps operation and manifest resources for deployment</a><a class="headerlink" href="#introduce-kpops-operation-and-manifest-resources-for-deployment" title="Permanent link">&para;</a></h2>
-<p>The <code>kpops manifest</code> command and <code>kpops.manifest()</code> API have been <strong>removed</strong>.</p>
-<p>Resource manifesting is now integrated into the <em>operation</em> commands (<code>deploy</code>, <code>destroy</code>, <code>reset</code>, <code>clean</code>) through the new <strong>operation mode</strong> feature.</p>
-<p>To manifest resources, you can:</p>
+<h1 id="migrate-from-v9-to-v10">Migrate from V9 to V10<a class="headerlink" href="#migrate-from-v9-to-v10" title="Permanent link">&para;</a></h1>
+<h2 id="helm-diff-config">Helm diff config<a class="headerlink" href="#helm-diff-config" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Pass <code>--operation-mode manifest</code> when executing <code>kpops</code> commands.</li>
-<li>Set the operation mode by defining the <code>KPOPS_OPERATION_MODE</code> environment variable.</li>
+<li>https://github.com/bakdata/kpops/pull/600</li>
+<li>https://github.com/bakdata/kpops/pull/601</li>
 </ul>
-<h2 id="manifest-tosection-with-strimzi-kafkatopic"><a href="https://github.com/bakdata/kpops/pull/545">Manifest toSection with Strimzi KafkaTopic</a><a class="headerlink" href="#manifest-tosection-with-strimzi-kafkatopic" title="Permanent link">&para;</a></h2>
-<p>KPOps now supports generating valid Kubernetes KafkaTopic resources compatible with <a href="https://github.com/strimzi/strimzi-kafka-operator/blob/main/examples/topic/kafka-topic.yaml">Strimzi</a>. When using manifest or argo as the operation_mode, you must specify the Strimzi cluster label to ensure the topics are recognized by the deployed Strimzi Topic Operator.</p>
-<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
+<p>The Helm diff configuration has moved from <code>config.yaml</code> to the <code>HelmApp</code> component. To ignore specific keypaths we use string arrays now (formerly dot-notation). It is now possible to ignore YAML keys containing <code>.</code> or other special characters.</p>
+<h3 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h3>
+<h4 id="defaultsyaml">defaults.yaml<a class="headerlink" href="#defaultsyaml" title="Permanent link">&para;</a></h4>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
 <span class="normal"><a href="#__codelineno-0-2">2</a></span>
 <span class="normal"><a href="#__codelineno-0-3">3</a></span>
-<span class="normal"><a href="#__codelineno-0-4">4</a></span>
-<span class="normal"><a href="#__codelineno-0-5">5</a></span>
-<span class="normal"><a href="#__codelineno-0-6">6</a></span>
-<span class="normal"><a href="#__codelineno-0-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a>operation_mode: manifest
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="gi">+ strimzi_topic:</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="gi">+  label:</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="gi">+     strimzi.io/cluster: my-cluster</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6"></a>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7"></a># rest of your config
+<span class="normal"><a href="#__codelineno-0-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="nt">helm-app</span><span class="p">:</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="w">  </span><span class="nt">diff_config</span><span class="p">:</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="w">    </span><span class="nt">ignore</span><span class="p">:</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;metadata&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;labels&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;helm.sh/chart&quot;</span><span class="p p-Indicator">]</span>
 </span></code></pre></div></td></tr></table></div>
-<!-- dprint-ignore-start -->
-
-<div class="admonition info standalone topic operator deployment">
-<p class="admonition-title">Info</p>
-<p>Refer to the <a href="https://strimzi.io/docs/operators/latest/deploying#deploying-the-topic-operator-standalone-str">Strimzi documentation on deploying a standalone topic operator</a> for more details.</p>
-</div>
-<!-- dprint-ignore-end -->
-
-<h2 id="drop-support-for-python-310"><a href="https://github.com/bakdata/kpops/pull/561">Drop support for Python 3.10</a><a class="headerlink" href="#drop-support-for-python-310" title="Permanent link">&para;</a></h2>
-<p>KPOps V9 no longer supports Python 3.10. Ensure your environment is running Python 3.11 to 3.12.</p>
-<h4 id="action-required">Action Required:<a class="headerlink" href="#action-required" title="Permanent link">&para;</a></h4>
-<p>Upgrade your Python version to a supported version (3.11 or 3.12).
-Update your virtual environments and CI pipelines to reflect this change.</p>
 
 
 
