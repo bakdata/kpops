@@ -333,8 +333,8 @@ def clean(
                         print_yaml(rendered_manifest.model_dump())
         case OperationMode.ARGO:
             log.warning(
-                "No cleanup jobs are manifested in Argo mode. The cleanup jobs with Argo hooks are manifested with 'deploy' command. \n"
-                " If you wish to see the cleanup job manifest use the 'manifest' operation mode."
+                "No cleanup jobs are manifested in Argo mode. The cleanup jobs with Argo hooks are manifested with 'deploy' command.\n"
+                "If you wish to see the cleanup job manifest use the 'manifest' operation mode."
             )
 
 
