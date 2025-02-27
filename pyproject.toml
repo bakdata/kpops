@@ -92,12 +92,19 @@ reportUnknownMemberType = "warning"
 reportIncompatibleVariableOverride = "warning"
 reportIncompatibleMethodOverride = "warning"
 
+# we can't do much about it if a library doesn't provide types
+reportMissingTypeStubs = false
+
 reportAny = false
 reportExplicitAny = false
 reportImplicitStringConcatenation = false
 
 # false positive for Pydantic https://github.com/DetachHead/basedpyright/issues/868
 reportUnsafeMultipleInheritance = false
+
+# not sure if possible to override these only for ./tests
+reportUnusedParameter = "hint" # for pytest fixtures we could disable check entirely: false
+reportUnusedCallResult = false
 
 [tool.ruff]
 output-format = "grouped"
