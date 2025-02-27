@@ -94,6 +94,7 @@ reportIncompatibleMethodOverride = "warning"
 
 reportAny = false
 reportExplicitAny = false
+reportImplicitStringConcatenation = false
 
 [tool.ruff]
 output-format = "grouped"
