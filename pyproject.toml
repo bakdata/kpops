@@ -102,8 +102,10 @@ reportImplicitStringConcatenation = false
 # false positive for Pydantic https://github.com/DetachHead/basedpyright/issues/868
 reportUnsafeMultipleInheritance = false
 
-# not sure if possible to override these only for ./tests
-reportUnusedParameter = "hint" # for pytest fixtures we could disable check entirely: false
+[[tool.basedpyright.executionEnvironments]]
+root = "tests"
+reportPrivateUsage = false
+reportUnusedParameter = false
 reportUnusedCallResult = false
 
 [tool.ruff]
