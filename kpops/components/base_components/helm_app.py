@@ -67,15 +67,11 @@ class HelmApp(KubernetesApp):
     :param repo_config: Configuration of the Helm chart repo to be used for
         deploying the component, defaults to None this means that the command "helm repo add" is not called and Helm
         expects a path to local Helm chart.
+    :param diff_config: Helm diff config
     :param version: Helm chart version, defaults to None
     :param values: Helm app values
-    :param diff_config: Helm diff config
     """
 
-    # TODO: combine Helm config, e.g.
-    # helm:
-    #   repo: {}
-    #   diff: {}
     repo_config: HelmRepoConfig | None = Field(
         default=None,
         description=describe_attr("repo_config", __doc__),
