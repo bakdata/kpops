@@ -92,6 +92,9 @@ reportUnknownMemberType = "warning"
 reportIncompatibleVariableOverride = "warning"
 reportIncompatibleMethodOverride = "warning"
 
+reportAny = false
+reportExplicitAny = false
+
 [tool.ruff]
 output-format = "grouped"
 show-fixes = true
