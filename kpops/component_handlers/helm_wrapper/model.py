@@ -10,12 +10,14 @@ from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import DescConfigModel
 
+KeyPath = tuple[str, ...]
+
 
 class HelmDiffConfig(BaseModel):
-    ignore: set[str] = Field(
-        default_factory=set,
-        description="Set of keys that should not be checked.",
-        examples=["- name\n- imageTag"],
+    ignore: list[KeyPath] = Field(
+        default_factory=list,
+        description="List of keypaths that should be excluded from the diff.",
+        examples=[("name",), ("imageTag",), ("metadata", "labels", "helm.sh/chart")],
     )
 
 
