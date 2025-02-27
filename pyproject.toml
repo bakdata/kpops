@@ -108,10 +108,15 @@ reportUnsafeMultipleInheritance = false
 strictParameterNoneValue = false
 
 [[tool.basedpyright.executionEnvironments]]
+root = "kpops/components/streams_bootstrap_v2"
+reportDeprecated = "hint"
+
+[[tool.basedpyright.executionEnvironments]]
 root = "tests"
 reportPrivateUsage = false
 reportUnusedParameter = false
 reportUnusedCallResult = false
+reportDeprecated = "hint"
 
 [tool.ruff]
 output-format = "grouped"
