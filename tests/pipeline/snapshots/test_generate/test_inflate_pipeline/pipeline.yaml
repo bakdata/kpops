@@ -1,4 +1,6 @@
 - _cleaner:
+    diff_config:
+      ignore: []
     name: scheduled-producer
     namespace: example-namespace
     prefix: resources-pipeline-with-inflate-
@@ -20,6 +22,8 @@
         schemaRegistryUrl: http://localhost:8081/
       schedule: 30 3/8 * * *
     version: 3.6.1
+  diff_config:
+    ignore: []
   name: scheduled-producer
   namespace: example-namespace
   prefix: resources-pipeline-with-inflate-
@@ -51,6 +55,8 @@
     schedule: 30 3/8 * * *
   version: 3.6.1
 - _cleaner:
+    diff_config:
+      ignore: []
     name: converter
     namespace: example-namespace
     prefix: resources-pipeline-with-inflate-
@@ -86,6 +92,8 @@
           memory: 2G
       statefulSet: false
     version: 3.6.1
+  diff_config:
+    ignore: []
   name: converter
   namespace: example-namespace
   prefix: resources-pipeline-with-inflate-
@@ -136,6 +144,8 @@
     statefulSet: false
   version: 3.6.1
 - _cleaner:
+    diff_config:
+      ignore: []
     name: should-inflate
     namespace: example-namespace
     prefix: resources-pipeline-with-inflate-
@@ -174,6 +184,8 @@
           memory: 3G
       statefulSet: false
     version: 3.6.1
+  diff_config:
+    ignore: []
   name: should-inflate
   namespace: example-namespace
   prefix: resources-pipeline-with-inflate-
@@ -226,6 +238,8 @@
     statefulSet: false
   version: 3.6.1
 - _resetter:
+    diff_config:
+      ignore: []
     name: should-inflate-inflated-sink-connector
     namespace: example-namespace
     prefix: resources-pipeline-with-inflate-
@@ -270,6 +284,8 @@
         label: test
   type: kafka-sink-connector
 - _cleaner:
+    diff_config:
+      ignore: []
     name: should-inflate-inflated-streams-app
     namespace: example-namespace
     prefix: resources-pipeline-with-inflate-
@@ -293,6 +309,8 @@
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
     version: 3.6.1
+  diff_config:
+    ignore: []
   name: should-inflate-inflated-streams-app
   namespace: example-namespace
   prefix: resources-pipeline-with-inflate-

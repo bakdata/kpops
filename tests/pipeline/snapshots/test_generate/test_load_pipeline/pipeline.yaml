@@ -1,4 +1,6 @@
 - _cleaner:
+    diff_config:
+      ignore: []
     name: scheduled-producer
     namespace: example-namespace
     prefix: resources-first-pipeline-
@@ -20,6 +22,8 @@
         schemaRegistryUrl: http://localhost:8081/
       schedule: 30 3/8 * * *
     version: 3.6.1
+  diff_config:
+    ignore: []
   name: scheduled-producer
   namespace: example-namespace
   prefix: resources-first-pipeline-
@@ -51,6 +55,8 @@
     schedule: 30 3/8 * * *
   version: 3.6.1
 - _cleaner:
+    diff_config:
+      ignore: []
     name: converter
     namespace: example-namespace
     prefix: resources-first-pipeline-
@@ -86,6 +92,8 @@
           memory: 2G
       statefulSet: false
     version: 3.6.1
+  diff_config:
+    ignore: []
   name: converter
   namespace: example-namespace
   prefix: resources-first-pipeline-
@@ -136,6 +144,8 @@
     statefulSet: false
   version: 3.6.1
 - _cleaner:
+    diff_config:
+      ignore: []
     name: a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
     namespace: example-namespace
     prefix: resources-first-pipeline-
@@ -174,6 +184,8 @@
           memory: 3G
       statefulSet: false
     version: 3.6.1
+  diff_config:
+    ignore: []
   name: a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
   namespace: example-namespace
   prefix: resources-first-pipeline-

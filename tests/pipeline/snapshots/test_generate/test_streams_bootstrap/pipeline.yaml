@@ -1,4 +1,6 @@
 - _cleaner:
+    diff_config:
+      ignore: []
     name: my-producer-app
     namespace: example-namespace
     prefix: resources-streams-bootstrap-
@@ -43,6 +45,8 @@
         schemaRegistryUrl: http://localhost:8081/
       schedule: 30 3/8 * * *
     version: 3.6.1
+  diff_config:
+    ignore: []
   name: my-producer-app
   namespace: example-namespace
   prefix: resources-streams-bootstrap-
@@ -96,6 +100,8 @@
     schedule: 30 3/8 * * *
   version: 3.6.1
 - _cleaner:
+    diff_config:
+      ignore: []
     name: my-streams-app
     namespace: example-namespace
     prefix: resources-streams-bootstrap-
@@ -167,6 +173,8 @@
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
     version: 3.6.1
+  diff_config:
+    ignore: []
   from:
     components: {}
     topics:

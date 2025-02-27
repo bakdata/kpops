@@ -1,4 +1,6 @@
 - _cleaner:
+    diff_config:
+      ignore: []
     name: account-producer
     namespace: ${NAMESPACE}
     prefix: from-pipeline-component-
@@ -23,6 +25,8 @@
       schedule: 0 12 * * *
       suspend: true
     version: 3.6.1
+  diff_config:
+    ignore: []
   name: account-producer
   namespace: ${NAMESPACE}
   prefix: from-pipeline-component-

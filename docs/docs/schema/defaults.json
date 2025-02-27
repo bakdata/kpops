@@ -115,6 +115,13 @@
             "additionalProperties": true,
             "description": "Kubernetes app managed through Helm with an associated Helm chart.",
             "properties": {
+                "diff_config": {
+                    "$ref": "#/$defs/HelmDiffConfig",
+                    "default": {
+                        "ignore": []
+                    },
+                    "description": "Helm diff config"
+                },
                 "from": {
                     "anyOf": [
                         {
@@ -220,6 +227,36 @@
                 }
             },
             "title": "HelmAppValues",
+            "type": "object"
+        },
+        "HelmDiffConfig": {
+            "properties": {
+                "ignore": {
+                    "description": "List of keypaths that should be excluded from the diff.",
+                    "examples": [
+                        [
+                            "name"
+                        ],
+                        [
+                            "imageTag"
+                        ],
+                        [
+                            "metadata",
+                            "labels",
+                            "helm.sh/chart"
+                        ]
+                    ],
+                    "items": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    },
+                    "title": "Ignore",
+                    "type": "array"
+                }
+            },
+            "title": "HelmDiffConfig",
             "type": "object"
         },
         "HelmRepoConfig": {
@@ -1472,6 +1509,13 @@
             "additionalProperties": true,
             "description": "Producer component.\nThis producer holds configuration to use as values for the streams-bootstrap producer Helm chart. Note that the producer does not support error topics.",
             "properties": {
+                "diff_config": {
+                    "$ref": "#/$defs/HelmDiffConfig",
+                    "default": {
+                        "ignore": []
+                    },
+                    "description": "Helm diff config"
+                },
                 "from": {
                     "default": null,
                     "description": "Producer doesn't support FromSection",
@@ -1552,6 +1596,13 @@
             "deprecated": true,
             "description": "Producer component.\nThis producer holds configuration to use as values for the streams-bootstrap producer Helm chart. Note that the producer does not support error topics.",
             "properties": {
+                "diff_config": {
+                    "$ref": "#/$defs/HelmDiffConfig",
+                    "default": {
+                        "ignore": []
+                    },
+                    "description": "Helm diff config"
+                },
                 "from": {
                     "default": null,
                     "description": "Producer doesn't support FromSection",
@@ -2578,6 +2629,13 @@
             "additionalProperties": true,
             "description": "StreamsApp component that configures a streams-bootstrap app.",
             "properties": {
+                "diff_config": {
+                    "$ref": "#/$defs/HelmDiffConfig",
+                    "default": {
+                        "ignore": []
+                    },
+                    "description": "Helm diff config"
+                },
                 "from": {
                     "anyOf": [
                         {
@@ -2665,6 +2723,13 @@
             "deprecated": true,
             "description": "StreamsAppV2 component that configures a streams-bootstrap-v2 app.",
             "properties": {
+                "diff_config": {
+                    "$ref": "#/$defs/HelmDiffConfig",
+                    "default": {
+                        "ignore": []
+                    },
+                    "description": "Helm diff config"
+                },
                 "from": {
                     "anyOf": [
                         {
@@ -3249,6 +3314,13 @@
             "additionalProperties": true,
             "description": "Base for components with a streams-bootstrap Helm chart.",
             "properties": {
+                "diff_config": {
+                    "$ref": "#/$defs/HelmDiffConfig",
+                    "default": {
+                        "ignore": []
+                    },
+                    "description": "Helm diff config"
+                },
                 "from": {
                     "anyOf": [
                         {
@@ -3330,6 +3402,13 @@
             "deprecated": true,
             "description": "Base for components with a streams-bootstrap-v2 Helm chart.",
             "properties": {
+                "diff_config": {
+                    "$ref": "#/$defs/HelmDiffConfig",
+                    "default": {
+                        "ignore": []
+                    },
+                    "description": "Helm diff config"
+                },
                 "from": {
                     "anyOf": [
                         {
