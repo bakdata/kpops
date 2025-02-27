@@ -1946,13 +1946,13 @@
 <li>https://github.com/bakdata/kpops/pull/600</li>
 <li>https://github.com/bakdata/kpops/pull/601</li>
 </ul>
-<p>The Helm diff configuration has moved from <code>config.yaml</code> to the <code>HelmApp</code> component. To ignore specific keypaths we use string arrays now (formerly dot-notation). It is not possible to ignore YAML keys containing <code>.</code> or other special characters.</p>
+<p>The Helm diff configuration has moved from <code>config.yaml</code> to the <code>HelmApp</code> component. To ignore specific keypaths we use string arrays now (formerly dot-notation). It is now possible to ignore YAML keys containing <code>.</code> or other special characters.</p>
 <h3 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h3>
 <h4 id="defaultsyaml">defaults.yaml<a class="headerlink" href="#defaultsyaml" title="Permanent link">&para;</a></h4>
 <div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
 <span class="normal"><a href="#__codelineno-0-2">2</a></span>
 <span class="normal"><a href="#__codelineno-0-3">3</a></span>
-<span class="normal"><a href="#__codelineno-0-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">helm-app</span>
+<span class="normal"><a href="#__codelineno-0-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="nt">helm-app</span><span class="p">:</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="w">  </span><span class="nt">diff_config</span><span class="p">:</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="w">    </span><span class="nt">ignore</span><span class="p">:</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;metadata&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;labels&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;helm.sh/chart&quot;</span><span class="p p-Indicator">]</span>
