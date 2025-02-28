@@ -52,15 +52,15 @@ def create_config(file_name: str, dir_path: Path, include_optional: bool) -> Non
     file_path = Path(dir_path / (file_name + ".yaml"))
     file_path.touch(exist_ok=False)
     with file_path.open(mode="w") as conf:
-        conf.write(f"# {describe_object(KpopsConfig.__doc__)}")  # Write title
+        _ = conf.write(f"# {describe_object(KpopsConfig.__doc__)}")  # Write title
         non_required = extract_config_fields_for_yaml(
             collect_fields(KpopsConfig), False
         )
         required = extract_config_fields_for_yaml(collect_fields(KpopsConfig), True)
         for k in non_required:
             required.pop(k, None)
-        conf.write("\n\n# Required fields\n")
-        conf.write(yaml.safe_dump(required))
+        _ = conf.write("\n\n# Required fields\n")
+        _ = conf.write(yaml.safe_dump(required))
 
         if include_optional:
             dump = KpopsConfig.model_validate(non_required).model_dump(
@@ -68,8 +68,8 @@ def create_config(file_name: str, dir_path: Path, include_optional: bool) -> Non
             )
             for k in required:
                 dump.pop(k, None)
-            conf.write("\n# Non-required fields\n")
-            conf.write(yaml.safe_dump(dump))
+            _ = conf.write("\n# Non-required fields\n")
+            _ = conf.write(yaml.safe_dump(dump))
 
 
 def init_project(path: Path, conf_incl_opt: bool):

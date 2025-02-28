@@ -65,7 +65,7 @@ class Pipeline(BaseModel):
         self.__add_to_graph(component)
 
     def remove(self, component_id: str) -> None:
-        self._component_index.pop(component_id)
+        _ = self._component_index.pop(component_id)
 
     def get(self, component_id: str) -> PipelineComponent | None:
         return self._component_index.get(component_id)
@@ -115,7 +115,7 @@ class Pipeline(BaseModel):
             tasks: list[asyncio.Task[None]] = []
             for coro in coroutines:
                 tasks.append(asyncio.create_task(coro))
-            await asyncio.gather(*tasks)
+            _ = await asyncio.gather(*tasks)
 
         async def run_graph_tasks(pending_tasks: list[Awaitable[None]]) -> None:
             for pending_task in pending_tasks:

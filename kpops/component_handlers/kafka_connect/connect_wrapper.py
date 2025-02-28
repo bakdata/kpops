@@ -65,7 +65,7 @@ class ConnectWrapper:
             )
 
             await asyncio.sleep(1)
-            await self.create_connector(connector_config)
+            _ = await self.create_connector(connector_config)
 
         raise KafkaConnectError(response)
 
@@ -94,7 +94,7 @@ class ConnectWrapper:
                 "Rebalancing in progress while getting a connector... Retrying..."
             )
             await asyncio.sleep(1)
-            await self.get_connector(connector_name)
+            _ = await self.get_connector(connector_name)
         raise KafkaConnectError(response)
 
     async def update_connector_config(
@@ -130,7 +130,7 @@ class ConnectWrapper:
                 "Rebalancing in progress while updating a connector... Retrying..."
             )
             await asyncio.sleep(1)
-            await self.update_connector_config(connector_config)
+            _ = await self.update_connector_config(connector_config)
         raise KafkaConnectError(response)
 
     async def validate_connector_config(

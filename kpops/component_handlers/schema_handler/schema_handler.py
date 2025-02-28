@@ -128,7 +128,9 @@ class SchemaHandler:
                     )
                 )
         else:
-            await self.schema_registry_client.register(subject=subject, schema=schema)
+            _ = await self.schema_registry_client.register(
+                subject=subject, schema=schema
+            )
             log.info(
                 f"Schema Submission: schema submitted for {subject} with model {schema_class}."
             )

@@ -13,7 +13,7 @@ class HttpxException(Exception):
             log.exception(
                 f"The request responded with the code {self.error_code}. Error body: {response.json()}",
             )
-            response.raise_for_status()
+            _ = response.raise_for_status()
         except httpx.HTTPError as e:
             self.error_msg = str(e)
             log.exception(f"More information: {self.error_msg}")
