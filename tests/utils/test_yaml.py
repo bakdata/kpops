@@ -4,8 +4,7 @@ from typing import Any
 
 import pytest
 
-from kpops.cli.main import print_yaml
-from kpops.utils.yaml import substitute_nested
+from kpops.utils.yaml import print_yaml, substitute_nested
 
 
 @pytest.mark.parametrize(

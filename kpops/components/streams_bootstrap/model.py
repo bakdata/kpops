@@ -11,7 +11,6 @@ from kpops.components.common.kubernetes_model import (
     ImagePullPolicy,
     ProtocolSchema,
     Resources,
-    SerializeAsOptional,
     ServiceType,
     Toleration,
 )
@@ -20,6 +19,7 @@ from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
     DescConfigModel,
+    SerializeAsOptional,
     SerializeAsOptionalModel,
     exclude_by_value,
     exclude_defaults,

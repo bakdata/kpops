@@ -4,6 +4,7 @@ from unittest import mock
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
+from pipeline.test_components.components import TestSchemaProvider
 from pydantic import AnyHttpUrl, TypeAdapter
 from pytest_mock import MockerFixture
 from schema_registry.client.schema import AvroSchema
@@ -18,7 +19,6 @@ from kpops.components.base_components.models.to_section import (
 from kpops.components.common.topic import OutputTopicTypes, TopicConfig
 from kpops.config import KpopsConfig, SchemaRegistryConfig
 from kpops.utils.colorify import greenify, magentaify, yellowify
-from tests.pipeline.test_components import TestSchemaProvider
 
 log = logging.getLogger("SchemaHandler")
 

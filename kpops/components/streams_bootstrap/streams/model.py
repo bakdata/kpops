@@ -9,7 +9,6 @@ from pydantic import BaseModel, ConfigDict, Field
 from kpops.components.common.kubernetes_model import (
     ImagePullPolicy,
     Resources,
-    SerializeAsOptional,
 )
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
 from kpops.components.streams_bootstrap.model import (
@@ -20,6 +19,7 @@ from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
     DescConfigModel,
+    SerializeAsOptional,
     SerializeAsOptionalModel,
 )
 
