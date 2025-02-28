@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 class CustomFormatter(logging.Formatter):
     @override
-    def format(self, record) -> str:
+    def format(self, record: logging.LogRecord) -> str:
         message_format = "%(name)s - %(message)s"
 
         if record.name == "root":
