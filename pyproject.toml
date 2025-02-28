@@ -120,6 +120,10 @@ reportUnusedParameter = false
 reportUnusedCallResult = false
 reportDeprecated = "hint"
 
+[[tool.basedpyright.executionEnvironments]]
+root = "hooks"
+reportUnusedCallResult = false
+
 [tool.ruff]
 output-format = "grouped"
 show-fixes = true
