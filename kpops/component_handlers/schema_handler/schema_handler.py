@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, final
 
 from schema_registry.client import AsyncSchemaRegistryClient
 from schema_registry.client.schema import AvroSchema
+from schema_registry.client.utils import SchemaVersion
 
 from kpops.component_handlers.schema_handler.schema_provider import (
     Schema,
@@ -128,7 +129,7 @@ class SchemaHandler:
                     )
                 )
         else:
-            _ = await self.schema_registry_client.register(
+            _ = await self.schema_registry_client.register(  # pyright: ignore[reportUnknownMemberType]
                 subject=subject, schema=schema
             )
             log.info(
@@ -136,16 +137,19 @@ class SchemaHandler:
             )
 
     async def __subject_exists(self, subject: str) -> bool:
-        return len(await self.schema_registry_client.get_versions(subject)) > 0
+        versions: list[SchemaVersion] = await self.schema_registry_client.get_versions(  # pyright: ignore[reportUnknownMemberType]
+            subject
+        )
+        return len(versions) > 0
 
     async def __check_compatibility(
         self, schema: Schema, schema_class: str, subject: str
     ) -> None:
-        registered_version = await self.schema_registry_client.check_version(
+        registered_version = await self.schema_registry_client.check_version(  # pyright: ignore[reportUnknownMemberType]
             subject, schema
         )
         if registered_version is None:
-            if not await self.schema_registry_client.test_compatibility(
+            if not await self.schema_registry_client.test_compatibility(  # pyright: ignore[reportUnknownMemberType]
                 subject=subject, schema=schema
             ):
                 schema_str = (
@@ -157,7 +161,7 @@ class SchemaHandler:
                 raise Exception(msg)
         else:
             log.debug(
-                f"Schema Submission: schema was already submitted for the subject {subject} as version {registered_version.schema}. Therefore, the specified schema must be compatible."
+                f"Schema Submission: schema was already submitted for the subject {subject} as version {registered_version.schema}. Therefore, the specified schema must be compatible."  # pyright: ignore[reportUnknownMemberType]
             )
 
         log.info(
@@ -168,7 +172,9 @@ class SchemaHandler:
         if dry_run:
             log.info(magentaify(f"Schema Deletion: will delete subject {subject}."))
         else:
-            version_list = await self.schema_registry_client.delete_subject(subject)
+            version_list: list[
+                SchemaVersion
+            ] = await self.schema_registry_client.delete_subject(subject)  # pyright: ignore[reportUnknownMemberType]
             log.info(
                 f"Schema Deletion: deleted {len(version_list)} versions for subject {subject}."
             )
