@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from abc import ABC
-from typing import Any, Self
+from typing import Any, ClassVar, Self
 
 import pydantic
 from pydantic import AliasChoices, ConfigDict, Field
@@ -61,7 +61,7 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
         json_schema_extra={},
     )
 
-    model_config = ConfigDict(extra="allow")
+    model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 
     @pydantic.field_validator("extra_output_topics", mode="before")
     @classmethod

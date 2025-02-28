@@ -4,7 +4,7 @@ import asyncio
 import logging
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, TypeAlias
+from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
 import networkx as nx
 import yaml
@@ -40,7 +40,7 @@ class Pipeline(BaseModel):
     _component_index: dict[str, PipelineComponent] = {}
     _graph: nx.DiGraph[str] = nx.DiGraph()
 
-    model_config = ConfigDict(arbitrary_types_allowed=True)
+    model_config: ClassVar[ConfigDict] = ConfigDict(arbitrary_types_allowed=True)
 
     @property
     def step_names(self) -> list[str]:

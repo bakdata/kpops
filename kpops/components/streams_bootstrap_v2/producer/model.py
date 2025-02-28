@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from pydantic import ConfigDict, Field
 
 from kpops.components.streams_bootstrap_v2.base import (
@@ -21,4 +23,4 @@ class ProducerAppV2Values(StreamsBootstrapV2Values):
         description=describe_attr("streams", __doc__)
     )
 
-    model_config = ConfigDict(extra="allow")
+    model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")

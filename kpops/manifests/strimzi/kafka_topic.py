@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Self
+from typing import Any, ClassVar, Self
 
 from pydantic import ConfigDict, Field, model_validator
 
@@ -31,7 +31,7 @@ class TopicSpec(CamelCaseConfigModel):
         default=None, description=describe_attr("config", __doc__)
     )
 
-    model_config = ConfigDict(extra="allow")
+    model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 
     @model_validator(mode="before")
     @classmethod

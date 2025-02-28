@@ -162,7 +162,7 @@ class KpopsConfig(BaseSettings):
         description="The operation mode of KPOps (managed, manifest, argo).",
         exclude=True,
     )
-    model_config = SettingsConfigDict(
+    model_config: ClassVar[SettingsConfigDict] = SettingsConfigDict(
         env_prefix=ENV_PREFIX,
         env_nested_delimiter="__",
         use_enum_values=True,

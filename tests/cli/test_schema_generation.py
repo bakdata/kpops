@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from abc import ABC, abstractmethod
 from pathlib import Path
+from typing import ClassVar
 
 import pytest
 from pydantic import ConfigDict, Field
@@ -21,7 +22,7 @@ runner = CliRunner()
 
 # type is inherited from PipelineComponent
 class EmptyPipelineComponent(PipelineComponent):
-    model_config = ConfigDict(str_strip_whitespace=True)
+    model_config: ClassVar[ConfigDict] = ConfigDict(str_strip_whitespace=True)
 
 
 # abstract component inheriting from ABC should be excluded

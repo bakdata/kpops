@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import StrEnum
-from typing import Any
+from typing import Any, ClassVar
 
 import pydantic
 from pydantic import BaseModel, ConfigDict, Field
@@ -208,7 +208,7 @@ class StreamsAppAutoScaling(
         default=[],
         description=describe_attr("additional_triggers", __doc__),
     )
-    model_config = ConfigDict(extra="allow")
+    model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 
 
 class PersistenceConfig(BaseModel):
@@ -417,4 +417,4 @@ class StreamsAppValues(StreamsBootstrapValues):
         description=describe_attr("termination_grace_period_seconds", __doc__),
     )
 
-    model_config = ConfigDict(extra="allow")
+    model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")

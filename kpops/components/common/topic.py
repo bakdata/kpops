@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from enum import StrEnum
-from typing import Annotated, Any
+from typing import Annotated, Any, ClassVar
 
 import pydantic
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -62,7 +62,7 @@ class TopicConfig(DescConfigModel):
     )
     label: str | None = Field(default=None, description=describe_attr("label", __doc__))
 
-    model_config = ConfigDict(
+    model_config: ClassVar[ConfigDict] = ConfigDict(
         extra="forbid",
         use_enum_values=True,
         populate_by_name=True,

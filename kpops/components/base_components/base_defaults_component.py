@@ -7,7 +7,7 @@ from collections.abc import Hashable, Sequence
 from dataclasses import asdict
 from functools import cached_property
 from pathlib import Path
-from typing import Any, Self, TypeVar
+from typing import Any, ClassVar, Self, TypeVar
 
 import pydantic
 import typer
@@ -48,7 +48,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
     :param validate: Whether to run custom validation on the component, defaults to True
     """
 
-    model_config = ConfigDict(
+    model_config: ClassVar[ConfigDict] = ConfigDict(
         arbitrary_types_allowed=True,
         ignored_types=(cached_property, cached_classproperty),  # pyright: ignore[reportArgumentType]
     )

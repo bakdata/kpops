@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from croniter import croniter
 from pydantic import ConfigDict, Field, field_validator
 
@@ -64,7 +66,7 @@ class ProducerAppValues(StreamsBootstrapValues):
         default=None, description=describe_attr("ttl_seconds_after_finished", __doc__)
     )
 
-    model_config = ConfigDict(extra="allow")
+    model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 
     @field_validator("schedule")
     @classmethod

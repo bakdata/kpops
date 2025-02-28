@@ -1,6 +1,7 @@
 from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
+from typing import ClassVar
 
 from pydantic import BaseModel, ConfigDict, Field
 from typing_extensions import override
@@ -111,7 +112,7 @@ class HelmFlags(RepoAuthFlags):
     wait: bool = True
     wait_for_jobs: bool = False
 
-    model_config = ConfigDict(
+    model_config: ClassVar[ConfigDict] = ConfigDict(
         extra="allow",
     )
 

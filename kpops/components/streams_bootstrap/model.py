@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, ClassVar
 
 import pydantic
 from pydantic import AliasChoices, ConfigDict, Field
@@ -266,7 +266,7 @@ class KafkaConfig(CamelCaseConfigModel, DescConfigModel):
         json_schema_extra={},
     )
 
-    model_config = ConfigDict(extra="allow")
+    model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 
     @pydantic.field_validator("labeled_output_topics", mode="before")
     @classmethod

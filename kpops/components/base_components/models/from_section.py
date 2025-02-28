@@ -1,5 +1,5 @@
 from enum import StrEnum
-from typing import Any, NewType
+from typing import Any, ClassVar, NewType
 
 from pydantic import ConfigDict, Field, model_validator
 
@@ -32,7 +32,7 @@ class FromTopic(DescConfigModel):
     )
     label: str | None = Field(default=None, description=describe_attr("label", __doc__))
 
-    model_config = ConfigDict(
+    model_config: ClassVar[ConfigDict] = ConfigDict(
         extra="forbid",
         use_enum_values=True,
     )
@@ -65,6 +65,6 @@ class FromSection(DescConfigModel):
         description=describe_attr("components", __doc__),
     )
 
-    model_config = ConfigDict(
+    model_config: ClassVar[ConfigDict] = ConfigDict(
         extra="forbid",
     )
