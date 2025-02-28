@@ -4,7 +4,7 @@ from collections.abc import Mapping, MutableMapping
 from dataclasses import dataclass
 from difflib import Differ
 from enum import StrEnum
-from typing import TYPE_CHECKING, Any, Generic, NamedTuple, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, NamedTuple, TypeVar, cast
 
 import typer
 import yaml
@@ -38,16 +38,19 @@ class Change(NamedTuple, Generic[_O, _N]):
 
     @staticmethod
     def factory(
-        type: DiffType, change: _N | tuple[_O, _N]
+        type: DiffType, change: _O | _N | tuple[_O, _N]
     ) -> Change[_O | None, _N | None]:
         match type:
             case DiffType.ADD:
-                return Change(None, change)  # pyright: ignore[reportReturnType]
+                change = cast(_N, change)
+                return Change(None, change)
             case DiffType.REMOVE:
-                return Change(change, None)  # pyright: ignore[reportReturnType]
-            case DiffType.CHANGE if isinstance(change, tuple):
-                return Change(*change)  # pyright: ignore[reportReturnType]
-        msg = f"{type} is not part of {DiffType}"
+                change = cast(_O, change)
+                return Change(change, None)
+            case DiffType.CHANGE:
+                change = cast(tuple[_O, _N], change)
+                return Change(*change)
+        msg = f"{type} is not part of {DiffType}"  # pyright: ignore[reportUnreachable]
         raise ValueError(msg)
 
 
