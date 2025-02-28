@@ -7,7 +7,7 @@ from collections.abc import Hashable, Sequence
 from dataclasses import asdict
 from functools import cached_property
 from pathlib import Path
-from typing import Any, ClassVar, Self, TypeVar
+from typing import Any, ClassVar, Self, TypeVar, cast
 
 import pydantic
 import typer
@@ -216,6 +216,7 @@ def defaults_from_yaml(path: Path, key: str) -> dict[str, Any]:
             "Default files should be structured as map ([app type] -> [default config]"
         )
         raise TypeError(msg)
+    content = cast(dict[str, dict[str, Any]], content)
     value = content.get(key)
     if value is None:
         return {}
