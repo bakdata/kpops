@@ -275,7 +275,7 @@ class PipelineGenerator:
                 msg = f"The pipeline definition {env_file} should contain a list of components"
                 raise TypeError(msg)
 
-        return self.parse(main_content, env_content)
+        return self.parse(main_content, env_content)  # pyright: ignore[reportUnknownArgumentType]
 
     def parse_components(self, components: list[dict[str, Any]]) -> None:
         """Instantiate, enrich and inflate a list of components.

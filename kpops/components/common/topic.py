@@ -58,7 +58,8 @@ class TopicConfig(DescConfigModel):
         description=describe_attr("replication_factor", __doc__),
     )
     configs: dict[str, str | int] = Field(
-        default={}, description=describe_attr("configs", __doc__)
+        default={},  # pyright: ignore[reportUnknownArgumentType]
+        description=describe_attr("configs", __doc__),
     )
     label: str | None = Field(default=None, description=describe_attr("label", __doc__))
 
@@ -91,7 +92,7 @@ class KafkaTopic(BaseModel):
     """
 
     name: str
-    config: TopicConfig = TopicConfig()
+    config: TopicConfig = TopicConfig()  # pyright: ignore[reportUnknownArgumentType]
 
     @property
     def id(self) -> str:

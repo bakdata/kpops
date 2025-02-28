@@ -57,11 +57,11 @@ class FromSection(DescConfigModel):
     """
 
     topics: dict[TopicName, FromTopic] = Field(
-        default={},
+        default={},  # pyright: ignore[reportUnknownArgumentType]
         description=describe_attr("topics", __doc__),
     )
     components: dict[ComponentName, FromTopic] = Field(
-        default={},
+        default={},  # pyright: ignore[reportUnknownArgumentType]
         description=describe_attr("components", __doc__),
     )
 

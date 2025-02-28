@@ -78,21 +78,26 @@ class NodeSelectorRequirement(DescConfigModel, CamelCaseConfigModel):
 
     key: str = Field(description=describe_attr("key", __doc__))
     operator: NodeSelectorOperator
-    values: list[str] = Field(default=[], description=describe_attr("values", __doc__))
+    values: list[str] = Field(
+        default=[],  # pyright: ignore[reportUnknownArgumentType]
+        description=describe_attr("values", __doc__),
+    )
 
     @model_validator(mode="after")
     def validate_values(self) -> Self:
         match self.operator:
             case NodeSelectorOperator.IN | NodeSelectorOperator.NOT_IN:
-                assert (
-                    self.values
-                ), "If the operator is In or NotIn, the values array must be non-empty."
+                assert self.values, (
+                    "If the operator is In or NotIn, the values array must be non-empty."
+                )
             case NodeSelectorOperator.EXISTS | NodeSelectorOperator.DOES_NOT_EXIST:
-                assert not self.values, "If the operator is Exists or DoesNotExist, the values array must be empty."
+                assert not self.values, (
+                    "If the operator is Exists or DoesNotExist, the values array must be empty."
+                )
             case NodeSelectorOperator.GT | NodeSelectorOperator.LT:
-                assert (
-                    len(self.values) == 1
-                ), "If the operator is Gt or Lt, the values array must have a single element, which will be interpreted as an integer."
+                assert len(self.values) == 1, (
+                    "If the operator is Gt or Lt, the values array must have a single element, which will be interpreted as an integer."
+                )
         return self
 
 
@@ -104,10 +109,12 @@ class NodeSelectorTerm(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfi
     """
 
     match_expressions: SerializeAsOptional[list[NodeSelectorRequirement]] = Field(
-        default=[], description=describe_attr("match_expressions", __doc__)
+        default=[],  # pyright: ignore[reportUnknownArgumentType]
+        description=describe_attr("match_expressions", __doc__),
     )
     match_fields: SerializeAsOptional[list[NodeSelectorRequirement]] = Field(
-        default=[], description=describe_attr("match_fields", __doc__)
+        default=[],  # pyright: ignore[reportUnknownArgumentType]
+        description=describe_attr("match_fields", __doc__),
     )
 
 
@@ -151,7 +158,7 @@ class NodeAffinity(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfigMod
     preferred_during_scheduling_ignored_during_execution: SerializeAsOptional[
         list[PreferredSchedulingTerm]
     ] = Field(
-        default=[],
+        default=[],  # pyright: ignore[reportUnknownArgumentType]
         description=describe_attr(
             "preferred_during_scheduling_ignored_during_execution", __doc__
         ),
@@ -179,7 +186,7 @@ class LabelSelectorRequirement(DescConfigModel, CamelCaseConfigModel):
     )
     operator: LabelSelectorOperator
     values: list[str] = Field(
-        default=[],
+        default=[],  # pyright: ignore[reportUnknownArgumentType]
         description=describe_attr("values", __doc__),
     )
 
@@ -187,11 +194,13 @@ class LabelSelectorRequirement(DescConfigModel, CamelCaseConfigModel):
     def validate_values(self) -> Self:
         match self.operator:
             case LabelSelectorOperator.IN | LabelSelectorOperator.NOT_IN:
-                assert (
-                    self.values
-                ), "If the operator is In or NotIn, the values array must be non-empty."
+                assert self.values, (
+                    "If the operator is In or NotIn, the values array must be non-empty."
+                )
             case LabelSelectorOperator.EXISTS | LabelSelectorOperator.DOES_NOT_EXIST:
-                assert not self.values, "If the operator is Exists or DoesNotExist, the values array must be empty."
+                assert not self.values, (
+                    "If the operator is Exists or DoesNotExist, the values array must be empty."
+                )
         return self
 
 
@@ -203,11 +212,11 @@ class LabelSelector(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfigMo
     """
 
     match_labels: SerializeAsOptional[dict[str, str]] = Field(
-        default={},
+        default={},  # pyright: ignore[reportUnknownArgumentType]
         description=describe_attr("match_labels", __doc__),
     )
     match_expressions: SerializeAsOptional[list[LabelSelectorRequirement]] = Field(
-        default=[],
+        default=[],  # pyright: ignore[reportUnknownArgumentType]
         description=describe_attr("match_expressions", __doc__),
     )
 
@@ -228,18 +237,18 @@ class PodAffinityTerm(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfig
         description=describe_attr("label_selector", __doc__),
     )
     match_label_keys: SerializeAsOptional[list[str]] = Field(
-        default=[],
+        default=[],  # pyright: ignore[reportUnknownArgumentType]
         description=describe_attr("match_label_keys", __doc__),
     )
     mismatch_label_keys: SerializeAsOptional[list[str]] = Field(
-        default=[],
+        default=[],  # pyright: ignore[reportUnknownArgumentType]
         description=describe_attr("mismatch_label_keys", __doc__),
     )
     topology_key: str = Field(
         description=describe_attr("topology_key", __doc__),
     )
     namespaces: SerializeAsOptional[list[str]] = Field(
-        default=[],
+        default=[],  # pyright: ignore[reportUnknownArgumentType]
         description=describe_attr("namespaces", __doc__),
     )
     namespace_selector: LabelSelector | None = Field(
@@ -273,7 +282,7 @@ class PodAffinity(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfigMode
     required_during_scheduling_ignored_during_execution: SerializeAsOptional[
         list[PodAffinityTerm]
     ] = Field(
-        default=[],
+        default=[],  # pyright: ignore[reportUnknownArgumentType]
         description=describe_attr(
             "required_during_scheduling_ignored_during_execution", __doc__
         ),
@@ -281,7 +290,7 @@ class PodAffinity(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfigMode
     preferred_during_scheduling_ignored_during_execution: SerializeAsOptional[
         list[WeightedPodAffinityTerm]
     ] = Field(
-        default=[],
+        default=[],  # pyright: ignore[reportUnknownArgumentType]
         description=describe_attr(
             "preferred_during_scheduling_ignored_during_execution", __doc__
         ),

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from collections.abc import Iterator
-from typing import ClassVar
+from typing import Any, ClassVar
 
 from pydantic import AliasChoices, ConfigDict, Field
 
@@ -58,7 +58,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
 
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.set_input_topics()
         self.set_output_topics()

@@ -62,13 +62,13 @@ class Diff(Generic[_O, _N]):
         d1: dict[str, Any], d2: dict[str, Any], ignore: set[str] | None = None
     ) -> Iterator[Diff[Any, Any]]:
         for diff_type, keys, changes in diff(d1, d2, ignore=ignore):
-            diff_type = DiffType.from_str(diff_type)
+            diff_type = DiffType.from_str(diff_type)  # pyright: ignore[reportUnknownArgumentType]
             if not isinstance(changes_tmp := changes, list):
                 changes_tmp: list[tuple[str, Any]] = [("", changes)]
             for key, change in changes_tmp:
                 yield Diff(
                     diff_type,
-                    Diff.__find_changed_key(keys, key),
+                    Diff.__find_changed_key(keys, key),  # pyright: ignore[reportUnknownArgumentType]
                     Change.factory(diff_type, change),
                 )
 

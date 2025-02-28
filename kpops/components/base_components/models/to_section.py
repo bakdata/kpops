@@ -18,10 +18,12 @@ class ToSection(DescConfigModel):
     """
 
     topics: dict[TopicName, TopicConfig] = Field(
-        default={}, description=describe_attr("topics", __doc__)
+        default={},  # pyright: ignore[reportUnknownArgumentType]
+        description=describe_attr("topics", __doc__),
     )
     models: dict[ModelName, ModelVersion] = Field(
-        default={}, description=describe_attr("models", __doc__)
+        default={},  # pyright: ignore[reportUnknownArgumentType]
+        description=describe_attr("models", __doc__),
     )
 
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="forbid")
