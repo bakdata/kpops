@@ -8,7 +8,7 @@ def is_jsonable(input: Any) -> bool:
     :param input: Value to be checked.
     """
     try:
-        _ = json.dumps(input)
+        json.dumps(input)
     except (TypeError, OverflowError):
         return False
     else:

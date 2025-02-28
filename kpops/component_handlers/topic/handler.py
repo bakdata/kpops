@@ -111,7 +111,7 @@ class TopicHandler:
         self, topic: KafkaTopic, topic_spec: TopicSpec
     ) -> None:
         try:
-            _ = await self.proxy_wrapper.get_topic(topic.name)
+            await self.proxy_wrapper.get_topic(topic.name)
             topic_config_in_cluster = await self.proxy_wrapper.get_topic_config(
                 topic.name
             )
@@ -203,7 +203,7 @@ class TopicHandler:
 
     async def __execute_topic_deletion(self, topic_name: str) -> None:
         try:
-            _ = await self.proxy_wrapper.get_topic(topic_name)
+            await self.proxy_wrapper.get_topic(topic_name)
             await self.proxy_wrapper.delete_topic(topic_name)
         except TopicNotFoundException:
             log.warning(

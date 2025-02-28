@@ -37,12 +37,11 @@ class KafkaConnectHandler:
             await self.__dry_run_connector_creation(connector_config)
         else:
             try:
-                _ = await self._connect_wrapper.get_connector(connector_config.name)
-                _ = await self._connect_wrapper.update_connector_config(
-                    connector_config
-                )
+                await self._connect_wrapper.get_connector(connector_config.name)
+                await self._connect_wrapper.update_connector_config(connector_config)
+
             except ConnectorNotFoundException:
-                _ = await self._connect_wrapper.create_connector(connector_config)
+                await self._connect_wrapper.create_connector(connector_config)
 
     async def destroy_connector(self, connector_name: str, *, dry_run: bool) -> None:
         """Delete a connector resource from the cluster.
@@ -54,8 +53,9 @@ class KafkaConnectHandler:
             await self.__dry_run_connector_deletion(connector_name)
         else:
             try:
-                _ = await self._connect_wrapper.get_connector(connector_name)
-                _ = await self._connect_wrapper.delete_connector(connector_name)
+                await self._connect_wrapper.get_connector(connector_name)
+                await self._connect_wrapper.delete_connector(connector_name)
+
             except ConnectorNotFoundException:
                 log.warning(
                     f"Connector Destruction: the connector {connector_name} does not exist. Skipping."
@@ -95,7 +95,7 @@ class KafkaConnectHandler:
 
     async def __dry_run_connector_deletion(self, connector_name: str) -> None:
         try:
-            _ = await self._connect_wrapper.get_connector(connector_name)
+            await self._connect_wrapper.get_connector(connector_name)
             log.info(
                 magentaify(
                     f"Connector Destruction: connector {connector_name} already exists. Deleting connector."

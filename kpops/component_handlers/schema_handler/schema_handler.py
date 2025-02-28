@@ -129,7 +129,7 @@ class SchemaHandler:
                     )
                 )
         else:
-            _ = await self.schema_registry_client.register(  # pyright: ignore[reportUnknownMemberType]
+            await self.schema_registry_client.register(  # pyright: ignore[reportUnknownMemberType]
                 subject=subject, schema=schema
             )
             log.info(

@@ -103,6 +103,7 @@ reportMissingTypeStubs = false
 reportAny = false
 reportExplicitAny = false
 reportImplicitStringConcatenation = false
+reportUnusedCallResult = false
 
 # false positive for Pydantic https://github.com/DetachHead/basedpyright/issues/868
 reportUnsafeMultipleInheritance = false
@@ -118,12 +119,7 @@ reportDeprecated = "hint"
 root = "tests"
 reportPrivateUsage = false
 reportUnusedParameter = false
-reportUnusedCallResult = false
 reportDeprecated = "hint"
-
-[[tool.basedpyright.executionEnvironments]]
-root = "hooks"
-reportUnusedCallResult = false
 
 [tool.ruff]
 output-format = "grouped"

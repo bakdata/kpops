@@ -57,7 +57,7 @@ class Helm:
         command.extend(repo_auth_flags.to_command())
 
         try:
-            _ = self.__execute(command)
+            self.__execute(command)
         except (ReleaseNotFoundException, RuntimeError) as e:
             if (
                 len(e.args) == 1
@@ -72,9 +72,9 @@ class Helm:
                 raise
 
         if self._version.minor > 7:
-            _ = self.__execute(["helm", "repo", "update", repository_name])
+            self.__execute(["helm", "repo", "update", repository_name])
         else:
-            _ = self.__execute(["helm", "repo", "update"])
+            self.__execute(["helm", "repo", "update"])
 
     async def upgrade_install(
         self,
