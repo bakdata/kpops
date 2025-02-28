@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, override
+from typing import TYPE_CHECKING
 
 import typer
+from typing_extensions import override
 
 if TYPE_CHECKING:
     from kpops.components.base_components.pipeline_component import PipelineComponent
