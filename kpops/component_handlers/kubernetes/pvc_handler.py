@@ -13,7 +13,7 @@ class PVCHandler:
     def __init__(self, app_name: str, namespace: str) -> None:
         self.app_name = app_name
         self.namespace = namespace
-        self._client = AsyncClient(namespace=namespace)  # pyright: ignore[reportArgumentType]
+        self._client = AsyncClient(namespace=namespace)
 
     async def list_pvcs(self) -> AsyncIterable[PersistentVolumeClaim]:
         return self._client.list(PersistentVolumeClaim, labels={"app": self.app_name})
