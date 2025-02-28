@@ -81,6 +81,8 @@ asyncio_default_fixture_loop_scope = "function"
 [tool.basedpyright]
 include = ["kpops", "tests", "hooks"]
 
+failOnWarnings = false # CLI usage
+
 reportImportCycles = true
 
 reportUnknownParameterType = "warning"
