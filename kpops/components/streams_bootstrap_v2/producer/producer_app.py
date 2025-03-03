@@ -58,10 +58,7 @@ class ProducerAppV2(StreamsBootstrapV2):
     @computed_field
     @cached_property
     def _cleaner(self) -> ProducerAppCleaner:
-        kwargs = self.model_dump(by_alias=True, exclude={"_cleaner", "from_", "to"})
-        cleaner = ProducerAppCleaner.model_validate(kwargs)
-        cleaner.values.name_override = None
-        return cleaner
+        return ProducerAppCleaner.from_parent(self)
 
     @override
     def apply_to_outputs(self, name: str, topic: TopicConfig) -> None:

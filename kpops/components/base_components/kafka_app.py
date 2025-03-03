@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 from abc import ABC
+from typing import Self
 
 from typing_extensions import override
 
@@ -18,6 +19,13 @@ class KafkaAppCleaner(Cleaner, ABC):
 
     from_: None = None
     to: None = None
+
+    @classmethod
+    def from_parent(cls, parent: KafkaApp) -> Self:
+        kwargs = parent.model_dump(by_alias=True, exclude={"_cleaner", "from_", "to"})
+        cleaner = cls.model_validate(kwargs)
+        cleaner.values.name_override = None
+        return cleaner
 
     @property
     @override
