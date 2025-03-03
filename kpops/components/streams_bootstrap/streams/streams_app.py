@@ -59,7 +59,7 @@ class StreamsAppCleaner(KafkaAppCleaner, StreamsBootstrap):
         if get_config().operation_mode is OperationMode.ARGO:
             post_delete = ArgoHook.POST_DELETE
             values = enrich_annotations(values, post_delete.key, post_delete.value)
-        return self.helm.template(
+        return self._helm.template(
             self.helm_release_name,
             self.helm_chart,
             self.namespace,
@@ -72,7 +72,7 @@ class StreamsAppCleaner(KafkaAppCleaner, StreamsBootstrap):
         self.values.kafka.delete_output = False
         values = self.to_helm_values()
 
-        return self.helm.template(
+        return self._helm.template(
             self.helm_release_name,
             self.helm_chart,
             self.namespace,
@@ -163,7 +163,7 @@ class StreamsApp(StreamsBootstrap):
 
     @override
     async def destroy(self, dry_run: bool) -> None:
-        cluster_values = await self.helm.get_values(
+        cluster_values = await self._helm.get_values(
             self.namespace, self.helm_release_name
         )
         if cluster_values:
