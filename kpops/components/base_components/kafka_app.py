@@ -10,6 +10,7 @@ from kpops.component_handlers import get_handlers
 from kpops.components.base_components.cleaner import Cleaner
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.config import get_config
+from kpops.utils.dict_ops import update_nested
 
 log = logging.getLogger("KafkaApp")
 
@@ -22,11 +23,14 @@ class KafkaAppCleaner(Cleaner, ABC):
 
     @classmethod
     def from_parent(cls, parent: KafkaApp) -> Self:
-        kwargs = parent.model_dump(
+        parent_kwargs = parent.model_dump(
             by_alias=True,
             exclude_none=True,
             exclude={"_cleaner", "from_", "to"},
         )
+        # enrichment: cleaner defaults take precedence over parent
+        cleaner_defaults = cls.extend_with_defaults(name=parent.name)
+        kwargs = update_nested(cleaner_defaults, parent_kwargs)
         cleaner = cls(**kwargs)
         cleaner.values.name_override = None
         return cleaner
