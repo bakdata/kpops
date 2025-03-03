@@ -540,18 +540,6 @@
             "additionalProperties": true,
             "description": "Base component for Kafka-based components.",
             "properties": {
-                "cleaner": {
-                    "anyOf": [
-                        {
-                            "type": "object"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Cleaner"
-                },
                 "from": {
                     "anyOf": [
                         {
@@ -1539,6 +1527,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Override of cleaner attributes",
                     "title": "Cleaner"
                 },
                 "diff_config": {
@@ -1638,6 +1627,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Override of cleaner attributes",
                     "title": "Cleaner"
                 },
                 "diff_config": {
@@ -2683,6 +2673,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Override of cleaner attributes",
                     "title": "Cleaner"
                 },
                 "diff_config": {
@@ -2789,6 +2780,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Override of cleaner attributes",
                     "title": "Cleaner"
                 },
                 "diff_config": {
@@ -3392,6 +3384,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Override of cleaner attributes",
                     "title": "Cleaner"
                 },
                 "diff_config": {
@@ -3492,6 +3485,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Override of cleaner attributes",
                     "title": "Cleaner"
                 },
                 "diff_config": {

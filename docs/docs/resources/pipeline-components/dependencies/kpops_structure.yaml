@@ -14,7 +14,6 @@ kpops_components_fields:
   - prefix
   - from_
   - to
-  - cleaner
   kafka-connector:
   - name
   - prefix

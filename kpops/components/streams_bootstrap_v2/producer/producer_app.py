@@ -4,15 +4,13 @@ from functools import cached_property
 from pydantic import Field, ValidationError, computed_field
 from typing_extensions import deprecated, override
 
-from kpops.components.base_components.kafka_app import (
-    KafkaAppCleaner,
-)
 from kpops.components.common.app_type import AppType
 from kpops.components.common.topic import (
     KafkaTopic,
     OutputTopicTypes,
     TopicConfig,
 )
+from kpops.components.streams_bootstrap.base import StreamsBootstrapCleaner
 from kpops.components.streams_bootstrap_v2.base import StreamsBootstrapV2
 from kpops.components.streams_bootstrap_v2.producer.model import ProducerAppV2Values
 from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
@@ -21,7 +19,7 @@ from kpops.utils.docstring import describe_attr
 log = logging.getLogger("ProducerAppV2")
 
 
-class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrapV2):  # pyright: ignore[reportIncompatibleVariableOverride]
+class ProducerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrapV2):  # pyright: ignore[reportIncompatibleVariableOverride]
     values: ProducerAppV2Values  # pyright: ignore[reportIncompatibleVariableOverride]
 
     @property

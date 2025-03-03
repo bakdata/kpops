@@ -6,9 +6,9 @@ from typing_extensions import deprecated, override
 
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
 from kpops.components.base_components.helm_app import HelmApp
-from kpops.components.base_components.kafka_app import KafkaAppCleaner
 from kpops.components.common.app_type import AppType
 from kpops.components.common.topic import KafkaTopic
+from kpops.components.streams_bootstrap.base import StreamsBootstrapCleaner
 from kpops.components.streams_bootstrap_v2.base import StreamsBootstrapV2
 from kpops.components.streams_bootstrap_v2.streams.model import (
     StreamsAppV2Values,
@@ -19,7 +19,7 @@ from kpops.utils.docstring import describe_attr
 log = logging.getLogger("StreamsAppV2")
 
 
-class StreamsAppCleaner(KafkaAppCleaner, StreamsBootstrapV2):
+class StreamsAppCleaner(StreamsBootstrapCleaner, StreamsBootstrapV2):
     from_: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
     to: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
     values: StreamsAppV2Values  # pyright: ignore[reportIncompatibleVariableOverride]

@@ -130,12 +130,12 @@ class StreamsBootstrapV2(KafkaApp, HelmApp, ABC):
     :param repo_config: Configuration of the Helm chart repo to be used for
         deploying the component, defaults to streams-bootstrap Helm repo
     :param version: Helm chart version, defaults to "2.9.0"
+    :param cleaner: Override of cleaner attributes
     """
 
     values: StreamsBootstrapV2Values = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         description=describe_attr("values", __doc__),
     )
-
     repo_config: HelmRepoConfig = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         default=STREAMS_BOOTSTRAP_HELM_REPO,
         description=describe_attr("repo_config", __doc__),
@@ -143,6 +143,10 @@ class StreamsBootstrapV2(KafkaApp, HelmApp, ABC):
     version: str | None = Field(
         default=STREAMS_BOOTSTRAP_VERSION,
         description=describe_attr("version", __doc__),
+    )
+    cleaner: dict[str, Any] | None = Field(
+        default=None,
+        description=describe_attr("cleaner", __doc__),
     )
 
     @pydantic.model_validator(mode="after")

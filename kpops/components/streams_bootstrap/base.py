@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import re
 from abc import ABC
-from typing import Self
+from typing import TYPE_CHECKING, Any, Self
 
 import pydantic
 from pydantic import Field
@@ -11,11 +11,17 @@ from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
 from kpops.components.base_components import KafkaApp
+from kpops.components.base_components.cleaner import Cleaner
 from kpops.components.base_components.helm_app import HelmApp
 from kpops.components.streams_bootstrap.model import StreamsBootstrapValues
+from kpops.config import get_config
 from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.manifests.strimzi.kafka_topic import StrimziKafkaTopic
+from kpops.utils.dict_ops import update_nested
 from kpops.utils.docstring import describe_attr
+
+if TYPE_CHECKING:
+    from kpops.components.streams_bootstrap_v2.base import StreamsBootstrapV2
 
 STREAMS_BOOTSTRAP_HELM_REPO = HelmRepoConfig(
     repository_name="bakdata-streams-bootstrap",
@@ -36,21 +42,24 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
     :param repo_config: Configuration of the Helm chart repo to be used for
         deploying the component, defaults to streams-bootstrap Helm repo
     :param version: Helm chart version, defaults to "3.6.1"
+    :param cleaner: Override of cleaner attributes
     """
 
     values: StreamsBootstrapValues = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         description=describe_attr("values", __doc__),
     )
-
     repo_config: HelmRepoConfig = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         default=STREAMS_BOOTSTRAP_HELM_REPO,
         description=describe_attr("repo_config", __doc__),
     )
-
     version: str = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         default=STREAMS_BOOTSTRAP_VERSION,
         pattern=STREAMS_BOOTSTRAP_VERSION_PATTERN,
         description=describe_attr("version", __doc__),
+    )
+    cleaner: dict[str, Any] | None = Field(
+        default=None,
+        description=describe_attr("cleaner", __doc__),
     )
 
     @pydantic.field_validator("version", mode="after")
@@ -98,3 +107,46 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
                 StrimziKafkaTopic.from_topic(topic) for topic in self.to.kafka_topics
             )
         return ()
+
+
+class StreamsBootstrapCleaner(Cleaner, ABC):  # separate file?
+    """Helm app for resetting and cleaning a streams-bootstrap app."""
+
+    from_: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
+    to: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
+
+    @classmethod
+    def from_parent(cls, parent: StreamsBootstrap | StreamsBootstrapV2) -> Self:
+        parent_kwargs = parent.model_dump(
+            by_alias=True,
+            exclude_none=True,
+            exclude={"_cleaner", "from_", "to"},
+        )
+        # enrichment: cleaner override takes precedence over parent
+        kwargs = parent_kwargs
+        if parent.cleaner:
+            kwargs = update_nested(parent.cleaner, parent_kwargs)
+        cleaner = cls(**kwargs)
+        cleaner.values.name_override = None
+        return cleaner
+
+    @property
+    @override
+    def helm_chart(self) -> str:
+        raise NotImplementedError
+
+    @override
+    async def clean(self, dry_run: bool) -> None:
+        """Clean an app using a cleanup job.
+
+        :param dry_run: Dry run command
+        """
+        log.info(f"Uninstall old cleanup job for {self.helm_release_name}")
+        await self.destroy(dry_run)
+
+        log.info(f"Deploy cleanup job for {self.helm_release_name}")
+        await self.deploy(dry_run)
+
+        if not get_config().retain_clean_jobs:
+            log.info(f"Uninstall cleanup job for {self.helm_release_name}")
+            await self.destroy(dry_run)

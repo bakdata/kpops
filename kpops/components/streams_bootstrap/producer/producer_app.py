@@ -5,7 +5,6 @@ from pydantic import Field, ValidationError, computed_field
 from typing_extensions import override
 
 from kpops.component_handlers.kubernetes.utils import trim
-from kpops.components.base_components.kafka_app import KafkaAppCleaner
 from kpops.components.common.app_type import AppType
 from kpops.components.common.topic import (
     KafkaTopic,
@@ -14,6 +13,7 @@ from kpops.components.common.topic import (
 )
 from kpops.components.streams_bootstrap.base import (
     StreamsBootstrap,
+    StreamsBootstrapCleaner,
 )
 from kpops.components.streams_bootstrap.producer.model import ProducerAppValues
 from kpops.config import get_config
@@ -27,7 +27,7 @@ from kpops.utils.docstring import describe_attr
 log = logging.getLogger("ProducerApp")
 
 
-class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrap):  # pyright: ignore[reportIncompatibleVariableOverride]
+class ProducerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):  # pyright: ignore[reportIncompatibleVariableOverride]
     values: ProducerAppValues  # pyright: ignore[reportIncompatibleVariableOverride]
 
     @property
