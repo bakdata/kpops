@@ -1,7 +1,7 @@
 import json
 import logging
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Annotated, Any, ClassVar
 
 import humps
 from pydantic import (
@@ -154,7 +154,7 @@ def issubclass_patched(
 
 
 class CamelCaseConfigModel(BaseModel):
-    model_config = ConfigDict(
+    model_config: ClassVar[ConfigDict] = ConfigDict(
         alias_generator=to_camel,
         populate_by_name=True,
     )
@@ -165,7 +165,9 @@ class DescConfigModel(BaseModel):
     def json_schema_extra(schema: dict[str, Any], model: type[BaseModel]) -> None:
         schema["description"] = describe_object(model.__doc__)
 
-    model_config = ConfigDict(json_schema_extra=json_schema_extra, use_enum_values=True)
+    model_config: ClassVar[ConfigDict] = ConfigDict(
+        json_schema_extra=json_schema_extra, use_enum_values=True
+    )
 
 
 class YamlConfigSettingsSource(PydanticBaseSettingsSource):
@@ -193,12 +195,13 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
         self.config = update_nested_pair(env_config, default_config)
 
     @staticmethod
-    def load_config(file: Path) -> dict:
+    def load_config(file: Path) -> dict[str, Any]:
         """Load YAML file if it exists.
 
         :param file: Path to a ``config*.yaml``
         :return: Dict containing the config or empty dict if file doesn't exist
         """
+        # TODO: remove isinstance check, let Pydantic handle the validation of the file contents
         if file.exists() and isinstance((loaded_file := load_yaml_file(file)), dict):
             return loaded_file
         return {}

@@ -1,5 +1,5 @@
 from enum import StrEnum
-from typing import Any
+from typing import Any, ClassVar
 
 import pydantic
 from pydantic import (
@@ -52,7 +52,7 @@ class KafkaConnectorConfig(DescConfigModel):
             }
         }
 
-    model_config = ConfigDict(
+    model_config: ClassVar[ConfigDict] = ConfigDict(
         extra="allow",
         alias_generator=to_dot,
         json_schema_extra=json_schema_extra,
@@ -106,7 +106,7 @@ class KafkaConnectResponse(BaseModel):
     tasks: list[ConnectorTask]
     type: str | None = None
 
-    model_config = ConfigDict(extra="forbid")
+    model_config: ClassVar[ConfigDict] = ConfigDict(extra="forbid")
 
 
 class KafkaConnectConfigError(BaseModel):

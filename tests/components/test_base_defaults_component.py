@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 import pydantic
 import pytest
@@ -28,7 +29,7 @@ class Nested(pydantic.BaseModel):
 
 class Child(Parent):
     __test__ = False
-    nice: dict | None = None
+    nice: dict[str, str] | None = None
     another_hard_coded: str = "another_hard_coded_value"
     nested: Nested | None = None
 
@@ -72,7 +73,7 @@ class TestBaseDefaultsComponent:
         ],
     )
     def test_load_defaults(
-        self, component_class: type[BaseDefaultsComponent], defaults: dict
+        self, component_class: type[BaseDefaultsComponent], defaults: dict[str, Any]
     ):
         assert component_class.load_defaults(RESOURCES_PATH / DEFAULTS_YAML) == defaults
 
@@ -99,7 +100,7 @@ class TestBaseDefaultsComponent:
         ],
     )
     def test_load_defaults_with_environment(
-        self, component_class: type[BaseDefaultsComponent], defaults: dict
+        self, component_class: type[BaseDefaultsComponent], defaults: dict[str, Any]
     ):
         assert (
             component_class.load_defaults(
@@ -250,7 +251,7 @@ class TestBaseDefaultsComponent:
         environment: str | None,
         expected_default_paths: list[Path],
     ):
-        config = KpopsConfig()
+        config = KpopsConfig()  # pyright: ignore[reportCallIssue]
         config.pipeline_base_dir = PIPELINE_BASE_DIR
         actual_default_paths = get_defaults_file_paths(
             pipeline_path,

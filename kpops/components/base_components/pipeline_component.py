@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from collections.abc import Iterator
+from typing import Any, ClassVar
 
 from pydantic import AliasChoices, ConfigDict, Field
 
@@ -38,7 +39,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         defaults to None
     """
 
-    name: str = Field(default=..., description=describe_attr("name", __doc__))
+    name: str = Field(description=describe_attr("name", __doc__))
     prefix: str = Field(
         default="${pipeline.name}-",
         description=describe_attr("prefix", __doc__),
@@ -55,9 +56,9 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         description=describe_attr("to", __doc__),
     )
 
-    model_config = ConfigDict(extra="allow")
+    model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.set_input_topics()
         self.set_output_topics()
@@ -244,6 +245,11 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
     def manifest_clean(self) -> tuple[KubernetesManifest, ...]:
         """Render Kubernetes manifests resources for clean."""
         return ()
+
+    def generate(self) -> dict[str, Any]:
+        return self.model_dump(
+            context="generate", mode="json", by_alias=True, exclude_none=True
+        )
 
     async def deploy(self, dry_run: bool) -> None:
         """Deploy component, e.g. to Kubernetes cluster.

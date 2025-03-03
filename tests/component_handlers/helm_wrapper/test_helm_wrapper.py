@@ -7,13 +7,16 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.component_handlers.helm_wrapper.exception import ReleaseNotFoundException
-from kpops.component_handlers.helm_wrapper.helm import Helm, HelmTemplate
+from kpops.component_handlers.helm_wrapper.exception import (
+    ParseError,
+    ReleaseNotFoundException,
+)
+from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.model import (
     HelmConfig,
+    HelmTemplate,
     HelmTemplateFlags,
     HelmUpgradeInstallFlags,
-    ParseError,
     RepoAuthFlags,
     Version,
 )

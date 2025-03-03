@@ -21,8 +21,8 @@ from kpops.utils.docstring import describe_attr
 log = logging.getLogger("ProducerAppV2")
 
 
-class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrapV2):
-    values: ProducerAppV2Values
+class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrapV2):  # pyright: ignore[reportIncompatibleVariableOverride]
+    values: ProducerAppV2Values  # pyright: ignore[reportIncompatibleVariableOverride]
 
     @property
     @override
@@ -45,10 +45,10 @@ class ProducerAppV2(StreamsBootstrapV2):
     :param from_: Producer doesn't support FromSection, defaults to None
     """
 
-    values: ProducerAppV2Values = Field(
+    values: ProducerAppV2Values = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         description=describe_attr("values", __doc__),
     )
-    from_: None = Field(
+    from_: None = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         default=None,
         alias="from",
         title="From",
@@ -92,6 +92,7 @@ class ProducerAppV2(StreamsBootstrapV2):
     def helm_chart(self) -> str:
         return f"{self.repo_config.repository_name}/{AppType.PRODUCER_APP.value}"
 
+    @override
     async def reset(self, dry_run: bool) -> None:
         """Reset not necessary, since producer app has no consumer group offsets."""
         await super().reset(dry_run)

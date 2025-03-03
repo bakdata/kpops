@@ -1,14 +1,7 @@
 - _cleaner:
-    diff_config:
-      ignore: []
     name: app1
     namespace: development-namespace
     prefix: resources-custom-config-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: producer-app-cleaner
     values:
@@ -23,16 +16,9 @@
         requests:
           memory: 2G
     version: 3.6.1
-  diff_config:
-    ignore: []
   name: app1
   namespace: development-namespace
   prefix: resources-custom-config-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
   to:
     models: {}
     topics:
@@ -54,16 +40,9 @@
         memory: 2G
   version: 3.6.1
 - _cleaner:
-    diff_config:
-      ignore: []
     name: app2
     namespace: development-namespace
     prefix: resources-custom-config-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: streams-app-cleaner
     values:
@@ -81,16 +60,9 @@
         pipeline: resources-custom-config
       statefulSet: false
     version: 3.6.1
-  diff_config:
-    ignore: []
   name: app2
   namespace: development-namespace
   prefix: resources-custom-config-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
   to:
     models: {}
     topics:

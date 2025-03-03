@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, ClassVar
 
 import pydantic
 from pydantic import AliasChoices, ConfigDict, Field
@@ -11,7 +11,6 @@ from kpops.components.common.kubernetes_model import (
     ImagePullPolicy,
     ProtocolSchema,
     Resources,
-    SerializeAsOptional,
     ServiceType,
     Toleration,
 )
@@ -20,6 +19,7 @@ from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
     DescConfigModel,
+    SerializeAsOptional,
     SerializeAsOptionalModel,
     exclude_by_value,
     exclude_defaults,
@@ -248,7 +248,7 @@ class KafkaConfig(CamelCaseConfigModel, DescConfigModel):
     """
 
     bootstrap_servers: str = Field(
-        default=..., description=describe_attr("bootstrap_servers", __doc__)
+        description=describe_attr("bootstrap_servers", __doc__)
     )
     schema_registry_url: str | None = Field(
         default=None,
@@ -266,7 +266,7 @@ class KafkaConfig(CamelCaseConfigModel, DescConfigModel):
         json_schema_extra={},
     )
 
-    model_config = ConfigDict(extra="allow")
+    model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 
     @pydantic.field_validator("labeled_output_topics", mode="before")
     @classmethod

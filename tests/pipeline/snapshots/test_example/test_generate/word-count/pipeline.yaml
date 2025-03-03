@@ -1,14 +1,7 @@
 - _cleaner:
-    diff_config:
-      ignore: []
     name: data-producer
     namespace: ${NAMESPACE}
     prefix: word-count-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: producer-app-cleaner
     values:
@@ -24,16 +17,9 @@
           enabled: false
       replicaCount: 1
     version: 3.1.0
-  diff_config:
-    ignore: []
   name: data-producer
   namespace: ${NAMESPACE}
   prefix: word-count-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
   to:
     models: {}
     topics:
@@ -55,16 +41,9 @@
     replicaCount: 1
   version: 3.1.0
 - _cleaner:
-    diff_config:
-      ignore: []
     name: word-count-app
     namespace: ${NAMESPACE}
     prefix: word-count-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: streams-app-cleaner
     values:
@@ -84,16 +63,9 @@
       replicaCount: 1
       statefulSet: false
     version: 3.1.0
-  diff_config:
-    ignore: []
   name: word-count-app
   namespace: ${NAMESPACE}
   prefix: word-count-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
   to:
     models: {}
     topics:
@@ -125,16 +97,9 @@
     statefulSet: false
   version: 3.1.0
 - _resetter:
-    diff_config:
-      ignore: []
     name: redis-sink-connector
     namespace: ${NAMESPACE}
     prefix: word-count-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-kafka-connect-resetter
-      url: https://bakdata.github.io/kafka-connect-resetter/
     suffix: -clean
     type: kafka-connector-resetter
     values:

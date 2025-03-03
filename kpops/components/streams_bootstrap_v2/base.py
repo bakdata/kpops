@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from abc import ABC
-from typing import Any, Self
+from typing import Any, ClassVar, Self
 
 import pydantic
 from pydantic import AliasChoices, ConfigDict, Field
@@ -44,7 +44,7 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
     :param output_topic: Output topic, defaults to None
     """
 
-    brokers: str = Field(default=..., description=describe_attr("brokers", __doc__))
+    brokers: str = Field(description=describe_attr("brokers", __doc__))
     schema_registry_url: str | None = Field(
         default=None,
         validation_alias=AliasChoices(
@@ -61,7 +61,7 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
         json_schema_extra={},
     )
 
-    model_config = ConfigDict(extra="allow")
+    model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 
     @pydantic.field_validator("extra_output_topics", mode="before")
     @classmethod
@@ -132,11 +132,11 @@ class StreamsBootstrapV2(KafkaApp, HelmApp, ABC):
     :param version: Helm chart version, defaults to "2.9.0"
     """
 
-    values: StreamsBootstrapV2Values = Field(
+    values: StreamsBootstrapV2Values = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         description=describe_attr("values", __doc__),
     )
 
-    repo_config: HelmRepoConfig = Field(
+    repo_config: HelmRepoConfig = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         default=STREAMS_BOOTSTRAP_HELM_REPO,
         description=describe_attr("repo_config", __doc__),
     )

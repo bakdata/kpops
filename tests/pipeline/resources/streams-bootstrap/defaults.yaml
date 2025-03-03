@@ -1,5 +1,5 @@
 cleaner:
-  helm_diff:
+  diff_config:
     ignore:
       - ["foo", "bar"]
 

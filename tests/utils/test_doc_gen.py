@@ -55,8 +55,8 @@ class TestEnvDocGen:
         tmp_path: Path,
         var_name: str,
         default_value: Any,
-        description: str | list[str],
-        extra_args: tuple,
+        description: str | list[str] | None,
+        extra_args: tuple[str, ...],
         expected_outcome: str,
     ):
         target = tmp_path / "target.csv"
@@ -138,7 +138,7 @@ class TestEnvDocGen:
         var_name: str,
         default: Any,
         required: str,
-        description: str | list[str],
+        description: str,
         setting_name: str,
         expected: str,
     ):
@@ -152,9 +152,8 @@ class TestEnvDocGen:
             EnvVarAttrs.DESCRIPTION,
         ]
         with source.open("w+", newline="") as f:
-            if setting_name is not None:
-                csv_record.append(setting_name)
-                csv_column_names.append(EnvVarAttrs.CORRESPONDING_SETTING_NAME)
+            csv_record.append(setting_name)
+            csv_column_names.append(EnvVarAttrs.CORRESPONDING_SETTING_NAME)
             f.write(",".join(csv_column_names) + "\n")
             f.write(",".join(csv_record))
         append_csv_to_dotenv_file(source, target)

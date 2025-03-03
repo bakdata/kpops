@@ -1,14 +1,7 @@
 - _cleaner:
-    diff_config:
-      ignore: []
     name: streams-app
     namespace: example-namespace
     prefix: resources-kafka-connect-sink-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: streams-app-cleaner
     values:
@@ -24,8 +17,6 @@
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
     version: 3.6.1
-  diff_config:
-    ignore: []
   from:
     components: {}
     topics:
@@ -34,11 +25,6 @@
   name: streams-app
   namespace: example-namespace
   prefix: resources-kafka-connect-sink-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
   to:
     models: {}
     topics:
@@ -66,16 +52,9 @@
     statefulSet: false
   version: 3.6.1
 - _resetter:
-    diff_config:
-      ignore: []
     name: es-sink-connector
     namespace: example-namespace
     prefix: resources-kafka-connect-sink-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-kafka-connect-resetter
-      url: https://bakdata.github.io/kafka-connect-resetter/
     suffix: -clean
     type: kafka-connector-resetter
     values:
