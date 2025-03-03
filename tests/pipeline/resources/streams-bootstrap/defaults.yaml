@@ -1,9 +1,11 @@
 cleaner:
   diff_config:
-    ignore:
-      - ["foo", "bar"]
+    ignore: []
 
 streams-bootstrap:
+  diff_config:
+    ignore:
+      - ["foo", "bar"]
   version: "3.6.1"
   values:
     imagePullPolicy: IfNotPresent
