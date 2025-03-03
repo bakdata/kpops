@@ -26,9 +26,9 @@ class TestExample:
 
     @pytest.fixture(scope="session")
     def test_submodule(self):
-        assert any(
-            EXAMPLES_PATH.iterdir()
-        ), "examples directory is empty, please initialize and update the git submodule (see contributing guide)"
+        assert any(EXAMPLES_PATH.iterdir()), (
+            "examples directory is empty, please initialize and update the git submodule (see contributing guide)"
+        )
 
     @pytest.mark.usefixtures("test_submodule")
     @pytest.mark.parametrize(
