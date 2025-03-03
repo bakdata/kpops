@@ -4,13 +4,15 @@ import logging
 from typing import TYPE_CHECKING
 
 import typer
+from typing_extensions import override
 
 if TYPE_CHECKING:
     from kpops.components.base_components.pipeline_component import PipelineComponent
 
 
 class CustomFormatter(logging.Formatter):
-    def format(self, record):
+    @override
+    def format(self, record: logging.LogRecord) -> str:
         message_format = "%(name)s - %(message)s"
 
         if record.name == "root":

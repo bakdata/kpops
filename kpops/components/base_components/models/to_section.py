@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import ClassVar
+
 from pydantic import ConfigDict, Field
 
 from kpops.components.base_components.models import ModelName, ModelVersion, TopicName
@@ -16,13 +18,15 @@ class ToSection(DescConfigModel):
     """
 
     topics: dict[TopicName, TopicConfig] = Field(
-        default={}, description=describe_attr("topics", __doc__)
+        default={},  # pyright: ignore[reportUnknownArgumentType]
+        description=describe_attr("topics", __doc__),
     )
     models: dict[ModelName, ModelVersion] = Field(
-        default={}, description=describe_attr("models", __doc__)
+        default={},  # pyright: ignore[reportUnknownArgumentType]
+        description=describe_attr("models", __doc__),
     )
 
-    model_config = ConfigDict(extra="forbid")
+    model_config: ClassVar[ConfigDict] = ConfigDict(extra="forbid")
 
     @property
     def kafka_topics(self) -> list[KafkaTopic]:

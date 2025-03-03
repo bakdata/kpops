@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Self
+from typing import Any, ClassVar, Self
 
 import pydantic
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -191,7 +191,7 @@ class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
         default=[],
         description=describe_attr("topics", __doc__),
     )
-    model_config = ConfigDict(extra="allow")
+    model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 
     @model_validator(mode="after")
     def validate_mandatory_fields_are_set(self) -> Self:
@@ -245,7 +245,7 @@ class StreamsAppV2Values(StreamsBootstrapV2Values):
     :param autoscaling: Kubernetes event-driven autoscaling config, defaults to None
     """
 
-    streams: StreamsConfig = Field(
+    streams: StreamsConfig = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         description=describe_attr("streams", __doc__),
     )
     autoscaling: StreamsAppAutoScaling | None = Field(
@@ -260,4 +260,4 @@ class StreamsAppV2Values(StreamsBootstrapV2Values):
         default=PersistenceConfig(),
         description=describe_attr("persistence", __doc__),
     )
-    model_config = ConfigDict(extra="allow")
+    model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")

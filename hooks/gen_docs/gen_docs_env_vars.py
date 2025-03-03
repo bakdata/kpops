@@ -106,7 +106,7 @@ def csv_append_env_var(
     name: str,
     default_value: Any,
     description: str | list[str] | None,
-    *args,
+    *args: str,
 ) -> None:
     """Append env variable record to a chosen .csv file, create it if doesn't exist.
 
@@ -208,8 +208,12 @@ def append_csv_to_dotenv_file(
                 default_value = f"={env_var.default_value}"
             env_var.default_value = default_value
             with target.open("a") as f_target:
-                f_target.write(
-                    f"{env_var.description}\n{env_var.name}{env_var.default_value}\n",
+                f_target.writelines(
+                    (
+                        env_var.description + "\n",
+                        env_var.name,
+                        env_var.default_value + "\n",
+                    )
                 )
 
 

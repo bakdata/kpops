@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, final
 
 if TYPE_CHECKING:
     from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from kpops.component_handlers.topic.handler import TopicHandler
 
 
+@final
 class ComponentHandlers:
     _instance: ComponentHandlers | None = None
 
@@ -37,7 +38,7 @@ class ComponentHandlers:
 
 
 def get_handlers() -> ComponentHandlers:
-    if not ComponentHandlers._instance:
+    if not ComponentHandlers._instance:  # pyright: ignore[reportPrivateUsage]
         msg = f"{ComponentHandlers.__name__} has not been initialized"
         raise RuntimeError(msg)
-    return ComponentHandlers._instance
+    return ComponentHandlers._instance  # pyright: ignore[reportPrivateUsage]

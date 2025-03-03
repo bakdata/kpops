@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, final
 
 from kpops.component_handlers.topic.exception import (
     TopicNotFoundException,
@@ -25,6 +25,7 @@ from kpops.utils.dict_differ import Diff, DiffType, render_diff
 log = logging.getLogger("KafkaTopic")
 
 
+@final
 class TopicHandler:
     def __init__(self, proxy_wrapper: ProxyWrapper) -> None:
         self.proxy_wrapper = proxy_wrapper
@@ -56,8 +57,8 @@ class TopicHandler:
 
     @staticmethod
     def __get_topic_config_diff(
-        cluster_config: TopicConfigResponse, current_config: dict
-    ) -> list[Diff]:
+        cluster_config: TopicConfigResponse, current_config: dict[str, Any]
+    ) -> list[Diff[str, Any]]:
         comparable_in_cluster_config_dict, _ = parse_rest_proxy_topic_config(
             cluster_config
         )
@@ -230,4 +231,4 @@ class TopicHandler:
             configs.append({"name": config_name, "value": config_value})
         topic_spec_json["configs"] = configs
         topic_spec_json["topic_name"] = topic.name
-        return TopicSpec(**topic_spec_json)
+        return TopicSpec.model_validate(topic_spec_json)

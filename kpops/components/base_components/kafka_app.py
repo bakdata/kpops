@@ -16,8 +16,8 @@ log = logging.getLogger("KafkaApp")
 class KafkaAppCleaner(Cleaner, ABC):
     """Helm app for resetting and cleaning a streams-bootstrap app."""
 
-    from_: None = None
-    to: None = None
+    from_: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
+    to: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
 
     @property
     @override

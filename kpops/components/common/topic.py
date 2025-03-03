@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from enum import StrEnum
-from typing import Annotated, Any
+from typing import Annotated, Any, ClassVar
 
 import pydantic
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -58,11 +58,12 @@ class TopicConfig(DescConfigModel):
         description=describe_attr("replication_factor", __doc__),
     )
     configs: dict[str, str | int] = Field(
-        default={}, description=describe_attr("configs", __doc__)
+        default={},  # pyright: ignore[reportUnknownArgumentType]
+        description=describe_attr("configs", __doc__),
     )
     label: str | None = Field(default=None, description=describe_attr("label", __doc__))
 
-    model_config = ConfigDict(
+    model_config: ClassVar[ConfigDict] = ConfigDict(
         extra="forbid",
         use_enum_values=True,
         populate_by_name=True,
@@ -91,7 +92,7 @@ class KafkaTopic(BaseModel):
     """
 
     name: str
-    config: TopicConfig = TopicConfig()
+    config: TopicConfig = TopicConfig()  # pyright: ignore[reportUnknownArgumentType]
 
     @property
     def id(self) -> str:

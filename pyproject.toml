@@ -42,7 +42,7 @@ kpops = "kpops.cli.main:app"
 dev = [
   "lefthook>=1.10.4",
   "polyfactory>=2.13.0",
-  "pyright>=1.1.352",
+  "basedpyright>=1.28.0",
   "pytablewriter[from]>=1.0.0",
   "pytest>=8.3.2",
   "pytest-asyncio>=0.23.8",
@@ -78,8 +78,11 @@ packages = ["kpops"]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 
-[tool.pyright]
+[tool.basedpyright]
 include = ["kpops", "tests", "hooks"]
+allowedUntypedLibraries = ["pytablewriter"]
+
+failOnWarnings = false # CLI usage
 
 reportImportCycles = true
 
@@ -91,6 +94,24 @@ reportUnknownMemberType = "warning"
 
 reportIncompatibleVariableOverride = "warning"
 reportIncompatibleMethodOverride = "warning"
+
+reportUnusedParameter = "hint"
+reportDeprecated = "hint"
+
+reportAny = false
+reportExplicitAny = false
+reportImplicitStringConcatenation = false
+reportUnusedCallResult = false
+# false positive for Pydantic https://github.com/DetachHead/basedpyright/issues/868
+reportUnsafeMultipleInheritance = false
+
+# we can't do much about it if a library doesn't provide types
+reportMissingTypeStubs = false
+# TODO: apply only to 3rd party libs such as lightkube
+strictParameterNoneValue = false
+
+# TODO: apply only to tests https://github.com/DetachHead/basedpyright/issues/668
+reportPrivateUsage = false
 
 [tool.ruff]
 output-format = "grouped"

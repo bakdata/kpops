@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from croniter import croniter
 from pydantic import ConfigDict, Field, field_validator
 
@@ -28,7 +30,7 @@ class ProducerAppValues(StreamsBootstrapValues):
     :param ttl_seconds_after_finished: See https://kubernetes.io/docs/concepts/workloads/controllers/ttlafterfinished/#ttl-after-finished-controller
     """
 
-    kafka: ProducerConfig = Field(description=describe_attr("kafka", __doc__))
+    kafka: ProducerConfig = Field(description=describe_attr("kafka", __doc__))  # pyright: ignore[reportIncompatibleVariableOverride]
 
     deployment: bool | None = Field(
         default=None, description=describe_attr("deployment", __doc__)
@@ -64,7 +66,7 @@ class ProducerAppValues(StreamsBootstrapValues):
         default=None, description=describe_attr("ttl_seconds_after_finished", __doc__)
     )
 
-    model_config = ConfigDict(extra="allow")
+    model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 
     @field_validator("schedule")
     @classmethod

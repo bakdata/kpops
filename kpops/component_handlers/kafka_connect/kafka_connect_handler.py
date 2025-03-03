@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Self
+from typing import TYPE_CHECKING, Self, final
 
 from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
 from kpops.component_handlers.kafka_connect.exception import (
@@ -18,6 +18,7 @@ if TYPE_CHECKING:
 log = logging.getLogger("KafkaConnectHandler")
 
 
+@final
 class KafkaConnectHandler:
     def __init__(self, connect_wrapper: ConnectWrapper):
         self._connect_wrapper = connect_wrapper
