@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from collections.abc import Iterator
+from typing import Any
 
 from pydantic import AliasChoices, ConfigDict, Field
 
@@ -218,6 +219,11 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         ]
         for input_topic in input_topics:
             self.apply_from_inputs(input_topic, from_topic)
+
+    def generate(self) -> dict[str, Any]:
+        return self.model_dump(
+            context="generate", mode="json", by_alias=True, exclude_none=True
+        )
 
     def inflate(self) -> list[PipelineComponent]:
         """Inflate component.
