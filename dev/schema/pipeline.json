@@ -1199,6 +1199,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Override of cleaner attributes",
                     "title": "Cleaner"
                 },
                 "diff_config": {
@@ -1298,6 +1299,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Override of cleaner attributes",
                     "title": "Cleaner"
                 },
                 "diff_config": {
@@ -2343,6 +2345,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Override of cleaner attributes",
                     "title": "Cleaner"
                 },
                 "diff_config": {
@@ -2449,6 +2452,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Override of cleaner attributes",
                     "title": "Cleaner"
                 },
                 "diff_config": {
