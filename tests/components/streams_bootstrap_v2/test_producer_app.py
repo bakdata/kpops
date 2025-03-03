@@ -126,7 +126,7 @@ class TestProducerApp:
         )
 
         mock_helm_upgrade_install = mocker.patch.object(
-            producer_app.helm, "upgrade_install"
+            producer_app._helm, "upgrade_install"
         )
 
         mock = mocker.AsyncMock()
@@ -171,7 +171,7 @@ class TestProducerApp:
         producer_app: ProducerAppV2,
         mocker: MockerFixture,
     ):
-        mock_helm_uninstall = mocker.patch.object(producer_app.helm, "uninstall")
+        mock_helm_uninstall = mocker.patch.object(producer_app._helm, "uninstall")
 
         await producer_app.destroy(dry_run=True)
 
@@ -187,18 +187,18 @@ class TestProducerApp:
     ):
         # actual component
         mock_helm_uninstall_producer_app = mocker.patch.object(
-            producer_app.helm, "uninstall"
+            producer_app._helm, "uninstall"
         )
 
         # cleaner
         mock_helm_upgrade_install = mocker.patch.object(
-            producer_app._cleaner.helm, "upgrade_install"
+            producer_app._cleaner._helm, "upgrade_install"
         )
         mock_helm_uninstall = mocker.patch.object(
-            producer_app._cleaner.helm, "uninstall"
+            producer_app._cleaner._helm, "uninstall"
         )
         mock_helm_print_helm_diff = mocker.patch.object(
-            producer_app._cleaner.dry_run_handler, "print_helm_diff"
+            producer_app._cleaner._dry_run_handler, "print_helm_diff"
         )
 
         mock = mocker.MagicMock()
@@ -264,15 +264,15 @@ class TestProducerApp:
     ):
         # actual component
         mock_helm_uninstall_producer_app = mocker.patch.object(
-            producer_app.helm, "uninstall"
+            producer_app._helm, "uninstall"
         )
 
         # cleaner
         mock_helm_upgrade_install = mocker.patch.object(
-            producer_app._cleaner.helm, "upgrade_install"
+            producer_app._cleaner._helm, "upgrade_install"
         )
         mock_helm_uninstall = mocker.patch.object(
-            producer_app._cleaner.helm, "uninstall"
+            producer_app._cleaner._helm, "uninstall"
         )
 
         mock = mocker.MagicMock()
@@ -391,12 +391,12 @@ class TestProducerApp:
                 },
             },
         )
-        uninstall_producer_mock = mocker.patch.object(producer_app.helm, "uninstall")
-        mocker.patch.object(producer_app._cleaner.dry_run_handler, "print_helm_diff")
-        mocker.patch.object(producer_app._cleaner.helm, "uninstall")
+        uninstall_producer_mock = mocker.patch.object(producer_app._helm, "uninstall")
+        mocker.patch.object(producer_app._cleaner._dry_run_handler, "print_helm_diff")
+        mocker.patch.object(producer_app._cleaner._helm, "uninstall")
 
         mock_helm_upgrade_install_clean_up = mocker.patch.object(
-            producer_app._cleaner.helm, "upgrade_install"
+            producer_app._cleaner._helm, "upgrade_install"
         )
 
         dry_run = True
@@ -440,12 +440,12 @@ class TestProducerApp:
                 },
             },
         )
-        mocker.patch.object(producer_app.helm, "uninstall")
-        mocker.patch.object(producer_app._cleaner.dry_run_handler, "print_helm_diff")
-        mocker.patch.object(producer_app._cleaner.helm, "uninstall")
+        mocker.patch.object(producer_app._helm, "uninstall")
+        mocker.patch.object(producer_app._cleaner._dry_run_handler, "print_helm_diff")
+        mocker.patch.object(producer_app._cleaner._helm, "uninstall")
 
         mock_helm_upgrade_install = mocker.patch.object(
-            producer_app._cleaner.helm, "upgrade_install"
+            producer_app._cleaner._helm, "upgrade_install"
         )
 
         dry_run = True
@@ -508,12 +508,12 @@ class TestProducerApp:
                 },
             },
         )
-        mocker.patch.object(producer_app.helm, "uninstall")
-        mocker.patch.object(producer_app._cleaner.dry_run_handler, "print_helm_diff")
-        mocker.patch.object(producer_app._cleaner.helm, "uninstall")
+        mocker.patch.object(producer_app._helm, "uninstall")
+        mocker.patch.object(producer_app._cleaner._dry_run_handler, "print_helm_diff")
+        mocker.patch.object(producer_app._cleaner._helm, "uninstall")
 
         mock_helm_upgrade_install = mocker.patch.object(
-            producer_app._cleaner.helm, "upgrade_install"
+            producer_app._cleaner._helm, "upgrade_install"
         )
 
         dry_run = True

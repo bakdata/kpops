@@ -121,7 +121,7 @@ class StreamsAppV2(StreamsBootstrapV2):
 
     @override
     async def destroy(self, dry_run: bool) -> None:
-        cluster_values = await self.helm.get_values(
+        cluster_values = await self._helm.get_values(
             self.namespace, self.helm_release_name
         )
         if cluster_values:

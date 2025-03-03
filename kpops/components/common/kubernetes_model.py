@@ -87,15 +87,17 @@ class NodeSelectorRequirement(DescConfigModel, CamelCaseConfigModel):
     def validate_values(self) -> Self:
         match self.operator:
             case NodeSelectorOperator.IN | NodeSelectorOperator.NOT_IN:
-                assert (
-                    self.values
-                ), "If the operator is In or NotIn, the values array must be non-empty."
+                assert self.values, (
+                    "If the operator is In or NotIn, the values array must be non-empty."
+                )
             case NodeSelectorOperator.EXISTS | NodeSelectorOperator.DOES_NOT_EXIST:
-                assert not self.values, "If the operator is Exists or DoesNotExist, the values array must be empty."
+                assert not self.values, (
+                    "If the operator is Exists or DoesNotExist, the values array must be empty."
+                )
             case NodeSelectorOperator.GT | NodeSelectorOperator.LT:
-                assert (
-                    len(self.values) == 1
-                ), "If the operator is Gt or Lt, the values array must have a single element, which will be interpreted as an integer."
+                assert len(self.values) == 1, (
+                    "If the operator is Gt or Lt, the values array must have a single element, which will be interpreted as an integer."
+                )
         return self
 
 
@@ -192,11 +194,13 @@ class LabelSelectorRequirement(DescConfigModel, CamelCaseConfigModel):
     def validate_values(self) -> Self:
         match self.operator:
             case LabelSelectorOperator.IN | LabelSelectorOperator.NOT_IN:
-                assert (
-                    self.values
-                ), "If the operator is In or NotIn, the values array must be non-empty."
+                assert self.values, (
+                    "If the operator is In or NotIn, the values array must be non-empty."
+                )
             case LabelSelectorOperator.EXISTS | LabelSelectorOperator.DOES_NOT_EXIST:
-                assert not self.values, "If the operator is Exists or DoesNotExist, the values array must be empty."
+                assert not self.values, (
+                    "If the operator is Exists or DoesNotExist, the values array must be empty."
+                )
         return self
 
 

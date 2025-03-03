@@ -73,7 +73,7 @@ def import_module(module_name: str) -> ModuleType:
     module = importlib.import_module(module_name)
     if module.__file__:
         log.debug(
-            f"Loading {typer.style(module.__name__,bold=True)} ({module.__file__})"
+            f"Loading {typer.style(module.__name__, bold=True)} ({module.__file__})"
         )
     return module
 

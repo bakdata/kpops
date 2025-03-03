@@ -44,7 +44,7 @@ class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrap):  # pyright: ignore[
             post_delete = ArgoHook.POST_DELETE
             values = enrich_annotations(values, post_delete.key, post_delete.value)
 
-        return self.helm.template(
+        return self._helm.template(
             self.helm_release_name,
             self.helm_chart,
             self.namespace,
@@ -137,7 +137,7 @@ class ProducerApp(StreamsBootstrap):
 
     @override
     async def destroy(self, dry_run: bool) -> None:
-        cluster_values = await self.helm.get_values(
+        cluster_values = await self._helm.get_values(
             self.namespace, self.helm_release_name
         )
         if cluster_values:

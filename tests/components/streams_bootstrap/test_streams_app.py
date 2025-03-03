@@ -370,7 +370,7 @@ class TestStreamsApp:
             get_handlers().topic_handler, "create_topic"
         )
         mock_helm_upgrade_install = mocker.patch.object(
-            streams_app.helm, "upgrade_install"
+            streams_app._helm, "upgrade_install"
         )
 
         mock = mocker.AsyncMock()
@@ -454,7 +454,7 @@ class TestStreamsApp:
         streams_app: StreamsApp,
         mocker: MockerFixture,
     ):
-        mock_helm_uninstall = mocker.patch.object(streams_app.helm, "uninstall")
+        mock_helm_uninstall = mocker.patch.object(streams_app._helm, "uninstall")
 
         await streams_app.destroy(dry_run=True)
 
@@ -470,14 +470,16 @@ class TestStreamsApp:
     ):
         # actual component
         mock_helm_uninstall_streams_app = mocker.patch.object(
-            streams_app.helm, "uninstall"
+            streams_app._helm, "uninstall"
         )
 
         cleaner = streams_app._cleaner
         assert isinstance(cleaner, StreamsAppCleaner)
 
-        mock_helm_upgrade_install = mocker.patch.object(cleaner.helm, "upgrade_install")
-        mock_helm_uninstall = mocker.patch.object(cleaner.helm, "uninstall")
+        mock_helm_upgrade_install = mocker.patch.object(
+            cleaner._helm, "upgrade_install"
+        )
+        mock_helm_uninstall = mocker.patch.object(cleaner._helm, "uninstall")
 
         mock = mocker.MagicMock()
         mock.attach_mock(
@@ -537,14 +539,14 @@ class TestStreamsApp:
     ):
         # actual component
         mock_helm_uninstall_streams_app = mocker.patch.object(
-            streams_app.helm, "uninstall"
+            streams_app._helm, "uninstall"
         )
 
         mock_helm_upgrade_install = mocker.patch.object(
-            streams_app._cleaner.helm, "upgrade_install"
+            streams_app._cleaner._helm, "upgrade_install"
         )
         mock_helm_uninstall = mocker.patch.object(
-            streams_app._cleaner.helm, "uninstall"
+            streams_app._cleaner._helm, "uninstall"
         )
 
         mock = mocker.MagicMock()
@@ -639,12 +641,12 @@ class TestStreamsApp:
             },
         )
 
-        mocker.patch.object(streams_app.helm, "uninstall")
+        mocker.patch.object(streams_app._helm, "uninstall")
 
         mock_helm_upgrade_install = mocker.patch.object(
-            streams_app._cleaner.helm, "upgrade_install"
+            streams_app._cleaner._helm, "upgrade_install"
         )
-        mocker.patch.object(streams_app._cleaner.helm, "uninstall")
+        mocker.patch.object(streams_app._cleaner._helm, "uninstall")
 
         mock = mocker.MagicMock()
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
@@ -718,12 +720,12 @@ class TestStreamsApp:
             },
         )
 
-        mocker.patch.object(streams_app.helm, "uninstall")
+        mocker.patch.object(streams_app._helm, "uninstall")
 
         mock_helm_upgrade_install = mocker.patch.object(
-            streams_app._cleaner.helm, "upgrade_install"
+            streams_app._cleaner._helm, "upgrade_install"
         )
-        mocker.patch.object(streams_app._cleaner.helm, "uninstall")
+        mocker.patch.object(streams_app._cleaner._helm, "uninstall")
 
         mock = mocker.MagicMock()
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
@@ -869,13 +871,15 @@ class TestStreamsApp:
     ):
         # actual component
         mock_helm_uninstall_streams_app = mocker.patch.object(
-            stateful_streams_app.helm, "uninstall"
+            stateful_streams_app._helm, "uninstall"
         )
         cleaner = stateful_streams_app._cleaner
         assert isinstance(cleaner, StreamsAppCleaner)
 
-        mock_helm_upgrade_install = mocker.patch.object(cleaner.helm, "upgrade_install")
-        mock_helm_uninstall = mocker.patch.object(cleaner.helm, "uninstall")
+        mock_helm_upgrade_install = mocker.patch.object(
+            cleaner._helm, "upgrade_install"
+        )
+        mock_helm_uninstall = mocker.patch.object(cleaner._helm, "uninstall")
 
         mock_delete_pvcs = mocker.patch.object(PVCHandler, "delete_pvcs")
 
@@ -1007,12 +1011,12 @@ class TestStreamsApp:
             },
         )
 
-        mocker.patch.object(streams_app.helm, "uninstall")
+        mocker.patch.object(streams_app._helm, "uninstall")
 
         mock_helm_upgrade_install = mocker.patch.object(
-            streams_app._cleaner.helm, "upgrade_install"
+            streams_app._cleaner._helm, "upgrade_install"
         )
-        mocker.patch.object(streams_app._cleaner.helm, "uninstall")
+        mocker.patch.object(streams_app._cleaner._helm, "uninstall")
 
         mock = mocker.MagicMock()
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
