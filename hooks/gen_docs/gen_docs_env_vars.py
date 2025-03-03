@@ -209,8 +209,7 @@ def append_csv_to_dotenv_file(
             env_var.default_value = default_value
             with target.open("a") as f_target:
                 f_target.write(
-                    f"{env_var.description}\n"
-                    f"{env_var.name}{env_var.default_value}\n",
+                    f"{env_var.description}\n{env_var.name}{env_var.default_value}\n",
                 )
 
 
