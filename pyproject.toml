@@ -96,30 +96,22 @@ reportIncompatibleVariableOverride = "warning"
 reportIncompatibleMethodOverride = "warning"
 
 reportUnusedParameter = "hint"
-
-# we can't do much about it if a library doesn't provide types
-reportMissingTypeStubs = false
+reportDeprecated = "hint"
 
 reportAny = false
 reportExplicitAny = false
 reportImplicitStringConcatenation = false
 reportUnusedCallResult = false
-
 # false positive for Pydantic https://github.com/DetachHead/basedpyright/issues/868
 reportUnsafeMultipleInheritance = false
 
+# we can't do much about it if a library doesn't provide types
+reportMissingTypeStubs = false
 # TODO: apply only to 3rd party libs such as lightkube
 strictParameterNoneValue = false
 
-[[tool.basedpyright.executionEnvironments]]
-root = "kpops/components/streams_bootstrap_v2"
-reportDeprecated = "hint"
-
-[[tool.basedpyright.executionEnvironments]]
-root = "tests"
+# TODO: apply only to tests https://github.com/DetachHead/basedpyright/issues/668
 reportPrivateUsage = false
-reportUnusedParameter = false
-reportDeprecated = "hint"
 
 [tool.ruff]
 output-format = "grouped"
