@@ -1,5 +1,5 @@
 from collections.abc import Iterator
-from typing import Any, Self
+from typing import Any, ClassVar, Self
 
 import pydantic
 import yaml
@@ -31,7 +31,7 @@ class ObjectMeta(CamelCaseConfigModel):
     resource_version: str | None = None
     uid: str | None = None
 
-    model_config = ConfigDict(extra="allow")
+    model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 
     @pydantic.model_serializer(mode="wrap", when_used="always")
     def serialize_model(
@@ -53,7 +53,7 @@ class KubernetesManifest(CamelCaseConfigModel):
     metadata: ObjectMeta
     _required: set[str] = pydantic.PrivateAttr({"api_version", "kind"})
 
-    model_config = ConfigDict(extra="allow")
+    model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 
     @classmethod
     def from_yaml(cls, /, content: str) -> Iterator[Self]:

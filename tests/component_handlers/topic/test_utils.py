@@ -118,7 +118,9 @@ kafka_rest_proxy_response = {
 
 
 def test_parse_and_compare_topic_configs():
-    topic_config_response = TopicConfigResponse(**kafka_rest_proxy_response)
+    topic_config_response = TopicConfigResponse.model_validate(
+        kafka_rest_proxy_response
+    )
 
     in_cluster, new_config = parse_and_compare_topic_configs(
         topic_config_response,
@@ -137,7 +139,9 @@ def test_parse_and_compare_topic_configs():
 
 
 def test_compare_single_config_correctly():
-    topic_config_response = TopicConfigResponse(**kafka_rest_proxy_response)
+    topic_config_response = TopicConfigResponse.model_validate(
+        kafka_rest_proxy_response
+    )
 
     in_cluster, new_config = parse_and_compare_topic_configs(
         topic_config_response,

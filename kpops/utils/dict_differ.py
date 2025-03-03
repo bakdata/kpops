@@ -4,7 +4,7 @@ from collections.abc import Mapping, MutableMapping
 from dataclasses import dataclass
 from difflib import Differ
 from enum import StrEnum
-from typing import TYPE_CHECKING, Any, Generic, NamedTuple, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, NamedTuple, TypeVar, cast
 
 import typer
 import yaml
@@ -38,16 +38,19 @@ class Change(NamedTuple, Generic[_O, _N]):
 
     @staticmethod
     def factory(
-        type: DiffType, change: _N | tuple[_O, _N]
+        type: DiffType, change: _O | _N | tuple[_O, _N]
     ) -> Change[_O | None, _N | None]:
         match type:
             case DiffType.ADD:
-                return Change(None, change)  # pyright: ignore[reportReturnType]
+                change = cast(_N, change)
+                return Change(None, change)
             case DiffType.REMOVE:
-                return Change(change, None)  # pyright: ignore[reportReturnType]
-            case DiffType.CHANGE if isinstance(change, tuple):
-                return Change(*change)  # pyright: ignore[reportReturnType]
-        msg = f"{type} is not part of {DiffType}"
+                change = cast(_O, change)
+                return Change(change, None)
+            case DiffType.CHANGE:
+                change = cast(tuple[_O, _N], change)
+                return Change(*change)
+        msg = f"{type} is not part of {DiffType}"  # pyright: ignore[reportUnreachable]
         raise ValueError(msg)
 
 
@@ -62,13 +65,13 @@ class Diff(Generic[_O, _N]):
         d1: dict[str, Any], d2: dict[str, Any], ignore: set[str] | None = None
     ) -> Iterator[Diff[Any, Any]]:
         for diff_type, keys, changes in diff(d1, d2, ignore=ignore):
-            diff_type = DiffType.from_str(diff_type)
+            diff_type = DiffType.from_str(diff_type)  # pyright: ignore[reportUnknownArgumentType]
             if not isinstance(changes_tmp := changes, list):
                 changes_tmp: list[tuple[str, Any]] = [("", changes)]
             for key, change in changes_tmp:
                 yield Diff(
                     diff_type,
-                    Diff.__find_changed_key(keys, key),
+                    Diff.__find_changed_key(keys, key),  # pyright: ignore[reportUnknownArgumentType]
                     Change.factory(diff_type, change),
                 )
 
@@ -108,7 +111,7 @@ def render_diff(
     if not differences:
         return None
 
-    d2_filtered: Mapping = patch(differences, d1)
+    d2_filtered: Mapping[str, Any] = patch(differences, d1)
     return "".join(
         colorize_diff(
             differ.compare(
@@ -134,5 +137,5 @@ def colorize_line(line: str) -> str:
     return line
 
 
-def to_yaml(data: Mapping) -> Sequence[str]:
+def to_yaml(data: Mapping[str, Any]) -> Sequence[str]:
     return yaml.safe_dump(data, sort_keys=True).splitlines(keepends=True)

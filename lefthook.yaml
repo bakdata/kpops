@@ -14,9 +14,9 @@ pre-commit:
       glob: "*.py"
       run: uv run ruff format --force-exclude --config pyproject.toml {staged_files}
       stage_fixed: true
-    pyright:
+    basedpyright:
       glob: "*.py"
-      run: uv run pyright
+      run: uv run basedpyright
     dprint:
       glob: "*.{json,jsonc,yaml,yml,md,toml,css}"
       run: dprint fmt

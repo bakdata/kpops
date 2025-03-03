@@ -11,7 +11,8 @@ from pytest_snapshot.plugin import Snapshot
 from typer.testing import CliRunner
 
 import kpops.api as kpops
-from kpops.cli.main import FilterType, app
+from kpops.api.options import FilterType
+from kpops.cli.main import app
 from kpops.components.base_components.kafka_connector import KafkaSinkConnector
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.const.file_type import PIPELINE_YAML, KpopsFileType
@@ -856,7 +857,7 @@ class TestGenerate:
         assert pipeline.components[0].name == "es-sink-connector"
         assert pipeline.components[0]._resetter.name == "es-sink-connector"
         assert hasattr(pipeline.components[0]._resetter.values, "label")
-        assert pipeline.components[0]._resetter.values.label == "es-sink-connector"  # type: ignore[reportGeneralTypeIssues]
+        assert pipeline.components[0]._resetter.values.label == "es-sink-connector"  # pyright: ignore[reportAttributeAccessIssue,reportUnknownMemberType]
 
         enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(pipeline.to_yaml())
         assert enriched_pipeline[0]["name"] == "es-sink-connector"

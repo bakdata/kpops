@@ -1,6 +1,7 @@
 from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
+from typing import ClassVar
 
 from pydantic import BaseModel, ConfigDict, Field
 from typing_extensions import override
@@ -71,10 +72,8 @@ class HelmRepoConfig(DescConfigModel):
     :param repo_auth_flags: Authorisation-related flags
     """
 
-    repository_name: str = Field(
-        default=..., description=describe_attr("repository_name", __doc__)
-    )
-    url: str = Field(default=..., description=describe_attr("url", __doc__))
+    repository_name: str = Field(description=describe_attr("repository_name", __doc__))
+    url: str = Field(description=describe_attr("url", __doc__))
     repo_auth_flags: RepoAuthFlags = Field(
         default=RepoAuthFlags(), description=describe_attr("repo_auth_flags", __doc__)
     )
@@ -113,7 +112,7 @@ class HelmFlags(RepoAuthFlags):
     wait: bool = True
     wait_for_jobs: bool = False
 
-    model_config = ConfigDict(
+    model_config: ClassVar[ConfigDict] = ConfigDict(
         extra="allow",
     )
 

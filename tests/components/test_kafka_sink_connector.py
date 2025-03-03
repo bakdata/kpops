@@ -16,11 +16,11 @@ from kpops.components.base_components.kafka_connector import (
     KafkaConnectorResetter,
     KafkaSinkConnector,
 )
+from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.models.from_section import (
     FromSection,
     FromTopic,
     InputTopicTypes,
-    TopicName,
 )
 from kpops.components.base_components.models.to_section import (
     ToSection,

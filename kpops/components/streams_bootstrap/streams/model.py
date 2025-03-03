@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import StrEnum
-from typing import Any
+from typing import Any, ClassVar
 
 import pydantic
 from pydantic import BaseModel, ConfigDict, Field
@@ -9,7 +9,6 @@ from pydantic import BaseModel, ConfigDict, Field
 from kpops.components.common.kubernetes_model import (
     ImagePullPolicy,
     Resources,
-    SerializeAsOptional,
 )
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
 from kpops.components.streams_bootstrap.model import (
@@ -20,6 +19,7 @@ from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
     DescConfigModel,
+    SerializeAsOptional,
     SerializeAsOptionalModel,
 )
 
@@ -208,7 +208,7 @@ class StreamsAppAutoScaling(
         default=[],
         description=describe_attr("additional_triggers", __doc__),
     )
-    model_config = ConfigDict(extra="allow")
+    model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 
 
 class PersistenceConfig(BaseModel):
@@ -383,7 +383,7 @@ class StreamsAppValues(StreamsBootstrapValues):
     :param termination_grace_period_seconds: Delay for graceful application shutdown in seconds: https://pracucci.com/graceful-shutdown-of-kubernetes-pods.html
     """
 
-    kafka: StreamsConfig = Field(
+    kafka: StreamsConfig = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         description=describe_attr("kafka", __doc__),
     )
 
@@ -417,4 +417,4 @@ class StreamsAppValues(StreamsBootstrapValues):
         description=describe_attr("termination_grace_period_seconds", __doc__),
     )
 
-    model_config = ConfigDict(extra="allow")
+    model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")

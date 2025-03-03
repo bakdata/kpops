@@ -78,7 +78,7 @@ class SchemaRegistryConfig(BaseSettings):
         description="Whether the Schema Registry handler should be initialized.",
     )
     url: AnyHttpUrl = Field(
-        default=TypeAdapter(AnyHttpUrl).validate_python("http://localhost:8081"),  # pyright: ignore[reportCallIssue]
+        default=TypeAdapter(AnyHttpUrl).validate_python("http://localhost:8081"),
         description="Address of the Schema Registry.",
     )
     timeout: int | float = Field(
@@ -90,7 +90,7 @@ class KafkaRestConfig(BaseSettings):
     """Configuration for Kafka REST Proxy."""
 
     url: AnyHttpUrl = Field(
-        default=TypeAdapter(AnyHttpUrl).validate_python("http://localhost:8082"),  # pyright: ignore[reportCallIssue]
+        default=TypeAdapter(AnyHttpUrl).validate_python("http://localhost:8082"),
         description="Address of the Kafka REST Proxy.",
     )
     timeout: int | float = Field(
@@ -102,7 +102,7 @@ class KafkaConnectConfig(BaseSettings):
     """Configuration for Kafka Connect."""
 
     url: AnyHttpUrl = Field(
-        default=TypeAdapter(AnyHttpUrl).validate_python("http://localhost:8083"),  # pyright: ignore[reportCallIssue]
+        default=TypeAdapter(AnyHttpUrl).validate_python("http://localhost:8083"),
         description="Address of Kafka Connect.",
     )
     timeout: int | float = Field(
@@ -120,7 +120,6 @@ class KpopsConfig(BaseSettings):
         description="Base directory to the pipelines (default is current working directory)",
     )
     kafka_brokers: str = Field(
-        default=...,
         examples=[
             "broker1:9092,broker2:9092,broker3:9092",
         ],
@@ -163,7 +162,7 @@ class KpopsConfig(BaseSettings):
         description="The operation mode of KPOps (managed, manifest, argo).",
         exclude=True,
     )
-    model_config = SettingsConfigDict(
+    model_config: ClassVar[SettingsConfigDict] = SettingsConfigDict(
         env_prefix=ENV_PREFIX,
         env_nested_delimiter="__",
         use_enum_values=True,
