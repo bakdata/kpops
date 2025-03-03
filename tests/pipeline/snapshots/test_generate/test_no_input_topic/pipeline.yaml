@@ -1,14 +1,7 @@
 - _cleaner:
-    diff_config:
-      ignore: []
     name: app1
     namespace: example-namespace
     prefix: resources-no-input-topic-pipeline-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: streams-app-cleaner
     values:
@@ -30,8 +23,6 @@
           memory: 2G
       statefulSet: false
     version: 3.6.1
-  diff_config:
-    ignore: []
   from:
     components: {}
     topics:
@@ -40,11 +31,6 @@
   name: app1
   namespace: example-namespace
   prefix: resources-no-input-topic-pipeline-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
   to:
     models: {}
     topics:
@@ -78,16 +64,9 @@
     statefulSet: false
   version: 3.6.1
 - _cleaner:
-    diff_config:
-      ignore: []
     name: app2
     namespace: example-namespace
     prefix: resources-no-input-topic-pipeline-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: streams-app-cleaner
     values:
@@ -105,16 +84,9 @@
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
     version: 3.6.1
-  diff_config:
-    ignore: []
   name: app2
   namespace: example-namespace
   prefix: resources-no-input-topic-pipeline-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
   to:
     models: {}
     topics:

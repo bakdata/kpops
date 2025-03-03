@@ -97,9 +97,7 @@ class Pipeline(BaseModel):
 
     def to_yaml(self) -> str:
         return yaml.dump(
-            self.model_dump(mode="json", by_alias=True, exclude_none=True)[
-                "components"
-            ],
+            [component.generate() for component in self.components],
             Dumper=CustomSafeDumper,
         )
 

@@ -1,14 +1,7 @@
 - _cleaner:
-    diff_config:
-      ignore: []
     name: producer1
     namespace: example-namespace
     prefix: resources-read-from-component-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: producer-app-cleaner
     values:
@@ -18,16 +11,9 @@
         outputTopic: resources-read-from-component-producer1
         schemaRegistryUrl: http://localhost:8081/
     version: 3.6.1
-  diff_config:
-    ignore: []
   name: producer1
   namespace: example-namespace
   prefix: resources-read-from-component-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
   to:
     models: {}
     topics:
@@ -43,16 +29,9 @@
       schemaRegistryUrl: http://localhost:8081/
   version: 3.6.1
 - _cleaner:
-    diff_config:
-      ignore: []
     name: producer2
     namespace: example-namespace
     prefix: ''
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: producer-app-cleaner
     values:
@@ -62,16 +41,9 @@
         outputTopic: resources-read-from-component-producer2
         schemaRegistryUrl: http://localhost:8081/
     version: 3.6.1
-  diff_config:
-    ignore: []
   name: producer2
   namespace: example-namespace
   prefix: ''
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
   to:
     models: {}
     topics:
@@ -87,16 +59,9 @@
       schemaRegistryUrl: http://localhost:8081/
   version: 3.6.1
 - _cleaner:
-    diff_config:
-      ignore: []
     name: inflate-step
     namespace: example-namespace
     prefix: resources-read-from-component-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: streams-app-cleaner
     values:
@@ -120,16 +85,9 @@
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
     version: 3.6.1
-  diff_config:
-    ignore: []
   name: inflate-step
   namespace: example-namespace
   prefix: resources-read-from-component-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
   to:
     models: {}
     topics:
@@ -167,16 +125,9 @@
     statefulSet: false
   version: 3.6.1
 - _resetter:
-    diff_config:
-      ignore: []
     name: inflate-step-inflated-sink-connector
     namespace: example-namespace
     prefix: resources-read-from-component-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-kafka-connect-resetter
-      url: https://bakdata.github.io/kafka-connect-resetter/
     suffix: -clean
     type: kafka-connector-resetter
     values:
@@ -213,16 +164,9 @@
         type: output
   type: kafka-sink-connector
 - _cleaner:
-    diff_config:
-      ignore: []
     name: inflate-step-inflated-streams-app
     namespace: example-namespace
     prefix: resources-read-from-component-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: streams-app-cleaner
     values:
@@ -238,16 +182,9 @@
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
     version: 3.6.1
-  diff_config:
-    ignore: []
   name: inflate-step-inflated-streams-app
   namespace: example-namespace
   prefix: resources-read-from-component-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
   to:
     models: {}
     topics:
@@ -275,16 +212,9 @@
     statefulSet: false
   version: 3.6.1
 - _cleaner:
-    diff_config:
-      ignore: []
     name: inflate-step-without-prefix
     namespace: example-namespace
     prefix: ''
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: streams-app-cleaner
     values:
@@ -308,16 +238,9 @@
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
     version: 3.6.1
-  diff_config:
-    ignore: []
   name: inflate-step-without-prefix
   namespace: example-namespace
   prefix: ''
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
   to:
     models: {}
     topics:
@@ -355,16 +278,9 @@
     statefulSet: false
   version: 3.6.1
 - _resetter:
-    diff_config:
-      ignore: []
     name: inflate-step-without-prefix-inflated-sink-connector
     namespace: example-namespace
     prefix: resources-read-from-component-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-kafka-connect-resetter
-      url: https://bakdata.github.io/kafka-connect-resetter/
     suffix: -clean
     type: kafka-connector-resetter
     values:
@@ -401,16 +317,9 @@
         type: output
   type: kafka-sink-connector
 - _cleaner:
-    diff_config:
-      ignore: []
     name: inflate-step-without-prefix-inflated-streams-app
     namespace: example-namespace
     prefix: resources-read-from-component-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: streams-app-cleaner
     values:
@@ -426,16 +335,9 @@
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
     version: 3.6.1
-  diff_config:
-    ignore: []
   name: inflate-step-without-prefix-inflated-streams-app
   namespace: example-namespace
   prefix: resources-read-from-component-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
   to:
     models: {}
     topics:
@@ -463,16 +365,9 @@
     statefulSet: false
   version: 3.6.1
 - _cleaner:
-    diff_config:
-      ignore: []
     name: consumer1
     namespace: example-namespace
     prefix: resources-read-from-component-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: streams-app-cleaner
     values:
@@ -488,8 +383,6 @@
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
     version: 3.6.1
-  diff_config:
-    ignore: []
   from:
     components:
       producer1:
@@ -498,11 +391,6 @@
   name: consumer1
   namespace: example-namespace
   prefix: resources-read-from-component-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
   to:
     models: {}
     topics:
@@ -530,16 +418,9 @@
     statefulSet: false
   version: 3.6.1
 - _cleaner:
-    diff_config:
-      ignore: []
     name: consumer2
     namespace: example-namespace
     prefix: resources-read-from-component-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: streams-app-cleaner
     values:
@@ -555,8 +436,6 @@
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
     version: 3.6.1
-  diff_config:
-    ignore: []
   from:
     components:
       consumer1:
@@ -567,11 +446,6 @@
   name: consumer2
   namespace: example-namespace
   prefix: resources-read-from-component-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
   to:
     models: {}
     topics:
@@ -596,16 +470,9 @@
     statefulSet: false
   version: 3.6.1
 - _cleaner:
-    diff_config:
-      ignore: []
     name: consumer3
     namespace: example-namespace
     prefix: resources-read-from-component-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: streams-app-cleaner
     values:
@@ -621,8 +488,6 @@
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
     version: 3.6.1
-  diff_config:
-    ignore: []
   from:
     components:
       producer2:
@@ -633,11 +498,6 @@
   name: consumer3
   namespace: example-namespace
   prefix: resources-read-from-component-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
   to:
     models: {}
     topics:
@@ -662,16 +522,9 @@
     statefulSet: false
   version: 3.6.1
 - _cleaner:
-    diff_config:
-      ignore: []
     name: consumer4
     namespace: example-namespace
     prefix: resources-read-from-component-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: streams-app-cleaner
     values:
@@ -686,8 +539,6 @@
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
     version: 3.6.1
-  diff_config:
-    ignore: []
   from:
     components:
       inflate-step:
@@ -696,11 +547,6 @@
   name: consumer4
   namespace: example-namespace
   prefix: resources-read-from-component-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
   to:
     models: {}
     topics:
@@ -724,16 +570,9 @@
     statefulSet: false
   version: 3.6.1
 - _cleaner:
-    diff_config:
-      ignore: []
     name: consumer5
     namespace: example-namespace
     prefix: resources-read-from-component-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: streams-app-cleaner
     values:
@@ -748,8 +587,6 @@
         schemaRegistryUrl: http://localhost:8081/
       statefulSet: false
     version: 3.6.1
-  diff_config:
-    ignore: []
   from:
     components:
       inflate-step-without-prefix:
@@ -758,11 +595,6 @@
   name: consumer5
   namespace: example-namespace
   prefix: resources-read-from-component-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
   to:
     models: {}
     topics:

@@ -1,14 +1,7 @@
 - _cleaner:
-    diff_config:
-      ignore: []
     name: account-producer
     namespace: ${NAMESPACE}
     prefix: atm-fraud-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: producer-app-cleaner
     values:
@@ -28,16 +21,9 @@
         schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
       suspend: true
     version: 2.9.0
-  diff_config:
-    ignore: []
   name: account-producer
   namespace: ${NAMESPACE}
   prefix: atm-fraud-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
   to:
     models: {}
     topics:
@@ -63,16 +49,9 @@
     suspend: true
   version: 2.9.0
 - _cleaner:
-    diff_config:
-      ignore: []
     name: transaction-avro-producer
     namespace: ${NAMESPACE}
     prefix: atm-fraud-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: producer-app-cleaner
     values:
@@ -95,16 +74,9 @@
         schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
       suspend: true
     version: 2.9.0
-  diff_config:
-    ignore: []
   name: transaction-avro-producer
   namespace: ${NAMESPACE}
   prefix: atm-fraud-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
   to:
     models: {}
     topics:
@@ -133,16 +105,9 @@
     suspend: true
   version: 2.9.0
 - _cleaner:
-    diff_config:
-      ignore: []
     name: transaction-joiner
     namespace: ${NAMESPACE}
     prefix: atm-fraud-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: streams-app-cleaner
     values:
@@ -170,16 +135,9 @@
         outputTopic: atm-fraud-transaction-joiner-topic
         schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
     version: 2.9.0
-  diff_config:
-    ignore: []
   name: transaction-joiner
   namespace: ${NAMESPACE}
   prefix: atm-fraud-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
   to:
     models: {}
     topics:
@@ -217,16 +175,9 @@
       schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
   version: 2.9.0
 - _cleaner:
-    diff_config:
-      ignore: []
     name: fraud-detector
     namespace: ${NAMESPACE}
     prefix: atm-fraud-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: streams-app-cleaner
     values:
@@ -254,16 +205,9 @@
         outputTopic: atm-fraud-fraud-detector-topic
         schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
     version: 2.9.0
-  diff_config:
-    ignore: []
   name: fraud-detector
   namespace: ${NAMESPACE}
   prefix: atm-fraud-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
   to:
     models: {}
     topics:
@@ -301,16 +245,9 @@
       schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
   version: 2.9.0
 - _cleaner:
-    diff_config:
-      ignore: []
     name: account-linker
     namespace: ${NAMESPACE}
     prefix: atm-fraud-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: streams-app-cleaner
     values:
@@ -341,8 +278,6 @@
         outputTopic: atm-fraud-account-linker-topic
         schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
     version: 2.9.0
-  diff_config:
-    ignore: []
   from:
     components:
       account-producer:
@@ -353,11 +288,6 @@
   name: account-linker
   namespace: ${NAMESPACE}
   prefix: atm-fraud-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
   to:
     models: {}
     topics:
@@ -398,16 +328,9 @@
       schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
   version: 2.9.0
 - _resetter:
-    diff_config:
-      ignore: []
     name: postgresql-connector
     namespace: ${NAMESPACE}
     prefix: atm-fraud-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-kafka-connect-resetter
-      url: https://bakdata.github.io/kafka-connect-resetter/
     suffix: -clean
     type: kafka-connector-resetter
     values:

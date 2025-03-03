@@ -246,6 +246,11 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         """Render Kubernetes manifests resources for clean."""
         return ()
 
+    def generate(self) -> dict[str, Any]:
+        return self.model_dump(
+            context="generate", mode="json", by_alias=True, exclude_none=True
+        )
+
     async def deploy(self, dry_run: bool) -> None:
         """Deploy component, e.g. to Kubernetes cluster.
 
