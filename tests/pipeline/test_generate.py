@@ -886,7 +886,7 @@ class TestGenerate:
         streams_app = pipeline.components[1]
         assert isinstance(streams_app, StreamsApp)
         assert streams_app.diff_config.ignore == helm_diff_ignore
-        assert not streams_app._cleaner.diff_config.ignore
+        assert streams_app._cleaner.diff_config.ignore == [("baz",)]
 
         snapshot.assert_match(pipeline.to_yaml(), PIPELINE_YAML)
 

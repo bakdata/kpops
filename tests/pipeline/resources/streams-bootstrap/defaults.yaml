@@ -3,6 +3,9 @@ streams-bootstrap:
     ignore:
       - ["foo", "bar"]
   version: "3.6.1"
+  cleaner:
+    diff_config:
+      ignore: []
   values:
     imagePullPolicy: IfNotPresent
     files:

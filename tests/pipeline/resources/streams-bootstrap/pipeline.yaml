@@ -1,7 +1,4 @@
 - type: my-producer-app
-  cleaner:
-    diff_config:
-      ignore: []
   values:
     image: "my-registry/my-producer-image"
     imageTag: "1.0.0"
@@ -22,7 +19,8 @@
 - type: my-streams-app
   cleaner:
     diff_config:
-      ignore: []
+      ignore:
+        - ["baz"]
   values:
     image: "my-registry/my-streams-app-image"
     imageTag: "1.0.0"

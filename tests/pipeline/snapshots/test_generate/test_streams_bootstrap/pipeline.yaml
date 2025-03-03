@@ -140,7 +140,8 @@
 - _cleaner:
     cleaner:
       diff_config:
-        ignore: []
+        ignore:
+          - - baz
     name: my-streams-app
     namespace: example-namespace
     prefix: resources-streams-bootstrap-
@@ -210,9 +211,11 @@
   cleaner:
     cleaner:
       diff_config:
-        ignore: []
+        ignore:
+          - - baz
     diff_config:
-      ignore: []
+      ignore:
+        - - baz
     name: my-streams-app
     namespace: example-namespace
     prefix: resources-streams-bootstrap-
