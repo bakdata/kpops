@@ -1,3 +1,8 @@
+cleaner:
+  diff_config:
+    ignore:
+      - ["ignored"]
+
 streams-bootstrap:
   diff_config:
     ignore:
