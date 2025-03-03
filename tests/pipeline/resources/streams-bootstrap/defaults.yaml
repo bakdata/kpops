@@ -1,3 +1,8 @@
+cleaner:
+  helm_diff:
+    ignore:
+      - ["foo", "bar"]
+
 streams-bootstrap:
   version: "3.6.1"
   values:
