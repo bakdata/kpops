@@ -5,8 +5,8 @@ from abc import ABC
 from typing import Any, ClassVar, Self
 
 import pydantic
-from pydantic import AliasChoices, ConfigDict, Field
-from typing_extensions import deprecated
+from pydantic import AliasChoices, ConfigDict, Field, model_serializer
+from typing_extensions import deprecated, override
 
 from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
 from kpops.components.base_components import KafkaApp
@@ -19,6 +19,7 @@ from kpops.utils.pydantic import (
     DescConfigModel,
     SerializeAsOptional,
     SerializeAsOptionalModel,
+    exclude_by_name,
     exclude_by_value,
     exclude_defaults,
 )
@@ -164,3 +165,21 @@ class StreamsBootstrapV2(KafkaApp, HelmApp, ABC):
             "StreamsBootstrapV2 is deprecated, consider migrating to StreamsBootstrap."
         )
         return model
+
+    @override
+    @model_serializer(mode="wrap", when_used="always")
+    def serialize_model(
+        self,
+        default_serialize_handler: pydantic.SerializerFunctionWrapHandler,
+        info: pydantic.SerializationInfo,
+    ) -> dict[str, Any]:
+        # TODO: refactor with Annotated SkipGenerate
+        exclude_generate = {
+            "repo_config",
+            "diff_config",
+            "cleaner",
+        }
+        return exclude_by_name(
+            default_serialize_handler(self),
+            *exclude_generate if info.context == "generate" else {},
+        )

@@ -6,7 +6,7 @@ from abc import ABC
 from typing import TYPE_CHECKING, Any, Self
 
 import pydantic
-from pydantic import Field
+from pydantic import Field, model_serializer
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
@@ -19,6 +19,7 @@ from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.manifests.strimzi.kafka_topic import StrimziKafkaTopic
 from kpops.utils.dict_ops import update_nested
 from kpops.utils.docstring import describe_attr
+from kpops.utils.pydantic import exclude_by_name
 
 if TYPE_CHECKING:
     from kpops.components.streams_bootstrap_v2.base import StreamsBootstrapV2
@@ -108,8 +109,26 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
             )
         return ()
 
+    @override
+    @model_serializer(mode="wrap", when_used="always")
+    def serialize_model(
+        self,
+        default_serialize_handler: pydantic.SerializerFunctionWrapHandler,
+        info: pydantic.SerializationInfo,
+    ) -> dict[str, Any]:
+        # TODO: refactor with Annotated SkipGenerate
+        exclude_generate = {
+            "repo_config",
+            "diff_config",
+            "cleaner",
+        }
+        return exclude_by_name(
+            default_serialize_handler(self),
+            *exclude_generate if info.context == "generate" else {},
+        )
 
-class StreamsBootstrapCleaner(Cleaner, ABC):  # separate file?
+
+class StreamsBootstrapCleaner(Cleaner, ABC):
     """Helm app for resetting and cleaning a streams-bootstrap app."""
 
     from_: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
@@ -120,7 +139,7 @@ class StreamsBootstrapCleaner(Cleaner, ABC):  # separate file?
         parent_kwargs = parent.model_dump(
             by_alias=True,
             exclude_none=True,
-            exclude={"_cleaner", "from_", "to"},
+            exclude={"cleaner", "_cleaner", "from_", "to"},
         )
         # enrichment: cleaner override takes precedence over parent
         kwargs = parent_kwargs
