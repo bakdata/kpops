@@ -15,6 +15,8 @@ from kpops.api.options import FilterType
 from kpops.cli.main import app
 from kpops.components.base_components.kafka_connector import KafkaSinkConnector
 from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.components.streams_bootstrap.producer.producer_app import ProducerApp
+from kpops.components.streams_bootstrap.streams.streams_app import StreamsApp
 from kpops.const.file_type import PIPELINE_YAML, KpopsFileType
 from kpops.core.exception import ParsingException, ValidationError
 
@@ -871,18 +873,22 @@ class TestGenerate:
         )
 
     def test_streams_bootstrap(self, snapshot: Snapshot):
-        result = runner.invoke(
-            app,
-            [
-                "generate",
-                str(RESOURCE_PATH / "streams-bootstrap" / PIPELINE_YAML),
-            ],
-            catch_exceptions=False,
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "streams-bootstrap" / KpopsFileType.PIPELINE.as_yaml_file(),
         )
 
-        assert result.exit_code == 0, result.stdout
+        producer_app = pipeline.components[0]
+        assert isinstance(producer_app, ProducerApp)
+        assert not producer_app.diff_config.ignore
+        cleaner_helm_diff_ignore = [("foo", "bar")]
+        assert producer_app._cleaner.diff_config.ignore == cleaner_helm_diff_ignore
 
-        snapshot.assert_match(result.stdout, PIPELINE_YAML)
+        streams_app = pipeline.components[1]
+        assert isinstance(streams_app, StreamsApp)
+        assert not streams_app.diff_config.ignore
+        assert streams_app._cleaner.diff_config.ignore == cleaner_helm_diff_ignore
+
+        snapshot.assert_match(pipeline.to_yaml(), PIPELINE_YAML)
 
     def test_symlinked_pipeline_as_original_pipeline(
         self,

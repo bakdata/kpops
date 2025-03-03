@@ -3,20 +3,24 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import ClassVar
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import ConfigDict, Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.exception import ParseError
 from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import DescConfigModel
+from kpops.utils.pydantic import (
+    DescConfigModel,
+    SerializeAsOptional,
+    SerializeAsOptionalModel,
+)
 
 KeyPath = tuple[str, ...]
 
 
-class HelmDiffConfig(BaseModel):
-    ignore: list[KeyPath] = Field(
-        default_factory=list,
+class HelmDiffConfig(SerializeAsOptionalModel):
+    ignore: SerializeAsOptional[list[KeyPath]] = Field(
+        default=[],  # pyright: ignore[reportUnknownArgumentType]
         description="List of keypaths that should be excluded from the diff.",
         examples=[("name",), ("imageTag",), ("metadata", "labels", "helm.sh/chart")],
     )

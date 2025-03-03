@@ -247,4 +247,3 @@
       schemaRegistryUrl: http://localhost:8081/
     statefulSet: false
   version: 3.6.1
-
