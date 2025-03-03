@@ -869,8 +869,6 @@ class TestGenerate:
             == "override-default-image-tag"
         )
 
-    # FIXME: this snapshot test should fail because cleaner defaults
-    @pytest.mark.xfail(strict=True)
     def test_streams_bootstrap(self, snapshot: Snapshot):
         result = runner.invoke(
             app,

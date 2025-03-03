@@ -102,7 +102,7 @@ class StreamsApp(StreamsBootstrap):
         kwargs = {
             name: getattr(self, name)
             for name in self.model_fields_set
-            if name not in {"_cleaner", "from_", "to"}
+            if name not in {"_cleaner", "from_", "to", "enrich"}
         }
         cleaner = StreamsAppCleaner.model_validate(kwargs)
         cleaner.values.name_override = None

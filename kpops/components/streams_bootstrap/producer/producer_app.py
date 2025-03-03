@@ -85,7 +85,7 @@ class ProducerApp(StreamsBootstrap):
         kwargs = {
             name: getattr(self, name)
             for name in self.model_fields_set
-            if name not in {"_cleaner", "from_", "to"}
+            if name not in {"_cleaner", "from_", "to", "enrich"}
         }
         cleaner = ProducerAppCleaner.model_validate(kwargs)
         cleaner.values.name_override = None

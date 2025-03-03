@@ -1,6 +1,10 @@
 - _cleaner:
     diff_config:
       ignore: []
+    helm_diff:
+      ignore:
+        - - foo
+          - bar
     name: my-producer-app
     namespace: example-namespace
     prefix: resources-streams-bootstrap-
@@ -102,6 +106,10 @@
 - _cleaner:
     diff_config:
       ignore: []
+    helm_diff:
+      ignore:
+        - - foo
+          - bar
     name: my-streams-app
     namespace: example-namespace
     prefix: resources-streams-bootstrap-
