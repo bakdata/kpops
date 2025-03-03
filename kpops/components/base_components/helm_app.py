@@ -223,4 +223,10 @@ class HelmApp(KubernetesApp):
         default_serialize_handler: pydantic.SerializerFunctionWrapHandler,
         info: pydantic.SerializationInfo,
     ) -> dict[str, Any]:
-        return exclude_by_name(default_serialize_handler(self), "helm", "helm_diff")
+        return exclude_by_name(
+            default_serialize_handler(self),
+            "helm",
+            "helm_diff",
+            "repo_config",
+            "diff_config",
+        )
