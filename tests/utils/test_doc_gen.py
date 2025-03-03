@@ -98,9 +98,7 @@ class TestEnvDocGen:
                 "True",
                 "description",
                 "setting_name",
-                "# setting_name\n"
-                "# description\n"
-                "NAME # No default value, required\n",
+                "# setting_name\n# description\nNAME # No default value, required\n",
                 id="default not exists, required",
             ),
             pytest.param(
