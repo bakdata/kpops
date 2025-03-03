@@ -1,4 +1,7 @@
 - type: my-producer-app
+  cleaner:
+    diff_config:
+      ignore: []
   values:
     image: "my-registry/my-producer-image"
     imageTag: "1.0.0"
@@ -17,6 +20,9 @@
         label: my-producer-app-output-topic-label
 
 - type: my-streams-app
+  cleaner:
+    diff_config:
+      ignore: []
   values:
     image: "my-registry/my-streams-app-image"
     imageTag: "1.0.0"

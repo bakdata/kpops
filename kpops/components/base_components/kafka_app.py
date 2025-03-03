@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from abc import ABC
-from typing import Self
+from typing import TYPE_CHECKING, Any, Self
 
 from typing_extensions import override
 
@@ -12,10 +12,13 @@ from kpops.components.base_components.pipeline_component import PipelineComponen
 from kpops.config import get_config
 from kpops.utils.dict_ops import update_nested
 
+if TYPE_CHECKING:
+    pass
+
 log = logging.getLogger("KafkaApp")
 
 
-class KafkaAppCleaner(Cleaner, ABC):
+class KafkaAppCleaner(Cleaner, ABC):  # TODO: actually StreamsBootstrapCleaner
     """Helm app for resetting and cleaning a streams-bootstrap app."""
 
     from_: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
@@ -28,9 +31,11 @@ class KafkaAppCleaner(Cleaner, ABC):
             exclude_none=True,
             exclude={"_cleaner", "from_", "to"},
         )
-        # enrichment: cleaner defaults take precedence over parent
-        cleaner_defaults = cls.extend_with_defaults(name=parent.name)
-        kwargs = update_nested(cleaner_defaults, parent_kwargs)
+        # enrichment: cleaner override takes precedence over parent
+        # TODO: parent.cleaner.model_dump(by_alias=True, exclude_none=True)
+        kwargs = parent_kwargs
+        if parent.cleaner:
+            kwargs = update_nested(parent.cleaner, parent_kwargs)
         cleaner = cls(**kwargs)
         cleaner.values.name_override = None
         return cleaner
@@ -59,6 +64,11 @@ class KafkaAppCleaner(Cleaner, ABC):
 
 class KafkaApp(PipelineComponent, ABC):
     """Base component for Kafka-based components."""
+
+    # TODO: move to StreamsBootstrap
+    # TODO: StreamsBootstrapCleaner
+    # TODO: add docs: override values for cleaner
+    cleaner: dict[str, Any] | None = None
 
     @override
     async def deploy(self, dry_run: bool) -> None:
