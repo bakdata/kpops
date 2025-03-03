@@ -1,14 +1,7 @@
 - _cleaner:
-    diff_config:
-      ignore: []
     name: scheduled-producer
     namespace: example-namespace
     prefix: resources-pipeline-folders-pipeline-1-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: producer-app-cleaner
     values:
@@ -22,16 +15,9 @@
         schemaRegistryUrl: http://localhost:8081/
       schedule: 30 3/8 * * *
     version: 3.6.1
-  diff_config:
-    ignore: []
   name: scheduled-producer
   namespace: example-namespace
   prefix: resources-pipeline-folders-pipeline-1-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
   to:
     models:
       com/bakdata/kafka/fake: 1.0.0
@@ -56,16 +42,9 @@
   version: 3.6.1
 
 - _cleaner:
-    diff_config:
-      ignore: []
     name: converter
     namespace: example-namespace
     prefix: resources-pipeline-folders-pipeline-2-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: streams-app-cleaner
     values:
@@ -91,16 +70,9 @@
           memory: 2G
       statefulSet: false
     version: 3.6.1
-  diff_config:
-    ignore: []
   name: converter
   namespace: example-namespace
   prefix: resources-pipeline-folders-pipeline-2-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
   to:
     models: {}
     topics:
@@ -142,16 +114,9 @@
   version: 3.6.1
 
 - _cleaner:
-    diff_config:
-      ignore: []
     name: a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
     namespace: example-namespace
     prefix: resources-pipeline-folders-pipeline-3-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: streams-app-cleaner
     values:
@@ -180,16 +145,9 @@
           memory: 3G
       statefulSet: false
     version: 3.6.1
-  diff_config:
-    ignore: []
   name: a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
   namespace: example-namespace
   prefix: resources-pipeline-folders-pipeline-3-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
   to:
     models: {}
     topics:
