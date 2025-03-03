@@ -223,10 +223,14 @@ class HelmApp(KubernetesApp):
         default_serialize_handler: pydantic.SerializerFunctionWrapHandler,
         info: pydantic.SerializationInfo,
     ) -> dict[str, Any]:
+        # TODO: refactor with Annotated SkipGenerate
+        exclude_generate = {
+            "repo_config",
+            "diff_config",
+        }
         return exclude_by_name(
             default_serialize_handler(self),
             "helm",
             "helm_diff",
-            "repo_config",
-            "diff_config",
+            *exclude_generate if info.context == "generate" else {},
         )
