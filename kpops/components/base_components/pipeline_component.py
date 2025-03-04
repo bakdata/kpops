@@ -4,7 +4,8 @@ from abc import ABC
 from collections.abc import Iterator
 from typing import Any, ClassVar
 
-from pydantic import AliasChoices, ConfigDict, Field
+import pydantic
+from pydantic import AliasChoices, ConfigDict, Field, model_serializer
 
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
@@ -24,6 +25,7 @@ from kpops.components.common.topic import (
 )
 from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.utils.docstring import describe_attr
+from kpops.utils.pydantic import exclude_by_value
 
 
 class PipelineComponent(BaseDefaultsComponent, ABC):
@@ -276,3 +278,15 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         :param dry_run: Whether to do a dry run of the command
         """
         await self.destroy(dry_run)
+
+    @model_serializer(mode="wrap", when_used="always")
+    def serialize_model(
+        self,
+        default_serialize_handler: pydantic.SerializerFunctionWrapHandler,
+        info: pydantic.SerializationInfo,
+    ) -> dict[str, Any]:
+        result = default_serialize_handler(self)
+        # HACK: workaround for exclude_none, which is otherwise evaluated too early
+        if info.exclude_none:
+            return exclude_by_value(result, None)
+        return result
