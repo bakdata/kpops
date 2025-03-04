@@ -17,7 +17,6 @@ from kpops.components.streams_bootstrap.model import StreamsBootstrapValues
 from kpops.config import get_config
 from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.manifests.strimzi.kafka_topic import StrimziKafkaTopic
-from kpops.utils.dict_ops import update_nested
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import exclude_by_name
 
@@ -57,10 +56,6 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
         default=STREAMS_BOOTSTRAP_VERSION,
         pattern=STREAMS_BOOTSTRAP_VERSION_PATTERN,
         description=describe_attr("version", __doc__),
-    )
-    cleaner: dict[str, Any] | None = Field(
-        default=None,
-        description=describe_attr("cleaner", __doc__),
     )
 
     @pydantic.field_validator("version", mode="after")
@@ -139,13 +134,9 @@ class StreamsBootstrapCleaner(Cleaner, ABC):
         parent_kwargs = parent.model_dump(
             by_alias=True,
             exclude_none=True,
-            exclude={"cleaner", "_cleaner", "from_", "to"},
+            exclude={"_cleaner", "diff_config", "from_", "to"},
         )
-        # enrichment: cleaner override takes precedence over parent
-        kwargs = parent_kwargs
-        if parent.cleaner:
-            kwargs = update_nested(parent.cleaner, parent_kwargs)
-        cleaner = cls(**kwargs)
+        cleaner = cls(**parent_kwargs)
         cleaner.values.name_override = None
         return cleaner
 

@@ -877,16 +877,16 @@ class TestGenerate:
             RESOURCE_PATH / "streams-bootstrap" / KpopsFileType.PIPELINE.as_yaml_file(),
         )
 
-        helm_diff_ignore = [("foo", "bar")]
+        cleaner_diff_config = [("cleaner",)]
         producer_app = pipeline.components[0]
         assert isinstance(producer_app, ProducerApp)
-        assert producer_app.diff_config.ignore == helm_diff_ignore
-        assert not producer_app._cleaner.diff_config.ignore
+        assert not producer_app.diff_config.ignore
+        assert producer_app._cleaner.diff_config.ignore == cleaner_diff_config
 
         streams_app = pipeline.components[1]
         assert isinstance(streams_app, StreamsApp)
-        assert streams_app.diff_config.ignore == helm_diff_ignore
-        assert streams_app._cleaner.diff_config.ignore == [("baz",)]
+        assert streams_app.diff_config.ignore == [("foo", "bar")]
+        assert streams_app._cleaner.diff_config.ignore == cleaner_diff_config
 
         snapshot.assert_match(pipeline.to_yaml(), PIPELINE_YAML)
 

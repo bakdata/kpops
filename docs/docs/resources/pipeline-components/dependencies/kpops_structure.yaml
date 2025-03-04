@@ -61,7 +61,6 @@ kpops_components_fields:
   - repo_config
   - diff_config
   - version
-  - cleaner
   producer-app-v2:
   - name
   - prefix
@@ -83,7 +82,6 @@ kpops_components_fields:
   - repo_config
   - diff_config
   - version
-  - cleaner
   streams-app-v2:
   - name
   - prefix
@@ -105,7 +103,6 @@ kpops_components_fields:
   - repo_config
   - diff_config
   - version
-  - cleaner
   streams-bootstrap-v2:
   - name
   - prefix

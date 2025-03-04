@@ -1189,19 +1189,6 @@
             "additionalProperties": true,
             "description": "Producer component.\nThis producer holds configuration to use as values for the streams-bootstrap producer Helm chart. Note that the producer does not support error topics.",
             "properties": {
-                "cleaner": {
-                    "anyOf": [
-                        {
-                            "type": "object"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Override of cleaner attributes",
-                    "title": "Cleaner"
-                },
                 "diff_config": {
                     "$ref": "#/$defs/HelmDiffConfig",
                     "default": {
@@ -2335,19 +2322,6 @@
             "additionalProperties": true,
             "description": "StreamsApp component that configures a streams-bootstrap app.",
             "properties": {
-                "cleaner": {
-                    "anyOf": [
-                        {
-                            "type": "object"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Override of cleaner attributes",
-                    "title": "Cleaner"
-                },
                 "diff_config": {
                     "$ref": "#/$defs/HelmDiffConfig",
                     "default": {
