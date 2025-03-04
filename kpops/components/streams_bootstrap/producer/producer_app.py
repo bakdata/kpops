@@ -1,7 +1,7 @@
 import logging
 from functools import cached_property
 
-from pydantic import Field, ValidationError, computed_field
+from pydantic import Field, ValidationError
 from typing_extensions import override
 
 from kpops.component_handlers.kubernetes.utils import trim
@@ -79,7 +79,6 @@ class ProducerApp(StreamsBootstrap):
     def is_cron_job(self) -> bool:
         return bool(not self.values.deployment and self.values.schedule)
 
-    @computed_field
     @cached_property
     def _cleaner(self) -> ProducerAppCleaner:
         return ProducerAppCleaner.from_parent(self)

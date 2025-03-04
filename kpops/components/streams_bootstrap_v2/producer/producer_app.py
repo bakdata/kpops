@@ -1,7 +1,7 @@
 import logging
 from functools import cached_property
 
-from pydantic import Field, ValidationError, computed_field
+from pydantic import Field, ValidationError
 from typing_extensions import deprecated, override
 
 from kpops.components.common.app_type import AppType
@@ -53,7 +53,6 @@ class ProducerAppV2(StreamsBootstrapV2):
         description=describe_attr("from_", __doc__),
     )
 
-    @computed_field
     @cached_property
     def _cleaner(self) -> ProducerAppCleaner:
         return ProducerAppCleaner.from_parent(self)

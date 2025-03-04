@@ -6,7 +6,7 @@ from functools import cached_property
 from typing import Any, Literal, NoReturn, Self
 
 import pydantic
-from pydantic import Field, PrivateAttr, ValidationInfo, computed_field, field_validator
+from pydantic import Field, PrivateAttr, ValidationInfo, field_validator
 from typing_extensions import override
 
 from kpops.component_handlers import get_handlers
@@ -223,11 +223,6 @@ class KafkaSourceConnector(KafkaConnector):
             self._resetter.values.config.offset_topic = self.offset_topic
         return self
 
-    @computed_field
-    @cached_property
-    def _resetter(self) -> KafkaConnectorResetter:
-        return super()._resetter
-
     @override
     def apply_from_inputs(self, name: str, topic: FromTopic) -> NoReturn:
         msg = "Kafka source connector doesn't support FromSection"
@@ -249,11 +244,6 @@ class KafkaSinkConnector(KafkaConnector):
     """Kafka sink connector model."""
 
     _connector_type: KafkaConnectorType = PrivateAttr(KafkaConnectorType.SINK)
-
-    @computed_field
-    @cached_property
-    def _resetter(self) -> KafkaConnectorResetter:
-        return super()._resetter
 
     @property
     @override

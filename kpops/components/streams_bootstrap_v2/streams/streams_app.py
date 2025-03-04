@@ -1,7 +1,7 @@
 import logging
 from functools import cached_property
 
-from pydantic import Field, ValidationError, computed_field
+from pydantic import Field, ValidationError
 from typing_extensions import deprecated, override
 
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
@@ -59,7 +59,6 @@ class StreamsAppV2(StreamsBootstrapV2):
         description=describe_attr("values", __doc__),
     )
 
-    @computed_field
     @cached_property
     def _cleaner(self) -> StreamsAppCleaner:
         return StreamsAppCleaner.from_parent(self)
