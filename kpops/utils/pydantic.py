@@ -309,7 +309,7 @@ def serialize_skip_context_generate(
 ) -> _T | None:
     if info.context == "generate":
         return None  # HACK: serialize to None, then exclude_by_value
-        # instead use Pydantic once supported, custom model_serializer can be removed afterwards
+        # instead use PydanticOmit once supported, custom model_serializer can be removed afterwards
         # raise PydanticOmit  # depends on https://github.com/pydantic/pydantic/issues/6969
     return default_serialize_handler(value)
 
