@@ -18,6 +18,7 @@ from kpops.config import get_config
 from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.manifests.strimzi.kafka_topic import StrimziKafkaTopic
 from kpops.utils.docstring import describe_attr
+from kpops.utils.pydantic import SkipGenerate
 
 if TYPE_CHECKING:
     from kpops.components.streams_bootstrap_v2.base import StreamsBootstrapV2
@@ -46,7 +47,7 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
     values: StreamsBootstrapValues = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         description=describe_attr("values", __doc__),
     )
-    repo_config: HelmRepoConfig = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
+    repo_config: SkipGenerate[HelmRepoConfig] = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         default=STREAMS_BOOTSTRAP_HELM_REPO,
         description=describe_attr("repo_config", __doc__),
     )

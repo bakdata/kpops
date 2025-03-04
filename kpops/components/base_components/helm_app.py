@@ -5,7 +5,7 @@ from functools import cached_property
 from typing import Annotated, Any
 
 import pydantic
-from pydantic import Field, model_serializer
+from pydantic import Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
@@ -32,7 +32,7 @@ from kpops.manifests.argo import ArgoSyncWave, enrich_annotations
 from kpops.manifests.kubernetes import K8S_LABEL_MAX_LEN, KubernetesManifest
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import exclude_by_name
+from kpops.utils.pydantic import SkipGenerate
 
 log = logging.getLogger("HelmApp")
 
@@ -72,11 +72,11 @@ class HelmApp(KubernetesApp):
     :param values: Helm app values
     """
 
-    repo_config: HelmRepoConfig | None = Field(
+    repo_config: SkipGenerate[HelmRepoConfig | None] = Field(
         default=None,
         description=describe_attr("repo_config", __doc__),
     )
-    diff_config: HelmDiffConfig = Field(
+    diff_config: SkipGenerate[HelmDiffConfig] = Field(
         default=HelmDiffConfig(),
         description=describe_attr("diff_config", __doc__),
     )
@@ -214,20 +214,3 @@ class HelmApp(KubernetesApp):
             log.info(f"Helm release {self.helm_release_name} does not exist")
         new_release = Helm.load_manifest(stdout)
         self._helm_diff.log_helm_diff(log, current_release, new_release)
-
-    # TODO: move to PipelineComponent as generic serialize handler for generate context
-    @model_serializer(mode="wrap", when_used="always")
-    def serialize_model(
-        self,
-        default_serialize_handler: pydantic.SerializerFunctionWrapHandler,
-        info: pydantic.SerializationInfo,
-    ) -> dict[str, Any]:
-        # TODO: refactor with Annotated SkipGenerate
-        exclude_generate = {
-            "repo_config",
-            "diff_config",
-        }
-        return exclude_by_name(
-            default_serialize_handler(self),
-            *exclude_generate if info.context == "generate" else {},
-        )

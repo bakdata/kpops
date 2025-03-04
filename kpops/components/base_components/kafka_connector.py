@@ -25,7 +25,7 @@ from kpops.components.common.topic import KafkaTopic
 from kpops.config import get_config
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import CamelCaseConfigModel
+from kpops.utils.pydantic import CamelCaseConfigModel, SkipGenerate
 
 log = logging.getLogger("KafkaConnector")
 
@@ -53,7 +53,7 @@ class KafkaConnectorResetter(Cleaner, ABC):
     from_: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
     to: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
     values: KafkaConnectorResetterValues  # pyright: ignore[reportIncompatibleVariableOverride]
-    repo_config: HelmRepoConfig = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
+    repo_config: SkipGenerate[HelmRepoConfig] = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         default=HelmRepoConfig(
             repository_name="bakdata-kafka-connect-resetter",
             url="https://bakdata.github.io/kafka-connect-resetter/",
