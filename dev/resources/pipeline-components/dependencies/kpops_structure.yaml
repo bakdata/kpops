@@ -61,7 +61,6 @@ kpops_components_fields:
   - repo_config
   - diff_config
   - version
-  - cleaner
   producer-app-v2:
   - name
   - prefix
@@ -72,7 +71,6 @@ kpops_components_fields:
   - repo_config
   - diff_config
   - version
-  - cleaner
   streams-app:
   - name
   - prefix
@@ -83,7 +81,6 @@ kpops_components_fields:
   - repo_config
   - diff_config
   - version
-  - cleaner
   streams-app-v2:
   - name
   - prefix
@@ -94,7 +91,6 @@ kpops_components_fields:
   - repo_config
   - diff_config
   - version
-  - cleaner
   streams-bootstrap:
   - name
   - prefix
@@ -105,7 +101,6 @@ kpops_components_fields:
   - repo_config
   - diff_config
   - version
-  - cleaner
   streams-bootstrap-v2:
   - name
   - prefix
@@ -116,7 +111,6 @@ kpops_components_fields:
   - repo_config
   - diff_config
   - version
-  - cleaner
 kpops_components_inheritance_ref:
   helm-app:
     bases:
