@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [10.0.1](https://github.com/bakdata/kpops/tree/10.0.1) - 2025-03-04
+### What's changed
+
+* chore: upgrade ruff by @disrupted in [#606](https://github.com/bakdata/kpops/pull/606)
+
+* refactor(helm-app): make handlers private by @disrupted in [#602](https://github.com/bakdata/kpops/pull/602)
+
+* refactor: switch to basedpyright by @disrupted in [#604](https://github.com/bakdata/kpops/pull/604)
+
+* fix(helm-app): hide repo_config & diff_config from generate output by @disrupted in [#607](https://github.com/bakdata/kpops/pull/607)
+
+* fix(cleaner): enrich on init by @disrupted in [#608](https://github.com/bakdata/kpops/pull/608)
+
+
+**Full Changelog**: https://github.com/bakdata/kpops/compare/10.0.0...10.0.1
+
 ## [10.0.0](https://github.com/bakdata/kpops/tree/10.0.0) - 2025-02-27
 ### What's changed
 
@@ -10,6 +26,8 @@ All notable changes to this project will be documented in this file.
 * refactor(helm-diff)!: configure on HelmApp component level by @disrupted in [#601](https://github.com/bakdata/kpops/pull/601)
 
 * docs: create migration guide for v10 by @disrupted in [#603](https://github.com/bakdata/kpops/pull/603)
+
+* Bump version 9.4.1 → 10.0.0 by @bakdata-bot
 
 
 **Full Changelog**: https://github.com/bakdata/kpops/compare/9.4.1...10.0.0
@@ -498,7 +516,7 @@ All notable changes to this project will be documented in this file.
 ## [4.1.0](https://github.com/bakdata/kpops/tree/4.1.0) - 2024-03-07
 ### What's changed
 
-* Document precedence between env vars and config.yaml by @JakobEdding in [#465](https://github.com/bakdata/kpops/pull/465)
+* Document precedence between env vars and config.yaml by @jkbe in [#465](https://github.com/bakdata/kpops/pull/465)
 
 * Create init command by @sujuka99 in [#394](https://github.com/bakdata/kpops/pull/394)
 
@@ -1576,7 +1594,7 @@ All notable changes to this project will be documented in this file.
 
 * Bump version 0.2.3 → 0.2.4 by @bakdata-bot
 
-* Update version in actions readme by @JakobEdding in [#11](https://github.com/bakdata/kpops/pull/11)
+* Update version in actions readme by @jkbe in [#11](https://github.com/bakdata/kpops/pull/11)
 
 * Bump version 0.2.4 → 0.2.5 by @bakdata-bot
 
