@@ -17,10 +17,6 @@
         label: my-producer-app-output-topic-label
 
 - type: my-streams-app
-  cleaner:
-    diff_config:
-      ignore:
-        - ["baz"]
   values:
     image: "my-registry/my-streams-app-image"
     imageTag: "1.0.0"
