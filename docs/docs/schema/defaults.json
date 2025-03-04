@@ -118,7 +118,7 @@
                 "diff_config": {
                     "$ref": "#/$defs/HelmDiffConfig",
                     "default": {
-                        "ignore": []
+                        "ignore": null
                     },
                     "description": "Helm diff config"
                 },
@@ -232,6 +232,21 @@
         "HelmDiffConfig": {
             "properties": {
                 "ignore": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "items": {
+                                    "type": "string"
+                                },
+                                "type": "array"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": [],
                     "description": "List of keypaths that should be excluded from the diff.",
                     "examples": [
                         [
@@ -246,14 +261,7 @@
                             "helm.sh/chart"
                         ]
                     ],
-                    "items": {
-                        "items": {
-                            "type": "string"
-                        },
-                        "type": "array"
-                    },
-                    "title": "Ignore",
-                    "type": "array"
+                    "title": "Ignore"
                 }
             },
             "title": "HelmDiffConfig",
@@ -1512,7 +1520,7 @@
                 "diff_config": {
                     "$ref": "#/$defs/HelmDiffConfig",
                     "default": {
-                        "ignore": []
+                        "ignore": null
                     },
                     "description": "Helm diff config"
                 },
@@ -1599,7 +1607,7 @@
                 "diff_config": {
                     "$ref": "#/$defs/HelmDiffConfig",
                     "default": {
-                        "ignore": []
+                        "ignore": null
                     },
                     "description": "Helm diff config"
                 },
@@ -2632,7 +2640,7 @@
                 "diff_config": {
                     "$ref": "#/$defs/HelmDiffConfig",
                     "default": {
-                        "ignore": []
+                        "ignore": null
                     },
                     "description": "Helm diff config"
                 },
@@ -2726,7 +2734,7 @@
                 "diff_config": {
                     "$ref": "#/$defs/HelmDiffConfig",
                     "default": {
-                        "ignore": []
+                        "ignore": null
                     },
                     "description": "Helm diff config"
                 },
@@ -3317,7 +3325,7 @@
                 "diff_config": {
                     "$ref": "#/$defs/HelmDiffConfig",
                     "default": {
-                        "ignore": []
+                        "ignore": null
                     },
                     "description": "Helm diff config"
                 },
@@ -3405,7 +3413,7 @@
                 "diff_config": {
                     "$ref": "#/$defs/HelmDiffConfig",
                     "default": {
-                        "ignore": []
+                        "ignore": null
                     },
                     "description": "Helm diff config"
                 },

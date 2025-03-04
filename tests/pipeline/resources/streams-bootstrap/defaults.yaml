@@ -1,3 +1,8 @@
+cleaner:
+  diff_config:
+    ignore:
+      - ["cleaner"]
+
 streams-bootstrap:
   version: "3.6.1"
   values:
@@ -26,6 +31,9 @@ streams-bootstrap:
 producer-app: {} # inherits from streams-bootstrap
 
 streams-app: # inherits from streams-bootstrap
+  diff_config:
+    ignore:
+      - ["foo", "bar"]
   values:
     kafka:
       config:
