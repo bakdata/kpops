@@ -3,10 +3,10 @@ from __future__ import annotations
 import logging
 import re
 from abc import ABC
-from typing import TYPE_CHECKING, Any, Self
+from typing import TYPE_CHECKING, Self
 
 import pydantic
-from pydantic import Field, model_serializer
+from pydantic import Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
@@ -18,7 +18,6 @@ from kpops.config import get_config
 from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.manifests.strimzi.kafka_topic import StrimziKafkaTopic
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import exclude_by_name
 
 if TYPE_CHECKING:
     from kpops.components.streams_bootstrap_v2.base import StreamsBootstrapV2
@@ -102,24 +101,6 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
                 StrimziKafkaTopic.from_topic(topic) for topic in self.to.kafka_topics
             )
         return ()
-
-    @override
-    @model_serializer(mode="wrap", when_used="always")
-    def serialize_model(
-        self,
-        default_serialize_handler: pydantic.SerializerFunctionWrapHandler,
-        info: pydantic.SerializationInfo,
-    ) -> dict[str, Any]:
-        # TODO: refactor with Annotated SkipGenerate
-        exclude_generate = {
-            "repo_config",
-            "diff_config",
-            "cleaner",
-        }
-        return exclude_by_name(
-            default_serialize_handler(self),
-            *exclude_generate if info.context == "generate" else {},
-        )
 
 
 class StreamsBootstrapCleaner(Cleaner, ABC):
