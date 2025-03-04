@@ -42,7 +42,6 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
     :param repo_config: Configuration of the Helm chart repo to be used for
         deploying the component, defaults to streams-bootstrap Helm repo
     :param version: Helm chart version, defaults to "3.6.1"
-    :param cleaner: Override of cleaner attributes
     """
 
     values: StreamsBootstrapValues = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
