@@ -1,23 +1,4 @@
-- _cleaner:
-    name: data-producer
-    namespace: ${NAMESPACE}
-    prefix: word-count-
-    suffix: -clean
-    type: producer-app-cleaner
-    values:
-      image: bakdata/kpops-demo-sentence-producer
-      imageTag: 2.0.0
-      kafka:
-        bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-        outputTopic: word-count-data-producer-topic
-      labels:
-        pipeline: word-count
-      prometheus:
-        jmx:
-          enabled: false
-      replicaCount: 1
-    version: 3.1.0
-  name: data-producer
+- name: data-producer
   namespace: ${NAMESPACE}
   prefix: word-count-
   to:
@@ -40,30 +21,7 @@
         enabled: false
     replicaCount: 1
   version: 3.1.0
-- _cleaner:
-    name: word-count-app
-    namespace: ${NAMESPACE}
-    prefix: word-count-
-    suffix: -clean
-    type: streams-app-cleaner
-    values:
-      image: bakdata/kpops-demo-word-count-app
-      imageTag: 2.0.0
-      kafka:
-        bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-        errorTopic: word-count-word-count-app-dead-letter-topic
-        inputTopics:
-          - word-count-data-producer-topic
-        outputTopic: word-count-word-count-app-topic
-      labels:
-        pipeline: word-count
-      prometheus:
-        jmx:
-          enabled: false
-      replicaCount: 1
-      statefulSet: false
-    version: 3.1.0
-  name: word-count-app
+- name: word-count-app
   namespace: ${NAMESPACE}
   prefix: word-count-
   to:
@@ -96,19 +54,7 @@
     replicaCount: 1
     statefulSet: false
   version: 3.1.0
-- _resetter:
-    name: redis-sink-connector
-    namespace: ${NAMESPACE}
-    prefix: word-count-
-    suffix: -clean
-    type: kafka-connector-resetter
-    values:
-      config:
-        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-        connector: word-count-redis-sink-connector
-      connectorType: sink
-    version: 1.0.4
-  config:
+- config:
     connector.class: com.github.jcustenborder.kafka.connect.redis.RedisSinkConnector
     key.converter: org.apache.kafka.connect.storage.StringConverter
     name: word-count-redis-sink-connector

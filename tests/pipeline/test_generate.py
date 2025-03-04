@@ -830,22 +830,13 @@ class TestGenerate:
         )
 
     def test_substitution_in_inflated_component(self):
-        result = runner.invoke(
-            app,
-            [
-                "generate",
-                str(RESOURCE_PATH / "resetter_values" / PIPELINE_YAML),
-            ],
-            catch_exceptions=False,
-        )
-        assert result.exit_code == 0, result.stdout
-        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
+        pipeline = kpops.generate(RESOURCE_PATH / "resetter_values" / PIPELINE_YAML)
+        assert isinstance(pipeline.components[1], KafkaSinkConnector)
         assert (
-            enriched_pipeline[1]["_resetter"]["values"]["label"]
-            == "inflated-connector-name"
+            pipeline.components[1]._resetter.values.label == "inflated-connector-name"  # pyright: ignore[reportAttributeAccessIssue,reportUnknownMemberType]
         )
         assert (
-            enriched_pipeline[1]["_resetter"]["values"]["imageTag"]
+            pipeline.components[1]._resetter.values.imageTag  # pyright: ignore[reportAttributeAccessIssue,reportUnknownMemberType]
             == "override-default-image-tag"
         )
 
@@ -861,20 +852,20 @@ class TestGenerate:
         assert hasattr(pipeline.components[0]._resetter.values, "label")
         assert pipeline.components[0]._resetter.values.label == "es-sink-connector"  # pyright: ignore[reportAttributeAccessIssue,reportUnknownMemberType]
 
-        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(pipeline.to_yaml())
-        assert enriched_pipeline[0]["name"] == "es-sink-connector"
-        assert enriched_pipeline[0]["_resetter"]["name"] == "es-sink-connector"
+        assert pipeline.components[0].name == "es-sink-connector"
+        assert pipeline.components[0]._resetter.name == "es-sink-connector"
         assert (
-            enriched_pipeline[0]["_resetter"]["values"]["label"] == "es-sink-connector"
+            pipeline.components[0]._resetter.values.label  # pyright: ignore[reportAttributeAccessIssue,reportUnknownMemberType]
+            == "es-sink-connector"
         )
         assert (
-            enriched_pipeline[0]["_resetter"]["values"]["imageTag"]
+            pipeline.components[0]._resetter.values.imageTag  # pyright: ignore[reportAttributeAccessIssue,reportUnknownMemberType]
             == "override-default-image-tag"
         )
 
     def test_streams_bootstrap(self, snapshot: Snapshot):
         pipeline = kpops.generate(
-            RESOURCE_PATH / "streams-bootstrap" / KpopsFileType.PIPELINE.as_yaml_file(),
+            RESOURCE_PATH / "streams-bootstrap" / PIPELINE_YAML,
         )
 
         cleaner_diff_config = [("cleaner",)]

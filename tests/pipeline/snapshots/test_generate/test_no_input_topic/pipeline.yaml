@@ -1,29 +1,4 @@
-- _cleaner:
-    name: app1
-    namespace: example-namespace
-    prefix: resources-no-input-topic-pipeline-
-    suffix: -clean
-    type: streams-app-cleaner
-    values:
-      commandLine:
-        CONVERT_XML: true
-      image: bakdata-demo-streams-app
-      kafka:
-        bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-        config:
-          large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-        errorTopic: resources-no-input-topic-pipeline-app1-error
-        inputPattern: .*
-        outputTopic: example-output
-        schemaRegistryUrl: http://localhost:8081/
-      resources:
-        limits:
-          memory: 2G
-        requests:
-          memory: 2G
-      statefulSet: false
-    version: 3.6.1
-  from:
+- from:
     components: {}
     topics:
       .*:
@@ -63,28 +38,7 @@
         memory: 2G
     statefulSet: false
   version: 3.6.1
-- _cleaner:
-    name: app2
-    namespace: example-namespace
-    prefix: resources-no-input-topic-pipeline-
-    suffix: -clean
-    type: streams-app-cleaner
-    values:
-      image: bakdata-demo-streams-app
-      kafka:
-        bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-        config:
-          large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-        errorTopic: resources-no-input-topic-pipeline-app2-error
-        inputTopics:
-          - example-output
-        labeledOutputTopics:
-          extra: example-output-extra
-          test-output: test-output-extra
-        schemaRegistryUrl: http://localhost:8081/
-      statefulSet: false
-    version: 3.6.1
-  name: app2
+- name: app2
   namespace: example-namespace
   prefix: resources-no-input-topic-pipeline-
   to:
