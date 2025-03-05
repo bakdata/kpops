@@ -24,9 +24,10 @@ from kpops.components.common.topic import (
 )
 from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.utils.docstring import describe_attr
+from kpops.utils.pydantic import SerializeAsOptionalModel
 
 
-class PipelineComponent(BaseDefaultsComponent, ABC):
+class PipelineComponent(SerializeAsOptionalModel, BaseDefaultsComponent, ABC):
     """Base class for all components.
 
     :param name: Component name

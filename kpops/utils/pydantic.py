@@ -12,6 +12,7 @@ from pydantic import (
     GetCoreSchemaHandler,
     SerializationInfo,
     SerializerFunctionWrapHandler,
+    WrapSerializer,
     model_serializer,
 )
 from pydantic.fields import FieldInfo
@@ -299,3 +300,22 @@ class SerializeAsOptionalModel(BaseModel):
         if info.exclude_none:
             return exclude_by_value(result, None)
         return result
+
+
+def serialize_skip_context_generate(
+    value: _T,
+    default_serialize_handler: SerializerFunctionWrapHandler,
+    info: SerializationInfo,
+) -> _T | None:
+    if info.context == "generate":
+        return None  # HACK: serialize to None, then exclude_by_value
+        # instead use PydanticOmit once supported, custom model_serializer can be removed afterwards
+        # raise PydanticOmit  # depends on https://github.com/pydantic/pydantic/issues/6969
+    return default_serialize_handler(value)
+
+
+SkipGenerate = Annotated[
+    _T,
+    WrapSerializer(serialize_skip_context_generate),
+    "Exclude field from generate output",
+]
