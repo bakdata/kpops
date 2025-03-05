@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import inspect
 import shutil
 from collections.abc import Callable
 from contextlib import suppress
@@ -284,35 +285,37 @@ def fill_csv_cli(target: Path) -> None:
     :param target: The path to the `.csv` file. Note that it must already
         contain the column names
     """
-    for var_in_main_name in dir(main):
-        var_in_main = getattr(main, var_in_main_name)
-        if (
-            not var_in_main_name.startswith("__")
-            and isinstance(var_in_main, OptionInfo | ArgumentInfo)
-            and var_in_main.envvar
-        ):
-            cli_env_var_description: list[str] = [
-                var_in_main.help
-                or "No description available, please refer to the CLI Usage documentation",
-            ]
-            if isinstance(var_in_main.envvar, list):
-                var_in_main_envvar = var_in_main.envvar[0]
-                if len(var_in_main.envvar) > 1:
-                    cli_env_var_description = [
-                        *cli_env_var_description,
-                        f"The following variables are equivalent to {var_in_main_envvar}:",
-                        ", ".join(
-                            [f"`{var_name}`" for var_name in var_in_main.envvar[1:]],
-                        ),
+    annotations = inspect.get_annotations(main, eval_str=True)
+    for name, annotation in annotations.items():
+        if not name.startswith("__") and getattr(annotation, "__metadata__", None):
+            for metadata in annotation.__metadata__:
+                if isinstance(metadata, OptionInfo | ArgumentInfo) and metadata.envvar:
+                    cli_env_var_description: list[str] = [
+                        metadata.help
+                        or "No description available, please refer to the CLI Usage documentation",
                     ]
-            else:
-                var_in_main_envvar = var_in_main.envvar
-            csv_append_env_var(
-                target,
-                var_in_main_envvar,
-                var_in_main.default,
-                cli_env_var_description,
-            )
+                    if isinstance(metadata.envvar, list):
+                        metadata_envvar = metadata.envvar[0]
+                        if len(metadata.envvar) > 1:
+                            cli_env_var_description = [
+                                *cli_env_var_description,
+                                f"The following variables are equivalent to {metadata_envvar}:",
+                                ", ".join(
+                                    [
+                                        f"`{var_name}`"
+                                        for var_name in metadata.envvar[1:]
+                                    ],
+                                ),
+                            ]
+                    else:
+                        metadata_envvar = metadata.envvar
+                    csv_append_env_var(
+                        target,
+                        metadata_envvar,
+                        getattr(main, name, None),
+                        cli_env_var_description,
+                    )
+                    break
 
 
 def gen_vars(
