@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [10.0.2](https://github.com/bakdata/kpops/tree/10.0.2) - 2025-03-04
+### What's changed
+
+* fix: hide _cleaner & _resetter from generate output by @disrupted in [#610](https://github.com/bakdata/kpops/pull/610)
+
+
+**Full Changelog**: https://github.com/bakdata/kpops/compare/10.0.1...10.0.2
+
 ## [10.0.1](https://github.com/bakdata/kpops/tree/10.0.1) - 2025-03-04
 ### What's changed
 
@@ -14,6 +22,8 @@ All notable changes to this project will be documented in this file.
 * fix(helm-app): hide repo_config & diff_config from generate output by @disrupted in [#607](https://github.com/bakdata/kpops/pull/607)
 
 * fix(cleaner): enrich on init by @disrupted in [#608](https://github.com/bakdata/kpops/pull/608)
+
+* Bump version 10.0.0 → 10.0.1 by @bakdata-bot
 
 
 **Full Changelog**: https://github.com/bakdata/kpops/compare/10.0.0...10.0.1
