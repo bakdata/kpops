@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Annotated
 
 import typer
 
@@ -350,10 +351,11 @@ def version_callback(show_version: bool) -> None:
     """
 )
 def schema(
-    scope: KpopsFileType = typer.Argument(
-        ...,
-        show_default=False,
-        help=f"""
+    scope: Annotated[
+        KpopsFileType,
+        typer.Argument(
+            show_default=False,
+            help=f"""
         Scope of the generated schema
         \n\n\n
         - {KpopsFileType.PIPELINE.value}: Schema of PipelineComponents for KPOps {PIPELINE_YAML}
@@ -361,7 +363,8 @@ def schema(
         - {KpopsFileType.DEFAULTS.value}: Schema of PipelineComponents for KPOps {DEFAULTS_YAML}
         \n\n
         - {KpopsFileType.CONFIG.value}: Schema for KPOps {CONFIG_YAML}""",
-    ),
+        ),
+    ],
 ) -> None:
     match scope:
         case KpopsFileType.PIPELINE:
@@ -374,14 +377,16 @@ def schema(
 
 @app.callback()
 def main(
-    version: bool = typer.Option(
-        False,
-        "--version",
-        "-V",
-        help="Print KPOps version",
-        callback=version_callback,
-        is_eager=True,
-    ),
+    version: Annotated[
+        bool,
+        typer.Option(
+            "--version",
+            "-V",
+            help="Print KPOps version",
+            callback=version_callback,
+            is_eager=True,
+        ),
+    ] = False,
 ): ...
 
 
