@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 def generate(
     pipeline_path: Path,
     dotenv: list[Path] | None = None,
-    config: Path = Path(),
+    config: Path | None = None,
     steps: set[str] | None = None,
     filter_type: FilterType = FilterType.INCLUDE,
     environment: str | None = None,
@@ -73,7 +73,7 @@ def generate(
 def manifest_deploy(
     pipeline_path: Path,
     dotenv: list[Path] | None = None,
-    config: Path = Path(),
+    config: Path | None = None,
     steps: set[str] | None = None,
     filter_type: FilterType = FilterType.INCLUDE,
     environment: str | None = None,
@@ -98,7 +98,7 @@ def manifest_deploy(
 def manifest_destroy(
     pipeline_path: Path,
     dotenv: list[Path] | None = None,
-    config: Path = Path(),
+    config: Path | None = None,
     steps: set[str] | None = None,
     filter_type: FilterType = FilterType.INCLUDE,
     environment: str | None = None,
@@ -123,7 +123,7 @@ def manifest_destroy(
 def manifest_reset(
     pipeline_path: Path,
     dotenv: list[Path] | None = None,
-    config: Path = Path(),
+    config: Path | None = None,
     steps: set[str] | None = None,
     filter_type: FilterType = FilterType.INCLUDE,
     environment: str | None = None,
@@ -148,7 +148,7 @@ def manifest_reset(
 def manifest_clean(
     pipeline_path: Path,
     dotenv: list[Path] | None = None,
-    config: Path = Path(),
+    config: Path | None = None,
     steps: set[str] | None = None,
     filter_type: FilterType = FilterType.INCLUDE,
     environment: str | None = None,
@@ -173,7 +173,7 @@ def manifest_clean(
 def deploy(
     pipeline_path: Path,
     dotenv: list[Path] | None = None,
-    config: Path = Path(),
+    config: Path | None = None,
     steps: set[str] | None = None,
     filter_type: FilterType = FilterType.INCLUDE,
     environment: str | None = None,
@@ -221,7 +221,7 @@ def deploy(
 def destroy(
     pipeline_path: Path,
     dotenv: list[Path] | None = None,
-    config: Path = Path(),
+    config: Path | None = None,
     steps: set[str] | None = None,
     filter_type: FilterType = FilterType.INCLUDE,
     environment: str | None = None,
@@ -271,7 +271,7 @@ def destroy(
 def reset(
     pipeline_path: Path,
     dotenv: list[Path] | None = None,
-    config: Path = Path(),
+    config: Path | None = None,
     steps: set[str] | None = None,
     filter_type: FilterType = FilterType.INCLUDE,
     environment: str | None = None,
@@ -319,7 +319,7 @@ def reset(
 def clean(
     pipeline_path: Path,
     dotenv: list[Path] | None = None,
-    config: Path = Path(),
+    config: Path | None = None,
     steps: set[str] | None = None,
     filter_type: FilterType = FilterType.INCLUDE,
     environment: str | None = None,

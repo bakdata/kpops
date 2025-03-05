@@ -171,15 +171,17 @@ class KpopsConfig(BaseSettings):
     @classmethod
     def create(
         cls,
-        config_dir: Path,
+        config_dir: Path | None,
         dotenv: list[Path] | None = None,
         environment: str | None = None,
         verbose: bool = False,
         operation_mode: OperationMode | None = None,
     ) -> KpopsConfig:
         cls.setup_logging_level(verbose)
-        YamlConfigSettingsSource.config_dir = config_dir
-        YamlConfigSettingsSource.environment = environment
+        if config_dir:
+            YamlConfigSettingsSource.config_dir = config_dir
+        if environment:
+            YamlConfigSettingsSource.environment = environment
         cls._instance = KpopsConfig(
             _env_file=dotenv  # pyright: ignore[reportCallIssue]
         )

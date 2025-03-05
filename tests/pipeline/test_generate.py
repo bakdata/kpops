@@ -849,15 +849,7 @@ class TestGenerate:
         assert isinstance(pipeline.components[0], KafkaSinkConnector)
         assert pipeline.components[0].name == "es-sink-connector"
         assert pipeline.components[0]._resetter.name == "es-sink-connector"
-        assert hasattr(pipeline.components[0]._resetter.values, "label")
         assert pipeline.components[0]._resetter.values.label == "es-sink-connector"  # pyright: ignore[reportAttributeAccessIssue,reportUnknownMemberType]
-
-        assert pipeline.components[0].name == "es-sink-connector"
-        assert pipeline.components[0]._resetter.name == "es-sink-connector"
-        assert (
-            pipeline.components[0]._resetter.values.label  # pyright: ignore[reportAttributeAccessIssue,reportUnknownMemberType]
-            == "es-sink-connector"
-        )
         assert (
             pipeline.components[0]._resetter.values.imageTag  # pyright: ignore[reportAttributeAccessIssue,reportUnknownMemberType]
             == "override-default-image-tag"
