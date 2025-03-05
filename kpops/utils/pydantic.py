@@ -1,7 +1,7 @@
 import json
 import logging
 from pathlib import Path
-from typing import Annotated, Any, ClassVar
+from typing import Annotated, Any, ClassVar, final
 
 import humps
 from pydantic import (
@@ -16,7 +16,7 @@ from pydantic import (
 )
 from pydantic.fields import FieldInfo
 from pydantic_core import PydanticUseDefault, core_schema
-from pydantic_settings import PydanticBaseSettingsSource
+from pydantic_settings import BaseSettings, PydanticBaseSettingsSource
 from typing_extensions import TypeVar, override
 
 from kpops.utils.dict_ops import update_nested_pair
@@ -122,7 +122,7 @@ def collect_fields(model: type[BaseModel]) -> dict[str, Any]:
     :param model: settings class
     :return: ``dict`` of all fields in a settings class
     """
-    seen_fields = {}
+    seen_fields: dict[str, Any] = {}
     for field_name, field_value in model.model_fields.items():
         if field_value.annotation and issubclass_patched(field_value.annotation):
             seen_fields[field_name] = collect_fields(field_value.annotation)
@@ -170,16 +170,17 @@ class DescConfigModel(BaseModel):
     )
 
 
+@final
 class YamlConfigSettingsSource(PydanticBaseSettingsSource):
     """Loads variables from a YAML file at the project's root."""
 
-    log = logging.getLogger()
+    log: logging.Logger = logging.getLogger()
 
-    config_dir = Path()
-    config_file_base_name = "config"
+    config_dir: Path = Path()
+    config_file_base_name: str = "config"
     environment: str | None = None
 
-    def __init__(self, settings_cls) -> None:
+    def __init__(self, settings_cls: type[BaseSettings]) -> None:
         super().__init__(settings_cls)
         default_config = self.load_config(
             self.config_dir / f"{self.config_file_base_name}.yaml"
@@ -201,9 +202,8 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
         :param file: Path to a ``config*.yaml``
         :return: Dict containing the config or empty dict if file doesn't exist
         """
-        # TODO: remove isinstance check, let Pydantic handle the validation of the file contents
-        if file.exists() and isinstance((loaded_file := load_yaml_file(file)), dict):
-            return loaded_file
+        if file.exists():
+            return load_yaml_file(file)
         return {}
 
     @override
