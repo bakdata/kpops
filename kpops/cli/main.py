@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Annotated
 
 import typer
 
@@ -374,14 +375,16 @@ def schema(
 
 @app.callback()
 def main(
-    version: bool = typer.Option(
-        False,
-        "--version",
-        "-V",
-        help="Print KPOps version",
-        callback=version_callback,
-        is_eager=True,
-    ),
+    version: Annotated[
+        bool,
+        typer.Option(
+            "--version",
+            "-V",
+            help="Print KPOps version",
+            callback=version_callback,
+            is_eager=True,
+        ),
+    ] = False,
 ): ...
 
 
