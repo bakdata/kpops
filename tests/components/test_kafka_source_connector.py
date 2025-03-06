@@ -119,6 +119,26 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             ),
         ]
 
+    @pytest.mark.parametrize(
+        "initial_state", [InitialState.PAUSED, InitialState.STOPPED]
+    )
+    async def test_deploy_initial_state(
+        self,
+        connector: KafkaSourceConnector,
+        initial_state: InitialState,
+        mocker: MockerFixture,
+    ):
+        mock_create_connector = mocker.patch.object(
+            get_handlers().connector_handler, "create_connector"
+        )
+
+        connector.initial_state = initial_state
+        dry_run = True
+        await connector.deploy(dry_run=dry_run)
+        assert mock_create_connector.mock_calls == [
+            mocker.call(connector.config, initial_state=initial_state, dry_run=dry_run)
+        ]
+
     async def test_destroy(
         self,
         connector: KafkaSourceConnector,
