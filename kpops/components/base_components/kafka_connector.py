@@ -231,6 +231,7 @@ class KafkaSourceConnector(KafkaConnector):
     @override
     async def reset(self, dry_run: bool) -> None:
         """Reset state. Keep connector."""
+        await super().reset(dry_run)
         await self._resetter.reset(dry_run)
 
     @override
@@ -265,6 +266,7 @@ class KafkaSinkConnector(KafkaConnector):
     @override
     async def reset(self, dry_run: bool) -> None:
         """Reset state. Keep consumer group and connector."""
+        await super().reset(dry_run)
         self._resetter.values.config.delete_consumer_group = False
         await self._resetter.reset(dry_run)
 
