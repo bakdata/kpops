@@ -83,16 +83,15 @@ class TestConnectorApiWrapper:
 
         with pytest.raises(KafkaConnectError):
             await connect_wrapper.create_connector(
-                KafkaConnectorConfig.model_validate(configs),
-                InitialState.RUNNING,
+                KafkaConnectorConfig.model_validate(configs), InitialState.RUNNING
             )
 
         mock_post.assert_called_with(
-            url=f"{DEFAULT_HOST}/connectors",
-            headers=HEADERS,
+            "/connectors",
             json={
                 "name": "test-connector",
-                "config": KafkaConnectorConfig.model_validate(configs).model_dump(),
+                "config": configs,
+                "initial_state": "RUNNING",
             },
         )
 
@@ -168,10 +167,7 @@ class TestConnectorApiWrapper:
         with pytest.raises(KafkaConnectError):
             await connect_wrapper.get_connector(connector_name)
 
-        mock_get.assert_called_with(
-            url=f"{DEFAULT_HOST}/connectors/{connector_name}",
-            headers={"Accept": "application/json", "Content-Type": "application/json"},
-        )
+        mock_get.assert_called_with(f"/connectors/{connector_name}")
 
     @pytest.mark.flaky(reruns=5, condition=sys.platform.startswith("win32"))
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
@@ -186,6 +182,7 @@ class TestConnectorApiWrapper:
         actual_response = {
             "name": "hdfs-sink-connector",
             "config": {
+                "name": "hdfs-sink-connector",
                 "connector.class": "io.confluent.connect.hdfs.HdfsSinkConnector",
                 "tasks.max": "10",
                 "topics": "test-topic",
@@ -282,9 +279,8 @@ class TestConnectorApiWrapper:
             )
 
         mock_put.assert_called_with(
-            url=f"{DEFAULT_HOST}/connectors/{connector_name}/config",
-            headers={"Accept": "application/json", "Content-Type": "application/json"},
-            json=KafkaConnectorConfig.model_validate(configs).model_dump(),
+            f"/connectors/{connector_name}/config",
+            json=configs,
         )
 
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
@@ -300,6 +296,7 @@ class TestConnectorApiWrapper:
         actual_response = {
             "name": "hdfs-sink-connector",
             "config": {
+                "name": "hdfs-sink-connector",
                 "connector.class": "io.confluent.connect.hdfs.HdfsSinkConnector",
                 "tasks.max": "10",
                 "topics": "test-topic",
@@ -344,6 +341,7 @@ class TestConnectorApiWrapper:
         actual_response = {
             "name": "hdfs-sink-connector",
             "config": {
+                "name": "hdfs-sink-connector",
                 "connector.class": "io.confluent.connect.hdfs.HdfsSinkConnector",
                 "tasks.max": "10",
                 "topics": "test-topic",
@@ -407,10 +405,7 @@ class TestConnectorApiWrapper:
         with pytest.raises(KafkaConnectError):
             await connect_wrapper.delete_connector(connector_name)
 
-        mock_delete.assert_called_with(
-            url=f"{DEFAULT_HOST}/connectors/{connector_name}",
-            headers=HEADERS,
-        )
+        mock_delete.assert_called_with(f"/connectors/{connector_name}")
 
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     async def test_should_return_correct_response_when_deleting_connector(
@@ -424,6 +419,7 @@ class TestConnectorApiWrapper:
         actual_response = {
             "name": "hdfs-sink-connector",
             "config": {
+                "name": "hdfs-sink-connector",
                 "connector.class": "io.confluent.connect.hdfs.HdfsSinkConnector",
                 "tasks.max": "10",
                 "topics": "test-topic",
@@ -503,29 +499,8 @@ class TestConnectorApiWrapper:
     async def test_should_create_correct_validate_connector_config_request(
         self, mock_put: AsyncMock, connect_wrapper: ConnectWrapper
     ):
-        connector_config = KafkaConnectorConfig.model_validate(
-            {
-                "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
-                "name": "FileStreamSinkConnector",
-                "tasks.max": "1",
-                "topics": "test-topic",
-            }
-        )
-        with pytest.raises(KafkaConnectError):
-            await connect_wrapper.validate_connector_config(connector_config)
-
-        mock_put.assert_called_with(
-            url=f"{DEFAULT_HOST}/connector-plugins/FileStreamSinkConnector/config/validate",
-            headers={"Accept": "application/json", "Content-Type": "application/json"},
-            json=connector_config.model_dump(),
-        )
-
-    @patch("httpx.AsyncClient.put")
-    async def test_should_create_correct_validate_connector_config_and_name_gets_added(
-        self, mock_put: AsyncMock, connect_wrapper: ConnectWrapper
-    ):
         connector_name = "FileStreamSinkConnector"
-        configs = {
+        config = {
             "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
             "name": connector_name,
             "tasks.max": "1",
@@ -533,15 +508,12 @@ class TestConnectorApiWrapper:
         }
         with pytest.raises(KafkaConnectError):
             await connect_wrapper.validate_connector_config(
-                KafkaConnectorConfig.model_validate(configs)
+                KafkaConnectorConfig.model_validate(config)
             )
 
         mock_put.assert_called_with(
-            url=f"{DEFAULT_HOST}/connector-plugins/{connector_name}/config/validate",
-            headers={"Accept": "application/json", "Content-Type": "application/json"},
-            json=KafkaConnectorConfig.model_validate(
-                {"name": connector_name, **configs}
-            ).model_dump(),
+            f"/connector-plugins/{connector_name}/config/validate",
+            json=config,
         )
 
     async def test_should_parse_validate_connector_config(
