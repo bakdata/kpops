@@ -2,10 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [10.0.3](https://github.com/bakdata/kpops/tree/10.0.3) - 2025-03-06
+### What's changed
+
+* refactor(api): improve typing by @disrupted in [#612](https://github.com/bakdata/kpops/pull/612)
+
+* refactor(pydantic): create `SkipGenerate` type by @disrupted in [#611](https://github.com/bakdata/kpops/pull/611)
+
+* refactor(cli): use annotated for typer option by @disrupted in [#613](https://github.com/bakdata/kpops/pull/613)
+
+* fix(kafka-connector): destroy connector on reset by @disrupted in [#615](https://github.com/bakdata/kpops/pull/615)
+
+
+**Full Changelog**: https://github.com/bakdata/kpops/compare/10.0.2...10.0.3
+
 ## [10.0.2](https://github.com/bakdata/kpops/tree/10.0.2) - 2025-03-04
 ### What's changed
 
 * fix: hide _cleaner & _resetter from generate output by @disrupted in [#610](https://github.com/bakdata/kpops/pull/610)
+
+* Bump version 10.0.1 → 10.0.2 by @bakdata-bot
 
 
 **Full Changelog**: https://github.com/bakdata/kpops/compare/10.0.1...10.0.2
