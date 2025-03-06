@@ -63,6 +63,7 @@
     tasks.max: '1'
     topics: word-count-word-count-app-topic
     value.converter: org.apache.kafka.connect.storage.StringConverter
+  initial_state: RUNNING
   name: redis-sink-connector
   prefix: word-count-
   resetter_values: {}

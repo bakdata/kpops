@@ -45,6 +45,7 @@
     read.timeout.ms: '120000'
     tasks.max: '1'
     topics: example-output
+  initial_state: RUNNING
   name: es-sink-connector
   prefix: resources-kafka-connect-sink-
   resetter_values: {}

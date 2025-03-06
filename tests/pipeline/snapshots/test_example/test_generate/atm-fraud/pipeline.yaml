@@ -205,6 +205,7 @@
     transforms.flatten.type: org.apache.kafka.connect.transforms.Flatten$Value
     value.converter: io.confluent.connect.avro.AvroConverter
     value.converter.schema.registry.url: http://k8kafka-cp-schema-registry.${NAMESPACE}.svc.cluster.local:8081
+  initial_state: RUNNING
   name: postgresql-connector
   prefix: atm-fraud-
   resetter_values: {}

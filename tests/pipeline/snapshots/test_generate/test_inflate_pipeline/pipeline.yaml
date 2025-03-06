@@ -127,6 +127,7 @@
     tasks.max: '1'
     topics: resources-pipeline-with-inflate-should-inflate
     transforms.changeTopic.replacement: resources-pipeline-with-inflate-should-inflate-index-v1
+  initial_state: RUNNING
   name: should-inflate-inflated-sink-connector
   prefix: resources-pipeline-with-inflate-
   resetter_values: {}

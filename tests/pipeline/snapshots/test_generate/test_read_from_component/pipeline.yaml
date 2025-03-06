@@ -85,6 +85,7 @@
     tasks.max: '1'
     topics: resources-read-from-component-inflate-step
     transforms.changeTopic.replacement: resources-read-from-component-inflate-step-index-v1
+  initial_state: RUNNING
   name: inflate-step-inflated-sink-connector
   prefix: resources-read-from-component-
   resetter_values: {}
@@ -180,6 +181,7 @@
     tasks.max: '1'
     topics: resources-read-from-component-inflate-step-without-prefix
     transforms.changeTopic.replacement: resources-read-from-component-inflate-step-without-prefix-index-v1
+  initial_state: RUNNING
   name: inflate-step-without-prefix-inflated-sink-connector
   prefix: resources-read-from-component-
   resetter_values: {}
