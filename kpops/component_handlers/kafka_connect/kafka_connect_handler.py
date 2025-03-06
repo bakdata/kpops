@@ -8,6 +8,7 @@ from kpops.component_handlers.kafka_connect.exception import (
     ConnectorNotFoundException,
     ConnectorStateException,
 )
+from kpops.component_handlers.kafka_connect.model import InitialState
 from kpops.utils.colorify import magentaify
 from kpops.utils.dict_differ import render_diff
 
@@ -24,7 +25,11 @@ class KafkaConnectHandler:
         self._connect_wrapper = connect_wrapper
 
     async def create_connector(
-        self, connector_config: KafkaConnectorConfig, *, dry_run: bool
+        self,
+        connector_config: KafkaConnectorConfig,
+        *,
+        initial_state: InitialState,
+        dry_run: bool,
     ) -> None:
         """Create a connector.
 
@@ -41,7 +46,9 @@ class KafkaConnectHandler:
                 await self._connect_wrapper.update_connector_config(connector_config)
 
             except ConnectorNotFoundException:
-                await self._connect_wrapper.create_connector(connector_config)
+                await self._connect_wrapper.create_connector(
+                    connector_config, initial_state
+                )
 
     async def destroy_connector(self, connector_name: str, *, dry_run: bool) -> None:
         """Delete a connector resource from the cluster.

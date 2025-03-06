@@ -187,7 +187,7 @@ class KafkaConnector(PipelineComponent, ABC):
                 await schema_handler.submit_schemas(to_section=self.to, dry_run=dry_run)
 
         await get_handlers().connector_handler.create_connector(
-            self.config, dry_run=dry_run
+            self.config, initial_state=self.initial_state, dry_run=dry_run
         )
 
     @override

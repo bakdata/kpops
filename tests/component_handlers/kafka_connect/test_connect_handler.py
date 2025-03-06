@@ -12,6 +12,7 @@ from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
     KafkaConnectHandler,
 )
 from kpops.component_handlers.kafka_connect.model import (
+    InitialState,
     KafkaConnectorConfig,
     KafkaConnectResponse,
 )
@@ -71,7 +72,9 @@ class TestConnectorHandler:
         handler = self.connector_handler(connector_wrapper)
         renderer_diff_mock.return_value = None
 
-        await handler.create_connector(connector_config, dry_run=True)
+        await handler.create_connector(
+            connector_config, initial_state=InitialState.RUNNING, dry_run=True
+        )
         connector_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
         connector_wrapper.validate_connector_config.assert_called_once_with(
             connector_config
@@ -101,7 +104,9 @@ class TestConnectorHandler:
         }
 
         config = KafkaConnectorConfig.model_validate(configs)
-        await handler.create_connector(config, dry_run=True)
+        await handler.create_connector(
+            config, initial_state=InitialState.RUNNING, dry_run=True
+        )
         connector_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
         connector_wrapper.validate_connector_config.assert_called_once_with(config)
 
@@ -141,7 +146,9 @@ class TestConnectorHandler:
         }
 
         connector_config = KafkaConnectorConfig.model_validate(configs)
-        await handler.create_connector(connector_config, dry_run=True)
+        await handler.create_connector(
+            connector_config, initial_state=InitialState.RUNNING, dry_run=True
+        )
         connector_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
         connector_wrapper.validate_connector_config.assert_called_once_with(
             connector_config
@@ -177,7 +184,9 @@ class TestConnectorHandler:
             ConnectorStateException,
             match=f"Connector Creation: validating the connector config for connector {CONNECTOR_NAME} resulted in the following errors: {formatted_errors}",
         ):
-            await handler.create_connector(connector_config, dry_run=True)
+            await handler.create_connector(
+                connector_config, initial_state=InitialState.RUNNING, dry_run=True
+            )
 
         connector_wrapper.validate_connector_config.assert_called_once_with(
             connector_config
@@ -190,7 +199,9 @@ class TestConnectorHandler:
 
         handler = self.connector_handler(connector_wrapper)
 
-        await handler.create_connector(connector_config, dry_run=False)
+        await handler.create_connector(
+            connector_config, initial_state=InitialState.RUNNING, dry_run=False
+        )
 
         assert connector_wrapper.mock_calls == [
             mock.call.get_connector(CONNECTOR_NAME),
@@ -206,7 +217,9 @@ class TestConnectorHandler:
 
         connector_wrapper.get_connector.side_effect = ConnectorNotFoundException()
 
-        await handler.create_connector(connector_config, dry_run=False)
+        await handler.create_connector(
+            connector_config, initial_state=InitialState.RUNNING, dry_run=False
+        )
 
         connector_wrapper.create_connector.assert_called_once_with(connector_config)
 

@@ -11,8 +11,10 @@ from kpops.component_handlers.kafka_connect.exception import (
     KafkaConnectError,
 )
 from kpops.component_handlers.kafka_connect.model import (
+    InitialState,
     KafkaConnectConfigErrorResponse,
     KafkaConnectorConfig,
+    KafkaConnectRequest,
     KafkaConnectResponse,
 )
 
@@ -39,7 +41,7 @@ class ConnectWrapper:
         return self._config.url
 
     async def create_connector(
-        self, connector_config: KafkaConnectorConfig
+        self, connector_config: KafkaConnectorConfig, initial_state: InitialState
     ) -> KafkaConnectResponse:
         """Create a new connector.
 
@@ -47,13 +49,12 @@ class ConnectWrapper:
         :param connector_config: The config of the connector
         :return: The current connector info if successful.
         """
-        config_json: dict[str, Any] = connector_config.model_dump()
-        connect_data: dict[str, Any] = {
-            "name": connector_config.name,
-            "config": config_json,
-        }
+        payload = KafkaConnectRequest(
+            config=connector_config,
+            initial_state=initial_state,
+        )
         response = await self._client.post(
-            url=f"{self.url}connectors", headers=HEADERS, json=connect_data
+            url=f"{self.url}connectors", headers=HEADERS, json=payload.model_dump()
         )
         if response.status_code == httpx.codes.CREATED:
             log.info(f"Connector {connector_config.name} created.")
@@ -63,9 +64,8 @@ class ConnectWrapper:
             log.warning(
                 "Rebalancing in progress while creating a connector... Retrying..."
             )
-
             await asyncio.sleep(1)
-            await self.create_connector(connector_config)
+            await self.create_connector(connector_config, initial_state)
 
         raise KafkaConnectError(response)
 
@@ -76,7 +76,7 @@ class ConnectWrapper:
         :param connector_name: Nameof the crated connector
         :return: Information about the connector.
         """
-        if connector_name is None:
+        if connector_name is None:  # TODO: remove None case
             msg = "Connector name not set"
             raise Exception(msg)
         response = await self._client.get(

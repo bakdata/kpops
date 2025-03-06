@@ -5,6 +5,7 @@ import pydantic
 from pydantic import (
     BaseModel,
     ConfigDict,
+    computed_field,
     field_validator,
     model_serializer,
 )
@@ -113,9 +114,19 @@ class ConnectorTask(BaseModel):
     task: int
 
 
+class KafkaConnectRequest(BaseModel):
+    config: KafkaConnectorConfig
+    initial_state: InitialState
+
+    @computed_field
+    @property
+    def name(self) -> str:
+        return self.config.name
+
+
 class KafkaConnectResponse(BaseModel):
     name: str
-    config: dict[str, str]
+    config: dict[str, str]  # TODO: KafkaConnectorConfig
     tasks: list[ConnectorTask]
     type: str | None = None
 

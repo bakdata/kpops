@@ -13,6 +13,7 @@ from kpops.component_handlers.kafka_connect.exception import (
     KafkaConnectError,
 )
 from kpops.component_handlers.kafka_connect.model import (
+    InitialState,
     KafkaConnectorConfig,
     KafkaConnectResponse,
 )
@@ -81,7 +82,8 @@ class TestConnectorApiWrapper:
 
         with pytest.raises(KafkaConnectError):
             await connect_wrapper.create_connector(
-                KafkaConnectorConfig.model_validate(configs)
+                KafkaConnectorConfig.model_validate(configs),
+                InitialState.RUNNING,
             )
 
         mock_post.assert_called_with(
@@ -126,7 +128,9 @@ class TestConnectorApiWrapper:
             status_code=201,
         )
 
-        expected_response = await connect_wrapper.create_connector(connector_config)
+        expected_response = await connect_wrapper.create_connector(
+            connector_config, InitialState.RUNNING
+        )
 
         assert KafkaConnectResponse.model_validate(actual_response) == expected_response
 
@@ -147,7 +151,7 @@ class TestConnectorApiWrapper:
         )
 
         await timeout(
-            connect_wrapper.create_connector(connector_config),
+            connect_wrapper.create_connector(connector_config, InitialState.RUNNING),
             secs=10,
         )
 
