@@ -126,7 +126,7 @@ class KafkaConnectRequest(BaseModel):
 
 class KafkaConnectResponse(BaseModel):
     name: str
-    config: dict[str, str]  # TODO: KafkaConnectorConfig
+    config: KafkaConnectorConfig
     tasks: list[ConnectorTask]
     type: str | None = None
 

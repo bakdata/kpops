@@ -76,9 +76,12 @@ class KafkaConnectHandler:
             connector = await self._connect_wrapper.get_connector(connector_name)
 
             log.info(f"Connector Creation: connector {connector_name} already exists.")
-            if diff := render_diff(connector.config, connector_config.model_dump()):
+            if diff := render_diff(
+                connector.config.model_dump(), connector_config.model_dump()
+            ):
                 log.info(f"Updating config:\n{diff}")
 
+            # TODO: refactor, this should not be here
             log.debug(connector_config.model_dump())
             log.debug(f"PUT /connectors/{connector_name}/config HTTP/1.1")
             log.debug(f"HOST: {self._connect_wrapper.url}")
