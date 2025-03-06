@@ -9,6 +9,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     RepoAuthFlags,
 )
 from kpops.component_handlers.kafka_connect.model import (
+    InitialState,
     KafkaConnectorConfig,
     KafkaConnectorType,
 )
@@ -113,7 +114,9 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                 mocker.call.mock_create_topic(topic, dry_run=dry_run)
                 for topic in connector.to.kafka_topics
             ),
-            mocker.call.mock_create_connector(connector.config, dry_run=dry_run),
+            mocker.call.mock_create_connector(
+                connector.config, initial_state=InitialState.RUNNING, dry_run=dry_run
+            ),
         ]
 
     async def test_destroy(

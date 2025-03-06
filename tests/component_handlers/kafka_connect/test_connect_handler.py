@@ -1,3 +1,4 @@
+from typing import Any
 from unittest import mock
 from unittest.mock import AsyncMock, MagicMock
 
@@ -124,7 +125,7 @@ class TestConnectorHandler:
     ):
         handler = self.connector_handler(connector_wrapper)
 
-        actual_response = {
+        actual_response: dict[str, Any] = {
             "name": "name",
             "config": {
                 "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
@@ -221,7 +222,9 @@ class TestConnectorHandler:
             connector_config, initial_state=InitialState.RUNNING, dry_run=False
         )
 
-        connector_wrapper.create_connector.assert_called_once_with(connector_config)
+        connector_wrapper.create_connector.assert_called_once_with(
+            connector_config, InitialState.RUNNING
+        )
 
     async def test_should_print_correct_log_when_destroying_connector_in_dry_run(
         self, log_info_mock: MagicMock, connector_wrapper: AsyncMock
