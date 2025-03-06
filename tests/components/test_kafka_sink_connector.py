@@ -206,10 +206,15 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         self,
         connector: KafkaSinkConnector,
         dry_run_handler_mock: MagicMock,
+        mocker: MockerFixture,
     ):
+        mock_destroy = mocker.patch.object(connector, "destroy")
+        mock_resetter_reset = mocker.spy(connector._resetter, "reset")
         dry_run = True
         await connector.reset(dry_run=dry_run)
 
+        mock_destroy.assert_called_once_with(dry_run)
+        mock_resetter_reset.assert_called_once_with(dry_run)
         dry_run_handler_mock.print_helm_diff.assert_called_once()
 
     async def test_reset_when_dry_run_is_false(
@@ -236,11 +241,11 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         dry_run = False
 
         await connector.reset(dry_run=dry_run)
-        mock_destroy.assert_not_called()
         mock_resetter_reset.assert_called_once_with(dry_run)
 
         mock.assert_has_calls(
             [
+                mocker.call.destroy_connector(dry_run),
                 mocker.call.helm.add_repo(
                     "bakdata-kafka-connect-resetter",
                     "https://bakdata.github.io/kafka-connect-resetter/",
