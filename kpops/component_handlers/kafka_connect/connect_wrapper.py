@@ -23,7 +23,6 @@ if TYPE_CHECKING:
 
     from kpops.config import KafkaConnectConfig
 
-HEADERS = {"Accept": "application/json", "Content-Type": "application/json"}
 
 log = logging.getLogger("KafkaConnectAPI")
 
@@ -35,7 +34,9 @@ class ConnectWrapper:
     def __init__(self, config: KafkaConnectConfig) -> None:
         self._config: KafkaConnectConfig = config
         self._client = httpx.AsyncClient(
-            base_url=str(config.url), timeout=config.timeout
+            base_url=str(config.url),
+            headers={"Accept": "application/json", "Content-Type": "application/json"},
+            timeout=config.timeout,
         )
 
     @property
@@ -55,9 +56,7 @@ class ConnectWrapper:
             config=connector_config,
             initial_state=initial_state,
         )
-        response = await self._client.post(
-            url="/connectors", headers=HEADERS, json=payload.model_dump()
-        )
+        response = await self._client.post("/connectors", json=payload.model_dump())
         if response.status_code == httpx.codes.CREATED:
             log.info(f"Connector {connector_config.name} created.")
             log.debug(response.json())
@@ -78,9 +77,7 @@ class ConnectWrapper:
         :param connector_name: Name of the connector
         :return: Information about the connector.
         """
-        response = await self._client.get(
-            url=f"/connectors/{connector_name}", headers=HEADERS
-        )
+        response = await self._client.get(f"/connectors/{connector_name}")
         if response.status_code == httpx.codes.OK:
             log.info(f"Connector {connector_name} exists.")
             log.debug(response.json())
@@ -110,8 +107,7 @@ class ConnectWrapper:
 
         config_json = connector_config.model_dump()
         response = await self._client.put(
-            url=f"/connectors/{connector_name}/config",
-            headers=HEADERS,
+            f"/connectors/{connector_name}/config",
             json=config_json,
         )
 
@@ -142,8 +138,7 @@ class ConnectWrapper:
         :return: List of all found errors
         """
         response = await self._client.put(
-            url=f"/connector-plugins/{connector_config.class_name}/config/validate",
-            headers=HEADERS,
+            f"/connector-plugins/{connector_config.class_name}/config/validate",
             json=connector_config.model_dump(),
         )
 
@@ -171,9 +166,7 @@ class ConnectWrapper:
         :param connector_name: Configuration parameters for the connector.
         :raises ConnectorNotFoundException: Connector not found
         """
-        response = await self._client.delete(
-            url=f"/connectors/{connector_name}", headers=HEADERS
-        )
+        response = await self._client.delete(f"/connectors/{connector_name}")
         if response.status_code == httpx.codes.NO_CONTENT:
             log.info(f"Connector {connector_name} deleted.")
             return
