@@ -6,6 +6,7 @@ from pydantic import (
     BaseModel,
     ConfigDict,
     computed_field,
+    field_serializer,
     field_validator,
     model_serializer,
 )
@@ -96,17 +97,14 @@ class KafkaConnectorConfig(DescConfigModel):
         return {by_alias(self, name): to_str(value) for name, value in result.items()}
 
 
-class UpperStrEnum(StrEnum):
-    @override
-    @staticmethod
-    def _generate_next_value_(name: str, *args: Any, **kwargs: Any) -> str:
-        return name.upper()
-
-
-class InitialState(UpperStrEnum):
+class InitialState(StrEnum):
     RUNNING = auto()
     PAUSED = auto()
     STOPPED = auto()
+
+    @property
+    def api_value(self) -> str:
+        return self.value.upper()
 
 
 class ConnectorTask(BaseModel):
@@ -122,6 +120,10 @@ class KafkaConnectRequest(BaseModel):
     @property
     def name(self) -> str:
         return self.config.name
+
+    @field_serializer("initial_state")
+    def serialize_initial_state(self, initial_state: InitialState) -> str:
+        return initial_state.api_value
 
 
 class KafkaConnectResponse(BaseModel):

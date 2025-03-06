@@ -311,9 +311,9 @@
         },
         "InitialState": {
             "enum": [
-                "RUNNING",
-                "PAUSED",
-                "STOPPED"
+                "running",
+                "paused",
+                "stopped"
             ],
             "title": "InitialState",
             "type": "string"
@@ -632,7 +632,7 @@
                 },
                 "initial_state": {
                     "$ref": "#/$defs/InitialState",
-                    "default": "RUNNING",
+                    "default": "running",
                     "description": "Initial state when deploying the connctor"
                 },
                 "name": {
@@ -712,7 +712,7 @@
                 },
                 "initial_state": {
                     "$ref": "#/$defs/InitialState",
-                    "default": "RUNNING",
+                    "default": "running",
                     "description": "Initial state when deploying the connctor"
                 },
                 "name": {
