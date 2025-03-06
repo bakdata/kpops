@@ -69,16 +69,13 @@ class ConnectWrapper:
 
         raise KafkaConnectError(response)
 
-    async def get_connector(self, connector_name: str | None) -> KafkaConnectResponse:
-        """Get information about the connector.
+    async def get_connector(self, connector_name: str) -> KafkaConnectResponse:
+        """Get information about a connector.
 
         API Reference: https://docs.confluent.io/platform/current/connect/references/restapi.html#get--connectors-(string-name)
-        :param connector_name: Nameof the crated connector
+        :param connector_name: Name of the connector
         :return: Information about the connector.
         """
-        if connector_name is None:  # TODO: remove None case
-            msg = "Connector name not set"
-            raise Exception(msg)
         response = await self._client.get(
             url=f"{self.url}connectors/{connector_name}", headers=HEADERS
         )
