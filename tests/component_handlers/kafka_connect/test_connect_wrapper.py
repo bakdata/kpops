@@ -2,6 +2,7 @@ import json
 import sys
 from unittest.mock import AsyncMock, MagicMock, patch
 
+import httpx
 import pytest
 import pytest_asyncio
 from anyio import Path
@@ -125,7 +126,7 @@ class TestConnectorApiWrapper:
             url=f"{DEFAULT_HOST}/connectors",
             headers=HEADERS,
             json=actual_response,
-            status_code=201,
+            status_code=httpx.codes.CREATED,
         )
 
         expected_response = await connect_wrapper.create_connector(
@@ -146,7 +147,7 @@ class TestConnectorApiWrapper:
             method="POST",
             url=f"{DEFAULT_HOST}/connectors",
             json={},
-            status_code=409,
+            status_code=httpx.codes.CONFLICT,
             is_reusable=True,
         )
 
@@ -205,7 +206,7 @@ class TestConnectorApiWrapper:
             url=f"{DEFAULT_HOST}/connectors/{connector_name}",
             headers=HEADERS,
             json=actual_response,
-            status_code=200,
+            status_code=httpx.codes.OK,
         )
         expected_response = await connect_wrapper.get_connector(connector_name)
         assert KafkaConnectResponse.model_validate(actual_response) == expected_response
@@ -225,7 +226,7 @@ class TestConnectorApiWrapper:
             url=f"{DEFAULT_HOST}/connectors/{connector_name}",
             headers=HEADERS,
             json={},
-            status_code=404,
+            status_code=httpx.codes.NOT_FOUND,
         )
         with pytest.raises(ConnectorNotFoundException):
             await connect_wrapper.get_connector(connector_name)
@@ -248,7 +249,7 @@ class TestConnectorApiWrapper:
             url=f"{DEFAULT_HOST}/connectors/{connector_name}",
             headers=HEADERS,
             json={},
-            status_code=409,
+            status_code=httpx.codes.CONFLICT,
         )
 
         await timeout(
@@ -319,7 +320,7 @@ class TestConnectorApiWrapper:
             url=f"{DEFAULT_HOST}/connectors/{connector_name}/config",
             headers=HEADERS,
             json=actual_response,
-            status_code=200,
+            status_code=httpx.codes.OK,
         )
 
         expected_response = await connect_wrapper.update_connector_config(
@@ -363,7 +364,7 @@ class TestConnectorApiWrapper:
             url=f"{DEFAULT_HOST}/connectors/{connector_name}/config",
             headers=HEADERS,
             json=actual_response,
-            status_code=201,
+            status_code=httpx.codes.CREATED,
         )
         expected_response = await connect_wrapper.update_connector_config(
             connector_config
@@ -386,7 +387,7 @@ class TestConnectorApiWrapper:
             url=f"{DEFAULT_HOST}/connectors/{connector_name}/config",
             headers=HEADERS,
             json={},
-            status_code=409,
+            status_code=httpx.codes.CONFLICT,
         )
 
         await timeout(
@@ -443,7 +444,7 @@ class TestConnectorApiWrapper:
             url=f"{DEFAULT_HOST}/connectors/{connector_name}",
             headers=HEADERS,
             json=actual_response,
-            status_code=204,
+            status_code=httpx.codes.NO_CONTENT,
         )
         await connect_wrapper.delete_connector(connector_name)
 
@@ -463,7 +464,7 @@ class TestConnectorApiWrapper:
             url=f"{DEFAULT_HOST}/connectors/{connector_name}",
             headers=HEADERS,
             json={},
-            status_code=404,
+            status_code=httpx.codes.NOT_FOUND,
         )
         with pytest.raises(ConnectorNotFoundException):
             await connect_wrapper.delete_connector(connector_name)
@@ -486,7 +487,7 @@ class TestConnectorApiWrapper:
             url=f"{DEFAULT_HOST}/connectors/{connector_name}",
             headers=HEADERS,
             json={},
-            status_code=409,
+            status_code=httpx.codes.CONFLICT,
         )
 
         await timeout(
@@ -556,7 +557,7 @@ class TestConnectorApiWrapper:
             url=f"{DEFAULT_HOST}/connector-plugins/FileStreamSinkConnector/config/validate",
             headers=HEADERS,
             json=actual_response,
-            status_code=200,
+            status_code=httpx.codes.OK,
         )
 
         configs = {
