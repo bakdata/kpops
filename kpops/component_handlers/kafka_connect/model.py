@@ -1,4 +1,4 @@
-from enum import StrEnum
+from enum import StrEnum, auto
 from typing import Any, ClassVar
 
 import pydantic
@@ -93,6 +93,19 @@ class KafkaConnectorConfig(DescConfigModel):
     ) -> dict[str, str]:
         result = exclude_by_value(default_serialize_handler(self), None)
         return {by_alias(self, name): to_str(value) for name, value in result.items()}
+
+
+class UpperStrEnum(StrEnum):
+    @override
+    @staticmethod
+    def _generate_next_value_(name: str, *args: Any, **kwargs: Any) -> str:
+        return name.upper()
+
+
+class InitialState(UpperStrEnum):
+    RUNNING = auto()
+    PAUSED = auto()
+    STOPPED = auto()
 
 
 class ConnectorTask(BaseModel):
