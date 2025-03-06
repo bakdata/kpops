@@ -34,7 +34,9 @@ class ConnectWrapper:
 
     def __init__(self, config: KafkaConnectConfig) -> None:
         self._config: KafkaConnectConfig = config
-        self._client = httpx.AsyncClient(timeout=config.timeout)
+        self._client = httpx.AsyncClient(
+            base_url=str(config.url), timeout=config.timeout
+        )
 
     @property
     def url(self) -> AnyHttpUrl:
@@ -54,7 +56,7 @@ class ConnectWrapper:
             initial_state=initial_state,
         )
         response = await self._client.post(
-            url=f"{self.url}connectors", headers=HEADERS, json=payload.model_dump()
+            url="/connectors", headers=HEADERS, json=payload.model_dump()
         )
         if response.status_code == httpx.codes.CREATED:
             log.info(f"Connector {connector_config.name} created.")
@@ -77,7 +79,7 @@ class ConnectWrapper:
         :return: Information about the connector.
         """
         response = await self._client.get(
-            url=f"{self.url}connectors/{connector_name}", headers=HEADERS
+            url=f"/connectors/{connector_name}", headers=HEADERS
         )
         if response.status_code == httpx.codes.OK:
             log.info(f"Connector {connector_name} exists.")
@@ -108,7 +110,7 @@ class ConnectWrapper:
 
         config_json = connector_config.model_dump()
         response = await self._client.put(
-            url=f"{self.url}connectors/{connector_name}/config",
+            url=f"/connectors/{connector_name}/config",
             headers=HEADERS,
             json=config_json,
         )
@@ -140,7 +142,7 @@ class ConnectWrapper:
         :return: List of all found errors
         """
         response = await self._client.put(
-            url=f"{self.url}connector-plugins/{connector_config.class_name}/config/validate",
+            url=f"/connector-plugins/{connector_config.class_name}/config/validate",
             headers=HEADERS,
             json=connector_config.model_dump(),
         )
@@ -170,7 +172,7 @@ class ConnectWrapper:
         :raises ConnectorNotFoundException: Connector not found
         """
         response = await self._client.delete(
-            url=f"{self.url}connectors/{connector_name}", headers=HEADERS
+            url=f"/connectors/{connector_name}", headers=HEADERS
         )
         if response.status_code == httpx.codes.NO_CONTENT:
             log.info(f"Connector {connector_name} deleted.")
