@@ -633,7 +633,7 @@
                 "initial_state": {
                     "$ref": "#/$defs/InitialState",
                     "default": "running",
-                    "description": "Initial state when deploying the connctor"
+                    "description": "Initial state for newly created connector"
                 },
                 "name": {
                     "description": "Component name",
@@ -713,7 +713,7 @@
                 "initial_state": {
                     "$ref": "#/$defs/InitialState",
                     "default": "running",
-                    "description": "Initial state when deploying the connctor"
+                    "description": "Initial state for newly created connector"
                 },
                 "name": {
                     "description": "Component name",
