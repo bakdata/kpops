@@ -309,6 +309,15 @@
             "title": "ImagePullPolicy",
             "type": "string"
         },
+        "InitialState": {
+            "enum": [
+                "running",
+                "paused",
+                "stopped"
+            ],
+            "title": "InitialState",
+            "type": "string"
+        },
         "InputTopicTypes": {
             "description": "Input topic types.\n\n- INPUT: input topic\n- PATTERN: extra-topic-pattern or input-topic-pattern",
             "enum": [
@@ -621,6 +630,11 @@
                     "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
                 },
+                "initial_state": {
+                    "$ref": "#/$defs/InitialState",
+                    "default": "running",
+                    "description": "Initial state for newly created connector"
+                },
                 "name": {
                     "description": "Component name",
                     "title": "Name",
@@ -695,6 +709,11 @@
                     "default": null,
                     "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
+                },
+                "initial_state": {
+                    "$ref": "#/$defs/InitialState",
+                    "default": "running",
+                    "description": "Initial state for newly created connector"
                 },
                 "name": {
                     "description": "Component name",
