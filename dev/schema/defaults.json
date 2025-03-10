@@ -43,6 +43,15 @@
             "title": "Affinity",
             "type": "object"
         },
+        "ConnectorState": {
+            "enum": [
+                "running",
+                "paused",
+                "stopped"
+            ],
+            "title": "ConnectorState",
+            "type": "string"
+        },
         "Effects": {
             "enum": [
                 "NoExecute",
@@ -307,15 +316,6 @@
                 "Never"
             ],
             "title": "ImagePullPolicy",
-            "type": "string"
-        },
-        "InitialState": {
-            "enum": [
-                "running",
-                "paused",
-                "stopped"
-            ],
-            "title": "InitialState",
             "type": "string"
         },
         "InputTopicTypes": {
@@ -663,11 +663,6 @@
                     "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
                 },
-                "initial_state": {
-                    "$ref": "#/$defs/InitialState",
-                    "default": "running",
-                    "description": "Initial state for newly created connector"
-                },
                 "name": {
                     "description": "Component name",
                     "title": "Name",
@@ -695,6 +690,18 @@
                 "resetter_values": {
                     "$ref": "#/$defs/HelmAppValues",
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
+                },
+                "state": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ConnectorState"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Initial state for newly created connector"
                 },
                 "to": {
                     "anyOf": [
@@ -801,11 +808,6 @@
                     "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
                 },
-                "initial_state": {
-                    "$ref": "#/$defs/InitialState",
-                    "default": "running",
-                    "description": "Initial state for newly created connector"
-                },
                 "name": {
                     "description": "Component name",
                     "title": "Name",
@@ -833,6 +835,18 @@
                 "resetter_values": {
                     "$ref": "#/$defs/HelmAppValues",
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
+                },
+                "state": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ConnectorState"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Initial state for newly created connector"
                 },
                 "to": {
                     "anyOf": [
@@ -881,11 +895,6 @@
                     "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
                 },
-                "initial_state": {
-                    "$ref": "#/$defs/InitialState",
-                    "default": "running",
-                    "description": "Initial state for newly created connector"
-                },
                 "name": {
                     "description": "Component name",
                     "title": "Name",
@@ -926,6 +935,18 @@
                 "resetter_values": {
                     "$ref": "#/$defs/HelmAppValues",
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
+                },
+                "state": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ConnectorState"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Initial state for newly created connector"
                 },
                 "to": {
                     "anyOf": [
