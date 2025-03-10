@@ -8,6 +8,7 @@ from kpops.component_handlers.kafka_connect.exception import (
     ConnectorNotFoundException,
     ConnectorStateException,
 )
+from kpops.component_handlers.kafka_connect.model import ConnectorState
 from kpops.utils.colorify import magentaify
 from kpops.utils.dict_differ import render_diff
 
@@ -24,24 +25,51 @@ class KafkaConnectHandler:
         self._connect_wrapper = connect_wrapper
 
     async def create_connector(
-        self, connector_config: KafkaConnectorConfig, *, dry_run: bool
+        self,
+        connector_config: KafkaConnectorConfig,
+        *,
+        state: ConnectorState | None,
+        dry_run: bool,
     ) -> None:
         """Create a connector.
 
-        If the connector exists the config of that connector gets updated.
+        If the connector exists the config and state of that connector gets updated.
 
         :param connector_config: The connector config.
+        :param state: The state that the connector should have afterwards.
         :param dry_run: Whether the connector creation should be run in dry run mode.
         """
         if dry_run:
-            await self.__dry_run_connector_creation(connector_config)
+            await self.__dry_run_connector_creation(connector_config, state)
         else:
+            connector_name = connector_config.name
             try:
-                await self._connect_wrapper.get_connector(connector_config.name)
+                await self._connect_wrapper.get_connector(connector_name)
+                status = await self._connect_wrapper.get_connector_status(
+                    connector_name
+                )
+                current_state = status.connector.state
+                match current_state, state:
+                    case ConnectorState.RUNNING, ConnectorState.PAUSED:
+                        await self._connect_wrapper.pause_connector(connector_name)
+                    case (
+                        ConnectorState.RUNNING | ConnectorState.PAUSED,
+                        ConnectorState.STOPPED,
+                    ):
+                        await self._connect_wrapper.stop_connector(connector_name)
+                    case _:
+                        pass
+
                 await self._connect_wrapper.update_connector_config(connector_config)
 
+                if (
+                    current_state is ConnectorState.PAUSED
+                    and state is ConnectorState.RUNNING
+                ):
+                    await self._connect_wrapper.resume_connector(connector_name)
+
             except ConnectorNotFoundException:
-                await self._connect_wrapper.create_connector(connector_config)
+                await self._connect_wrapper.create_connector(connector_config, state)
 
     async def destroy_connector(self, connector_name: str, *, dry_run: bool) -> None:
         """Delete a connector resource from the cluster.
@@ -62,19 +90,43 @@ class KafkaConnectHandler:
                 )
 
     async def __dry_run_connector_creation(
-        self, connector_config: KafkaConnectorConfig
+        self,
+        connector_config: KafkaConnectorConfig,
+        state: ConnectorState | None,
     ) -> None:
         connector_name = connector_config.name
         try:
             connector = await self._connect_wrapper.get_connector(connector_name)
-
+            status = await self._connect_wrapper.get_connector_status(connector_name)
+            current_state = status.connector.state
             log.info(f"Connector Creation: connector {connector_name} already exists.")
-            if diff := render_diff(connector.config, connector_config.model_dump()):
+
+            match current_state, state:
+                case ConnectorState.RUNNING, ConnectorState.PAUSED:
+                    log.info("Pausing connector")
+                case (
+                    ConnectorState.RUNNING | ConnectorState.PAUSED,
+                    ConnectorState.STOPPED,
+                ):
+                    log.info("Stopping connector")
+                case _:
+                    pass
+
+            if diff := render_diff(
+                connector.config.model_dump(), connector_config.model_dump()
+            ):
                 log.info(f"Updating config:\n{diff}")
 
+            # TODO: refactor, this should not be here
             log.debug(connector_config.model_dump())
             log.debug(f"PUT /connectors/{connector_name}/config HTTP/1.1")
             log.debug(f"HOST: {self._connect_wrapper.url}")
+
+            if (
+                current_state is ConnectorState.PAUSED
+                and state is ConnectorState.RUNNING
+            ):
+                log.info("Resuming connector")
         except ConnectorNotFoundException:
             diff = render_diff({}, connector_config.model_dump())
             log.info(

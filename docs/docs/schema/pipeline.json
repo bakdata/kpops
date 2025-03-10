@@ -43,6 +43,15 @@
             "title": "Affinity",
             "type": "object"
         },
+        "ConnectorState": {
+            "enum": [
+                "running",
+                "paused",
+                "stopped"
+            ],
+            "title": "ConnectorState",
+            "type": "string"
+        },
         "Effects": {
             "enum": [
                 "NoExecute",
@@ -649,6 +658,18 @@
                     "$ref": "#/$defs/HelmAppValues",
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
                 },
+                "state": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ConnectorState"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Connector state"
+                },
                 "to": {
                     "anyOf": [
                         {
@@ -736,6 +757,18 @@
                 "resetter_values": {
                     "$ref": "#/$defs/HelmAppValues",
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
+                },
+                "state": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ConnectorState"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Connector state"
                 },
                 "to": {
                     "anyOf": [
