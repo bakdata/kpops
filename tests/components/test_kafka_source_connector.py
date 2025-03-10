@@ -2,6 +2,7 @@ from unittest.mock import ANY, MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
+from typing_extensions import override
 
 from kpops.component_handlers import get_handlers
 from kpops.component_handlers.helm_wrapper.model import (
@@ -43,6 +44,7 @@ OFFSETS_TOPIC = "kafka-connect-offsets"
 
 
 class TestKafkaSourceConnector(TestKafkaConnector):
+    @override
     @pytest.fixture()
     def connector(
         self,
@@ -80,7 +82,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                 name=CONNECTOR_NAME,
                 config=connector_config,
                 resetter_namespace=RESETTER_NAMESPACE,
-                from_=FromSection(  # pyright: ignore[reportGeneralTypeIssues] wrong diagnostic when using TopicName as topics key type
+                from_=FromSection(
                     topics={
                         TopicName("connector-topic"): FromTopic(
                             type=InputTopicTypes.INPUT
@@ -115,24 +117,25 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                 for topic in connector.to.kafka_topics
             ),
             mocker.call.mock_create_connector(
-                connector.config, initial_state=InitialState.RUNNING, dry_run=dry_run
+                connector.config, initial_state=None, dry_run=dry_run
             ),
         ]
 
     @pytest.mark.parametrize(
-        "initial_state", [InitialState.PAUSED, InitialState.STOPPED]
+        "initial_state",
+        [None, InitialState.RUNNING, InitialState.PAUSED, InitialState.STOPPED],
     )
     async def test_deploy_initial_state(
         self,
         connector: KafkaSourceConnector,
-        initial_state: InitialState,
+        initial_state: InitialState | None,
         mocker: MockerFixture,
     ):
         mock_create_connector = mocker.patch.object(
             get_handlers().connector_handler, "create_connector"
         )
 
-        connector.initial_state = initial_state
+        connector.state = initial_state
         dry_run = True
         await connector.deploy(dry_run=dry_run)
         assert mock_create_connector.mock_calls == [

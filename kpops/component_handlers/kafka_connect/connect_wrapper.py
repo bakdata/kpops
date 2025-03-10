@@ -44,7 +44,9 @@ class ConnectWrapper:
         return self._config.url
 
     async def create_connector(
-        self, connector_config: KafkaConnectorConfig, initial_state: InitialState
+        self,
+        connector_config: KafkaConnectorConfig,
+        initial_state: InitialState | None = None,
     ) -> KafkaConnectResponse:
         """Create a new connector.
 
@@ -56,7 +58,9 @@ class ConnectWrapper:
             config=connector_config,
             initial_state=initial_state,
         )
-        response = await self._client.post("/connectors", json=payload.model_dump())
+        response = await self._client.post(
+            "/connectors", json=payload.model_dump(exclude_none=True)
+        )
         if response.status_code == httpx.codes.CREATED:
             log.info(f"Connector {connector_config.name} created.")
             log.debug(response.json())

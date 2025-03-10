@@ -114,7 +114,7 @@ class ConnectorTask(BaseModel):
 
 class KafkaConnectRequest(BaseModel):
     config: KafkaConnectorConfig
-    initial_state: InitialState
+    initial_state: InitialState | None = None
 
     @computed_field
     @property

@@ -28,7 +28,7 @@ class KafkaConnectHandler:
         self,
         connector_config: KafkaConnectorConfig,
         *,
-        initial_state: InitialState,
+        initial_state: InitialState | None,
         dry_run: bool,
     ) -> None:
         """Create a connector.

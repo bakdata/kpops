@@ -117,8 +117,8 @@ class KafkaConnector(PipelineComponent, ABC):
     config: KafkaConnectorConfig = Field(
         description=describe_attr("config", __doc__),
     )
-    initial_state: InitialState = Field(
-        default=InitialState.RUNNING,
+    state: InitialState | None = Field(
+        default=None,
         description=describe_attr("initial_state", __doc__),
     )
     resetter_namespace: str | None = Field(
@@ -187,7 +187,7 @@ class KafkaConnector(PipelineComponent, ABC):
                 await schema_handler.submit_schemas(to_section=self.to, dry_run=dry_run)
 
         await get_handlers().connector_handler.create_connector(
-            self.config, initial_state=self.initial_state, dry_run=dry_run
+            self.config, initial_state=self.state, dry_run=dry_run
         )
 
     @override
