@@ -43,7 +43,7 @@ class TestConnectorHandler:
         )
 
     @pytest.fixture()
-    def connector_wrapper(self) -> AsyncMock:
+    def connect_wrapper(self) -> AsyncMock:
         return AsyncMock()
 
     @pytest.fixture()
@@ -52,8 +52,8 @@ class TestConnectorHandler:
             "kpops.component_handlers.kafka_connect.kafka_connect_handler.render_diff"
         )
 
-    @staticmethod
-    def connector_handler(connect_wrapper: MagicMock) -> KafkaConnectHandler:
+    @pytest.fixture()
+    def handler(self, connect_wrapper: AsyncMock) -> KafkaConnectHandler:
         return KafkaConnectHandler(connect_wrapper=connect_wrapper)
 
     @pytest.fixture()
@@ -63,21 +63,19 @@ class TestConnectorHandler:
             name=CONNECTOR_NAME,
         )
 
-    async def test_should_create_connector_in_dry_run(
+    async def test_create_connector_dry_run(
         self,
+        connect_wrapper: AsyncMock,
+        handler: KafkaConnectHandler,
         connector_config: KafkaConnectorConfig,
         renderer_diff_mock: MagicMock,
         log_info_mock: MagicMock,
-        connector_wrapper: AsyncMock,
     ):
-        handler = self.connector_handler(connector_wrapper)
         renderer_diff_mock.return_value = None
 
-        await handler.create_connector(
-            connector_config, state=ConnectorState.RUNNING, dry_run=True
-        )
-        connector_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
-        connector_wrapper.validate_connector_config.assert_called_once_with(
+        await handler.create_connector(connector_config, state=None, dry_run=True)
+        connect_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
+        connect_wrapper.validate_connector_config.assert_called_once_with(
             connector_config
         )
 
@@ -90,12 +88,13 @@ class TestConnectorHandler:
             ),
         ]
 
-    async def test_should_log_correct_message_when_create_connector_and_connector_not_exists_in_dry_run(
-        self, log_info_mock: MagicMock, connector_wrapper: AsyncMock
+    async def test_log_correct_message_when_create_connector_and_connector_not_exists_dry_run(
+        self,
+        connect_wrapper: AsyncMock,
+        handler: KafkaConnectHandler,
+        log_info_mock: MagicMock,
     ):
-        handler = self.connector_handler(connector_wrapper)
-
-        connector_wrapper.get_connector.side_effect = ConnectorNotFoundException()
+        connect_wrapper.get_connector.side_effect = ConnectorNotFoundException()
 
         configs = {
             "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
@@ -105,11 +104,9 @@ class TestConnectorHandler:
         }
 
         config = KafkaConnectorConfig.model_validate(configs)
-        await handler.create_connector(
-            config, state=ConnectorState.RUNNING, dry_run=True
-        )
-        connector_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
-        connector_wrapper.validate_connector_config.assert_called_once_with(config)
+        await handler.create_connector(config, state=None, dry_run=True)
+        connect_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
+        connect_wrapper.validate_connector_config.assert_called_once_with(config)
 
         assert log_info_mock.mock_calls == [
             mock.call(
@@ -120,11 +117,12 @@ class TestConnectorHandler:
             ),
         ]
 
-    async def test_should_log_correct_message_when_create_connector_and_connector_exists_in_dry_run(
-        self, log_info_mock: MagicMock, connector_wrapper: AsyncMock
+    async def test_log_correct_message_when_create_connector_and_connector_exists_dry_run(
+        self,
+        connect_wrapper: AsyncMock,
+        handler: KafkaConnectHandler,
+        log_info_mock: MagicMock,
     ):
-        handler = self.connector_handler(connector_wrapper)
-
         actual_response: dict[str, Any] = {
             "name": "name",
             "config": {
@@ -135,7 +133,7 @@ class TestConnectorHandler:
             },
             "tasks": [],
         }
-        connector_wrapper.get_connector.return_value = (
+        connect_wrapper.get_connector.return_value = (
             KafkaConnectResponse.model_validate(actual_response)
         )
 
@@ -147,11 +145,9 @@ class TestConnectorHandler:
         }
 
         connector_config = KafkaConnectorConfig.model_validate(configs)
-        await handler.create_connector(
-            connector_config, state=ConnectorState.RUNNING, dry_run=True
-        )
-        connector_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
-        connector_wrapper.validate_connector_config.assert_called_once_with(
+        await handler.create_connector(connector_config, state=None, dry_run=True)
+        connect_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
+        connect_wrapper.validate_connector_config.assert_called_once_with(
             connector_config
         )
 
@@ -167,113 +163,136 @@ class TestConnectorHandler:
             ),
         ]
 
-    async def test_should_log_invalid_config_when_create_connector_in_dry_run(
-        self, connector_config: KafkaConnectorConfig, renderer_diff_mock: MagicMock
+    @pytest.mark.usefixtures("renderer_diff_mock")
+    async def test_log_invalid_config_when_create_connector_dry_run(
+        self,
+        connect_wrapper: AsyncMock,
+        handler: KafkaConnectHandler,
+        connector_config: KafkaConnectorConfig,
     ):
-        connector_wrapper = AsyncMock()
         errors = [
             "Missing required configuration file which has no default value.",
             "Missing connector name.",
         ]
-        connector_wrapper.validate_connector_config.return_value = errors
-
-        handler = self.connector_handler(connector_wrapper)
-
+        connect_wrapper.validate_connector_config.return_value = errors
         formatted_errors = "\n".join(errors)
 
         with pytest.raises(
             ConnectorStateException,
             match=f"Connector Creation: validating the connector config for connector {CONNECTOR_NAME} resulted in the following errors: {formatted_errors}",
         ):
-            await handler.create_connector(
-                connector_config, state=ConnectorState.RUNNING, dry_run=True
-            )
+            await handler.create_connector(connector_config, state=None, dry_run=True)
 
-        connector_wrapper.validate_connector_config.assert_called_once_with(
+        connect_wrapper.validate_connector_config.assert_called_once_with(
             connector_config
         )
 
-    async def test_should_call_update_connector_config_when_connector_exists_not_dry_run(
-        self, connector_config: KafkaConnectorConfig
+    async def test_update_connector_config_when_connector_exists(
+        self,
+        connect_wrapper: AsyncMock,
+        handler: KafkaConnectHandler,
+        connector_config: KafkaConnectorConfig,
     ):
-        connector_wrapper = AsyncMock()
-
-        handler = self.connector_handler(connector_wrapper)
-
-        await handler.create_connector(
-            connector_config, state=ConnectorState.RUNNING, dry_run=False
-        )
-
-        assert connector_wrapper.mock_calls == [
+        await handler.create_connector(connector_config, state=None, dry_run=False)
+        assert connect_wrapper.mock_calls == [
             mock.call.get_connector(CONNECTOR_NAME),
             mock.call.update_connector_config(connector_config),
         ]
 
-    async def test_should_call_create_connector_when_connector_does_not_exists_not_dry_run(
-        self, connector_config: KafkaConnectorConfig
+    async def test_update_and_resume_connector(
+        self,
+        connect_wrapper: AsyncMock,
+        handler: KafkaConnectHandler,
+        connector_config: KafkaConnectorConfig,
     ):
-        connector_wrapper = AsyncMock()
-
-        handler = self.connector_handler(connector_wrapper)
-
-        connector_wrapper.get_connector.side_effect = ConnectorNotFoundException()
-
         await handler.create_connector(
             connector_config, state=ConnectorState.RUNNING, dry_run=False
         )
+        assert connect_wrapper.mock_calls == [
+            mock.call.get_connector(CONNECTOR_NAME),
+            mock.call.update_connector_config(connector_config),
+            mock.call.resume_connector(connector_config.name),
+        ]
 
-        connector_wrapper.create_connector.assert_called_once_with(
-            connector_config, ConnectorState.RUNNING
-        )
-
-    async def test_should_print_correct_log_when_destroying_connector_in_dry_run(
-        self, log_info_mock: MagicMock, connector_wrapper: AsyncMock
+    async def test_update_and_pause_connector(
+        self,
+        connect_wrapper: AsyncMock,
+        handler: KafkaConnectHandler,
+        connector_config: KafkaConnectorConfig,
     ):
-        handler = self.connector_handler(connector_wrapper)
+        await handler.create_connector(
+            connector_config, state=ConnectorState.PAUSED, dry_run=False
+        )
+        assert connect_wrapper.mock_calls == [
+            mock.call.get_connector(CONNECTOR_NAME),
+            mock.call.update_connector_config(connector_config),
+            mock.call.pause_connector(connector_config.name),
+        ]
 
+    async def test_update_and_stop_connector(
+        self,
+        connect_wrapper: AsyncMock,
+        handler: KafkaConnectHandler,
+        connector_config: KafkaConnectorConfig,
+    ):
+        await handler.create_connector(
+            connector_config, state=ConnectorState.STOPPED, dry_run=False
+        )
+        assert connect_wrapper.mock_calls == [
+            mock.call.get_connector(CONNECTOR_NAME),
+            mock.call.update_connector_config(connector_config),
+            mock.call.stop_connector(connector_config.name),
+        ]
+
+    async def test_call_create_connector_when_connector_does_not_exists(
+        self,
+        connect_wrapper: AsyncMock,
+        handler: KafkaConnectHandler,
+        connector_config: KafkaConnectorConfig,
+    ):
+        connect_wrapper.get_connector.side_effect = ConnectorNotFoundException()
+        await handler.create_connector(connector_config, state=None, dry_run=False)
+        connect_wrapper.create_connector.assert_called_once_with(connector_config, None)
+
+    async def test_print_correct_log_when_destroying_connector_dry_run(
+        self, handler: KafkaConnectHandler, log_info_mock: MagicMock
+    ):
         await handler.destroy_connector(CONNECTOR_NAME, dry_run=True)
-
         log_info_mock.assert_called_once_with(
             magentaify(
                 f"Connector Destruction: connector {CONNECTOR_NAME} already exists. Deleting connector."
             )
         )
 
-    async def test_should_print_correct_warning_log_when_destroying_connector_and_connector_exists_in_dry_run(
-        self, log_warning_mock: MagicMock, connector_wrapper: AsyncMock
+    async def test_print_correct_warning_log_when_destroying_connector_and_connector_exists_dry_run(
+        self,
+        connect_wrapper: AsyncMock,
+        handler: KafkaConnectHandler,
+        log_warning_mock: MagicMock,
     ):
-        connector_wrapper = AsyncMock()
-
-        connector_wrapper.get_connector.side_effect = ConnectorNotFoundException()
-
-        handler = self.connector_handler(connector_wrapper)
-
+        connect_wrapper.get_connector.side_effect = ConnectorNotFoundException()
         await handler.destroy_connector(CONNECTOR_NAME, dry_run=True)
-
         log_warning_mock.assert_called_once_with(
             f"Connector Destruction: connector {CONNECTOR_NAME} does not exist and cannot be deleted. Skipping."
         )
 
-    async def test_should_call_delete_connector_when_destroying_existing_connector_not_dry_run(
-        self, connector_wrapper: AsyncMock
+    async def test_call_delete_connector_when_destroying_existing_connector(
+        self, connect_wrapper: AsyncMock, handler: KafkaConnectHandler
     ):
-        handler = self.connector_handler(connector_wrapper)
-
         await handler.destroy_connector(CONNECTOR_NAME, dry_run=False)
-
-        assert connector_wrapper.mock_calls == [
+        assert connect_wrapper.mock_calls == [
             mock.call.get_connector(CONNECTOR_NAME),
             mock.call.delete_connector(CONNECTOR_NAME),
         ]
 
-    async def test_should_print_correct_warning_log_when_destroying_connector_and_connector_exists_not_dry_run(
-        self, log_warning_mock: MagicMock, connector_wrapper: AsyncMock
+    async def test_print_correct_warning_log_when_destroying_connector_and_connector_exists(
+        self,
+        connect_wrapper: AsyncMock,
+        handler: KafkaConnectHandler,
+        log_warning_mock: MagicMock,
     ):
-        connector_wrapper.get_connector.side_effect = ConnectorNotFoundException()
-        handler = self.connector_handler(connector_wrapper)
-
+        connect_wrapper.get_connector.side_effect = ConnectorNotFoundException()
         await handler.destroy_connector(CONNECTOR_NAME, dry_run=False)
-
         log_warning_mock.assert_called_once_with(
             f"Connector Destruction: the connector {CONNECTOR_NAME} does not exist. Skipping."
         )
