@@ -40,7 +40,7 @@ class KafkaConnectHandler:
         :param dry_run: Whether the connector creation should be run in dry run mode.
         """
         if dry_run:
-            await self.__dry_run_connector_creation(connector_config)
+            await self.__dry_run_connector_creation(connector_config, state)
         else:
             connector_name = connector_config.name
             try:
@@ -49,7 +49,6 @@ class KafkaConnectHandler:
                     connector_name
                 )
 
-                # update connector state
                 should_update_state = state != status.connector.state
                 if should_update_state:
                     match state:
@@ -87,13 +86,27 @@ class KafkaConnectHandler:
                 )
 
     async def __dry_run_connector_creation(
-        self, connector_config: KafkaConnectorConfig
+        self,
+        connector_config: KafkaConnectorConfig,
+        state: ConnectorState | None,
     ) -> None:
         connector_name = connector_config.name
         try:
             connector = await self._connect_wrapper.get_connector(connector_name)
 
             log.info(f"Connector Creation: connector {connector_name} already exists.")
+
+            status = await self._connect_wrapper.get_connector_status(connector_name)
+            should_update_state = state != status.connector.state
+            if should_update_state:
+                match state:
+                    case ConnectorState.PAUSED:
+                        log.info("Pausing connector")
+                    case ConnectorState.STOPPED:
+                        log.info("Stopping connector")
+                    case _:
+                        pass
+
             if diff := render_diff(
                 connector.config.model_dump(), connector_config.model_dump()
             ):
@@ -103,6 +116,9 @@ class KafkaConnectHandler:
             log.debug(connector_config.model_dump())
             log.debug(f"PUT /connectors/{connector_name}/config HTTP/1.1")
             log.debug(f"HOST: {self._connect_wrapper.url}")
+
+            if should_update_state and state is ConnectorState.RUNNING:
+                log.info("Resuming connector")
         except ConnectorNotFoundException:
             diff = render_diff({}, connector_config.model_dump())
             log.info(
