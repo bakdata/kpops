@@ -258,6 +258,69 @@ class TestConnectorApiWrapper:
             "Rebalancing in progress while getting a connector... Retrying..."
         )
 
+    async def test_pause(self, connect_wrapper: ConnectWrapper, httpx_mock: HTTPXMock):
+        connector_name = "test-connector"
+        httpx_mock.add_response(
+            method="PUT",
+            url=f"{DEFAULT_HOST}/connectors/{connector_name}/pause",
+            status_code=httpx.codes.ACCEPTED,
+        )
+        await connect_wrapper.pause_connector(connector_name)
+
+    async def test_pause_error(
+        self, connect_wrapper: ConnectWrapper, httpx_mock: HTTPXMock
+    ):
+        connector_name = "test-connector"
+        httpx_mock.add_response(
+            method="PUT",
+            url=f"{DEFAULT_HOST}/connectors/{connector_name}/pause",
+            status_code=httpx.codes.INTERNAL_SERVER_ERROR,
+        )
+        with pytest.raises(KafkaConnectError):
+            await connect_wrapper.pause_connector(connector_name)
+
+    async def test_resume(self, connect_wrapper: ConnectWrapper, httpx_mock: HTTPXMock):
+        connector_name = "test-connector"
+        httpx_mock.add_response(
+            method="PUT",
+            url=f"{DEFAULT_HOST}/connectors/{connector_name}/resume",
+            status_code=httpx.codes.ACCEPTED,
+        )
+        await connect_wrapper.resume_connector(connector_name)
+
+    async def test_resume_error(
+        self, connect_wrapper: ConnectWrapper, httpx_mock: HTTPXMock
+    ):
+        connector_name = "test-connector"
+        httpx_mock.add_response(
+            method="PUT",
+            url=f"{DEFAULT_HOST}/connectors/{connector_name}/resume",
+            status_code=httpx.codes.INTERNAL_SERVER_ERROR,
+        )
+        with pytest.raises(KafkaConnectError):
+            await connect_wrapper.resume_connector(connector_name)
+
+    async def test_stop(self, connect_wrapper: ConnectWrapper, httpx_mock: HTTPXMock):
+        connector_name = "test-connector"
+        httpx_mock.add_response(
+            method="PUT",
+            url=f"{DEFAULT_HOST}/connectors/{connector_name}/stop",
+            status_code=httpx.codes.ACCEPTED,
+        )
+        await connect_wrapper.stop_connector(connector_name)
+
+    async def test_stop_error(
+        self, connect_wrapper: ConnectWrapper, httpx_mock: HTTPXMock
+    ):
+        connector_name = "test-connector"
+        httpx_mock.add_response(
+            method="PUT",
+            url=f"{DEFAULT_HOST}/connectors/{connector_name}/stop",
+            status_code=httpx.codes.INTERNAL_SERVER_ERROR,
+        )
+        with pytest.raises(KafkaConnectError):
+            await connect_wrapper.stop_connector(connector_name)
+
     @patch("httpx.AsyncClient.put")
     async def test_should_create_correct_update_connector_request(
         self, mock_put: AsyncMock, connect_wrapper: ConnectWrapper
