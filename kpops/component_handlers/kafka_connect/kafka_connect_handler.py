@@ -48,8 +48,6 @@ class KafkaConnectHandler:
 
                 # update connector state
                 match state:
-                    case ConnectorState.RUNNING:
-                        await self._connect_wrapper.resume_connector(connector_name)
                     case ConnectorState.PAUSED:
                         await self._connect_wrapper.pause_connector(connector_name)
                     case ConnectorState.STOPPED:
@@ -58,6 +56,9 @@ class KafkaConnectHandler:
                         pass
 
                 await self._connect_wrapper.update_connector_config(connector_config)
+
+                if state is ConnectorState.RUNNING:
+                    await self._connect_wrapper.resume_connector(connector_name)
 
             except ConnectorNotFoundException:
                 await self._connect_wrapper.create_connector(connector_config, state)

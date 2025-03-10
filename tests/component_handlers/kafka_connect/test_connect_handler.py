@@ -210,8 +210,8 @@ class TestConnectorHandler:
         )
         assert connect_wrapper.mock_calls == [
             mock.call.get_connector(CONNECTOR_NAME),
-            mock.call.resume_connector(connector_config.name),
             mock.call.update_connector_config(connector_config),
+            mock.call.resume_connector(connector_config.name),
         ]
 
     async def test_update_and_pause_connector(
