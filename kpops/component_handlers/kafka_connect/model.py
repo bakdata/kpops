@@ -23,11 +23,6 @@ from kpops.utils.pydantic import (
 )
 
 
-class KafkaConnectorType(StrEnum):
-    SINK = "sink"
-    SOURCE = "source"
-
-
 class KafkaConnectorConfig(DescConfigModel):
     """Settings specific to Kafka Connectors."""
 
@@ -112,7 +107,7 @@ class ConnectorTask(BaseModel):
     task: int
 
 
-class KafkaConnectRequest(BaseModel):
+class CreateConnector(BaseModel):
     config: KafkaConnectorConfig
     initial_state: ConnectorState | None = None
 
@@ -126,11 +121,36 @@ class KafkaConnectRequest(BaseModel):
         return initial_state.api_value
 
 
-class KafkaConnectResponse(BaseModel):
+class ConnectorStatus(BaseModel):
+    state: ConnectorState
+    worker_id: str
+
+
+class ConnectorTaskStatus(BaseModel):
+    id: int
+    state: ConnectorState
+    worker_id: str
+
+
+class KafkaConnectorType(StrEnum):
+    SINK = "sink"
+    SOURCE = "source"
+
+
+class ConnectorStatusResponse(BaseModel):
+    name: str
+    connector: ConnectorStatus
+    tasks: list[ConnectorTaskStatus]
+    type: KafkaConnectorType
+
+    model_config: ClassVar[ConfigDict] = ConfigDict(extra="forbid")
+
+
+class ConnectorResponse(BaseModel):
     name: str
     config: KafkaConnectorConfig
     tasks: list[ConnectorTask]
-    type: str | None = None
+    type: KafkaConnectorType
 
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="forbid")
 

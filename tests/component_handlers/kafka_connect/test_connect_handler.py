@@ -13,9 +13,12 @@ from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
     KafkaConnectHandler,
 )
 from kpops.component_handlers.kafka_connect.model import (
+    ConnectorResponse,
     ConnectorState,
+    ConnectorStatus,
+    ConnectorStatusResponse,
     KafkaConnectorConfig,
-    KafkaConnectResponse,
+    KafkaConnectorType,
 )
 from kpops.utils.colorify import magentaify
 from tests.components.test_kafka_connector import CONNECTOR_NAME
@@ -132,9 +135,10 @@ class TestConnectorHandler:
                 "topics": TOPIC_NAME,
             },
             "tasks": [],
+            "type": "sink",
         }
-        connect_wrapper.get_connector.return_value = (
-            KafkaConnectResponse.model_validate(actual_response)
+        connect_wrapper.get_connector.return_value = ConnectorResponse.model_validate(
+            actual_response
         )
 
         configs = {
@@ -187,15 +191,48 @@ class TestConnectorHandler:
             connector_config
         )
 
+    @staticmethod
+    def mock_connector_status(
+        connect_wrapper: AsyncMock, connector_name: str, state: ConnectorState
+    ) -> None:
+        connect_wrapper.get_connector_status.return_value = ConnectorStatusResponse(
+            name=connector_name,
+            connector=ConnectorStatus(state=state, worker_id="foo"),
+            tasks=[],
+            type=KafkaConnectorType.SINK,
+        )
+
     async def test_update_connector_config_when_connector_exists(
         self,
         connect_wrapper: AsyncMock,
         handler: KafkaConnectHandler,
         connector_config: KafkaConnectorConfig,
     ):
+        self.mock_connector_status(
+            connect_wrapper, connector_config.name, ConnectorState.RUNNING
+        )
         await handler.create_connector(connector_config, state=None, dry_run=False)
         assert connect_wrapper.mock_calls == [
             mock.call.get_connector(CONNECTOR_NAME),
+            mock.call.get_connector_status(CONNECTOR_NAME),
+            mock.call.update_connector_config(connector_config),
+        ]
+
+    async def test_update_running_connector(
+        self,
+        connect_wrapper: AsyncMock,
+        handler: KafkaConnectHandler,
+        connector_config: KafkaConnectorConfig,
+    ):
+        self.mock_connector_status(
+            connect_wrapper, connector_config.name, ConnectorState.RUNNING
+        )
+        await handler.create_connector(
+            connector_config, state=ConnectorState.RUNNING, dry_run=False
+        )
+        assert connect_wrapper.mock_calls == [
+            mock.call.get_connector(CONNECTOR_NAME),
+            mock.call.get_connector_status(CONNECTOR_NAME),
             mock.call.update_connector_config(connector_config),
         ]
 
@@ -205,13 +242,35 @@ class TestConnectorHandler:
         handler: KafkaConnectHandler,
         connector_config: KafkaConnectorConfig,
     ):
+        self.mock_connector_status(
+            connect_wrapper, connector_config.name, ConnectorState.PAUSED
+        )
         await handler.create_connector(
             connector_config, state=ConnectorState.RUNNING, dry_run=False
         )
         assert connect_wrapper.mock_calls == [
             mock.call.get_connector(CONNECTOR_NAME),
+            mock.call.get_connector_status(CONNECTOR_NAME),
             mock.call.update_connector_config(connector_config),
             mock.call.resume_connector(connector_config.name),
+        ]
+
+    async def test_update_paused_connector(
+        self,
+        connect_wrapper: AsyncMock,
+        handler: KafkaConnectHandler,
+        connector_config: KafkaConnectorConfig,
+    ):
+        self.mock_connector_status(
+            connect_wrapper, connector_config.name, ConnectorState.PAUSED
+        )
+        await handler.create_connector(
+            connector_config, state=ConnectorState.PAUSED, dry_run=False
+        )
+        assert connect_wrapper.mock_calls == [
+            mock.call.get_connector(CONNECTOR_NAME),
+            mock.call.get_connector_status(CONNECTOR_NAME),
+            mock.call.update_connector_config(connector_config),
         ]
 
     async def test_update_and_pause_connector(
@@ -220,12 +279,34 @@ class TestConnectorHandler:
         handler: KafkaConnectHandler,
         connector_config: KafkaConnectorConfig,
     ):
+        self.mock_connector_status(
+            connect_wrapper, connector_config.name, ConnectorState.RUNNING
+        )
         await handler.create_connector(
             connector_config, state=ConnectorState.PAUSED, dry_run=False
         )
         assert connect_wrapper.mock_calls == [
             mock.call.get_connector(CONNECTOR_NAME),
+            mock.call.get_connector_status(CONNECTOR_NAME),
             mock.call.pause_connector(connector_config.name),
+            mock.call.update_connector_config(connector_config),
+        ]
+
+    async def test_update_stopped_connector(
+        self,
+        connect_wrapper: AsyncMock,
+        handler: KafkaConnectHandler,
+        connector_config: KafkaConnectorConfig,
+    ):
+        self.mock_connector_status(
+            connect_wrapper, connector_config.name, ConnectorState.STOPPED
+        )
+        await handler.create_connector(
+            connector_config, state=ConnectorState.STOPPED, dry_run=False
+        )
+        assert connect_wrapper.mock_calls == [
+            mock.call.get_connector(CONNECTOR_NAME),
+            mock.call.get_connector_status(CONNECTOR_NAME),
             mock.call.update_connector_config(connector_config),
         ]
 
@@ -235,11 +316,15 @@ class TestConnectorHandler:
         handler: KafkaConnectHandler,
         connector_config: KafkaConnectorConfig,
     ):
+        self.mock_connector_status(
+            connect_wrapper, connector_config.name, ConnectorState.RUNNING
+        )
         await handler.create_connector(
             connector_config, state=ConnectorState.STOPPED, dry_run=False
         )
         assert connect_wrapper.mock_calls == [
             mock.call.get_connector(CONNECTOR_NAME),
+            mock.call.get_connector_status(CONNECTOR_NAME),
             mock.call.stop_connector(connector_config.name),
             mock.call.update_connector_config(connector_config),
         ]

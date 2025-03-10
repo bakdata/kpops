@@ -14,9 +14,9 @@ from kpops.component_handlers.kafka_connect.exception import (
     KafkaConnectError,
 )
 from kpops.component_handlers.kafka_connect.model import (
+    ConnectorResponse,
     ConnectorState,
     KafkaConnectorConfig,
-    KafkaConnectResponse,
 )
 from kpops.component_handlers.kafka_connect.timeout import timeout
 from kpops.config import KpopsConfig
@@ -150,7 +150,7 @@ class TestConnectorApiWrapper:
             connector_config, ConnectorState.RUNNING
         )
 
-        assert KafkaConnectResponse.model_validate(actual_response) == expected_response
+        assert ConnectorResponse.model_validate(actual_response) == expected_response
 
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     async def test_should_raise_connector_exists_exception_when_connector_exists(
@@ -221,7 +221,7 @@ class TestConnectorApiWrapper:
             status_code=httpx.codes.OK,
         )
         expected_response = await connect_wrapper.get_connector(CONNECTOR_NAME)
-        assert KafkaConnectResponse.model_validate(actual_response) == expected_response
+        assert ConnectorResponse.model_validate(actual_response) == expected_response
         log_info.assert_called_once_with(f"Connector {CONNECTOR_NAME} exists.")
 
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
@@ -406,7 +406,7 @@ class TestConnectorApiWrapper:
         expected_response = await connect_wrapper.update_connector_config(
             connector_config
         )
-        assert KafkaConnectResponse.model_validate(actual_response) == expected_response
+        assert ConnectorResponse.model_validate(actual_response) == expected_response
         log_info.assert_called_once_with(
             f"Config for connector {CONNECTOR_NAME} updated."
         )
@@ -448,7 +448,7 @@ class TestConnectorApiWrapper:
         expected_response = await connect_wrapper.update_connector_config(
             connector_config
         )
-        assert KafkaConnectResponse.model_validate(actual_response) == expected_response
+        assert ConnectorResponse.model_validate(actual_response) == expected_response
         log_info.assert_called_once_with(f"Connector {CONNECTOR_NAME} created.")
 
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
