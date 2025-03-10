@@ -97,7 +97,7 @@ class KafkaConnectorConfig(DescConfigModel):
         return {by_alias(self, name): to_str(value) for name, value in result.items()}
 
 
-class InitialState(StrEnum):
+class ConnectorState(StrEnum):
     RUNNING = auto()
     PAUSED = auto()
     STOPPED = auto()
@@ -114,7 +114,7 @@ class ConnectorTask(BaseModel):
 
 class KafkaConnectRequest(BaseModel):
     config: KafkaConnectorConfig
-    initial_state: InitialState | None = None
+    initial_state: ConnectorState | None = None
 
     @computed_field
     @property
@@ -122,7 +122,7 @@ class KafkaConnectRequest(BaseModel):
         return self.config.name
 
     @field_serializer("initial_state")
-    def serialize_initial_state(self, initial_state: InitialState) -> str:
+    def serialize_initial_state(self, initial_state: ConnectorState) -> str:
         return initial_state.api_value
 
 

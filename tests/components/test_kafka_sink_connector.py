@@ -10,7 +10,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     RepoAuthFlags,
 )
 from kpops.component_handlers.kafka_connect.model import (
-    InitialState,
+    ConnectorState,
     KafkaConnectorConfig,
     KafkaConnectorType,
 )
@@ -188,18 +188,18 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                 for topic in connector.to.kafka_topics
             ),
             mocker.call.mock_create_connector(
-                connector.config, initial_state=None, dry_run=dry_run
+                connector.config, state=None, dry_run=dry_run
             ),
         ]
 
     @pytest.mark.parametrize(
         "initial_state",
-        [None, InitialState.RUNNING, InitialState.PAUSED, InitialState.STOPPED],
+        [None, ConnectorState.RUNNING, ConnectorState.PAUSED, ConnectorState.STOPPED],
     )
     async def test_deploy_initial_state(
         self,
         connector: KafkaSinkConnector,
-        initial_state: InitialState | None,
+        initial_state: ConnectorState | None,
         mocker: MockerFixture,
     ):
         mock_create_connector = mocker.patch.object(
@@ -210,7 +210,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         dry_run = True
         await connector.deploy(dry_run=dry_run)
         assert mock_create_connector.mock_calls == [
-            mocker.call(connector.config, initial_state=initial_state, dry_run=dry_run)
+            mocker.call(connector.config, state=initial_state, dry_run=dry_run)
         ]
 
     async def test_destroy(

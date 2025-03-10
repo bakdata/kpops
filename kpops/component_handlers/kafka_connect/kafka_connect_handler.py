@@ -8,7 +8,7 @@ from kpops.component_handlers.kafka_connect.exception import (
     ConnectorNotFoundException,
     ConnectorStateException,
 )
-from kpops.component_handlers.kafka_connect.model import InitialState
+from kpops.component_handlers.kafka_connect.model import ConnectorState
 from kpops.utils.colorify import magentaify
 from kpops.utils.dict_differ import render_diff
 
@@ -28,7 +28,7 @@ class KafkaConnectHandler:
         self,
         connector_config: KafkaConnectorConfig,
         *,
-        initial_state: InitialState | None,
+        state: ConnectorState | None,
         dry_run: bool,
     ) -> None:
         """Create a connector.
@@ -41,14 +41,22 @@ class KafkaConnectHandler:
         if dry_run:
             await self.__dry_run_connector_creation(connector_config)
         else:
+            connector_name = connector_config.name
             try:
-                await self._connect_wrapper.get_connector(connector_config.name)
+                await self._connect_wrapper.get_connector(connector_name)
                 await self._connect_wrapper.update_connector_config(connector_config)
+                match state:
+                    case ConnectorState.RUNNING:
+                        await self._connect_wrapper.resume_connector(connector_name)
+                    case ConnectorState.PAUSED:
+                        await self._connect_wrapper.pause_connector(connector_name)
+                    case ConnectorState.STOPPED:
+                        await self._connect_wrapper.stop_connector(connector_name)
+                    case _:
+                        pass
 
             except ConnectorNotFoundException:
-                await self._connect_wrapper.create_connector(
-                    connector_config, initial_state
-                )
+                await self._connect_wrapper.create_connector(connector_config, state)
 
     async def destroy_connector(self, connector_name: str, *, dry_run: bool) -> None:
         """Delete a connector resource from the cluster.

@@ -11,7 +11,7 @@ from kpops.component_handlers.kafka_connect.exception import (
     KafkaConnectError,
 )
 from kpops.component_handlers.kafka_connect.model import (
-    InitialState,
+    ConnectorState,
     KafkaConnectConfigErrorResponse,
     KafkaConnectorConfig,
     KafkaConnectRequest,
@@ -46,7 +46,7 @@ class ConnectWrapper:
     async def create_connector(
         self,
         connector_config: KafkaConnectorConfig,
-        initial_state: InitialState | None = None,
+        initial_state: ConnectorState | None = None,
     ) -> KafkaConnectResponse:
         """Create a new connector.
 
@@ -96,6 +96,39 @@ class ConnectWrapper:
             await asyncio.sleep(1)
             await self.get_connector(connector_name)
         raise KafkaConnectError(response)
+
+    async def pause_connector(self, connector_name: str) -> None:
+        """Pause connector.
+
+        API Reference: https://docs.confluent.io/platform/current/connect/references/restapi.html#put--connectors-(string-name)-pause
+        :param connector_name: Name of the connector
+        """
+        response = await self._client.put(f"/connectors/{connector_name}/pause")
+        if response.status_code != httpx.codes.OK:
+            raise KafkaConnectError(response)
+        log.info(f"Connector {connector_name} paused.")
+
+    async def resume_connector(self, connector_name: str) -> None:
+        """Resume connector.
+
+        API Reference: https://docs.confluent.io/platform/current/connect/references/restapi.html#put--connectors-(string-name)-resume
+        :param connector_name: Name of the connector
+        """
+        response = await self._client.put(f"/connectors/{connector_name}/resume")
+        if response.status_code != httpx.codes.OK:
+            raise KafkaConnectError(response)
+        log.info(f"Connector {connector_name} resumed.")
+
+    async def stop_connector(self, connector_name: str) -> None:
+        """Stop connector.
+
+        API Reference: https://docs.confluent.io/platform/current/connect/references/restapi.html#put--connectors-(string-name)-stop
+        :param connector_name: Name of the connector
+        """
+        response = await self._client.put(f"/connectors/{connector_name}/stop")
+        if response.status_code != httpx.codes.OK:
+            raise KafkaConnectError(response)
+        log.info(f"Connector {connector_name} stopped.")
 
     async def update_connector_config(
         self, connector_config: KafkaConnectorConfig

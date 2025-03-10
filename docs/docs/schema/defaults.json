@@ -43,6 +43,15 @@
             "title": "Affinity",
             "type": "object"
         },
+        "ConnectorState": {
+            "enum": [
+                "running",
+                "paused",
+                "stopped"
+            ],
+            "title": "ConnectorState",
+            "type": "string"
+        },
         "Effects": {
             "enum": [
                 "NoExecute",
@@ -307,15 +316,6 @@
                 "Never"
             ],
             "title": "ImagePullPolicy",
-            "type": "string"
-        },
-        "InitialState": {
-            "enum": [
-                "running",
-                "paused",
-                "stopped"
-            ],
-            "title": "InitialState",
             "type": "string"
         },
         "InputTopicTypes": {
@@ -694,7 +694,7 @@
                 "state": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/InitialState"
+                            "$ref": "#/$defs/ConnectorState"
                         },
                         {
                             "type": "null"
@@ -839,7 +839,7 @@
                 "state": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/InitialState"
+                            "$ref": "#/$defs/ConnectorState"
                         },
                         {
                             "type": "null"
@@ -939,7 +939,7 @@
                 "state": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/InitialState"
+                            "$ref": "#/$defs/ConnectorState"
                         },
                         {
                             "type": "null"
