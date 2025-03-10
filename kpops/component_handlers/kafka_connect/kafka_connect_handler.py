@@ -48,20 +48,24 @@ class KafkaConnectHandler:
                 status = await self._connect_wrapper.get_connector_status(
                     connector_name
                 )
-
-                should_update_state = state != status.connector.state
-                if should_update_state:
-                    match state:
-                        case ConnectorState.PAUSED:
-                            await self._connect_wrapper.pause_connector(connector_name)
-                        case ConnectorState.STOPPED:
-                            await self._connect_wrapper.stop_connector(connector_name)
-                        case _:
-                            pass
+                current_state = status.connector.state
+                match current_state, state:
+                    case ConnectorState.RUNNING, ConnectorState.PAUSED:
+                        await self._connect_wrapper.pause_connector(connector_name)
+                    case (
+                        ConnectorState.RUNNING | ConnectorState.PAUSED,
+                        ConnectorState.STOPPED,
+                    ):
+                        await self._connect_wrapper.stop_connector(connector_name)
+                    case _:
+                        pass
 
                 await self._connect_wrapper.update_connector_config(connector_config)
 
-                if should_update_state and state is ConnectorState.RUNNING:
+                if (
+                    current_state is ConnectorState.PAUSED
+                    and state is ConnectorState.RUNNING
+                ):
                     await self._connect_wrapper.resume_connector(connector_name)
 
             except ConnectorNotFoundException:
@@ -93,18 +97,20 @@ class KafkaConnectHandler:
         connector_name = connector_config.name
         try:
             connector = await self._connect_wrapper.get_connector(connector_name)
+            status = await self._connect_wrapper.get_connector_status(connector_name)
+            current_state = status.connector.state
             log.info(f"Connector Creation: connector {connector_name} already exists.")
 
-            status = await self._connect_wrapper.get_connector_status(connector_name)
-            should_update_state = state != status.connector.state
-            if should_update_state:
-                match state:
-                    case ConnectorState.PAUSED:
-                        log.info("Pausing connector")
-                    case ConnectorState.STOPPED:
-                        log.info("Stopping connector")
-                    case _:
-                        pass
+            match current_state, state:
+                case ConnectorState.RUNNING, ConnectorState.PAUSED:
+                    log.info("Pausing connector")
+                case (
+                    ConnectorState.RUNNING | ConnectorState.PAUSED,
+                    ConnectorState.STOPPED,
+                ):
+                    log.info("Stopping connector")
+                case _:
+                    pass
 
             if diff := render_diff(
                 connector.config.model_dump(), connector_config.model_dump()
@@ -116,7 +122,10 @@ class KafkaConnectHandler:
             log.debug(f"PUT /connectors/{connector_name}/config HTTP/1.1")
             log.debug(f"HOST: {self._connect_wrapper.url}")
 
-            if should_update_state and state is ConnectorState.RUNNING:
+            if (
+                current_state is ConnectorState.PAUSED
+                and state is ConnectorState.RUNNING
+            ):
                 log.info("Resuming connector")
         except ConnectorNotFoundException:
             diff = render_diff({}, connector_config.model_dump())
