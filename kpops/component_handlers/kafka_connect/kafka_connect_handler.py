@@ -93,7 +93,6 @@ class KafkaConnectHandler:
         connector_name = connector_config.name
         try:
             connector = await self._connect_wrapper.get_connector(connector_name)
-
             log.info(f"Connector Creation: connector {connector_name} already exists.")
 
             status = await self._connect_wrapper.get_connector_status(connector_name)
