@@ -14,6 +14,13 @@ logger = logging.getLogger("faker")
 logger.setLevel(logging.INFO)  # quiet faker locale messages
 
 
+@pytest.fixture(autouse=True, scope="session")
+def setup_logging() -> None:
+    from kpops.api.logs import log
+
+    assert log
+
+
 @pytest.fixture()
 def mock_os_env() -> Iterator[os._Environ[str]]:
     """Clear ``os.environ``.
