@@ -108,7 +108,7 @@ class KafkaConnector(PipelineComponent, ABC):
     Should only be used to set defaults
 
     :param config: Connector config
-    :param initial_state: Initial state for newly created connector
+    :param state: Connector state
     :param resetter_namespace: Kubernetes namespace in which the Kafka Connect resetter shall be deployed
     :param resetter_values: Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc.,
         defaults to empty HelmAppValues

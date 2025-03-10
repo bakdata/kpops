@@ -668,7 +668,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Initial state for newly created connector"
+                    "description": ""
                 },
                 "to": {
                     "anyOf": [
@@ -768,7 +768,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Initial state for newly created connector"
+                    "description": ""
                 },
                 "to": {
                     "anyOf": [
