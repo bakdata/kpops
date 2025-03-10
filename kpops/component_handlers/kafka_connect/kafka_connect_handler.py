@@ -33,7 +33,7 @@ class KafkaConnectHandler:
     ) -> None:
         """Create a connector.
 
-        If the connector exists the config of that connector gets updated.
+        If the connector exists the config and state of that connector gets updated.
 
         :param connector_config: The connector config.
         :param state: The state that the connector should have afterwards.
