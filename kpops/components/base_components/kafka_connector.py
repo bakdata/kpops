@@ -119,7 +119,7 @@ class KafkaConnector(PipelineComponent, ABC):
     )
     state: ConnectorState | None = Field(
         default=None,
-        description=describe_attr("initial_state", __doc__),
+        description=describe_attr("state", __doc__),
     )
     resetter_namespace: str | None = Field(
         default=None, description=describe_attr("resetter_namespace", __doc__)

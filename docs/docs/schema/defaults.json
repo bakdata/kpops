@@ -701,7 +701,7 @@
                         }
                     ],
                     "default": null,
-                    "description": ""
+                    "description": "Connector state"
                 },
                 "to": {
                     "anyOf": [
@@ -846,7 +846,7 @@
                         }
                     ],
                     "default": null,
-                    "description": ""
+                    "description": "Connector state"
                 },
                 "to": {
                     "anyOf": [
@@ -946,7 +946,7 @@
                         }
                     ],
                     "default": null,
-                    "description": ""
+                    "description": "Connector state"
                 },
                 "to": {
                     "anyOf": [
