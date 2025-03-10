@@ -67,7 +67,25 @@ class TestConnectorApiWrapper:
         }
 
     @patch("httpx.AsyncClient.post")
-    async def test_should_create_post_requests_for_given_connector_configuration(
+    async def test_create(
+        self,
+        mock_post: AsyncMock,
+        connect_wrapper: ConnectWrapper,
+        connector_config: KafkaConnectorConfig,
+    ):
+        with pytest.raises(KafkaConnectError):
+            await connect_wrapper.create_connector(connector_config)
+
+        mock_post.assert_called_with(
+            "/connectors",
+            json={
+                "name": CONNECTOR_NAME,
+                "config": connector_config.model_dump(),
+            },
+        )
+
+    @patch("httpx.AsyncClient.post")
+    async def test_create_with_initial_state(
         self, mock_post: AsyncMock, connect_wrapper: ConnectWrapper
     ):
         configs = {
