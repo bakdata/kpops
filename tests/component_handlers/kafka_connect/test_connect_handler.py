@@ -210,8 +210,8 @@ class TestConnectorHandler:
         )
         assert connect_wrapper.mock_calls == [
             mock.call.get_connector(CONNECTOR_NAME),
-            mock.call.update_connector_config(connector_config),
             mock.call.resume_connector(connector_config.name),
+            mock.call.update_connector_config(connector_config),
         ]
 
     async def test_update_and_pause_connector(
@@ -225,8 +225,8 @@ class TestConnectorHandler:
         )
         assert connect_wrapper.mock_calls == [
             mock.call.get_connector(CONNECTOR_NAME),
-            mock.call.update_connector_config(connector_config),
             mock.call.pause_connector(connector_config.name),
+            mock.call.update_connector_config(connector_config),
         ]
 
     async def test_update_and_stop_connector(
@@ -240,8 +240,8 @@ class TestConnectorHandler:
         )
         assert connect_wrapper.mock_calls == [
             mock.call.get_connector(CONNECTOR_NAME),
-            mock.call.update_connector_config(connector_config),
             mock.call.stop_connector(connector_config.name),
+            mock.call.update_connector_config(connector_config),
         ]
 
     async def test_call_create_connector_when_connector_does_not_exists(

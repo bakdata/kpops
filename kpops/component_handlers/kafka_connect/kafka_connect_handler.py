@@ -36,6 +36,7 @@ class KafkaConnectHandler:
         If the connector exists the config of that connector gets updated.
 
         :param connector_config: The connector config.
+        :param state: The state that the connector should have afterwards.
         :param dry_run: Whether the connector creation should be run in dry run mode.
         """
         if dry_run:
@@ -44,7 +45,8 @@ class KafkaConnectHandler:
             connector_name = connector_config.name
             try:
                 await self._connect_wrapper.get_connector(connector_name)
-                await self._connect_wrapper.update_connector_config(connector_config)
+
+                # update connector state
                 match state:
                     case ConnectorState.RUNNING:
                         await self._connect_wrapper.resume_connector(connector_name)
@@ -54,6 +56,8 @@ class KafkaConnectHandler:
                         await self._connect_wrapper.stop_connector(connector_name)
                     case _:
                         pass
+
+                await self._connect_wrapper.update_connector_config(connector_config)
 
             except ConnectorNotFoundException:
                 await self._connect_wrapper.create_connector(connector_config, state)
