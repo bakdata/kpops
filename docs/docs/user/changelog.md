@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [10.0.4](https://github.com/bakdata/kpops/tree/10.0.4) - 2025-03-13
+### What's changed
+
+* Support streams-bootstrap v4 by @philipp94831 in [#617](https://github.com/bakdata/kpops/pull/617)
+
+
+**Full Changelog**: https://github.com/bakdata/kpops/compare/10.0.3...10.0.4
+
 ## [10.0.3](https://github.com/bakdata/kpops/tree/10.0.3) - 2025-03-06
 ### What's changed
 
@@ -12,6 +20,8 @@ All notable changes to this project will be documented in this file.
 * refactor(cli): use annotated for typer option by @disrupted in [#613](https://github.com/bakdata/kpops/pull/613)
 
 * fix(kafka-connector): destroy connector on reset by @disrupted in [#615](https://github.com/bakdata/kpops/pull/615)
+
+* Bump version 10.0.2 → 10.0.3 by @bakdata-bot
 
 
 **Full Changelog**: https://github.com/bakdata/kpops/compare/10.0.2...10.0.3
