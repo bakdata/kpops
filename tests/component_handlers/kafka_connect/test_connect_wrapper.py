@@ -121,6 +121,7 @@ class TestConnectorApiWrapper:
     ):
         actual_response = {
             "name": "hdfs-sink-connector",
+            "type": "sink",
             "config": {
                 "connector.class": "io.confluent.connect.hdfs.HdfsSinkConnector",
                 "name": CONNECTOR_NAME,
@@ -196,6 +197,7 @@ class TestConnectorApiWrapper:
     ):
         actual_response = {
             "name": "hdfs-sink-connector",
+            "type": "sink",
             "config": {
                 "name": "hdfs-sink-connector",
                 "connector.class": "io.confluent.connect.hdfs.HdfsSinkConnector",
@@ -378,6 +380,7 @@ class TestConnectorApiWrapper:
     ):
         actual_response = {
             "name": "hdfs-sink-connector",
+            "type": "sink",
             "config": {
                 "name": "hdfs-sink-connector",
                 "connector.class": "io.confluent.connect.hdfs.HdfsSinkConnector",
@@ -421,6 +424,7 @@ class TestConnectorApiWrapper:
     ):
         actual_response = {
             "name": "hdfs-sink-connector",
+            "type": "sink",
             "config": {
                 "name": "hdfs-sink-connector",
                 "connector.class": "io.confluent.connect.hdfs.HdfsSinkConnector",
