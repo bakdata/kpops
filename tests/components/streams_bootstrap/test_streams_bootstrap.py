@@ -111,6 +111,23 @@ class TestStreamsBootstrap:
                 }
             )
 
+    async def test_should_not_raise_validation_error_for_helm_chart_version_4(self):
+        assert StreamsBootstrap.model_validate(
+            {
+                "name": "example-name",
+                "namespace": "test-namespace",
+                "values": {
+                    "image": "my-app",
+                    "imageTag": "1.0.0",
+                    "kafka": {
+                        "outputTopic": "test",
+                        "bootstrapServers": "fake-broker:9092",
+                    },
+                },
+                "version": "4.0.0",
+            },
+        )
+
     async def test_should_raise_validation_error_for_invalid_helm_chart_version(self):
         with pytest.raises(
             ValueError,
