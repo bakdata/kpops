@@ -244,7 +244,7 @@ class TestConnectorApiWrapper:
             await connect_wrapper.get_connector(CONNECTOR_NAME)
 
         log_info.assert_called_once_with(
-            f"The named connector {CONNECTOR_NAME} does not exists."
+            f"The named connector {CONNECTOR_NAME} does not exist."
         )
 
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
@@ -544,7 +544,7 @@ class TestConnectorApiWrapper:
             await connect_wrapper.delete_connector(CONNECTOR_NAME)
 
         log_info.assert_called_once_with(
-            f"The named connector {CONNECTOR_NAME} does not exists."
+            f"The named connector {CONNECTOR_NAME} does not exist."
         )
 
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")

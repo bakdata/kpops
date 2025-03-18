@@ -88,7 +88,7 @@ class ConnectWrapper:
             log.debug(response.json())
             return ConnectorResponse.model_validate(response.json())
         elif response.status_code == httpx.codes.NOT_FOUND:
-            log.info(f"The named connector {connector_name} does not exists.")
+            log.info(f"The named connector {connector_name} does not exist.")
             raise ConnectorNotFoundException
         elif response.status_code == httpx.codes.CONFLICT:
             log.warning(
@@ -113,7 +113,7 @@ class ConnectWrapper:
             log.debug(response.json())
             return ConnectorStatusResponse.model_validate(response.json())
         elif response.status_code == httpx.codes.NOT_FOUND:
-            log.info(f"The named connector {connector_name} does not exists.")
+            log.info(f"The named connector {connector_name} does not exist.")
             raise ConnectorNotFoundException
         raise KafkaConnectError(response)
 
@@ -228,7 +228,7 @@ class ConnectWrapper:
             log.info(f"Connector {connector_name} deleted.")
             return
         elif response.status_code == httpx.codes.NOT_FOUND:
-            log.info(f"The named connector {connector_name} does not exists.")
+            log.info(f"The named connector {connector_name} does not exist.")
             raise ConnectorNotFoundException
         elif response.status_code == httpx.codes.CONFLICT:
             log.warning(
