@@ -43,13 +43,13 @@
             "title": "Affinity",
             "type": "object"
         },
-        "ConnectorState": {
+        "ConnectorNewState": {
             "enum": [
                 "running",
                 "paused",
                 "stopped"
             ],
-            "title": "ConnectorState",
+            "title": "ConnectorNewState",
             "type": "string"
         },
         "Effects": {
@@ -694,7 +694,7 @@
                 "state": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ConnectorState"
+                            "$ref": "#/$defs/ConnectorNewState"
                         },
                         {
                             "type": "null"
@@ -839,7 +839,7 @@
                 "state": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ConnectorState"
+                            "$ref": "#/$defs/ConnectorNewState"
                         },
                         {
                             "type": "null"
@@ -939,7 +939,7 @@
                 "state": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/ConnectorState"
+                            "$ref": "#/$defs/ConnectorNewState"
                         },
                         {
                             "type": "null"
