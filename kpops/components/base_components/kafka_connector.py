@@ -14,7 +14,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmRepoConfig,
 )
 from kpops.component_handlers.kafka_connect.model import (
-    ConnectorState,
+    ConnectorNewState,
     KafkaConnectorConfig,
     KafkaConnectorType,
 )
@@ -117,7 +117,7 @@ class KafkaConnector(PipelineComponent, ABC):
     config: KafkaConnectorConfig = Field(
         description=describe_attr("config", __doc__),
     )
-    state: ConnectorState | None = Field(
+    state: ConnectorNewState | None = Field(
         default=None,
         description=describe_attr("state", __doc__),
     )

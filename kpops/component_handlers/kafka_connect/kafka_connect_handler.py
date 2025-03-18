@@ -8,7 +8,10 @@ from kpops.component_handlers.kafka_connect.exception import (
     ConnectorNotFoundException,
     ConnectorStateException,
 )
-from kpops.component_handlers.kafka_connect.model import ConnectorState
+from kpops.component_handlers.kafka_connect.model import (
+    ConnectorCurrentState,
+    ConnectorNewState,
+)
 from kpops.utils.colorify import magentaify
 from kpops.utils.dict_differ import render_diff
 
@@ -28,7 +31,7 @@ class KafkaConnectHandler:
         self,
         connector_config: KafkaConnectorConfig,
         *,
-        state: ConnectorState | None,
+        state: ConnectorNewState | None,
         dry_run: bool,
     ) -> None:
         """Create a connector.
@@ -50,11 +53,11 @@ class KafkaConnectHandler:
                 )
                 current_state = status.connector.state
                 match current_state, state:
-                    case ConnectorState.RUNNING, ConnectorState.PAUSED:
+                    case ConnectorCurrentState.RUNNING, ConnectorNewState.PAUSED:
                         await self._connect_wrapper.pause_connector(connector_name)
                     case (
-                        ConnectorState.RUNNING | ConnectorState.PAUSED,
-                        ConnectorState.STOPPED,
+                        ConnectorCurrentState.RUNNING | ConnectorCurrentState.PAUSED,
+                        ConnectorNewState.STOPPED,
                     ):
                         await self._connect_wrapper.stop_connector(connector_name)
                     case _:
@@ -63,8 +66,8 @@ class KafkaConnectHandler:
                 await self._connect_wrapper.update_connector_config(connector_config)
 
                 if (
-                    current_state is ConnectorState.PAUSED
-                    and state is ConnectorState.RUNNING
+                    current_state is ConnectorCurrentState.PAUSED
+                    and state is ConnectorNewState.RUNNING
                 ):
                     await self._connect_wrapper.resume_connector(connector_name)
 
@@ -92,7 +95,7 @@ class KafkaConnectHandler:
     async def __dry_run_connector_creation(
         self,
         connector_config: KafkaConnectorConfig,
-        state: ConnectorState | None,
+        state: ConnectorNewState | None,
     ) -> None:
         connector_name = connector_config.name
         try:
@@ -102,11 +105,11 @@ class KafkaConnectHandler:
             log.info(f"Connector Creation: connector {connector_name} already exists.")
 
             match current_state, state:
-                case ConnectorState.RUNNING, ConnectorState.PAUSED:
+                case ConnectorCurrentState.RUNNING, ConnectorNewState.PAUSED:
                     log.info("Pausing connector")
                 case (
-                    ConnectorState.RUNNING | ConnectorState.PAUSED,
-                    ConnectorState.STOPPED,
+                    ConnectorCurrentState.RUNNING | ConnectorCurrentState.PAUSED,
+                    ConnectorNewState.STOPPED,
                 ):
                     log.info("Stopping connector")
                 case _:
@@ -123,8 +126,8 @@ class KafkaConnectHandler:
             log.debug(f"HOST: {self._connect_wrapper.url}")
 
             if (
-                current_state is ConnectorState.PAUSED
-                and state is ConnectorState.RUNNING
+                current_state is ConnectorCurrentState.PAUSED
+                and state is ConnectorNewState.RUNNING
             ):
                 log.info("Resuming connector")
         except ConnectorNotFoundException:

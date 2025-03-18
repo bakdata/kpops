@@ -14,8 +14,8 @@ from kpops.component_handlers.kafka_connect.exception import (
     KafkaConnectError,
 )
 from kpops.component_handlers.kafka_connect.model import (
+    ConnectorNewState,
     ConnectorResponse,
-    ConnectorState,
     KafkaConnectorConfig,
 )
 from kpops.component_handlers.kafka_connect.timeout import timeout
@@ -101,7 +101,7 @@ class TestConnectorApiWrapper:
 
         with pytest.raises(KafkaConnectError):
             await connect_wrapper.create_connector(
-                KafkaConnectorConfig.model_validate(configs), ConnectorState.RUNNING
+                KafkaConnectorConfig.model_validate(configs), ConnectorNewState.RUNNING
             )
 
         mock_post.assert_called_with(
@@ -148,7 +148,7 @@ class TestConnectorApiWrapper:
         )
 
         expected_response = await connect_wrapper.create_connector(
-            connector_config, ConnectorState.RUNNING
+            connector_config, ConnectorNewState.RUNNING
         )
 
         assert ConnectorResponse.model_validate(actual_response) == expected_response
@@ -170,7 +170,9 @@ class TestConnectorApiWrapper:
         )
 
         await timeout(
-            connect_wrapper.create_connector(connector_config, ConnectorState.RUNNING),
+            connect_wrapper.create_connector(
+                connector_config, ConnectorNewState.RUNNING
+            ),
             secs=10,
         )
 

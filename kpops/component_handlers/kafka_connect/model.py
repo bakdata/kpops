@@ -92,7 +92,7 @@ class KafkaConnectorConfig(DescConfigModel):
         return {by_alias(self, name): to_str(value) for name, value in result.items()}
 
 
-class ConnectorState(StrEnum):
+class ConnectorNewState(StrEnum):
     RUNNING = auto()
     PAUSED = auto()
     STOPPED = auto()
@@ -102,14 +102,16 @@ class ConnectorState(StrEnum):
         return self.value.upper()
 
 
-class ConnectorTask(BaseModel):
-    connector: str
-    task: int
+class ConnectorCurrentState(StrEnum):
+    RUNNING = auto()
+    PAUSED = auto()
+    STOPPED = auto()
+    FAILED = auto()
 
 
 class CreateConnector(BaseModel):
     config: KafkaConnectorConfig
-    initial_state: ConnectorState | None = None
+    initial_state: ConnectorNewState | None = None
 
     @computed_field
     @property
@@ -117,18 +119,18 @@ class CreateConnector(BaseModel):
         return self.config.name
 
     @field_serializer("initial_state")
-    def serialize_initial_state(self, initial_state: ConnectorState) -> str:
+    def serialize_initial_state(self, initial_state: ConnectorNewState) -> str:
         return initial_state.api_value
 
 
 class ConnectorStatus(BaseModel):
-    state: ConnectorState
+    state: ConnectorCurrentState
     worker_id: str
 
 
 class ConnectorTaskStatus(BaseModel):
     id: int
-    state: ConnectorState
+    state: ConnectorCurrentState
     worker_id: str
 
 
@@ -144,6 +146,11 @@ class ConnectorStatusResponse(BaseModel):
     type: KafkaConnectorType
 
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="forbid")
+
+
+class ConnectorTask(BaseModel):
+    connector: str
+    task: int
 
 
 class ConnectorResponse(BaseModel):

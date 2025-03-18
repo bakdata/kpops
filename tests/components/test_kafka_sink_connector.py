@@ -10,7 +10,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     RepoAuthFlags,
 )
 from kpops.component_handlers.kafka_connect.model import (
-    ConnectorState,
+    ConnectorNewState,
     KafkaConnectorConfig,
     KafkaConnectorType,
 )
@@ -194,12 +194,17 @@ class TestKafkaSinkConnector(TestKafkaConnector):
 
     @pytest.mark.parametrize(
         "initial_state",
-        [None, ConnectorState.RUNNING, ConnectorState.PAUSED, ConnectorState.STOPPED],
+        [
+            None,
+            ConnectorNewState.RUNNING,
+            ConnectorNewState.PAUSED,
+            ConnectorNewState.STOPPED,
+        ],
     )
     async def test_deploy_initial_state(
         self,
         connector: KafkaSinkConnector,
-        initial_state: ConnectorState | None,
+        initial_state: ConnectorNewState | None,
         mocker: MockerFixture,
     ):
         mock_create_connector = mocker.patch.object(

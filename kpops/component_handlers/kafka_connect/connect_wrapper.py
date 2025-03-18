@@ -11,8 +11,8 @@ from kpops.component_handlers.kafka_connect.exception import (
     KafkaConnectError,
 )
 from kpops.component_handlers.kafka_connect.model import (
+    ConnectorNewState,
     ConnectorResponse,
-    ConnectorState,
     ConnectorStatusResponse,
     CreateConnector,
     KafkaConnectConfigErrorResponse,
@@ -47,7 +47,7 @@ class ConnectWrapper:
     async def create_connector(
         self,
         connector_config: KafkaConnectorConfig,
-        initial_state: ConnectorState | None = None,
+        initial_state: ConnectorNewState | None = None,
     ) -> ConnectorResponse:
         """Create a new connector.
 
