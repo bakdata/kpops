@@ -25,11 +25,10 @@ RESETTER_NAMESPACE = "test-namespace"
 @pytest.mark.usefixtures("mock_env")
 class TestKafkaConnector:
     @pytest.fixture(autouse=True)
-    def helm_mock(self, mocker: MockerFixture) -> MagicMock:
-        async_mock = AsyncMock()
+    def helm_mock(self, mocker: MockerFixture) -> AsyncMock:
         return mocker.patch(
             "kpops.components.base_components.helm_app.Helm",
-            return_value=async_mock,
+            return_value=AsyncMock(),
         ).return_value
 
     @pytest.fixture()
