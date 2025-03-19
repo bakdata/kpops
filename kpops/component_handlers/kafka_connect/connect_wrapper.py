@@ -146,7 +146,7 @@ class ConnectWrapper:
         :param connector_name: Name of the connector
         """
         response = await self._client.put(f"/connectors/{connector_name}/stop")
-        if response.status_code != httpx.codes.ACCEPTED:
+        if response.status_code != httpx.codes.NO_CONTENT:
             raise KafkaConnectError(response)
         log.info(f"Connector {connector_name} stopped.")
 

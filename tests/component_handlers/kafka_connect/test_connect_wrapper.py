@@ -332,7 +332,7 @@ class TestConnectorApiWrapper:
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/stop",
-            status_code=httpx.codes.ACCEPTED,
+            status_code=httpx.codes.NO_CONTENT,
         )
         await connect_wrapper.stop_connector(CONNECTOR_NAME)
         assert caplog.messages == [f"Connector {CONNECTOR_NAME} stopped."]
