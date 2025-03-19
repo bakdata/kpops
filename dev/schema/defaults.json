@@ -46,8 +46,7 @@
         "ConnectorNewState": {
             "enum": [
                 "running",
-                "paused",
-                "stopped"
+                "paused"
             ],
             "title": "ConnectorNewState",
             "type": "string"
