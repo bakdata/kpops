@@ -206,6 +206,7 @@ class TestConnectorHandler:
             ),
         ]
 
+    @pytest.mark.parametrize("current_state", list(ConnectorCurrentState))
     @pytest.mark.usefixtures("mock_get_connector")
     async def test_update_and_resume_connector_dry_run(
         self,
@@ -213,25 +214,28 @@ class TestConnectorHandler:
         handler: KafkaConnectHandler,
         log_info_mock: MagicMock,
         connector_config_update: KafkaConnectorConfig,
+        current_state: ConnectorCurrentState,
     ):
-        self.mock_connector_status(
-            connect_wrapper, CONNECTOR_NAME, ConnectorCurrentState.PAUSED
-        )
+        self.mock_connector_status(connect_wrapper, CONNECTOR_NAME, current_state)
         await handler.create_connector(
             connector_config_update, state=ConnectorNewState.RUNNING, dry_run=True
         )
-        assert log_info_mock.mock_calls == [
+        expected_calls = [
             mock.call(
                 f"Connector Creation: connector {CONNECTOR_NAME} already exists."
             ),
             mock.call(
                 f"Updating config:\n  connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n  name: {CONNECTOR_NAME}\n\x1b[31m- tasks.max: '1'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m\x1b[32m+ tasks.max: '2'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m  topics: {TOPIC_NAME}\n"
             ),
-            mock.call("Resuming connector"),
+        ]
+        if current_state is not ConnectorCurrentState.RUNNING:
+            expected_calls.append(mock.call("Resuming connector"))
+        expected_calls.append(
             mock.call(
                 f"Connector Creation: connector config for {CONNECTOR_NAME} is valid!"
-            ),
-        ]
+            )
+        )
+        assert log_info_mock.mock_calls == expected_calls
 
     @pytest.mark.usefixtures("mock_get_connector")
     async def test_update_and_pause_connector_dry_run(
@@ -358,24 +362,28 @@ class TestConnectorHandler:
             mock.call.update_connector_config(connector_config),
         ]
 
+    @pytest.mark.parametrize("current_state", list(ConnectorCurrentState))
     async def test_update_and_resume_connector(
         self,
         connect_wrapper: AsyncMock,
         handler: KafkaConnectHandler,
         connector_config: KafkaConnectorConfig,
+        current_state: ConnectorCurrentState,
     ):
         self.mock_connector_status(
-            connect_wrapper, connector_config.name, ConnectorCurrentState.PAUSED
+            connect_wrapper, connector_config.name, current_state
         )
         await handler.create_connector(
             connector_config, state=ConnectorNewState.RUNNING, dry_run=False
         )
-        assert connect_wrapper.mock_calls == [
+        expected_calls = [
             mock.call.get_connector(CONNECTOR_NAME),
             mock.call.get_connector_status(CONNECTOR_NAME),
             mock.call.update_connector_config(connector_config),
-            mock.call.resume_connector(connector_config.name),
         ]
+        if current_state is not ConnectorCurrentState.RUNNING:
+            expected_calls.append(mock.call.resume_connector(connector_config.name))
+        assert connect_wrapper.mock_calls == expected_calls
 
     async def test_update_and_pause_connector(
         self,

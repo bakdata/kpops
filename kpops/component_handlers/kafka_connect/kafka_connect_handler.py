@@ -66,7 +66,7 @@ class KafkaConnectHandler:
                 await self._connect_wrapper.update_connector_config(connector_config)
 
                 if (
-                    current_state is ConnectorCurrentState.PAUSED
+                    current_state is not ConnectorCurrentState.RUNNING
                     and state is ConnectorNewState.RUNNING
                 ):
                     await self._connect_wrapper.resume_connector(connector_name)
@@ -126,7 +126,7 @@ class KafkaConnectHandler:
             log.debug(f"HOST: {self._connect_wrapper.url}")
 
             if (
-                current_state is ConnectorCurrentState.PAUSED
+                current_state is not ConnectorCurrentState.RUNNING
                 and state is ConnectorNewState.RUNNING
             ):
                 log.info("Resuming connector")
