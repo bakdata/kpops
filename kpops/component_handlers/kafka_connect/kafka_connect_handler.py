@@ -55,11 +55,6 @@ class KafkaConnectHandler:
                 match current_state, state:
                     case ConnectorCurrentState.RUNNING, ConnectorNewState.PAUSED:
                         await self._connect_wrapper.pause_connector(connector_name)
-                    case (
-                        ConnectorCurrentState.RUNNING | ConnectorCurrentState.PAUSED,
-                        ConnectorNewState.STOPPED,
-                    ):
-                        await self._connect_wrapper.stop_connector(connector_name)
                     case _:
                         pass
 
@@ -107,11 +102,6 @@ class KafkaConnectHandler:
             match current_state, state:
                 case ConnectorCurrentState.RUNNING, ConnectorNewState.PAUSED:
                     log.info("Pausing connector")
-                case (
-                    ConnectorCurrentState.RUNNING | ConnectorCurrentState.PAUSED,
-                    ConnectorNewState.STOPPED,
-                ):
-                    log.info("Stopping connector")
                 case _:
                     pass
 

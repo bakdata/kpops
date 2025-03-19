@@ -95,7 +95,6 @@ class KafkaConnectorConfig(DescConfigModel):
 class ConnectorNewState(StrEnum):
     RUNNING = auto()
     PAUSED = auto()
-    STOPPED = auto()
 
     @property
     def api_value(self) -> str:

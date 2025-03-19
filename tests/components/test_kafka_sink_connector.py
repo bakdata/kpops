@@ -194,12 +194,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
 
     @pytest.mark.parametrize(
         "initial_state",
-        [
-            None,
-            ConnectorNewState.RUNNING,
-            ConnectorNewState.PAUSED,
-            ConnectorNewState.STOPPED,
-        ],
+        [None, ConnectorNewState.RUNNING, ConnectorNewState.PAUSED],
     )
     async def test_deploy_initial_state(
         self,

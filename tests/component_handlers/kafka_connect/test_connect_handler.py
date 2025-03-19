@@ -264,35 +264,6 @@ class TestConnectorHandler:
             ),
         ]
 
-    @pytest.mark.parametrize(
-        "state", [ConnectorCurrentState.RUNNING, ConnectorCurrentState.PAUSED]
-    )
-    @pytest.mark.usefixtures("mock_get_connector")
-    async def test_update_and_stop_connector_dry_run(
-        self,
-        connect_wrapper: AsyncMock,
-        handler: KafkaConnectHandler,
-        log_info_mock: MagicMock,
-        connector_config_update: KafkaConnectorConfig,
-        state: ConnectorCurrentState,
-    ):
-        self.mock_connector_status(connect_wrapper, CONNECTOR_NAME, state)
-        await handler.create_connector(
-            connector_config_update, state=ConnectorNewState.STOPPED, dry_run=True
-        )
-        assert log_info_mock.mock_calls == [
-            mock.call(
-                f"Connector Creation: connector {CONNECTOR_NAME} already exists."
-            ),
-            mock.call("Stopping connector"),
-            mock.call(
-                f"Updating config:\n  connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n  name: {CONNECTOR_NAME}\n\x1b[31m- tasks.max: '1'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m\x1b[32m+ tasks.max: '2'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m  topics: {TOPIC_NAME}\n"
-            ),
-            mock.call(
-                f"Connector Creation: connector config for {CONNECTOR_NAME} is valid!"
-            ),
-        ]
-
     @pytest.mark.usefixtures("renderer_diff_mock")
     async def test_log_invalid_config_when_create_connector_dry_run(
         self,
@@ -401,27 +372,6 @@ class TestConnectorHandler:
             mock.call.get_connector(CONNECTOR_NAME),
             mock.call.get_connector_status(CONNECTOR_NAME),
             mock.call.pause_connector(connector_config.name),
-            mock.call.update_connector_config(connector_config),
-        ]
-
-    @pytest.mark.parametrize(
-        "state", [ConnectorCurrentState.RUNNING, ConnectorCurrentState.PAUSED]
-    )
-    async def test_update_and_stop_connector(
-        self,
-        connect_wrapper: AsyncMock,
-        handler: KafkaConnectHandler,
-        connector_config: KafkaConnectorConfig,
-        state: ConnectorCurrentState,
-    ):
-        self.mock_connector_status(connect_wrapper, connector_config.name, state)
-        await handler.create_connector(
-            connector_config, state=ConnectorNewState.STOPPED, dry_run=False
-        )
-        assert connect_wrapper.mock_calls == [
-            mock.call.get_connector(CONNECTOR_NAME),
-            mock.call.get_connector_status(CONNECTOR_NAME),
-            mock.call.stop_connector(connector_config.name),
             mock.call.update_connector_config(connector_config),
         ]
 
