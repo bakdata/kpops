@@ -53,6 +53,7 @@ class ConnectWrapper:
 
         API Reference: https://docs.confluent.io/platform/current/connect/references/restapi.html#post--connectors
         :param connector_config: The config of the connector
+        :param initial_state: The new state of the connector
         :return: The current connector info if successful.
         """
         payload = CreateConnector(
