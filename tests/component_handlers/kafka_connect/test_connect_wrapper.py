@@ -35,7 +35,7 @@ CONNECTOR_NAME = "test-connector"
 class TestConnectorApiWrapper:
     @pytest_asyncio.fixture()
     def connect_wrapper(self) -> ConnectWrapper:
-        config = KpopsConfig()  # pyright: ignore[reportCallIssue]
+        config = KpopsConfig.model_validate({})
         return ConnectWrapper(config.kafka_connect)
 
     @pytest.fixture()
@@ -195,10 +195,8 @@ class TestConnectorApiWrapper:
         mock_get.assert_called_with(f"/connectors/{CONNECTOR_NAME}")
 
     @pytest.mark.flaky(reruns=5, condition=sys.platform.startswith("win32"))
-    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     async def test_should_return_correct_response_when_getting_connector(
         self,
-        log_info: MagicMock,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
     ):
@@ -231,12 +229,9 @@ class TestConnectorApiWrapper:
         )
         expected_response = await connect_wrapper.get_connector(CONNECTOR_NAME)
         assert ConnectorResponse.model_validate(actual_response) == expected_response
-        log_info.assert_called_once_with(f"Connector {CONNECTOR_NAME} exists.")
 
-    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     async def test_should_raise_connector_not_found_when_getting_connector(
         self,
-        log_info: MagicMock,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
     ):
@@ -249,10 +244,6 @@ class TestConnectorApiWrapper:
         )
         with pytest.raises(ConnectorNotFoundException):
             await connect_wrapper.get_connector(CONNECTOR_NAME)
-
-        log_info.assert_called_once_with(
-            f"The named connector {CONNECTOR_NAME} does not exist."
-        )
 
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     async def test_should_raise_rebalance_in_progress_when_getting_connector(
@@ -533,10 +524,8 @@ class TestConnectorApiWrapper:
 
         log_info.assert_called_once_with(f"Connector {CONNECTOR_NAME} deleted.")
 
-    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     async def test_should_raise_connector_not_found_when_deleting_connector(
         self,
-        log_info: MagicMock,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
     ):
@@ -549,10 +538,6 @@ class TestConnectorApiWrapper:
         )
         with pytest.raises(ConnectorNotFoundException):
             await connect_wrapper.delete_connector(CONNECTOR_NAME)
-
-        log_info.assert_called_once_with(
-            f"The named connector {CONNECTOR_NAME} does not exist."
-        )
 
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     async def test_should_raise_rebalance_in_progress_when_deleting_connector(
