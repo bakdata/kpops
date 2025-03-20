@@ -98,7 +98,7 @@ class ConnectorNewState(StrEnum):
 
     @property
     def api_value(self) -> str:
-        return self.value.upper()
+        return ConnectorCurrentState[self.name].value
 
 
 class UpperStrEnum(StrEnum):
