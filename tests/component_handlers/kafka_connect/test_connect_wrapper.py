@@ -1,5 +1,6 @@
 import json
 import sys
+from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import httpx
@@ -14,9 +15,13 @@ from kpops.component_handlers.kafka_connect.exception import (
     KafkaConnectError,
 )
 from kpops.component_handlers.kafka_connect.model import (
+    ConnectorCurrentState,
     ConnectorNewState,
     ConnectorResponse,
+    ConnectorStatus,
+    ConnectorStatusResponse,
     KafkaConnectorConfig,
+    KafkaConnectorType,
 )
 from kpops.component_handlers.kafka_connect.timeout import timeout
 from kpops.config import KpopsConfig
@@ -592,6 +597,49 @@ class TestConnectorApiWrapper:
         mock_put.assert_called_with(
             f"/connector-plugins/{connector_name}/config/validate",
             json=config,
+        )
+
+    @pytest.mark.parametrize(
+        ("api_state", "enum_state"),
+        [
+            pytest.param("RUNNING", ConnectorCurrentState.RUNNING),
+            pytest.param("PAUSED", ConnectorCurrentState.PAUSED),
+            pytest.param("STOPPED", ConnectorCurrentState.STOPPED),
+            pytest.param("FAILED", ConnectorCurrentState.FAILED),
+        ],
+    )
+    async def test_should_parse_connector_status(
+        self,
+        connect_wrapper: ConnectWrapper,
+        httpx_mock: HTTPXMock,
+        api_state: str,
+        enum_state: ConnectorCurrentState,
+    ):
+        connector_name = "hdfs-sink-connector"
+        actual_response: dict[str, Any] = {
+            "name": connector_name,
+            "connector": {
+                "state": api_state,
+                "worker_id": "kafka-connect.infrastructure.svc:8083",
+            },
+            "tasks": [],
+            "type": "sink",
+        }
+        httpx_mock.add_response(
+            method="GET",
+            url=f"{DEFAULT_HOST}/connectors/{connector_name}/status",
+            headers=HEADERS,
+            json=actual_response,
+            status_code=httpx.codes.OK,
+        )
+        status = await connect_wrapper.get_connector_status(connector_name)
+        assert status == ConnectorStatusResponse(
+            name=connector_name,
+            connector=ConnectorStatus(
+                state=enum_state, worker_id="kafka-connect.infrastructure.svc:8083"
+            ),
+            tasks=[],
+            type=KafkaConnectorType.SINK,
         )
 
     async def test_should_parse_validate_connector_config(
