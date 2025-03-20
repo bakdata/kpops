@@ -2,10 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [10.1.0](https://github.com/bakdata/kpops/tree/10.1.0) - 2025-03-20
+### What's changed
+
+* feat(kafka-connect): set connector state by @disrupted in [#616](https://github.com/bakdata/kpops/pull/616)
+
+
+**Full Changelog**: https://github.com/bakdata/kpops/compare/10.0.4...10.1.0
+
 ## [10.0.4](https://github.com/bakdata/kpops/tree/10.0.4) - 2025-03-13
 ### What's changed
 
 * Support streams-bootstrap v4 by @philipp94831 in [#617](https://github.com/bakdata/kpops/pull/617)
+
+* Bump version 10.0.3 → 10.0.4 by @bakdata-bot
 
 
 **Full Changelog**: https://github.com/bakdata/kpops/compare/10.0.3...10.0.4
