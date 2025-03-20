@@ -122,9 +122,13 @@ class KafkaConnectHandler:
                 log.info("Resuming connector")
         except ConnectorNotFoundException:
             diff = render_diff({}, connector_config.model_dump())
-            log.info(
-                f"Connector Creation: connector {connector_name} does not exist. Creating connector with config:\n{diff}"
-            )
+            log_msg = [
+                f"Connector Creation: connector {connector_name} does not exist. Creating connector"
+            ]
+            if state:
+                log_msg.append(f"in {state.value} state")
+            log_msg.append(f"with config:\n{diff}")
+            log.info(" ".join(log_msg))
             log.debug("POST /connectors HTTP/1.1")
             log.debug(f"HOST: {self._connect_wrapper.url}")
 
