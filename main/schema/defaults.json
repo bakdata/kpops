@@ -43,6 +43,14 @@
             "title": "Affinity",
             "type": "object"
         },
+        "ConnectorNewState": {
+            "enum": [
+                "running",
+                "paused"
+            ],
+            "title": "ConnectorNewState",
+            "type": "string"
+        },
         "Effects": {
             "enum": [
                 "NoExecute",
@@ -682,6 +690,18 @@
                     "$ref": "#/$defs/HelmAppValues",
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
                 },
+                "state": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ConnectorNewState"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Connector state"
+                },
                 "to": {
                     "anyOf": [
                         {
@@ -815,6 +835,18 @@
                     "$ref": "#/$defs/HelmAppValues",
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
                 },
+                "state": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ConnectorNewState"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Connector state"
+                },
                 "to": {
                     "anyOf": [
                         {
@@ -902,6 +934,18 @@
                 "resetter_values": {
                     "$ref": "#/$defs/HelmAppValues",
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
+                },
+                "state": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ConnectorNewState"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Connector state"
                 },
                 "to": {
                     "anyOf": [
