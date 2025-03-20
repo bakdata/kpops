@@ -101,7 +101,14 @@ class ConnectorNewState(StrEnum):
         return self.value.upper()
 
 
-class ConnectorCurrentState(StrEnum):
+class UpperStrEnum(StrEnum):
+    @override
+    @staticmethod
+    def _generate_next_value_(name: str, *args: Any, **kwargs: Any) -> str:
+        return name.upper()
+
+
+class ConnectorCurrentState(UpperStrEnum):
     RUNNING = auto()
     PAUSED = auto()
     STOPPED = auto()
