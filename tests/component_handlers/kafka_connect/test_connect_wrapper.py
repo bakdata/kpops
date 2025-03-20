@@ -148,8 +148,8 @@ class TestConnectorApiWrapper:
             method="POST",
             url=f"{DEFAULT_HOST}/connectors",
             headers=HEADERS,
-            json=actual_response,
             status_code=httpx.codes.CREATED,
+            json=actual_response,
         )
 
         expected_response = await connect_wrapper.create_connector(
@@ -237,8 +237,8 @@ class TestConnectorApiWrapper:
             method="GET",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
             headers=HEADERS,
-            json=actual_response,
             status_code=httpx.codes.OK,
+            json=actual_response,
         )
         expected_response = await connect_wrapper.get_connector(CONNECTOR_NAME)
         assert ConnectorResponse.model_validate(actual_response) == expected_response
@@ -252,8 +252,8 @@ class TestConnectorApiWrapper:
             method="GET",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
             headers=HEADERS,
-            json={},
             status_code=httpx.codes.NOT_FOUND,
+            json={},
         )
         with pytest.raises(ConnectorNotFoundException):
             await connect_wrapper.get_connector(CONNECTOR_NAME)
@@ -269,8 +269,8 @@ class TestConnectorApiWrapper:
             method="GET",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
             headers=HEADERS,
-            json={},
             status_code=httpx.codes.CONFLICT,
+            json={},
         )
 
         await timeout(
@@ -413,8 +413,8 @@ class TestConnectorApiWrapper:
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/config",
             headers=HEADERS,
-            json=actual_response,
             status_code=httpx.codes.OK,
+            json=actual_response,
         )
 
         expected_response = await connect_wrapper.update_connector_config(
@@ -457,8 +457,8 @@ class TestConnectorApiWrapper:
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/config",
             headers=HEADERS,
-            json=actual_response,
             status_code=httpx.codes.CREATED,
+            json=actual_response,
         )
         expected_response = await connect_wrapper.update_connector_config(
             connector_config
@@ -549,8 +549,8 @@ class TestConnectorApiWrapper:
             method="DELETE",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
             headers=HEADERS,
-            json={},
             status_code=httpx.codes.CONFLICT,
+            json={},
         )
 
         await timeout(
@@ -613,8 +613,8 @@ class TestConnectorApiWrapper:
             method="GET",
             url=f"{DEFAULT_HOST}/connectors/{connector_name}/status",
             headers=HEADERS,
-            json=actual_response,
             status_code=httpx.codes.OK,
+            json=actual_response,
         )
         status = await connect_wrapper.get_connector_status(connector_name)
         assert status == ConnectorStatusResponse(
@@ -638,8 +638,8 @@ class TestConnectorApiWrapper:
             method="PUT",
             url=f"{DEFAULT_HOST}/connector-plugins/FileStreamSinkConnector/config/validate",
             headers=HEADERS,
-            json=actual_response,
             status_code=httpx.codes.OK,
+            json=actual_response,
         )
 
         configs = {
