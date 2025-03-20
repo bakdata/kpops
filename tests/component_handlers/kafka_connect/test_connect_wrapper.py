@@ -158,32 +158,45 @@ class TestConnectorApiWrapper:
 
         assert ConnectorResponse.model_validate(actual_response) == expected_response
 
+    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
-    async def test_should_raise_connector_exists_exception_when_connector_exists(
+    async def test_create_connector_retry(
         self,
         log_warning: MagicMock,
+        log_info: MagicMock,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
         connector_config: KafkaConnectorConfig,
     ):
+        ENDPOINT = f"{DEFAULT_HOST}/connectors"
         httpx_mock.add_response(
             method="POST",
-            url=f"{DEFAULT_HOST}/connectors",
-            json={},
+            url=ENDPOINT,
+            headers=HEADERS,
             status_code=httpx.codes.CONFLICT,
-            is_reusable=True,
+            json={},
+        )
+        httpx_mock.add_response(
+            method="POST",
+            url=ENDPOINT,
+            headers=HEADERS,
+            status_code=httpx.codes.CREATED,
+            json={
+                "name": CONNECTOR_NAME,
+                "type": "sink",
+                "config": {
+                    "name": CONNECTOR_NAME,
+                    "connector.class": "io.confluent.connect.hdfs.HdfsSinkConnector",
+                },
+                "tasks": [],
+            },
         )
 
-        await timeout(
-            connect_wrapper.create_connector(
-                connector_config, ConnectorNewState.RUNNING
-            ),
-            secs=10,
-        )
-
+        await connect_wrapper.create_connector(connector_config)
         log_warning.assert_called_with(
             "Rebalancing in progress while creating a connector... Retrying..."
         )
+        log_info.assert_called_with("Connector test-connector created.")
 
     @patch("httpx.AsyncClient.get")
     async def test_should_create_correct_get_connector_request(
@@ -453,30 +466,44 @@ class TestConnectorApiWrapper:
         assert ConnectorResponse.model_validate(actual_response) == expected_response
         log_info.assert_called_once_with(f"Connector {CONNECTOR_NAME} created.")
 
+    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
-    async def test_should_raise_connector_exists_exception_when_update_connector(
+    async def test_update_connector_retry(
         self,
         log_warning: MagicMock,
+        log_info: MagicMock,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
         connector_config: KafkaConnectorConfig,
     ):
+        ENDPOINT = f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/config"
         httpx_mock.add_response(
             method="PUT",
-            url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/config",
+            url=ENDPOINT,
             headers=HEADERS,
-            json={},
             status_code=httpx.codes.CONFLICT,
+            json={},
+        )
+        httpx_mock.add_response(
+            method="PUT",
+            url=ENDPOINT,
+            headers=HEADERS,
+            json={
+                "name": CONNECTOR_NAME,
+                "type": "sink",
+                "config": {
+                    "name": CONNECTOR_NAME,
+                    "connector.class": "io.confluent.connect.hdfs.HdfsSinkConnector",
+                },
+                "tasks": [],
+            },
         )
 
-        await timeout(
-            connect_wrapper.update_connector_config(connector_config),
-            secs=1,
-        )
-
+        await connect_wrapper.update_connector_config(connector_config)
         log_warning.assert_called_with(
             "Rebalancing in progress while updating a connector... Retrying..."
         )
+        log_info.assert_called_with("Config for connector test-connector updated.")
 
     @patch("httpx.AsyncClient.delete")
     async def test_should_create_correct_delete_connector_request(
