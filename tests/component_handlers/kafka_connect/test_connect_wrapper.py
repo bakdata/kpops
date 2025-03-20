@@ -8,6 +8,7 @@ import pytest
 import pytest_asyncio
 from anyio import Path
 from pytest_httpx import HTTPXMock
+from pytest_mock import MockerFixture
 
 from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
 from kpops.component_handlers.kafka_connect.exception import (
@@ -23,7 +24,6 @@ from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectorConfig,
     KafkaConnectorType,
 )
-from kpops.component_handlers.kafka_connect.timeout import timeout
 from kpops.config import KpopsConfig
 from tests.component_handlers.kafka_connect import RESOURCES_PATH
 
@@ -69,6 +69,10 @@ class TestConnectorApiWrapper:
                 {"connector": "hdfs-sink-connector", "task": 3},
             ],
         }
+
+    @pytest.fixture()
+    def mock_sleep(self, mocker: MockerFixture) -> None:
+        mocker.patch("asyncio.sleep", return_value=None)  # skip delay
 
     def test_serialize_config(self):
         # all values should be converted to strings
@@ -159,6 +163,7 @@ class TestConnectorApiWrapper:
         actual_response = await connect_wrapper.create_connector(connector_config)
         assert ConnectorResponse.model_validate(connector_response) == actual_response
 
+    @pytest.mark.usefixtures("mock_sleep")
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     async def test_create_connector_retry(
@@ -230,36 +235,34 @@ class TestConnectorApiWrapper:
         with pytest.raises(ConnectorNotFoundException):
             await connect_wrapper.get_connector(CONNECTOR_NAME)
 
+    @pytest.mark.usefixtures("mock_sleep")
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     async def test_get_connector_retry(
         self,
         log_warning: MagicMock,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
+        connector_response: dict[str, Any],
     ):
+        ENDPOINT = f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}"
         httpx_mock.add_response(
             method="GET",
-            url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
+            url=ENDPOINT,
             headers=HEADERS,
             status_code=httpx.codes.CONFLICT,
             json={},
         )
         httpx_mock.add_response(
             method="GET",
-            url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
+            url=ENDPOINT,
             headers=HEADERS,
-            status_code=httpx.codes.CONFLICT,
-            json={},
+            json=connector_response,
         )
-
-        await timeout(
-            connect_wrapper.get_connector(CONNECTOR_NAME),
-            secs=1,
-        )
-
+        actual_response = await connect_wrapper.get_connector(CONNECTOR_NAME)
         log_warning.assert_called_with(
             "Rebalancing in progress while getting a connector... Retrying..."
         )
+        assert actual_response == ConnectorResponse.model_validate(connector_response)
 
     @pytest.mark.parametrize(
         ("api_state", "enum_state"),
@@ -448,6 +451,7 @@ class TestConnectorApiWrapper:
         assert ConnectorResponse.model_validate(connector_response) == actual_response
         log_info.assert_called_once_with(f"Connector {CONNECTOR_NAME} created.")
 
+    @pytest.mark.usefixtures("mock_sleep")
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     async def test_update_connector_retry(
@@ -520,29 +524,35 @@ class TestConnectorApiWrapper:
         with pytest.raises(ConnectorNotFoundException):
             await connect_wrapper.delete_connector(CONNECTOR_NAME)
 
+    @pytest.mark.usefixtures("mock_sleep")
+    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     async def test_delete_connector_retry(
         self,
         log_warning: MagicMock,
+        log_info: MagicMock,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
     ):
+        ENDPOINT = f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}"
         httpx_mock.add_response(
             method="DELETE",
-            url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
+            url=ENDPOINT,
             headers=HEADERS,
             status_code=httpx.codes.CONFLICT,
             json={},
         )
-
-        await timeout(
-            connect_wrapper.delete_connector(CONNECTOR_NAME),
-            secs=1,
+        httpx_mock.add_response(
+            method="DELETE",
+            url=ENDPOINT,
+            status_code=httpx.codes.NO_CONTENT,
         )
 
+        await connect_wrapper.delete_connector(CONNECTOR_NAME)
         log_warning.assert_called_with(
             "Rebalancing in progress while deleting a connector... Retrying..."
         )
+        log_info.assert_called_with("Connector test-connector deleted.")
 
     @patch("httpx.AsyncClient.put")
     async def test_validate_connector_config_request(
