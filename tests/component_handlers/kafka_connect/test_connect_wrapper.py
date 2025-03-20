@@ -505,53 +505,22 @@ class TestConnectorApiWrapper:
         )
         log_info.assert_called_with("Config for connector test-connector updated.")
 
-    @patch("httpx.AsyncClient.delete")
-    async def test_should_create_correct_delete_connector_request(
-        self, mock_delete: AsyncMock, connect_wrapper: ConnectWrapper
-    ):
-        with pytest.raises(KafkaConnectError):
-            await connect_wrapper.delete_connector(CONNECTOR_NAME)
-
-        mock_delete.assert_called_with(f"/connectors/{CONNECTOR_NAME}")
-
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
-    async def test_should_return_correct_response_when_deleting_connector(
+    async def test_delete_connector(
         self,
         log_info: MagicMock,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
     ):
-        actual_response = {
-            "name": "hdfs-sink-connector",
-            "config": {
-                "name": "hdfs-sink-connector",
-                "connector.class": "io.confluent.connect.hdfs.HdfsSinkConnector",
-                "tasks.max": "10",
-                "topics": "test-topic",
-                "hdfs.url": "hdfs://fakehost:9000",
-                "hadoop.conf.dir": "/opt/hadoop/conf",
-                "hadoop.home": "/opt/hadoop",
-                "flush.size": "100",
-                "rotate.interval.ms": "1000",
-            },
-            "tasks": [
-                {"connector": "hdfs-sink-connector", "task": 1},
-                {"connector": "hdfs-sink-connector", "task": 2},
-                {"connector": "hdfs-sink-connector", "task": 3},
-            ],
-        }
         httpx_mock.add_response(
             method="DELETE",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
-            headers=HEADERS,
-            json=actual_response,
             status_code=httpx.codes.NO_CONTENT,
         )
         await connect_wrapper.delete_connector(CONNECTOR_NAME)
-
         log_info.assert_called_once_with(f"Connector {CONNECTOR_NAME} deleted.")
 
-    async def test_should_raise_connector_not_found_when_deleting_connector(
+    async def test_delete_connector_not_found(
         self,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
@@ -560,8 +529,11 @@ class TestConnectorApiWrapper:
             method="DELETE",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
             headers=HEADERS,
-            json={},
             status_code=httpx.codes.NOT_FOUND,
+            json={
+                "error_code": httpx.codes.NOT_FOUND.value,
+                "message": f"Connector {CONNECTOR_NAME} not found",
+            },
         )
         with pytest.raises(ConnectorNotFoundException):
             await connect_wrapper.delete_connector(CONNECTOR_NAME)
