@@ -5,7 +5,6 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import httpx
 import pytest
-import pytest_asyncio
 from anyio import Path
 from pytest_httpx import HTTPXMock
 from pytest_mock import MockerFixture
@@ -33,7 +32,7 @@ CONNECTOR_NAME = "test-connector"
 
 
 class TestConnectorApiWrapper:
-    @pytest_asyncio.fixture()
+    @pytest.fixture()
     def connect_wrapper(self) -> ConnectWrapper:
         config = KpopsConfig.model_validate({})
         return ConnectWrapper(config.kafka_connect)
