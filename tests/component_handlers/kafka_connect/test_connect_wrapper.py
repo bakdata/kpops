@@ -1,6 +1,5 @@
 import json
 import logging
-import sys
 from typing import Any
 from unittest.mock import AsyncMock, patch
 
@@ -188,7 +187,6 @@ class TestConnectorApiWrapper:
         assert caplog.records[1].message == "Connector test-connector created."
         assert caplog.records[1].levelname == "INFO"
 
-    @pytest.mark.flaky(reruns=5, condition=sys.platform.startswith("win32"))
     async def test_get_connector(
         self,
         connect_wrapper: ConnectWrapper,
