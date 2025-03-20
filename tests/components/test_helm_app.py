@@ -17,10 +17,9 @@ from kpops.utils.colorify import magentaify
 @pytest.mark.usefixtures("mock_env")
 class TestHelmApp:
     @pytest.fixture()
-    def helm_mock(self, mocker: MockerFixture) -> MagicMock:
-        async_mock = AsyncMock()
+    def helm_mock(self, mocker: MockerFixture) -> AsyncMock:
         return mocker.patch(
-            "kpops.components.base_components.helm_app.Helm", return_value=async_mock
+            "kpops.components.base_components.helm_app.Helm", return_value=AsyncMock()
         ).return_value
 
     @pytest.fixture()

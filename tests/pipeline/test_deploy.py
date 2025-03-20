@@ -1,5 +1,5 @@
 from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock
 
 import pytest
 from pytest_mock import MockerFixture
@@ -17,7 +17,7 @@ RESOURCE_PATH = Path(__file__).parent / "resources"
 @pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache", "clear_kpops_config")
 class TestDeploy:
     @pytest.fixture(autouse=True)
-    def mock_helm(self, mocker: MockerFixture) -> MagicMock:
+    def mock_helm(self, mocker: MockerFixture) -> AsyncMock:
         return mocker.patch(
             "kpops.components.base_components.helm_app.Helm",
             return_value=AsyncMock(),

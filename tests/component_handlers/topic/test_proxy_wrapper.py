@@ -2,6 +2,7 @@ import json
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
+import httpx
 import pytest
 import pytest_asyncio
 from anyio import Path
@@ -44,7 +45,7 @@ class TestProxyWrapper:
             method="GET",
             url=f"{DEFAULT_HOST}/v3/clusters",
             json=cluster_response,
-            status_code=200,
+            status_code=httpx.codes.OK,
         )
         assert proxy_wrapper.url == AnyHttpUrl(DEFAULT_HOST)
         assert proxy_wrapper.cluster_id == "cluster-1"
@@ -179,7 +180,7 @@ class TestProxyWrapper:
             url=f"{DEFAULT_HOST}/v3/clusters/cluster-1/topics",
             json=topic_spec,
             headers=HEADERS,
-            status_code=201,
+            status_code=httpx.codes.CREATED,
         )
         await proxy_wrapper.create_topic(
             topic_spec=TopicSpec.model_validate(topic_spec)
@@ -198,7 +199,7 @@ class TestProxyWrapper:
             method="DELETE",
             url=f"{DEFAULT_HOST}/v3/clusters/cluster-1/topics/{topic_name}",
             headers=HEADERS,
-            status_code=204,
+            status_code=httpx.codes.NO_CONTENT,
         )
         await proxy_wrapper.delete_topic(topic_name=topic_name)
         log_info_mock.assert_called_once_with("Topic topic-X deleted.")
@@ -232,7 +233,7 @@ class TestProxyWrapper:
             method="GET",
             url=f"{DEFAULT_HOST}/v3/clusters/cluster-1/topics/{topic_name}",
             headers=HEADERS,
-            status_code=200,
+            status_code=httpx.codes.OK,
             json=res,
         )
 
@@ -253,7 +254,7 @@ class TestProxyWrapper:
             method="GET",
             url=f"{DEFAULT_HOST}/v3/clusters/cluster-1/topics/{topic_name}",
             headers=HEADERS,
-            status_code=404,
+            status_code=httpx.codes.NOT_FOUND,
             json={
                 "error_code": 40403,
                 "message": "This server does not host this topic-partition.",
@@ -277,7 +278,7 @@ class TestProxyWrapper:
             url=f"{DEFAULT_HOST}/v3/clusters/cluster-1/topics/{topic_name}/configs:alter",
             headers=HEADERS,
             json={"data": [{"name": config_name, "operation": "DELETE"}]},
-            status_code=204,
+            status_code=httpx.codes.NO_CONTENT,
         )
 
         await proxy_wrapper.batch_alter_topic_config(

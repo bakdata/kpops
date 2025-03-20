@@ -14,6 +14,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmRepoConfig,
 )
 from kpops.component_handlers.kafka_connect.model import (
+    ConnectorNewState,
     KafkaConnectorConfig,
     KafkaConnectorType,
 )
@@ -107,6 +108,7 @@ class KafkaConnector(PipelineComponent, ABC):
     Should only be used to set defaults
 
     :param config: Connector config
+    :param state: Connector state
     :param resetter_namespace: Kubernetes namespace in which the Kafka Connect resetter shall be deployed
     :param resetter_values: Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc.,
         defaults to empty HelmAppValues
@@ -114,6 +116,10 @@ class KafkaConnector(PipelineComponent, ABC):
 
     config: KafkaConnectorConfig = Field(
         description=describe_attr("config", __doc__),
+    )
+    state: ConnectorNewState | None = Field(
+        default=None,
+        description=describe_attr("state", __doc__),
     )
     resetter_namespace: str | None = Field(
         default=None, description=describe_attr("resetter_namespace", __doc__)
@@ -181,7 +187,7 @@ class KafkaConnector(PipelineComponent, ABC):
                 await schema_handler.submit_schemas(to_section=self.to, dry_run=dry_run)
 
         await get_handlers().connector_handler.create_connector(
-            self.config, dry_run=dry_run
+            self.config, state=self.state, dry_run=dry_run
         )
 
     @override

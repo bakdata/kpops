@@ -11,9 +11,12 @@ from kpops.component_handlers.kafka_connect.exception import (
     KafkaConnectError,
 )
 from kpops.component_handlers.kafka_connect.model import (
+    ConnectorNewState,
+    ConnectorResponse,
+    ConnectorStatusResponse,
+    CreateConnector,
     KafkaConnectConfigErrorResponse,
     KafkaConnectorConfig,
-    KafkaConnectResponse,
 )
 
 if TYPE_CHECKING:
@@ -21,7 +24,6 @@ if TYPE_CHECKING:
 
     from kpops.config import KafkaConnectConfig
 
-HEADERS = {"Accept": "application/json", "Content-Type": "application/json"}
 
 log = logging.getLogger("KafkaConnectAPI")
 
@@ -32,62 +34,60 @@ class ConnectWrapper:
 
     def __init__(self, config: KafkaConnectConfig) -> None:
         self._config: KafkaConnectConfig = config
-        self._client = httpx.AsyncClient(timeout=config.timeout)
+        self._client = httpx.AsyncClient(
+            base_url=str(config.url),
+            headers={"Accept": "application/json", "Content-Type": "application/json"},
+            timeout=config.timeout,
+        )
 
     @property
     def url(self) -> AnyHttpUrl:
         return self._config.url
 
     async def create_connector(
-        self, connector_config: KafkaConnectorConfig
-    ) -> KafkaConnectResponse:
+        self,
+        connector_config: KafkaConnectorConfig,
+        initial_state: ConnectorNewState | None = None,
+    ) -> ConnectorResponse:
         """Create a new connector.
 
         API Reference: https://docs.confluent.io/platform/current/connect/references/restapi.html#post--connectors
         :param connector_config: The config of the connector
+        :param initial_state: The new state of the connector
         :return: The current connector info if successful.
         """
-        config_json: dict[str, Any] = connector_config.model_dump()
-        connect_data: dict[str, Any] = {
-            "name": connector_config.name,
-            "config": config_json,
-        }
+        payload = CreateConnector(
+            config=connector_config,
+            initial_state=initial_state,
+        )
         response = await self._client.post(
-            url=f"{self.url}connectors", headers=HEADERS, json=connect_data
+            "/connectors", json=payload.model_dump(exclude_none=True)
         )
         if response.status_code == httpx.codes.CREATED:
             log.info(f"Connector {connector_config.name} created.")
             log.debug(response.json())
-            return KafkaConnectResponse.model_validate(response.json())
+            return ConnectorResponse.model_validate(response.json())
         elif response.status_code == httpx.codes.CONFLICT:
             log.warning(
                 "Rebalancing in progress while creating a connector... Retrying..."
             )
-
             await asyncio.sleep(1)
-            await self.create_connector(connector_config)
+            await self.create_connector(connector_config, initial_state)
 
         raise KafkaConnectError(response)
 
-    async def get_connector(self, connector_name: str | None) -> KafkaConnectResponse:
-        """Get information about the connector.
+    async def get_connector(self, connector_name: str) -> ConnectorResponse:
+        """Get information about a connector.
 
         API Reference: https://docs.confluent.io/platform/current/connect/references/restapi.html#get--connectors-(string-name)
-        :param connector_name: Nameof the crated connector
+        :param connector_name: Name of the connector
         :return: Information about the connector.
         """
-        if connector_name is None:
-            msg = "Connector name not set"
-            raise Exception(msg)
-        response = await self._client.get(
-            url=f"{self.url}connectors/{connector_name}", headers=HEADERS
-        )
+        response = await self._client.get(f"/connectors/{connector_name}")
         if response.status_code == httpx.codes.OK:
-            log.info(f"Connector {connector_name} exists.")
             log.debug(response.json())
-            return KafkaConnectResponse.model_validate(response.json())
+            return ConnectorResponse.model_validate(response.json())
         elif response.status_code == httpx.codes.NOT_FOUND:
-            log.info(f"The named connector {connector_name} does not exists.")
             raise ConnectorNotFoundException
         elif response.status_code == httpx.codes.CONFLICT:
             log.warning(
@@ -97,9 +97,59 @@ class ConnectWrapper:
             await self.get_connector(connector_name)
         raise KafkaConnectError(response)
 
+    async def get_connector_status(
+        self, connector_name: str
+    ) -> ConnectorStatusResponse:
+        """Get current status of a connector.
+
+        API Reference: https://docs.confluent.io/platform/current/connect/references/restapi.html#get--connectors-(string-name)-status
+        :param connector_name: Name of the connector
+        :return: Status of the connector.
+        """
+        response = await self._client.get(f"/connectors/{connector_name}/status")
+        if response.status_code == httpx.codes.OK:
+            log.debug(response.json())
+            return ConnectorStatusResponse.model_validate(response.json())
+        elif response.status_code == httpx.codes.NOT_FOUND:
+            raise ConnectorNotFoundException
+        raise KafkaConnectError(response)
+
+    async def pause_connector(self, connector_name: str) -> None:
+        """Pause connector.
+
+        API Reference: https://docs.confluent.io/platform/current/connect/references/restapi.html#put--connectors-(string-name)-pause
+        :param connector_name: Name of the connector
+        """
+        response = await self._client.put(f"/connectors/{connector_name}/pause")
+        if response.status_code != httpx.codes.ACCEPTED:
+            raise KafkaConnectError(response)
+        log.info(f"Connector {connector_name} paused.")
+
+    async def resume_connector(self, connector_name: str) -> None:
+        """Resume connector.
+
+        API Reference: https://docs.confluent.io/platform/current/connect/references/restapi.html#put--connectors-(string-name)-resume
+        :param connector_name: Name of the connector
+        """
+        response = await self._client.put(f"/connectors/{connector_name}/resume")
+        if response.status_code != httpx.codes.ACCEPTED:
+            raise KafkaConnectError(response)
+        log.info(f"Connector {connector_name} resumed.")
+
+    async def stop_connector(self, connector_name: str) -> None:
+        """Stop connector.
+
+        API Reference: https://docs.confluent.io/platform/current/connect/references/restapi.html#put--connectors-(string-name)-stop
+        :param connector_name: Name of the connector
+        """
+        response = await self._client.put(f"/connectors/{connector_name}/stop")
+        if response.status_code != httpx.codes.NO_CONTENT:
+            raise KafkaConnectError(response)
+        log.info(f"Connector {connector_name} stopped.")
+
     async def update_connector_config(
         self, connector_config: KafkaConnectorConfig
-    ) -> KafkaConnectResponse:
+    ) -> ConnectorResponse:
         """Create or update a connector.
 
         Create a new connector using the given configuration, or update the
@@ -111,8 +161,7 @@ class ConnectWrapper:
 
         config_json = connector_config.model_dump()
         response = await self._client.put(
-            url=f"{self.url}connectors/{connector_name}/config",
-            headers=HEADERS,
+            f"/connectors/{connector_name}/config",
             json=config_json,
         )
 
@@ -120,11 +169,11 @@ class ConnectWrapper:
         if response.status_code == httpx.codes.OK:
             log.info(f"Config for connector {connector_name} updated.")
             log.debug(data)
-            return KafkaConnectResponse.model_validate(data)
+            return ConnectorResponse.model_validate(data)
         if response.status_code == httpx.codes.CREATED:
             log.info(f"Connector {connector_name} created.")
             log.debug(data)
-            return KafkaConnectResponse.model_validate(data)
+            return ConnectorResponse.model_validate(data)
         elif response.status_code == httpx.codes.CONFLICT:
             log.warning(
                 "Rebalancing in progress while updating a connector... Retrying..."
@@ -143,8 +192,7 @@ class ConnectWrapper:
         :return: List of all found errors
         """
         response = await self._client.put(
-            url=f"{self.url}connector-plugins/{connector_config.class_name}/config/validate",
-            headers=HEADERS,
+            f"/connector-plugins/{connector_config.class_name}/config/validate",
             json=connector_config.model_dump(),
         )
 
@@ -172,14 +220,11 @@ class ConnectWrapper:
         :param connector_name: Configuration parameters for the connector.
         :raises ConnectorNotFoundException: Connector not found
         """
-        response = await self._client.delete(
-            url=f"{self.url}connectors/{connector_name}", headers=HEADERS
-        )
+        response = await self._client.delete(f"/connectors/{connector_name}")
         if response.status_code == httpx.codes.NO_CONTENT:
             log.info(f"Connector {connector_name} deleted.")
             return
         elif response.status_code == httpx.codes.NOT_FOUND:
-            log.info(f"The named connector {connector_name} does not exists.")
             raise ConnectorNotFoundException
         elif response.status_code == httpx.codes.CONFLICT:
             log.warning(

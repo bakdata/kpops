@@ -1,10 +1,12 @@
-from enum import StrEnum
+from enum import StrEnum, auto
 from typing import Any, ClassVar
 
 import pydantic
 from pydantic import (
     BaseModel,
     ConfigDict,
+    computed_field,
+    field_serializer,
     field_validator,
     model_serializer,
 )
@@ -19,11 +21,6 @@ from kpops.utils.pydantic import (
     to_dot,
     to_str,
 )
-
-
-class KafkaConnectorType(StrEnum):
-    SINK = "sink"
-    SOURCE = "source"
 
 
 class KafkaConnectorConfig(DescConfigModel):
@@ -95,16 +92,78 @@ class KafkaConnectorConfig(DescConfigModel):
         return {by_alias(self, name): to_str(value) for name, value in result.items()}
 
 
+class UpperStrEnum(StrEnum):
+    @override
+    @staticmethod
+    def _generate_next_value_(name: str, *args: Any, **kwargs: Any) -> str:
+        return name.upper()
+
+
+class ConnectorCurrentState(UpperStrEnum):
+    RUNNING = auto()
+    PAUSED = auto()
+    STOPPED = auto()
+    FAILED = auto()
+
+
+class ConnectorNewState(StrEnum):
+    RUNNING = auto()
+    PAUSED = auto()
+
+    @property
+    def api_enum(self) -> ConnectorCurrentState:
+        return ConnectorCurrentState[self.name]
+
+
+class CreateConnector(BaseModel):
+    config: KafkaConnectorConfig
+    initial_state: ConnectorNewState | None = None
+
+    @computed_field
+    @property
+    def name(self) -> str:
+        return self.config.name
+
+    @field_serializer("initial_state")
+    def serialize_initial_state(self, initial_state: ConnectorNewState) -> str:
+        return initial_state.api_enum.value
+
+
+class ConnectorStatus(BaseModel):
+    state: ConnectorCurrentState
+    worker_id: str
+
+
+class ConnectorTaskStatus(BaseModel):
+    id: int
+    state: ConnectorCurrentState
+    worker_id: str
+
+
+class KafkaConnectorType(StrEnum):
+    SINK = "sink"
+    SOURCE = "source"
+
+
+class ConnectorStatusResponse(BaseModel):
+    name: str
+    connector: ConnectorStatus
+    tasks: list[ConnectorTaskStatus]
+    type: KafkaConnectorType
+
+    model_config: ClassVar[ConfigDict] = ConfigDict(extra="forbid")
+
+
 class ConnectorTask(BaseModel):
     connector: str
     task: int
 
 
-class KafkaConnectResponse(BaseModel):
+class ConnectorResponse(BaseModel):
     name: str
-    config: dict[str, str]
+    config: KafkaConnectorConfig
     tasks: list[ConnectorTask]
-    type: str | None = None
+    type: KafkaConnectorType
 
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="forbid")
 

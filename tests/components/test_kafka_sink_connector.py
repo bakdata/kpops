@@ -2,6 +2,7 @@ from unittest.mock import ANY, MagicMock, call
 
 import pytest
 from pytest_mock import MockerFixture
+from typing_extensions import override
 
 from kpops.component_handlers import get_handlers
 from kpops.component_handlers.helm_wrapper.model import (
@@ -9,6 +10,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     RepoAuthFlags,
 )
 from kpops.component_handlers.kafka_connect.model import (
+    ConnectorNewState,
     KafkaConnectorConfig,
     KafkaConnectorType,
 )
@@ -49,6 +51,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
     def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch("kpops.components.base_components.kafka_connector.log.info")
 
+    @override
     @pytest.fixture()
     def connector(self, connector_config: KafkaConnectorConfig) -> KafkaSinkConnector:
         return KafkaSinkConnector(
@@ -154,7 +157,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             name=CONNECTOR_NAME,
             config=connector_config,
             resetter_namespace=RESETTER_NAMESPACE,
-            from_=FromSection(  # pyright: ignore[reportGeneralTypeIssues] wrong diagnostic when using TopicName as topics key type
+            from_=FromSection(
                 topics={topic_pattern: FromTopic(type=InputTopicTypes.PATTERN)}
             ),
         )
@@ -184,7 +187,30 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                 mocker.call.mock_create_topic(topic, dry_run=dry_run)
                 for topic in connector.to.kafka_topics
             ),
-            mocker.call.mock_create_connector(connector.config, dry_run=dry_run),
+            mocker.call.mock_create_connector(
+                connector.config, state=None, dry_run=dry_run
+            ),
+        ]
+
+    @pytest.mark.parametrize(
+        "initial_state",
+        [None, ConnectorNewState.RUNNING, ConnectorNewState.PAUSED],
+    )
+    async def test_deploy_initial_state(
+        self,
+        connector: KafkaSinkConnector,
+        initial_state: ConnectorNewState | None,
+        mocker: MockerFixture,
+    ):
+        mock_create_connector = mocker.patch.object(
+            get_handlers().connector_handler, "create_connector"
+        )
+
+        connector.state = initial_state
+        dry_run = True
+        await connector.deploy(dry_run=dry_run)
+        assert mock_create_connector.mock_calls == [
+            mocker.call(connector.config, state=initial_state, dry_run=dry_run)
         ]
 
     async def test_destroy(
