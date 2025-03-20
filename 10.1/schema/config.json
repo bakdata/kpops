@@ -1,0 +1,277 @@
+{
+    "$defs": {
+        "HelmConfig": {
+            "description": "Global Helm configuration.",
+            "properties": {
+                "api_version": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Kubernetes API version used for `Capabilities.APIVersions`",
+                    "title": "API version"
+                },
+                "context": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Name of kubeconfig context (`--kube-context`)",
+                    "examples": [
+                        "dev-storage"
+                    ],
+                    "title": "Context"
+                },
+                "debug": {
+                    "default": false,
+                    "description": "Run Helm in Debug mode",
+                    "title": "Debug",
+                    "type": "boolean"
+                }
+            },
+            "title": "HelmConfig",
+            "type": "object"
+        },
+        "KafkaConnectConfig": {
+            "additionalProperties": false,
+            "description": "Configuration for Kafka Connect.",
+            "properties": {
+                "timeout": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ],
+                    "default": 30,
+                    "description": "Operation timeout in seconds.",
+                    "title": "Timeout"
+                },
+                "url": {
+                    "default": "http://localhost:8083/",
+                    "description": "Address of Kafka Connect.",
+                    "format": "uri",
+                    "minLength": 1,
+                    "title": "Url",
+                    "type": "string"
+                }
+            },
+            "title": "KafkaConnectConfig",
+            "type": "object"
+        },
+        "KafkaRestConfig": {
+            "additionalProperties": false,
+            "description": "Configuration for Kafka REST Proxy.",
+            "properties": {
+                "timeout": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ],
+                    "default": 30,
+                    "description": "Operation timeout in seconds.",
+                    "title": "Timeout"
+                },
+                "url": {
+                    "default": "http://localhost:8082/",
+                    "description": "Address of the Kafka REST Proxy.",
+                    "format": "uri",
+                    "minLength": 1,
+                    "title": "Url",
+                    "type": "string"
+                }
+            },
+            "title": "KafkaRestConfig",
+            "type": "object"
+        },
+        "SchemaRegistryConfig": {
+            "additionalProperties": false,
+            "description": "Configuration for Schema Registry.",
+            "properties": {
+                "enabled": {
+                    "default": false,
+                    "description": "Whether the Schema Registry handler should be initialized.",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
+                "timeout": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ],
+                    "default": 30,
+                    "description": "Operation timeout in seconds.",
+                    "title": "Timeout"
+                },
+                "url": {
+                    "default": "http://localhost:8081/",
+                    "description": "Address of the Schema Registry.",
+                    "format": "uri",
+                    "minLength": 1,
+                    "title": "Url",
+                    "type": "string"
+                }
+            },
+            "title": "SchemaRegistryConfig",
+            "type": "object"
+        },
+        "StrimziTopicConfig": {
+            "additionalProperties": false,
+            "description": "Configuration for Strimzi Kafka Topics.",
+            "properties": {
+                "label": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "The label to identify the KafkaTopic resources managed by the Topic Operator. This does not have to be the name of the Kafka cluster. It can be the label assigned to the KafkaTopic resource. If you deploy more than one Topic Operator, the labels must be unique for each. That is, the operators cannot manage the same resources.",
+                    "title": "Label",
+                    "type": "object"
+                },
+                "namespace": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The namespace where the Topic Operator is running. This is the namespace where the KafkaTopic resources are created.",
+                    "title": "Namespace"
+                }
+            },
+            "required": [
+                "label"
+            ],
+            "title": "StrimziTopicConfig",
+            "type": "object"
+        },
+        "TopicNameConfig": {
+            "additionalProperties": false,
+            "description": "Configure the topic name variables you can use in the pipeline definition.",
+            "properties": {
+                "default_error_topic_name": {
+                    "default": "${pipeline.name}-${component.name}-error",
+                    "description": "Configures the value for the variable ${error_topic_name}",
+                    "title": "Default Error Topic Name",
+                    "type": "string"
+                },
+                "default_output_topic_name": {
+                    "default": "${pipeline.name}-${component.name}",
+                    "description": "Configures the value for the variable ${output_topic_name}",
+                    "title": "Default Output Topic Name",
+                    "type": "string"
+                }
+            },
+            "title": "TopicNameConfig",
+            "type": "object"
+        }
+    },
+    "additionalProperties": false,
+    "description": "Global configuration for KPOps project.",
+    "properties": {
+        "create_namespace": {
+            "default": false,
+            "description": "Flag for `helm upgrade --install`. Create the release namespace if not present.",
+            "title": "Create Namespace",
+            "type": "boolean"
+        },
+        "helm_config": {
+            "$ref": "#/$defs/HelmConfig",
+            "default": {
+                "api_version": null,
+                "context": null,
+                "debug": false
+            },
+            "description": "Global flags for Helm."
+        },
+        "kafka_brokers": {
+            "description": "The comma separated Kafka brokers address.",
+            "examples": [
+                "broker1:9092,broker2:9092,broker3:9092"
+            ],
+            "title": "Kafka Brokers",
+            "type": "string"
+        },
+        "kafka_connect": {
+            "$ref": "#/$defs/KafkaConnectConfig",
+            "default": {
+                "timeout": 30,
+                "url": "http://localhost:8083/"
+            }
+        },
+        "kafka_rest": {
+            "$ref": "#/$defs/KafkaRestConfig",
+            "default": {
+                "timeout": 30,
+                "url": "http://localhost:8082/"
+            }
+        },
+        "pipeline_base_dir": {
+            "default": ".",
+            "description": "Base directory to the pipelines (default is current working directory)",
+            "format": "path",
+            "title": "Pipeline Base Dir",
+            "type": "string"
+        },
+        "retain_clean_jobs": {
+            "default": false,
+            "description": "Whether to retain clean up jobs in the cluster or uninstall the, after completion.",
+            "title": "Retain Clean Jobs",
+            "type": "boolean"
+        },
+        "schema_registry": {
+            "$ref": "#/$defs/SchemaRegistryConfig",
+            "default": {
+                "enabled": false,
+                "timeout": 30,
+                "url": "http://localhost:8081/"
+            }
+        },
+        "strimzi_topic": {
+            "anyOf": [
+                {
+                    "$ref": "#/$defs/StrimziTopicConfig"
+                },
+                {
+                    "type": "null"
+                }
+            ],
+            "default": null,
+            "description": "Configuration for Strimzi Kafka Topics."
+        },
+        "topic_name_config": {
+            "$ref": "#/$defs/TopicNameConfig",
+            "default": {
+                "default_error_topic_name": "${pipeline.name}-${component.name}-error",
+                "default_output_topic_name": "${pipeline.name}-${component.name}"
+            }
+        }
+    },
+    "required": [
+        "kafka_brokers"
+    ],
+    "title": "KpopsConfig",
+    "type": "object"
+}
