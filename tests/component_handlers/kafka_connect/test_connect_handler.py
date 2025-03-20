@@ -188,9 +188,7 @@ class TestConnectorHandler:
         connector_config_update: KafkaConnectorConfig,
         state: ConnectorNewState,
     ):
-        self.mock_connector_status(
-            connect_wrapper, CONNECTOR_NAME, ConnectorCurrentState(state)
-        )
+        self.mock_connector_status(connect_wrapper, CONNECTOR_NAME, state.api_enum)
         await handler.create_connector(
             connector_config_update, state=state, dry_run=True
         )
@@ -328,7 +326,7 @@ class TestConnectorHandler:
         state: ConnectorNewState,
     ):
         self.mock_connector_status(
-            connect_wrapper, connector_config.name, ConnectorCurrentState(state)
+            connect_wrapper, connector_config.name, state.api_enum
         )
         await handler.create_connector(connector_config, state=state, dry_run=False)
         assert connect_wrapper.mock_calls == [

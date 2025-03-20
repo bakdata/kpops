@@ -92,15 +92,6 @@ class KafkaConnectorConfig(DescConfigModel):
         return {by_alias(self, name): to_str(value) for name, value in result.items()}
 
 
-class ConnectorNewState(StrEnum):
-    RUNNING = auto()
-    PAUSED = auto()
-
-    @property
-    def api_value(self) -> str:
-        return ConnectorCurrentState[self.name].value
-
-
 class UpperStrEnum(StrEnum):
     @override
     @staticmethod
@@ -115,6 +106,15 @@ class ConnectorCurrentState(UpperStrEnum):
     FAILED = auto()
 
 
+class ConnectorNewState(StrEnum):
+    RUNNING = auto()
+    PAUSED = auto()
+
+    @property
+    def api_enum(self) -> ConnectorCurrentState:
+        return ConnectorCurrentState[self.name]
+
+
 class CreateConnector(BaseModel):
     config: KafkaConnectorConfig
     initial_state: ConnectorNewState | None = None
@@ -126,7 +126,7 @@ class CreateConnector(BaseModel):
 
     @field_serializer("initial_state")
     def serialize_initial_state(self, initial_state: ConnectorNewState) -> str:
-        return initial_state.api_value
+        return initial_state.api_enum.value
 
 
 class ConnectorStatus(BaseModel):
