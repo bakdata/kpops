@@ -1,7 +1,8 @@
 import json
+import logging
 import sys
 from typing import Any
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import httpx
 import pytest
@@ -151,16 +152,13 @@ class TestConnectorApiWrapper:
         assert ConnectorResponse.model_validate(connector_response) == actual_response
 
     @pytest.mark.usefixtures("mock_sleep")
-    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
-    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     async def test_create_connector_retry(
         self,
-        log_warning: MagicMock,
-        log_info: MagicMock,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
         connector_response: dict[str, Any],
         connector_config: KafkaConnectorConfig,
+        caplog: pytest.LogCaptureFixture,
     ):
         ENDPOINT = f"{DEFAULT_HOST}/connectors"
         httpx_mock.add_response(
@@ -178,11 +176,17 @@ class TestConnectorApiWrapper:
             json=connector_response,
         )
 
-        await connect_wrapper.create_connector(connector_config)
-        log_warning.assert_called_with(
-            "Rebalancing in progress while creating a connector... Retrying..."
+        with caplog.at_level(logging.INFO):
+            await connect_wrapper.create_connector(connector_config)
+
+        assert len(caplog.records) == 2
+        assert (
+            caplog.records[0].message
+            == "Rebalancing in progress while creating a connector... Retrying..."
         )
-        log_info.assert_called_with("Connector test-connector created.")
+        assert caplog.records[0].levelname == "WARNING"
+        assert caplog.records[1].message == "Connector test-connector created."
+        assert caplog.records[1].levelname == "INFO"
 
     @pytest.mark.flaky(reruns=5, condition=sys.platform.startswith("win32"))
     async def test_get_connector(
@@ -216,13 +220,12 @@ class TestConnectorApiWrapper:
             await connect_wrapper.get_connector(CONNECTOR_NAME)
 
     @pytest.mark.usefixtures("mock_sleep")
-    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     async def test_get_connector_retry(
         self,
-        log_warning: MagicMock,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
         connector_response: dict[str, Any],
+        caplog: pytest.LogCaptureFixture,
     ):
         ENDPOINT = f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}"
         httpx_mock.add_response(
@@ -238,9 +241,12 @@ class TestConnectorApiWrapper:
             headers=HEADERS,
             json=connector_response,
         )
-        actual_response = await connect_wrapper.get_connector(CONNECTOR_NAME)
-        log_warning.assert_called_with(
-            "Rebalancing in progress while getting a connector... Retrying..."
+        with caplog.at_level(logging.WARNING):
+            actual_response = await connect_wrapper.get_connector(CONNECTOR_NAME)
+        assert len(caplog.records) == 1
+        assert (
+            caplog.records[0].message
+            == "Rebalancing in progress while getting a connector... Retrying..."
         )
         assert actual_response == ConnectorResponse.model_validate(connector_response)
 
@@ -298,7 +304,9 @@ class TestConnectorApiWrapper:
             status_code=httpx.codes.ACCEPTED,
         )
         await connect_wrapper.pause_connector(CONNECTOR_NAME)
-        assert caplog.messages == [f"Connector {CONNECTOR_NAME} paused."]
+        assert len(caplog.records) == 1
+        assert caplog.records[0].message == f"Connector {CONNECTOR_NAME} paused."
+        assert caplog.records[0].levelname == "INFO"
 
     async def test_pause_error(
         self, connect_wrapper: ConnectWrapper, httpx_mock: HTTPXMock
@@ -323,7 +331,9 @@ class TestConnectorApiWrapper:
             status_code=httpx.codes.ACCEPTED,
         )
         await connect_wrapper.resume_connector(CONNECTOR_NAME)
-        assert caplog.messages == [f"Connector {CONNECTOR_NAME} resumed."]
+        assert len(caplog.records) == 1
+        assert caplog.records[0].message == f"Connector {CONNECTOR_NAME} resumed."
+        assert caplog.records[0].levelname == "INFO"
 
     async def test_resume_connector_error(
         self, connect_wrapper: ConnectWrapper, httpx_mock: HTTPXMock
@@ -348,7 +358,9 @@ class TestConnectorApiWrapper:
             status_code=httpx.codes.NO_CONTENT,
         )
         await connect_wrapper.stop_connector(CONNECTOR_NAME)
-        assert caplog.messages == [f"Connector {CONNECTOR_NAME} stopped."]
+        assert len(caplog.records) == 1
+        assert caplog.records[0].message == f"Connector {CONNECTOR_NAME} stopped."
+        assert caplog.records[0].levelname == "INFO"
 
     async def test_stop_connector_error(
         self, connect_wrapper: ConnectWrapper, httpx_mock: HTTPXMock
@@ -375,14 +387,13 @@ class TestConnectorApiWrapper:
             json=connector_config.model_dump(),
         )
 
-    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     async def test_update_connector(
         self,
-        log_info: MagicMock,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
         connector_config: KafkaConnectorConfig,
         connector_response: dict[str, Any],
+        caplog: pytest.LogCaptureFixture,
     ):
         httpx_mock.add_response(
             method="PUT",
@@ -391,22 +402,25 @@ class TestConnectorApiWrapper:
             status_code=httpx.codes.OK,
             json=connector_response,
         )
-        actual_response = await connect_wrapper.update_connector_config(
-            connector_config
-        )
+        with caplog.at_level(logging.INFO):
+            actual_response = await connect_wrapper.update_connector_config(
+                connector_config
+            )
         assert ConnectorResponse.model_validate(connector_response) == actual_response
-        log_info.assert_called_once_with(
-            f"Config for connector {CONNECTOR_NAME} updated."
+        assert len(caplog.records) == 1
+        assert (
+            caplog.records[0].message
+            == f"Config for connector {CONNECTOR_NAME} updated."
         )
+        assert caplog.records[0].levelname == "INFO"
 
-    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     async def test_update_create_connector(
         self,
-        log_info: MagicMock,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
         connector_config: KafkaConnectorConfig,
         connector_response: dict[str, Any],
+        caplog: pytest.LogCaptureFixture,
     ):
         httpx_mock.add_response(
             method="PUT",
@@ -415,23 +429,23 @@ class TestConnectorApiWrapper:
             status_code=httpx.codes.CREATED,
             json=connector_response,
         )
-        actual_response = await connect_wrapper.update_connector_config(
-            connector_config
-        )
+        with caplog.at_level(logging.INFO):
+            actual_response = await connect_wrapper.update_connector_config(
+                connector_config
+            )
         assert ConnectorResponse.model_validate(connector_response) == actual_response
-        log_info.assert_called_once_with(f"Connector {CONNECTOR_NAME} created.")
+        assert len(caplog.records) == 1
+        assert caplog.records[0].message == f"Connector {CONNECTOR_NAME} created."
+        assert caplog.records[0].levelname == "INFO"
 
     @pytest.mark.usefixtures("mock_sleep")
-    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
-    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     async def test_update_connector_retry(
         self,
-        log_warning: MagicMock,
-        log_info: MagicMock,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
         connector_response: dict[str, Any],
         connector_config: KafkaConnectorConfig,
+        caplog: pytest.LogCaptureFixture,
     ):
         ENDPOINT = f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/config"
         httpx_mock.add_response(
@@ -448,18 +462,25 @@ class TestConnectorApiWrapper:
             json=connector_response,
         )
 
-        await connect_wrapper.update_connector_config(connector_config)
-        log_warning.assert_called_with(
-            "Rebalancing in progress while updating a connector... Retrying..."
-        )
-        log_info.assert_called_with("Config for connector test-connector updated.")
+        with caplog.at_level(logging.INFO):
+            await connect_wrapper.update_connector_config(connector_config)
 
-    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
+        assert len(caplog.records) == 2
+        assert (
+            caplog.records[0].message
+            == "Rebalancing in progress while updating a connector... Retrying..."
+        )
+        assert caplog.records[0].levelname == "WARNING"
+        assert (
+            caplog.records[1].message == "Config for connector test-connector updated."
+        )
+        assert caplog.records[1].levelname == "INFO"
+
     async def test_delete_connector(
         self,
-        log_info: MagicMock,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
+        caplog: pytest.LogCaptureFixture,
     ):
         httpx_mock.add_response(
             method="DELETE",
@@ -467,7 +488,9 @@ class TestConnectorApiWrapper:
             status_code=httpx.codes.NO_CONTENT,
         )
         await connect_wrapper.delete_connector(CONNECTOR_NAME)
-        log_info.assert_called_once_with(f"Connector {CONNECTOR_NAME} deleted.")
+        assert len(caplog.records) == 1
+        assert caplog.records[0].message == f"Connector {CONNECTOR_NAME} deleted."
+        assert caplog.records[0].levelname == "INFO"
 
     async def test_delete_connector_not_found(
         self,
@@ -488,14 +511,11 @@ class TestConnectorApiWrapper:
             await connect_wrapper.delete_connector(CONNECTOR_NAME)
 
     @pytest.mark.usefixtures("mock_sleep")
-    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
-    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     async def test_delete_connector_retry(
         self,
-        log_warning: MagicMock,
-        log_info: MagicMock,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
+        caplog: pytest.LogCaptureFixture,
     ):
         ENDPOINT = f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}"
         httpx_mock.add_response(
@@ -511,11 +531,17 @@ class TestConnectorApiWrapper:
             status_code=httpx.codes.NO_CONTENT,
         )
 
-        await connect_wrapper.delete_connector(CONNECTOR_NAME)
-        log_warning.assert_called_with(
-            "Rebalancing in progress while deleting a connector... Retrying..."
+        with caplog.at_level(logging.INFO):
+            await connect_wrapper.delete_connector(CONNECTOR_NAME)
+
+        assert len(caplog.records) == 2
+        assert (
+            caplog.records[0].message
+            == "Rebalancing in progress while deleting a connector... Retrying..."
         )
-        log_info.assert_called_with("Connector test-connector deleted.")
+        assert caplog.records[0].levelname == "WARNING"
+        assert caplog.records[1].message == "Connector test-connector deleted."
+        assert caplog.records[1].levelname == "INFO"
 
     @pytest.fixture()
     def file_stream_connector_config(self) -> KafkaConnectorConfig:
