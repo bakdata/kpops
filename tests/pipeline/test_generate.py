@@ -226,9 +226,7 @@ class TestGenerate:
         sink_connector = pipeline.components[0]
         assert isinstance(sink_connector, KafkaSinkConnector)
         assert sink_connector.state is ConnectorNewState.PAUSED
-        # TODO: pipeline.generate()
-        enriched_pipeline = [component.generate() for component in pipeline.components]
-        sink_connector = enriched_pipeline[0]
+        sink_connector = sink_connector.generate()
         assert sink_connector["state"] == "paused"
         assert (
             sink_connector["config"]["errors.deadletterqueue.topic.name"]
