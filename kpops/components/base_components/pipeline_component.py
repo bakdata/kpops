@@ -57,7 +57,9 @@ class PipelineComponent(SerializeAsOptionalModel, BaseDefaultsComponent, ABC):
         description=describe_attr("to", __doc__),
     )
 
-    model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
+    model_config: ClassVar[ConfigDict] = ConfigDict(
+        extra="allow", use_enum_values=False
+    )
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
