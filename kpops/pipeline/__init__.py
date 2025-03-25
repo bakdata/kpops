@@ -95,11 +95,11 @@ class Pipeline(BaseModel):
     def validate(self) -> None:  # pyright: ignore [reportIncompatibleMethodOverride]
         self.__validate_graph()
 
+    def generate(self) -> list[dict[str, Any]]:
+        return [component.generate() for component in self.components]
+
     def to_yaml(self) -> str:
-        return yaml.dump(
-            [component.generate() for component in self.components],
-            Dumper=CustomSafeDumper,
-        )
+        return yaml.dump(self.generate(), Dumper=CustomSafeDumper)
 
     def build_execution_graph(
         self,
