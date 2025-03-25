@@ -1,13 +1,13 @@
 import json
-import sys
+import logging
 from typing import Any
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import httpx
 import pytest
-import pytest_asyncio
 from anyio import Path
 from pytest_httpx import HTTPXMock
+from pytest_mock import MockerFixture
 
 from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
 from kpops.component_handlers.kafka_connect.exception import (
@@ -23,7 +23,6 @@ from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectorConfig,
     KafkaConnectorType,
 )
-from kpops.component_handlers.kafka_connect.timeout import timeout
 from kpops.config import KpopsConfig
 from tests.component_handlers.kafka_connect import RESOURCES_PATH
 
@@ -33,26 +32,50 @@ CONNECTOR_NAME = "test-connector"
 
 
 class TestConnectorApiWrapper:
-    @pytest_asyncio.fixture()
+    @pytest.fixture()
     def connect_wrapper(self) -> ConnectWrapper:
         config = KpopsConfig.model_validate({})
         return ConnectWrapper(config.kafka_connect)
 
     @pytest.fixture()
-    def connector_config(self) -> KafkaConnectorConfig:
-        return KafkaConnectorConfig.model_validate(
-            {
-                "connector.class": "com.bakdata.connect.TestConnector",
+    def connector_response(self) -> dict[str, Any]:
+        return {
+            "name": CONNECTOR_NAME,
+            "type": "sink",
+            "config": {
                 "name": CONNECTOR_NAME,
-            }
-        )
+                "connector.class": "com.bakdata.connect.TestConnector",
+                "tasks.max": "10",
+                "topics": "test-topic",
+                "hdfs.url": "hdfs://fakehost:9000",
+                "hadoop.conf.dir": "/opt/hadoop/conf",
+                "hadoop.home": "/opt/hadoop",
+                "flush.size": "100",
+                "rotate.interval.ms": "1000",
+            },
+            "tasks": [
+                {"connector": "hdfs-sink-connector", "task": 1},
+                {"connector": "hdfs-sink-connector", "task": 2},
+                {"connector": "hdfs-sink-connector", "task": 3},
+            ],
+        }
 
-    def test_convert_config_values_to_str(self):
+    @pytest.fixture()
+    def connector_config(
+        self, connector_response: dict[str, Any]
+    ) -> KafkaConnectorConfig:
+        return KafkaConnectorConfig.model_validate(connector_response["config"])
+
+    @pytest.fixture()
+    def mock_sleep(self, mocker: MockerFixture) -> None:
+        mocker.patch("asyncio.sleep", return_value=None)  # skip delay
+
+    def test_serialize_config(self):
         # all values should be converted to strings
         assert KafkaConnectorConfig.model_validate(
             {
-                "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
                 "name": CONNECTOR_NAME,
+                "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
                 "batch.size": 50,
                 "max.buffered.records": 500,
                 "connection.password": "fake-password",
@@ -61,8 +84,8 @@ class TestConnectorApiWrapper:
                 "topic.tracking.allow.reset": False,
             }
         ).model_dump() == {
-            "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
             "name": CONNECTOR_NAME,
+            "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
             "batch.size": "50",
             "max.buffered.records": "500",
             "connection.password": "fake-password",
@@ -72,7 +95,7 @@ class TestConnectorApiWrapper:
         }
 
     @patch("httpx.AsyncClient.post")
-    async def test_create(
+    async def test_create_connector_request(
         self,
         mock_post: AsyncMock,
         connect_wrapper: ConnectWrapper,
@@ -90,186 +113,184 @@ class TestConnectorApiWrapper:
         )
 
     @patch("httpx.AsyncClient.post")
-    async def test_create_with_initial_state(
-        self, mock_post: AsyncMock, connect_wrapper: ConnectWrapper
+    async def test_create_connector_request_with_initial_state(
+        self,
+        mock_post: AsyncMock,
+        connect_wrapper: ConnectWrapper,
+        connector_config: KafkaConnectorConfig,
     ):
-        configs = {
-            "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
-            "name": CONNECTOR_NAME,
-            "batch.size": "50",
-            "value.converter": "com.bakdata.kafka.LargeMessageConverter",
-            "connection.username": "fake-user",
-            "value.converter.large.message.converter": "io.confluent.connect.avro.AvroConverter",
-            "max.buffered.records": "500",
-            "connection.password": "fake-password",
-        }
-
         with pytest.raises(KafkaConnectError):
             await connect_wrapper.create_connector(
-                KafkaConnectorConfig.model_validate(configs), ConnectorNewState.RUNNING
+                connector_config, ConnectorNewState.RUNNING
             )
-
         mock_post.assert_called_with(
             "/connectors",
             json={
                 "name": CONNECTOR_NAME,
-                "config": configs,
+                "config": connector_config.model_dump(),
                 "initial_state": "RUNNING",
             },
         )
 
-    async def test_should_return_correct_response_when_connector_created(
+    async def test_create_connector(
         self,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
         connector_config: KafkaConnectorConfig,
+        connector_response: dict[str, Any],
     ):
-        actual_response = {
-            "name": "hdfs-sink-connector",
-            "type": "sink",
-            "config": {
-                "connector.class": "io.confluent.connect.hdfs.HdfsSinkConnector",
-                "name": CONNECTOR_NAME,
-                "tasks.max": "10",
-                "topics": "test-topic",
-                "hdfs.url": "hdfs://fakehost:9000",
-                "hadoop.conf.dir": "/opt/hadoop/conf",
-                "hadoop.home": "/opt/hadoop",
-                "flush.size": "100",
-                "rotate.interval.ms": "1000",
-            },
-            "tasks": [
-                {"connector": "hdfs-sink-connector", "task": 1},
-                {"connector": "hdfs-sink-connector", "task": 2},
-                {"connector": "hdfs-sink-connector", "task": 3},
-            ],
-        }
         httpx_mock.add_response(
             method="POST",
             url=f"{DEFAULT_HOST}/connectors",
             headers=HEADERS,
-            json=actual_response,
             status_code=httpx.codes.CREATED,
+            json=connector_response,
         )
 
-        expected_response = await connect_wrapper.create_connector(
-            connector_config, ConnectorNewState.RUNNING
-        )
+        actual_response = await connect_wrapper.create_connector(connector_config)
+        assert ConnectorResponse.model_validate(connector_response) == actual_response
 
-        assert ConnectorResponse.model_validate(actual_response) == expected_response
-
-    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
-    async def test_should_raise_connector_exists_exception_when_connector_exists(
+    @pytest.mark.usefixtures("mock_sleep")
+    async def test_create_connector_retry(
         self,
-        log_warning: MagicMock,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
+        connector_response: dict[str, Any],
         connector_config: KafkaConnectorConfig,
+        caplog: pytest.LogCaptureFixture,
     ):
+        ENDPOINT = f"{DEFAULT_HOST}/connectors"
         httpx_mock.add_response(
             method="POST",
-            url=f"{DEFAULT_HOST}/connectors",
-            json={},
+            url=ENDPOINT,
+            headers=HEADERS,
             status_code=httpx.codes.CONFLICT,
-            is_reusable=True,
-        )
-
-        await timeout(
-            connect_wrapper.create_connector(
-                connector_config, ConnectorNewState.RUNNING
-            ),
-            secs=10,
-        )
-
-        log_warning.assert_called_with(
-            "Rebalancing in progress while creating a connector... Retrying..."
-        )
-
-    @patch("httpx.AsyncClient.get")
-    async def test_should_create_correct_get_connector_request(
-        self, mock_get: AsyncMock, connect_wrapper: ConnectWrapper
-    ):
-        with pytest.raises(KafkaConnectError):
-            await connect_wrapper.get_connector(CONNECTOR_NAME)
-
-        mock_get.assert_called_with(f"/connectors/{CONNECTOR_NAME}")
-
-    @pytest.mark.flaky(reruns=5, condition=sys.platform.startswith("win32"))
-    async def test_should_return_correct_response_when_getting_connector(
-        self,
-        connect_wrapper: ConnectWrapper,
-        httpx_mock: HTTPXMock,
-    ):
-        actual_response = {
-            "name": "hdfs-sink-connector",
-            "type": "sink",
-            "config": {
-                "name": "hdfs-sink-connector",
-                "connector.class": "io.confluent.connect.hdfs.HdfsSinkConnector",
-                "tasks.max": "10",
-                "topics": "test-topic",
-                "hdfs.url": "hdfs://fakehost:9000",
-                "hadoop.conf.dir": "/opt/hadoop/conf",
-                "hadoop.home": "/opt/hadoop",
-                "flush.size": "100",
-                "rotate.interval.ms": "1000",
-            },
-            "tasks": [
-                {"connector": "hdfs-sink-connector", "task": 1},
-                {"connector": "hdfs-sink-connector", "task": 2},
-                {"connector": "hdfs-sink-connector", "task": 3},
-            ],
-        }
-        httpx_mock.add_response(
-            method="GET",
-            url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
-            headers=HEADERS,
-            json=actual_response,
-            status_code=httpx.codes.OK,
-        )
-        expected_response = await connect_wrapper.get_connector(CONNECTOR_NAME)
-        assert ConnectorResponse.model_validate(actual_response) == expected_response
-
-    async def test_should_raise_connector_not_found_when_getting_connector(
-        self,
-        connect_wrapper: ConnectWrapper,
-        httpx_mock: HTTPXMock,
-    ):
-        httpx_mock.add_response(
-            method="GET",
-            url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
-            headers=HEADERS,
             json={},
+        )
+        httpx_mock.add_response(
+            method="POST",
+            url=ENDPOINT,
+            headers=HEADERS,
+            status_code=httpx.codes.CREATED,
+            json=connector_response,
+        )
+
+        with caplog.at_level(logging.INFO):
+            await connect_wrapper.create_connector(connector_config)
+
+        assert len(caplog.records) == 2
+        assert (
+            caplog.records[0].message
+            == "Rebalancing in progress while creating a connector... Retrying..."
+        )
+        assert caplog.records[0].levelname == "WARNING"
+        assert caplog.records[1].message == "Connector test-connector created."
+        assert caplog.records[1].levelname == "INFO"
+
+    async def test_get_connector(
+        self,
+        connect_wrapper: ConnectWrapper,
+        httpx_mock: HTTPXMock,
+        connector_response: dict[str, Any],
+    ):
+        httpx_mock.add_response(
+            method="GET",
+            url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
+            headers=HEADERS,
+            json=connector_response,
+        )
+        actual_response = await connect_wrapper.get_connector(CONNECTOR_NAME)
+        assert ConnectorResponse.model_validate(connector_response) == actual_response
+
+    async def test_get_connector_not_found(
+        self,
+        connect_wrapper: ConnectWrapper,
+        httpx_mock: HTTPXMock,
+    ):
+        httpx_mock.add_response(
+            method="GET",
+            url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
+            headers=HEADERS,
             status_code=httpx.codes.NOT_FOUND,
+            json={},
         )
         with pytest.raises(ConnectorNotFoundException):
             await connect_wrapper.get_connector(CONNECTOR_NAME)
 
-    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
-    async def test_should_raise_rebalance_in_progress_when_getting_connector(
+    @pytest.mark.usefixtures("mock_sleep")
+    async def test_get_connector_retry(
         self,
-        log_warning: MagicMock,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
+        connector_response: dict[str, Any],
+        caplog: pytest.LogCaptureFixture,
     ):
+        ENDPOINT = f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}"
         httpx_mock.add_response(
             method="GET",
-            url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
+            url=ENDPOINT,
             headers=HEADERS,
-            json={},
             status_code=httpx.codes.CONFLICT,
+            json={},
+        )
+        httpx_mock.add_response(
+            method="GET",
+            url=ENDPOINT,
+            headers=HEADERS,
+            json=connector_response,
+        )
+        with caplog.at_level(logging.WARNING):
+            actual_response = await connect_wrapper.get_connector(CONNECTOR_NAME)
+        assert len(caplog.records) == 1
+        assert (
+            caplog.records[0].message
+            == "Rebalancing in progress while getting a connector... Retrying..."
+        )
+        assert actual_response == ConnectorResponse.model_validate(connector_response)
+
+    @pytest.mark.parametrize(
+        ("api_state", "enum_state"),
+        [
+            pytest.param("RUNNING", ConnectorCurrentState.RUNNING),
+            pytest.param("PAUSED", ConnectorCurrentState.PAUSED),
+            pytest.param("STOPPED", ConnectorCurrentState.STOPPED),
+            pytest.param("FAILED", ConnectorCurrentState.FAILED),
+        ],
+    )
+    async def test_get_connector_status(
+        self,
+        connect_wrapper: ConnectWrapper,
+        httpx_mock: HTTPXMock,
+        api_state: str,
+        enum_state: ConnectorCurrentState,
+    ):
+        actual_response: dict[str, Any] = {
+            "name": CONNECTOR_NAME,
+            "connector": {
+                "state": api_state,
+                "worker_id": "kafka-connect.infrastructure.svc:8083",
+            },
+            "tasks": [],
+            "type": "sink",
+        }
+        httpx_mock.add_response(
+            method="GET",
+            url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/status",
+            headers=HEADERS,
+            status_code=httpx.codes.OK,
+            json=actual_response,
+        )
+        status = await connect_wrapper.get_connector_status(CONNECTOR_NAME)
+        assert status == ConnectorStatusResponse(
+            name=CONNECTOR_NAME,
+            connector=ConnectorStatus(
+                state=enum_state, worker_id="kafka-connect.infrastructure.svc:8083"
+            ),
+            tasks=[],
+            type=KafkaConnectorType.SINK,
         )
 
-        await timeout(
-            connect_wrapper.get_connector(CONNECTOR_NAME),
-            secs=1,
-        )
-
-        log_warning.assert_called_with(
-            "Rebalancing in progress while getting a connector... Retrying..."
-        )
-
-    async def test_pause(
+    async def test_pause_connector(
         self,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
@@ -281,7 +302,9 @@ class TestConnectorApiWrapper:
             status_code=httpx.codes.ACCEPTED,
         )
         await connect_wrapper.pause_connector(CONNECTOR_NAME)
-        assert caplog.messages == [f"Connector {CONNECTOR_NAME} paused."]
+        assert len(caplog.records) == 1
+        assert caplog.records[0].message == f"Connector {CONNECTOR_NAME} paused."
+        assert caplog.records[0].levelname == "INFO"
 
     async def test_pause_error(
         self, connect_wrapper: ConnectWrapper, httpx_mock: HTTPXMock
@@ -294,7 +317,7 @@ class TestConnectorApiWrapper:
         with pytest.raises(KafkaConnectError):
             await connect_wrapper.pause_connector(CONNECTOR_NAME)
 
-    async def test_resume(
+    async def test_resume_connector(
         self,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
@@ -306,9 +329,11 @@ class TestConnectorApiWrapper:
             status_code=httpx.codes.ACCEPTED,
         )
         await connect_wrapper.resume_connector(CONNECTOR_NAME)
-        assert caplog.messages == [f"Connector {CONNECTOR_NAME} resumed."]
+        assert len(caplog.records) == 1
+        assert caplog.records[0].message == f"Connector {CONNECTOR_NAME} resumed."
+        assert caplog.records[0].levelname == "INFO"
 
-    async def test_resume_error(
+    async def test_resume_connector_error(
         self, connect_wrapper: ConnectWrapper, httpx_mock: HTTPXMock
     ):
         httpx_mock.add_response(
@@ -319,7 +344,7 @@ class TestConnectorApiWrapper:
         with pytest.raises(KafkaConnectError):
             await connect_wrapper.resume_connector(CONNECTOR_NAME)
 
-    async def test_stop(
+    async def test_stop_connector(
         self,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
@@ -331,9 +356,11 @@ class TestConnectorApiWrapper:
             status_code=httpx.codes.NO_CONTENT,
         )
         await connect_wrapper.stop_connector(CONNECTOR_NAME)
-        assert caplog.messages == [f"Connector {CONNECTOR_NAME} stopped."]
+        assert len(caplog.records) == 1
+        assert caplog.records[0].message == f"Connector {CONNECTOR_NAME} stopped."
+        assert caplog.records[0].levelname == "INFO"
 
-    async def test_stop_error(
+    async def test_stop_connector_error(
         self, connect_wrapper: ConnectWrapper, httpx_mock: HTTPXMock
     ):
         httpx_mock.add_response(
@@ -345,186 +372,125 @@ class TestConnectorApiWrapper:
             await connect_wrapper.stop_connector(CONNECTOR_NAME)
 
     @patch("httpx.AsyncClient.put")
-    async def test_should_create_correct_update_connector_request(
-        self, mock_put: AsyncMock, connect_wrapper: ConnectWrapper
+    async def test_update_connector_request(
+        self,
+        mock_put: AsyncMock,
+        connect_wrapper: ConnectWrapper,
+        connector_config: KafkaConnectorConfig,
     ):
-        configs = {
-            "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
-            "name": CONNECTOR_NAME,
-            "batch.size": "50",
-            "value.converter": "com.bakdata.kafka.LargeMessageConverter",
-            "connection.username": "fake-user",
-            "value.converter.large.message.converter": "io.confluent.connect.avro.AvroConverter",
-            "max.buffered.records": "500",
-            "connection.password": "fake-password",
-        }
         with pytest.raises(KafkaConnectError):
-            await connect_wrapper.update_connector_config(
-                KafkaConnectorConfig.model_validate(configs)
-            )
-
+            await connect_wrapper.update_connector_config(connector_config)
         mock_put.assert_called_with(
             f"/connectors/{CONNECTOR_NAME}/config",
-            json=configs,
+            json=connector_config.model_dump(),
         )
 
-    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
-    async def test_should_return_correct_response_when_update_connector(
+    async def test_update_connector(
         self,
-        log_info: MagicMock,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
         connector_config: KafkaConnectorConfig,
+        connector_response: dict[str, Any],
+        caplog: pytest.LogCaptureFixture,
     ):
-        actual_response = {
-            "name": "hdfs-sink-connector",
-            "type": "sink",
-            "config": {
-                "name": "hdfs-sink-connector",
-                "connector.class": "io.confluent.connect.hdfs.HdfsSinkConnector",
-                "tasks.max": "10",
-                "topics": "test-topic",
-                "hdfs.url": "hdfs://fakehost:9000",
-                "hadoop.conf.dir": "/opt/hadoop/conf",
-                "hadoop.home": "/opt/hadoop",
-                "flush.size": "100",
-                "rotate.interval.ms": "1000",
-            },
-            "tasks": [
-                {"connector": "hdfs-sink-connector", "task": 1},
-                {"connector": "hdfs-sink-connector", "task": 2},
-                {"connector": "hdfs-sink-connector", "task": 3},
-            ],
-        }
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/config",
             headers=HEADERS,
-            json=actual_response,
             status_code=httpx.codes.OK,
+            json=connector_response,
         )
+        with caplog.at_level(logging.INFO):
+            actual_response = await connect_wrapper.update_connector_config(
+                connector_config
+            )
+        assert ConnectorResponse.model_validate(connector_response) == actual_response
+        assert len(caplog.records) == 1
+        assert (
+            caplog.records[0].message
+            == f"Config for connector {CONNECTOR_NAME} updated."
+        )
+        assert caplog.records[0].levelname == "INFO"
 
-        expected_response = await connect_wrapper.update_connector_config(
-            connector_config
-        )
-        assert ConnectorResponse.model_validate(actual_response) == expected_response
-        log_info.assert_called_once_with(
-            f"Config for connector {CONNECTOR_NAME} updated."
-        )
-
-    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
-    async def test_should_return_correct_response_when_update_connector_created(
+    async def test_update_create_connector(
         self,
-        log_info: MagicMock,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
         connector_config: KafkaConnectorConfig,
+        connector_response: dict[str, Any],
+        caplog: pytest.LogCaptureFixture,
     ):
-        actual_response = {
-            "name": "hdfs-sink-connector",
-            "type": "sink",
-            "config": {
-                "name": "hdfs-sink-connector",
-                "connector.class": "io.confluent.connect.hdfs.HdfsSinkConnector",
-                "tasks.max": "10",
-                "topics": "test-topic",
-                "hdfs.url": "hdfs://fakehost:9000",
-                "hadoop.conf.dir": "/opt/hadoop/conf",
-                "hadoop.home": "/opt/hadoop",
-                "flush.size": "100",
-                "rotate.interval.ms": "1000",
-            },
-            "tasks": [
-                {"connector": "hdfs-sink-connector", "task": 1},
-                {"connector": "hdfs-sink-connector", "task": 2},
-                {"connector": "hdfs-sink-connector", "task": 3},
-            ],
-        }
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/config",
             headers=HEADERS,
-            json=actual_response,
             status_code=httpx.codes.CREATED,
+            json=connector_response,
         )
-        expected_response = await connect_wrapper.update_connector_config(
-            connector_config
-        )
-        assert ConnectorResponse.model_validate(actual_response) == expected_response
-        log_info.assert_called_once_with(f"Connector {CONNECTOR_NAME} created.")
+        with caplog.at_level(logging.INFO):
+            actual_response = await connect_wrapper.update_connector_config(
+                connector_config
+            )
+        assert ConnectorResponse.model_validate(connector_response) == actual_response
+        assert len(caplog.records) == 1
+        assert caplog.records[0].message == f"Connector {CONNECTOR_NAME} created."
+        assert caplog.records[0].levelname == "INFO"
 
-    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
-    async def test_should_raise_connector_exists_exception_when_update_connector(
+    @pytest.mark.usefixtures("mock_sleep")
+    async def test_update_connector_retry(
         self,
-        log_warning: MagicMock,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
+        connector_response: dict[str, Any],
         connector_config: KafkaConnectorConfig,
+        caplog: pytest.LogCaptureFixture,
     ):
+        ENDPOINT = f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/config"
         httpx_mock.add_response(
             method="PUT",
-            url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/config",
+            url=ENDPOINT,
             headers=HEADERS,
-            json={},
             status_code=httpx.codes.CONFLICT,
+            json={},
+        )
+        httpx_mock.add_response(
+            method="PUT",
+            url=ENDPOINT,
+            headers=HEADERS,
+            json=connector_response,
         )
 
-        await timeout(
-            connect_wrapper.update_connector_config(connector_config),
-            secs=1,
+        with caplog.at_level(logging.INFO):
+            await connect_wrapper.update_connector_config(connector_config)
+
+        assert len(caplog.records) == 2
+        assert (
+            caplog.records[0].message
+            == "Rebalancing in progress while updating a connector... Retrying..."
         )
-
-        log_warning.assert_called_with(
-            "Rebalancing in progress while updating a connector... Retrying..."
+        assert caplog.records[0].levelname == "WARNING"
+        assert (
+            caplog.records[1].message == "Config for connector test-connector updated."
         )
+        assert caplog.records[1].levelname == "INFO"
 
-    @patch("httpx.AsyncClient.delete")
-    async def test_should_create_correct_delete_connector_request(
-        self, mock_delete: AsyncMock, connect_wrapper: ConnectWrapper
-    ):
-        with pytest.raises(KafkaConnectError):
-            await connect_wrapper.delete_connector(CONNECTOR_NAME)
-
-        mock_delete.assert_called_with(f"/connectors/{CONNECTOR_NAME}")
-
-    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
-    async def test_should_return_correct_response_when_deleting_connector(
+    async def test_delete_connector(
         self,
-        log_info: MagicMock,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
+        caplog: pytest.LogCaptureFixture,
     ):
-        actual_response = {
-            "name": "hdfs-sink-connector",
-            "config": {
-                "name": "hdfs-sink-connector",
-                "connector.class": "io.confluent.connect.hdfs.HdfsSinkConnector",
-                "tasks.max": "10",
-                "topics": "test-topic",
-                "hdfs.url": "hdfs://fakehost:9000",
-                "hadoop.conf.dir": "/opt/hadoop/conf",
-                "hadoop.home": "/opt/hadoop",
-                "flush.size": "100",
-                "rotate.interval.ms": "1000",
-            },
-            "tasks": [
-                {"connector": "hdfs-sink-connector", "task": 1},
-                {"connector": "hdfs-sink-connector", "task": 2},
-                {"connector": "hdfs-sink-connector", "task": 3},
-            ],
-        }
         httpx_mock.add_response(
             method="DELETE",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
-            headers=HEADERS,
-            json=actual_response,
             status_code=httpx.codes.NO_CONTENT,
         )
         await connect_wrapper.delete_connector(CONNECTOR_NAME)
+        assert len(caplog.records) == 1
+        assert caplog.records[0].message == f"Connector {CONNECTOR_NAME} deleted."
+        assert caplog.records[0].levelname == "INFO"
 
-        log_info.assert_called_once_with(f"Connector {CONNECTOR_NAME} deleted.")
-
-    async def test_should_raise_connector_not_found_when_deleting_connector(
+    async def test_delete_connector_not_found(
         self,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
@@ -533,102 +499,80 @@ class TestConnectorApiWrapper:
             method="DELETE",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
             headers=HEADERS,
-            json={},
             status_code=httpx.codes.NOT_FOUND,
+            json={
+                "error_code": httpx.codes.NOT_FOUND.value,
+                "message": f"Connector {CONNECTOR_NAME} not found",
+            },
         )
         with pytest.raises(ConnectorNotFoundException):
             await connect_wrapper.delete_connector(CONNECTOR_NAME)
 
-    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
-    async def test_should_raise_rebalance_in_progress_when_deleting_connector(
+    @pytest.mark.usefixtures("mock_sleep")
+    async def test_delete_connector_retry(
         self,
-        log_warning: MagicMock,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
+        caplog: pytest.LogCaptureFixture,
     ):
+        ENDPOINT = f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}"
         httpx_mock.add_response(
             method="DELETE",
-            url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
+            url=ENDPOINT,
             headers=HEADERS,
-            json={},
             status_code=httpx.codes.CONFLICT,
+            json={},
+        )
+        httpx_mock.add_response(
+            method="DELETE",
+            url=ENDPOINT,
+            status_code=httpx.codes.NO_CONTENT,
         )
 
-        await timeout(
-            connect_wrapper.delete_connector(CONNECTOR_NAME),
-            secs=1,
-        )
+        with caplog.at_level(logging.INFO):
+            await connect_wrapper.delete_connector(CONNECTOR_NAME)
 
-        log_warning.assert_called_with(
-            "Rebalancing in progress while deleting a connector... Retrying..."
+        assert len(caplog.records) == 2
+        assert (
+            caplog.records[0].message
+            == "Rebalancing in progress while deleting a connector... Retrying..."
+        )
+        assert caplog.records[0].levelname == "WARNING"
+        assert caplog.records[1].message == "Connector test-connector deleted."
+        assert caplog.records[1].levelname == "INFO"
+
+    @pytest.fixture()
+    def file_stream_connector_config(self) -> KafkaConnectorConfig:
+        return KafkaConnectorConfig.model_validate(
+            {
+                "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
+                "name": "FileStreamSinkConnector",
+                "tasks.max": "1",
+                "topics": "test-topic",
+            }
         )
 
     @patch("httpx.AsyncClient.put")
-    async def test_should_create_correct_validate_connector_config_request(
-        self, mock_put: AsyncMock, connect_wrapper: ConnectWrapper
+    async def test_validate_connector_config_request(
+        self,
+        mock_put: AsyncMock,
+        connect_wrapper: ConnectWrapper,
+        file_stream_connector_config: KafkaConnectorConfig,
     ):
-        connector_name = "FileStreamSinkConnector"
-        config = {
-            "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
-            "name": connector_name,
-            "tasks.max": "1",
-            "topics": "test-topic",
-        }
         with pytest.raises(KafkaConnectError):
             await connect_wrapper.validate_connector_config(
-                KafkaConnectorConfig.model_validate(config)
+                file_stream_connector_config
             )
-
         mock_put.assert_called_with(
-            f"/connector-plugins/{connector_name}/config/validate",
-            json=config,
+            f"/connector-plugins/{file_stream_connector_config.name}/config/validate",
+            json=file_stream_connector_config.model_dump(),
         )
 
-    @pytest.mark.parametrize(
-        ("api_state", "enum_state"),
-        [
-            pytest.param("RUNNING", ConnectorCurrentState.RUNNING),
-            pytest.param("PAUSED", ConnectorCurrentState.PAUSED),
-            pytest.param("STOPPED", ConnectorCurrentState.STOPPED),
-            pytest.param("FAILED", ConnectorCurrentState.FAILED),
-        ],
-    )
-    async def test_should_parse_connector_status(
+    async def test_validate_connector_config(
         self,
         connect_wrapper: ConnectWrapper,
         httpx_mock: HTTPXMock,
-        api_state: str,
-        enum_state: ConnectorCurrentState,
-    ):
-        connector_name = "hdfs-sink-connector"
-        actual_response: dict[str, Any] = {
-            "name": connector_name,
-            "connector": {
-                "state": api_state,
-                "worker_id": "kafka-connect.infrastructure.svc:8083",
-            },
-            "tasks": [],
-            "type": "sink",
-        }
-        httpx_mock.add_response(
-            method="GET",
-            url=f"{DEFAULT_HOST}/connectors/{connector_name}/status",
-            headers=HEADERS,
-            json=actual_response,
-            status_code=httpx.codes.OK,
-        )
-        status = await connect_wrapper.get_connector_status(connector_name)
-        assert status == ConnectorStatusResponse(
-            name=connector_name,
-            connector=ConnectorStatus(
-                state=enum_state, worker_id="kafka-connect.infrastructure.svc:8083"
-            ),
-            tasks=[],
-            type=KafkaConnectorType.SINK,
-        )
-
-    async def test_should_parse_validate_connector_config(
-        self, connect_wrapper: ConnectWrapper, httpx_mock: HTTPXMock
+        file_stream_connector_config: KafkaConnectorConfig,
     ):
         content = await Path(
             RESOURCES_PATH / "connect_validation_response.json",
@@ -637,22 +581,14 @@ class TestConnectorApiWrapper:
 
         httpx_mock.add_response(
             method="PUT",
-            url=f"{DEFAULT_HOST}/connector-plugins/FileStreamSinkConnector/config/validate",
+            url=f"{DEFAULT_HOST}/connector-plugins/{file_stream_connector_config.name}/config/validate",
             headers=HEADERS,
             json=actual_response,
-            status_code=httpx.codes.OK,
         )
 
-        configs = {
-            "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
-            "name": "FileStreamSinkConnector",
-            "tasks.max": "1",
-            "topics": "test-topic",
-        }
         errors = await connect_wrapper.validate_connector_config(
-            KafkaConnectorConfig.model_validate(configs)
+            file_stream_connector_config
         )
-
         assert errors == [
             "Found error for field file: Missing required configuration 'file' which has no default value."
         ]

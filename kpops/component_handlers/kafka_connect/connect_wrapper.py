@@ -67,13 +67,12 @@ class ConnectWrapper:
             log.info(f"Connector {connector_config.name} created.")
             log.debug(response.json())
             return ConnectorResponse.model_validate(response.json())
-        elif response.status_code == httpx.codes.CONFLICT:
+        if response.status_code == httpx.codes.CONFLICT:
             log.warning(
                 "Rebalancing in progress while creating a connector... Retrying..."
             )
             await asyncio.sleep(1)
-            await self.create_connector(connector_config, initial_state)
-
+            return await self.create_connector(connector_config, initial_state)
         raise KafkaConnectError(response)
 
     async def get_connector(self, connector_name: str) -> ConnectorResponse:
@@ -87,14 +86,14 @@ class ConnectWrapper:
         if response.status_code == httpx.codes.OK:
             log.debug(response.json())
             return ConnectorResponse.model_validate(response.json())
-        elif response.status_code == httpx.codes.NOT_FOUND:
+        if response.status_code == httpx.codes.NOT_FOUND:
             raise ConnectorNotFoundException
-        elif response.status_code == httpx.codes.CONFLICT:
+        if response.status_code == httpx.codes.CONFLICT:
             log.warning(
                 "Rebalancing in progress while getting a connector... Retrying..."
             )
             await asyncio.sleep(1)
-            await self.get_connector(connector_name)
+            return await self.get_connector(connector_name)
         raise KafkaConnectError(response)
 
     async def get_connector_status(
@@ -110,7 +109,7 @@ class ConnectWrapper:
         if response.status_code == httpx.codes.OK:
             log.debug(response.json())
             return ConnectorStatusResponse.model_validate(response.json())
-        elif response.status_code == httpx.codes.NOT_FOUND:
+        if response.status_code == httpx.codes.NOT_FOUND:
             raise ConnectorNotFoundException
         raise KafkaConnectError(response)
 
@@ -174,12 +173,12 @@ class ConnectWrapper:
             log.info(f"Connector {connector_name} created.")
             log.debug(data)
             return ConnectorResponse.model_validate(data)
-        elif response.status_code == httpx.codes.CONFLICT:
+        if response.status_code == httpx.codes.CONFLICT:
             log.warning(
                 "Rebalancing in progress while updating a connector... Retrying..."
             )
             await asyncio.sleep(1)
-            await self.update_connector_config(connector_config)
+            return await self.update_connector_config(connector_config)
         raise KafkaConnectError(response)
 
     async def validate_connector_config(
@@ -223,13 +222,13 @@ class ConnectWrapper:
         response = await self._client.delete(f"/connectors/{connector_name}")
         if response.status_code == httpx.codes.NO_CONTENT:
             log.info(f"Connector {connector_name} deleted.")
-            return
-        elif response.status_code == httpx.codes.NOT_FOUND:
+            return None
+        if response.status_code == httpx.codes.NOT_FOUND:
             raise ConnectorNotFoundException
-        elif response.status_code == httpx.codes.CONFLICT:
+        if response.status_code == httpx.codes.CONFLICT:
             log.warning(
                 "Rebalancing in progress while deleting a connector... Retrying..."
             )
             await asyncio.sleep(1)
-            await self.delete_connector(connector_name)
+            return await self.delete_connector(connector_name)
         raise KafkaConnectError(response)
