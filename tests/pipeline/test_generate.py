@@ -13,6 +13,7 @@ from typer.testing import CliRunner
 import kpops.api as kpops
 from kpops.api.options import FilterType
 from kpops.cli.main import app
+from kpops.component_handlers.kafka_connect.model import ConnectorNewState
 from kpops.components.base_components.kafka_connector import KafkaSinkConnector
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.components.streams_bootstrap.producer.producer_app import ProducerApp
@@ -217,18 +218,18 @@ class TestGenerate:
             )
 
     def test_kafka_connector_config_parsing(self):
-        result = runner.invoke(
-            app,
-            [
-                "generate",
-                str(RESOURCE_PATH / "kafka-connect-sink-config" / PIPELINE_YAML),
-                "--config",
-                str(RESOURCE_PATH / "kafka-connect-sink-config"),
-            ],
-            catch_exceptions=False,
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "kafka-connect-sink-config" / PIPELINE_YAML,
+            config=RESOURCE_PATH / "kafka-connect-sink-config",
         )
-        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
+        assert len(pipeline) == 1
+        sink_connector = pipeline.components[0]
+        assert isinstance(sink_connector, KafkaSinkConnector)
+        assert sink_connector.state is ConnectorNewState.PAUSED
+        # TODO: pipeline.generate()
+        enriched_pipeline = [component.generate() for component in pipeline.components]
         sink_connector = enriched_pipeline[0]
+        assert sink_connector["state"] == "paused"
         assert (
             sink_connector["config"]["errors.deadletterqueue.topic.name"]
             == "kafka-sink-connector-error-topic"

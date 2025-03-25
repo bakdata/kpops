@@ -1,6 +1,7 @@
 - type: kafka-sink-connector
   namespace: test-namespace
   name: test-connector
+  state: paused
   to:
     topics:
       ${error_topic_name}:
