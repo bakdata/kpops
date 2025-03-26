@@ -4,13 +4,11 @@ import asyncio
 import logging
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
+from typing import TYPE_CHECKING, Any, TypeAlias
 
 import networkx as nx
 import yaml
 from pydantic import (
-    BaseModel,
-    ConfigDict,
     SerializeAsAny,
     computed_field,
 )
@@ -34,13 +32,12 @@ log = logging.getLogger("PipelineGenerator")
 ComponentFilterPredicate: TypeAlias = Callable[[PipelineComponent], bool]
 
 
-class Pipeline(BaseModel):
+@dataclass
+class Pipeline:
     """Pipeline representation."""
 
-    _component_index: dict[str, PipelineComponent] = {}
-    _graph: nx.DiGraph[str] = nx.DiGraph()
-
-    model_config: ClassVar[ConfigDict] = ConfigDict(arbitrary_types_allowed=True)
+    _component_index: dict[str, PipelineComponent] = field(default_factory=dict)
+    _graph: nx.DiGraph[str] = field(default_factory=nx.DiGraph)
 
     @property
     def step_names(self) -> list[str]:
@@ -92,7 +89,7 @@ class Pipeline(BaseModel):
             if not predicate(component):
                 self.remove(component.id)
 
-    def validate(self) -> None:  # pyright: ignore [reportIncompatibleMethodOverride]
+    def validate(self) -> None:
         self.__validate_graph()
 
     def generate(self) -> list[dict[str, Any]]:
@@ -153,7 +150,7 @@ class Pipeline(BaseModel):
     def __bool__(self) -> bool:
         return bool(self._component_index)
 
-    def __iter__(self) -> Iterator[PipelineComponent]:  # pyright: ignore [reportIncompatibleMethodOverride]
+    def __iter__(self) -> Iterator[PipelineComponent]:
         yield from self._component_index.values()
 
     def __len__(self) -> int:
