@@ -31,11 +31,14 @@ log = logging.getLogger("Helm")
 
 @final
 class Helm:
+    _version: Version = None
+    _repos: map[str, str] = {}
+
     def __init__(self, helm_config: HelmConfig) -> None:
-        self._context = helm_config.context
-        self._debug = helm_config.debug
-        self._version = self.get_version()
-        if self._version.major != 3:
+        Helm._context = helm_config.context
+        Helm._debug = helm_config.debug
+        Helm._version = Helm.get_version()
+        if Helm._version.major != 3:
             msg = f"The supported Helm version is 3.x.x. The current Helm version is {self._version.major}.{self._version.minor}.{self._version.patch}"
             raise RuntimeError(msg)
 
@@ -45,6 +48,11 @@ class Helm:
         repository_url: str,
         repo_auth_flags: RepoAuthFlags | None = None,
     ) -> None:
+        if Helm._repos.get(repository_name) == repository_url:
+            log.debug(
+                f"Repository {repository_name} already added, skipping helm command."
+            )
+            return
         if repo_auth_flags is None:
             repo_auth_flags = RepoAuthFlags()
         command = [
@@ -58,6 +66,7 @@ class Helm:
 
         try:
             self.__execute(command)
+            Helm._repos[repository_name] = repository_url
         except (ReleaseNotFoundException, RuntimeError) as e:
             if (
                 len(e.args) == 1
@@ -154,8 +163,8 @@ class Helm:
                 f"Release with name {release_name} not found. Could not get values."
             )
 
+    @staticmethod
     def template(
-        self,
         release_name: str,
         chart: str,
         namespace: str,
@@ -190,7 +199,7 @@ class Helm:
                 values_file.name,
             ]
             command.extend(flags.to_command())
-            output = self.__execute(command)
+            output = Helm.__execute(command)
             manifests = KubernetesManifest.from_yaml(output)
             return tuple(manifests)
 
@@ -210,15 +219,19 @@ class Helm:
         except ReleaseNotFoundException:
             return ()
 
-    def get_version(self) -> Version:
-        command = ["helm", "version", "--short"]
-        short_version = self.__execute(command)
-        version_match = re.search(r"^v(\d+(?:\.\d+){0,2})", short_version)
-        if version_match is None:
-            msg = f"Could not parse the Helm version.\n\nHelm output:\n{short_version}"
-            raise RuntimeError(msg)
-        version = map(int, version_match.group(1).split("."))
-        return Version(*version)
+    @staticmethod
+    def get_version() -> Version:
+        if Helm._version is None:
+            command = ["helm", "version", "--short"]
+            short_version = Helm.__execute(command)
+            version_match = re.search(r"^v(\d+(?:\.\d+){0,2})", short_version)
+            if version_match is None:
+                msg = f"Could not parse the Helm version.\n\nHelm output:\n{short_version}"
+                raise RuntimeError(msg)
+            version = map(int, version_match.group(1).split("."))
+            Helm._version = Version(*version)
+
+        return Helm._version
 
     @staticmethod
     def load_manifest(yaml_contents: str) -> Iterator[HelmTemplate]:
@@ -242,8 +255,9 @@ class Helm:
             else:
                 current_yaml_doc.append(line)
 
-    def __execute(self, command: list[str]) -> str:
-        command = self.__set_global_flags(command)
+    @staticmethod
+    def __execute(command: list[str]) -> str:
+        command = Helm.__set_global_flags(command)
         log.debug(f"Executing {' '.join(command)}")
         process = subprocess.run(
             command,
@@ -255,8 +269,9 @@ class Helm:
         log.debug(process.stdout)
         return process.stdout
 
-    async def __async_execute(self, command: list[str]):
-        command = self.__set_global_flags(command)
+    @staticmethod
+    async def __async_execute(command: list[str]):
+        command = Helm.__set_global_flags(command)
         log.debug(f"Executing {' '.join(command)}")
         proc = await asyncio.create_subprocess_exec(
             *command,
@@ -269,11 +284,12 @@ class Helm:
         log.debug(stdout)
         return stdout.decode()
 
-    def __set_global_flags(self, command: list[str]) -> list[str]:
-        if self._context:
-            log.debug(f"Changing the Kubernetes context to {self._context}")
-            command.extend(["--kube-context", self._context])
-        if self._debug:
+    @staticmethod
+    def __set_global_flags(command: list[str]) -> list[str]:
+        if Helm._context:
+            log.debug(f"Changing the Kubernetes context to {Helm._context}")
+            command.extend(["--kube-context", Helm._context])
+        if Helm._debug:
             log.debug("Enabling verbose mode.")
             command.append("--debug")
         return command
