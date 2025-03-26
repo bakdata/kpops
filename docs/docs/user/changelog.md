@@ -2,10 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [10.1.2](https://github.com/bakdata/kpops/tree/10.1.2) - 2025-03-26
+### What's changed
+
+* feat(pipeline): add `generate` method by @disrupted in [#620](https://github.com/bakdata/kpops/pull/620)
+
+* test(kafka-connect-api): improve & speed up tests by @disrupted in [#618](https://github.com/bakdata/kpops/pull/618)
+
+* fix(pipeline): fix Pydantic TypeError by @disrupted in [#623](https://github.com/bakdata/kpops/pull/623)
+
+
+**Full Changelog**: https://github.com/bakdata/kpops/compare/10.1.1...10.1.2
+
 ## [10.1.1](https://github.com/bakdata/kpops/tree/10.1.1) - 2025-03-25
 ### What's changed
 
 * fix(kafka-connector): parse enum correctly by @disrupted in [#619](https://github.com/bakdata/kpops/pull/619)
+
+* Bump version 10.1.0 → 10.1.1 by @bakdata-bot
 
 
 **Full Changelog**: https://github.com/bakdata/kpops/compare/10.1.0...10.1.1

@@ -1,5 +1,4 @@
 version = 1
-revision = 1
 requires-python = ">=3.11"
 
 [[package]]
@@ -396,7 +395,7 @@ wheels = [
 
 [[package]]
 name = "kpops"
-version = "10.1.1"
+version = "10.1.2"
 source = { editable = "." }
 dependencies = [
     { name = "anyio" },
