@@ -31,12 +31,13 @@ log = logging.getLogger("Helm")
 
 @final
 class Helm:
-    _version: Version = Helm.get_version()
+    _version: Version = None
     _repos: map[str, str] = {}
 
     def __init__(self, helm_config: HelmConfig) -> None:
-        Helm._context = helm_config.context
-        Helm._debug = helm_config.debug
+        Helm._version = Helm.get_version()
+        self._context = helm_config.context
+        self._debug = helm_config.debug
         if Helm._version.major != 3:
             msg = f"The supported Helm version is 3.x.x. The current Helm version is {self._version.major}.{self._version.minor}.{self._version.patch}"
             raise RuntimeError(msg)
@@ -219,12 +220,9 @@ class Helm:
             return ()
 
     @staticmethod
-    def reset_version() -> None:
+    def clear_state_cache() -> None:
         Helm._version = None
-
-    @staticmethod
-    def reset_repos() -> None:
-        Helm._repos = {}
+        Helm._repos = None
 
     @staticmethod
     def get_version() -> Version:
