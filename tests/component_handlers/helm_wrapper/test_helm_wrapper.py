@@ -536,6 +536,7 @@ class TestHelmWrapper:
         expected_version: Version,
     ):
         mock_execute.return_value = raw_version
+        Helm.clear_state_cache()
         helm = Helm(helm_config=HelmConfig())
 
         mock_execute.assert_called_once_with(
@@ -556,6 +557,7 @@ class TestHelmWrapper:
             RuntimeError,
             match="The supported Helm version is 3.x.x. The current Helm version is 2.9.0",
         ):
+            Helm.clear_state_cache()
             Helm(helm_config=HelmConfig())
 
     def test_should_raise_exception_if_helm_version_cannot_be_parsed(
@@ -565,4 +567,5 @@ class TestHelmWrapper:
         with pytest.raises(
             RuntimeError, match="Could not parse the Helm version.\n\nHelm output:\n123"
         ):
+            Helm.clear_state_cache()
             Helm(helm_config=HelmConfig())
