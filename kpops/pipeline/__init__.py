@@ -383,7 +383,9 @@ class PipelineGenerator:
             msg = "The pipeline-base-dir should not equal the pipeline-path"
             raise ValueError(msg)
         pipeline_name = "-".join(path_without_file)
+        parent_pipeline_name = "-".join(path_without_file[:-1])
         ENV["pipeline.name"] = pipeline_name
+        ENV["pipeline.parent_name"] = parent_pipeline_name
         for level, parent in enumerate(path_without_file):
             ENV[f"pipeline.name_{level}"] = parent
 
