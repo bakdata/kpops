@@ -468,68 +468,52 @@ class TestStreamsApp:
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
     ):
-        # actual component
-        mock_helm_uninstall_streams_app = mocker.patch.object(
-            streams_app._helm, "uninstall"
-        )
-
-        cleaner = streams_app._cleaner
-        assert isinstance(cleaner, StreamsAppCleaner)
-
-        mock_helm_upgrade_install = mocker.patch.object(
-            cleaner._helm, "upgrade_install"
-        )
-        mock_helm_uninstall = mocker.patch.object(cleaner._helm, "uninstall")
-
         mock = mocker.MagicMock()
-        mock.attach_mock(
-            mock_helm_uninstall_streams_app, "mock_helm_uninstall_streams_app"
-        )
+        mock_helm_upgrade_install = mocker.patch.object(Helm, "upgrade_install")
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
+        mock_helm_uninstall = mocker.patch.object(Helm, "uninstall")
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
 
         dry_run = False
         await streams_app.reset(dry_run=dry_run)
 
-        mock.assert_has_calls(
-            [
-                mocker.call.mock_helm_uninstall_streams_app(
-                    "test-namespace", STREAMS_APP_RELEASE_NAME, dry_run
-                ),
-                ANY,  # __bool__
-                ANY,  # __str__
-                mocker.call.helm_uninstall(
-                    "test-namespace",
-                    STREAMS_APP_CLEAN_RELEASE_NAME,
-                    dry_run,
-                ),
-                ANY,  # __bool__  # FIXME: why is this in the call stack?
-                ANY,  # __str__
-                mocker.call.helm_upgrade_install(
-                    STREAMS_APP_CLEAN_RELEASE_NAME,
-                    "bakdata-streams-bootstrap/streams-app-cleanup-job",
-                    dry_run,
-                    "test-namespace",
-                    {
-                        "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
-                        "image": "streamsApp",
-                        "kafka": {
-                            "bootstrapServers": "fake-broker:9092",
-                            "outputTopic": "streams-app-output-topic",
-                            "deleteOutput": False,
-                        },
+        assert mock.mock_calls == [
+            mocker.call.helm_uninstall(
+                "test-namespace", STREAMS_APP_RELEASE_NAME, dry_run
+            ),
+            ANY,  # __bool__
+            ANY,  # __str__
+            mocker.call.helm_uninstall(
+                "test-namespace",
+                STREAMS_APP_CLEAN_RELEASE_NAME,
+                dry_run,
+            ),
+            ANY,  # __bool__  # FIXME: why is this in the call stack?
+            ANY,  # __str__
+            mocker.call.helm_upgrade_install(
+                STREAMS_APP_CLEAN_RELEASE_NAME,
+                "bakdata-streams-bootstrap/streams-app-cleanup-job",
+                dry_run,
+                "test-namespace",
+                {
+                    "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                    "image": "streamsApp",
+                    "kafka": {
+                        "bootstrapServers": "fake-broker:9092",
+                        "outputTopic": "streams-app-output-topic",
+                        "deleteOutput": False,
                     },
-                    HelmUpgradeInstallFlags(
-                        version="3.6.1", wait=True, wait_for_jobs=True
-                    ),
-                ),
-                mocker.call.helm_uninstall(
-                    "test-namespace",
-                    STREAMS_APP_CLEAN_RELEASE_NAME,
-                    dry_run,
-                ),
-            ]
-        )
+                },
+                HelmUpgradeInstallFlags(version="3.6.1", wait=True, wait_for_jobs=True),
+            ),
+            mocker.call.helm_uninstall(
+                "test-namespace",
+                STREAMS_APP_CLEAN_RELEASE_NAME,
+                dry_run,
+            ),
+            ANY,  # __bool__
+            ANY,  # __str__
+        ]
 
     async def test_should_clean_streams_app_and_deploy_clean_up_job_and_delete_clean_up(
         self,
@@ -537,65 +521,52 @@ class TestStreamsApp:
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
     ):
-        # actual component
-        mock_helm_uninstall_streams_app = mocker.patch.object(
-            streams_app._helm, "uninstall"
-        )
-
-        mock_helm_upgrade_install = mocker.patch.object(
-            streams_app._cleaner._helm, "upgrade_install"
-        )
-        mock_helm_uninstall = mocker.patch.object(
-            streams_app._cleaner._helm, "uninstall"
-        )
-
         mock = mocker.MagicMock()
-        mock.attach_mock(mock_helm_uninstall_streams_app, "helm_uninstall_streams_app")
+        mock_helm_upgrade_install = mocker.patch.object(Helm, "upgrade_install")
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
+        mock_helm_uninstall = mocker.patch.object(Helm, "uninstall")
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
 
         dry_run = False
         await streams_app.clean(dry_run=dry_run)
 
-        mock.assert_has_calls(
-            [
-                mocker.call.helm_uninstall_streams_app(
-                    "test-namespace", STREAMS_APP_RELEASE_NAME, dry_run
-                ),
-                ANY,  # __bool__
-                ANY,  # __str__
-                mocker.call.helm_uninstall(
-                    "test-namespace",
-                    STREAMS_APP_CLEAN_RELEASE_NAME,
-                    dry_run,
-                ),
-                ANY,  # __bool__
-                ANY,  # __str__
-                mocker.call.helm_upgrade_install(
-                    STREAMS_APP_CLEAN_RELEASE_NAME,
-                    "bakdata-streams-bootstrap/streams-app-cleanup-job",
-                    dry_run,
-                    "test-namespace",
-                    {
-                        "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
-                        "image": "streamsApp",
-                        "kafka": {
-                            "bootstrapServers": "fake-broker:9092",
-                            "outputTopic": "streams-app-output-topic",
-                            "deleteOutput": True,
-                        },
+        assert mock.mock_calls == [
+            mocker.call.helm_uninstall(
+                "test-namespace", STREAMS_APP_RELEASE_NAME, dry_run
+            ),
+            ANY,  # __bool__
+            ANY,  # __str__
+            mocker.call.helm_uninstall(
+                "test-namespace",
+                STREAMS_APP_CLEAN_RELEASE_NAME,
+                dry_run,
+            ),
+            ANY,  # __bool__
+            ANY,  # __str__
+            mocker.call.helm_upgrade_install(
+                STREAMS_APP_CLEAN_RELEASE_NAME,
+                "bakdata-streams-bootstrap/streams-app-cleanup-job",
+                dry_run,
+                "test-namespace",
+                {
+                    "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                    "image": "streamsApp",
+                    "kafka": {
+                        "bootstrapServers": "fake-broker:9092",
+                        "outputTopic": "streams-app-output-topic",
+                        "deleteOutput": True,
                     },
-                    HelmUpgradeInstallFlags(
-                        version="3.6.1", wait=True, wait_for_jobs=True
-                    ),
-                ),
-                mocker.call.helm_uninstall(
-                    "test-namespace",
-                    STREAMS_APP_CLEAN_RELEASE_NAME,
-                    dry_run,
-                ),
-            ]
-        )
+                },
+                HelmUpgradeInstallFlags(version="3.6.1", wait=True, wait_for_jobs=True),
+            ),
+            mocker.call.helm_uninstall(
+                "test-namespace",
+                STREAMS_APP_CLEAN_RELEASE_NAME,
+                dry_run,
+            ),
+            ANY,  # __bool__
+            ANY,  # __str__
+        ]
 
     async def test_should_deploy_clean_up_job_with_values_in_cluster_when_reset(
         self, mocker: MockerFixture
@@ -869,73 +840,57 @@ class TestStreamsApp:
         mock_list_pvcs: MagicMock,
         mocker: MockerFixture,
     ):
-        # actual component
-        mock_helm_uninstall_streams_app = mocker.patch.object(
-            stateful_streams_app._helm, "uninstall"
-        )
-        cleaner = stateful_streams_app._cleaner
-        assert isinstance(cleaner, StreamsAppCleaner)
-
-        mock_helm_upgrade_install = mocker.patch.object(
-            cleaner._helm, "upgrade_install"
-        )
-        mock_helm_uninstall = mocker.patch.object(cleaner._helm, "uninstall")
-
-        mock_delete_pvcs = mocker.patch.object(PVCHandler, "delete_pvcs")
-
         mock = MagicMock()
-        mock.attach_mock(mock_helm_uninstall_streams_app, "helm_uninstall_streams_app")
+        mock_helm_upgrade_install = mocker.patch.object(Helm, "upgrade_install")
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
+        mock_helm_uninstall = mocker.patch.object(Helm, "uninstall")
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
+        mock_delete_pvcs = mocker.patch.object(PVCHandler, "delete_pvcs")
         mock.attach_mock(mock_delete_pvcs, "delete_pvcs")
 
         dry_run = False
         await stateful_streams_app.clean(dry_run=dry_run)
 
-        mock.assert_has_calls(
-            [
-                mocker.call.helm_uninstall_streams_app(
-                    "test-namespace", STREAMS_APP_RELEASE_NAME, dry_run
-                ),
-                ANY,  # __bool__
-                ANY,  # __str__
-                mocker.call.helm_uninstall(
-                    "test-namespace",
-                    STREAMS_APP_CLEAN_RELEASE_NAME,
-                    dry_run,
-                ),
-                ANY,  # __bool__
-                ANY,  # __str__
-                mocker.call.helm_upgrade_install(
-                    STREAMS_APP_CLEAN_RELEASE_NAME,
-                    "bakdata-streams-bootstrap/streams-app-cleanup-job",
-                    dry_run,
-                    "test-namespace",
-                    {
-                        "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
-                        "image": "streamsApp",
-                        "kafka": {
-                            "bootstrapServers": "fake-broker:9092",
-                            "outputTopic": "streams-app-output-topic",
-                            "deleteOutput": True,
-                        },
-                        "statefulSet": True,
-                        "persistence": {"enabled": True, "size": "5Gi"},
+        assert mock.mock_calls == [
+            mocker.call.helm_uninstall(
+                "test-namespace", STREAMS_APP_RELEASE_NAME, dry_run
+            ),
+            ANY,  # __bool__
+            ANY,  # __str__
+            mocker.call.helm_uninstall(
+                "test-namespace",
+                STREAMS_APP_CLEAN_RELEASE_NAME,
+                dry_run,
+            ),
+            ANY,  # __bool__
+            ANY,  # __str__
+            mocker.call.helm_upgrade_install(
+                STREAMS_APP_CLEAN_RELEASE_NAME,
+                "bakdata-streams-bootstrap/streams-app-cleanup-job",
+                dry_run,
+                "test-namespace",
+                {
+                    "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                    "image": "streamsApp",
+                    "kafka": {
+                        "bootstrapServers": "fake-broker:9092",
+                        "outputTopic": "streams-app-output-topic",
+                        "deleteOutput": True,
                     },
-                    HelmUpgradeInstallFlags(
-                        version="3.6.1", wait=True, wait_for_jobs=True
-                    ),
-                ),
-                mocker.call.helm_uninstall(
-                    "test-namespace",
-                    STREAMS_APP_CLEAN_RELEASE_NAME,
-                    dry_run,
-                ),
-                ANY,  # __bool__
-                ANY,  # __str__
-                mocker.call.delete_pvcs(False),
-            ]
-        )
+                    "statefulSet": True,
+                    "persistence": {"enabled": True, "size": "5Gi"},
+                },
+                HelmUpgradeInstallFlags(version="3.6.1", wait=True, wait_for_jobs=True),
+            ),
+            mocker.call.helm_uninstall(
+                "test-namespace",
+                STREAMS_APP_CLEAN_RELEASE_NAME,
+                dry_run,
+            ),
+            ANY,  # __bool__
+            ANY,  # __str__
+            mocker.call.delete_pvcs(False),
+        ]
 
     @pytest.mark.usefixtures("kubeconfig")
     async def test_stateful_clean_with_dry_run_true(
