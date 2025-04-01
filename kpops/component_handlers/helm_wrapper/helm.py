@@ -31,15 +31,21 @@ log = logging.getLogger("Helm")
 
 @final
 class Helm:
-    _version: Version = None
-    _repos: map[str, str] = {}
+    _already_run_helm_version: bool = False
+    _version: Version
+    _repos: dict[str, str] = {}
+    _context: str | None = None
+    _debug: bool = False
 
     def __init__(self, helm_config: HelmConfig) -> None:
-        Helm._version = Helm.get_version()
-        self._context = helm_config.context
-        self._debug = helm_config.debug
+        Helm._version = (
+            Helm.get_version() if not Helm._already_run_helm_version else Helm._version
+        )
+        Helm._context = helm_config.context
+        Helm._debug = helm_config.debug
+
         if Helm._version.major != 3:
-            msg = f"The supported Helm version is 3.x.x. The current Helm version is {self._version.major}.{self._version.minor}.{self._version.patch}"
+            msg = f"The supported Helm version is 3.x.x. The current Helm version is {Helm._version.major}.{Helm._version.minor}.{Helm._version.patch}"
             raise RuntimeError(msg)
 
     def add_repo(
@@ -80,7 +86,7 @@ class Helm:
             else:
                 raise
 
-        if self._version.minor > 7:
+        if Helm._version.minor > 7:
             self.__execute(["helm", "repo", "update", repository_name])
         else:
             self.__execute(["helm", "repo", "update"])
@@ -163,8 +169,8 @@ class Helm:
                 f"Release with name {release_name} not found. Could not get values."
             )
 
-    @staticmethod
     def template(
+        self,
         release_name: str,
         chart: str,
         namespace: str,
@@ -199,7 +205,7 @@ class Helm:
                 values_file.name,
             ]
             command.extend(flags.to_command())
-            output = Helm.__execute(command)
+            output = self.__execute(command)
             manifests = KubernetesManifest.from_yaml(output)
             return tuple(manifests)
 
@@ -221,21 +227,19 @@ class Helm:
 
     @staticmethod
     def clear_state_cache() -> None:
-        Helm._version = None
-        Helm._repos = None
+        Helm._already_run_helm_version = False
+        Helm._repos = {}
 
     @staticmethod
     def get_version() -> Version:
-        if Helm._version is None:
-            command = ["helm", "version", "--short"]
-            short_version = Helm.__execute(command)
-            version_match = re.search(r"^v(\d+(?:\.\d+){0,2})", short_version)
-            if version_match is None:
-                msg = f"Could not parse the Helm version.\n\nHelm output:\n{short_version}"
-                raise RuntimeError(msg)
-            version = map(int, version_match.group(1).split("."))
-            Helm._version = Version(*version)
-
+        command = ["helm", "version", "--short"]
+        short_version = Helm.__execute(command)
+        version_match = re.search(r"^v(\d+(?:\.\d+){0,2})", short_version)
+        if version_match is None:
+            msg = f"Could not parse the Helm version.\n\nHelm output:\n{short_version}"
+            raise RuntimeError(msg)
+        version = map(int, version_match.group(1).split("."))
+        Helm._version = Version(*version)
         return Helm._version
 
     @staticmethod
@@ -260,6 +264,9 @@ class Helm:
             else:
                 current_yaml_doc.append(line)
 
+    def __execute(self, command: list[str]) -> str:
+        return Helm.__execute(command=command)
+
     @staticmethod
     def __execute(command: list[str]) -> str:
         command = Helm.__set_global_flags(command)
@@ -273,6 +280,9 @@ class Helm:
         Helm.parse_helm_command_stderr_output(process.stderr)
         log.debug(process.stdout)
         return process.stdout
+
+    async def __async_execute(self, command: list[str]):
+        return Helm.__async_execute(command=command)
 
     @staticmethod
     async def __async_execute(command: list[str]):

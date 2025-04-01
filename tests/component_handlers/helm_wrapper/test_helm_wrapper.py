@@ -117,6 +117,7 @@ class TestHelmWrapper:
     def test_should_include_configured_tls_parameters_on_add_when_version_is_new(
         self, helm: Helm, mock_execute: MagicMock
     ):
+        Helm.clear_state_cache()
         helm.add_repo(
             "test-repository",
             "fake",
