@@ -5,10 +5,13 @@ import logging
 import re
 import subprocess
 import tempfile
+from collections.abc import Hashable
+from functools import cached_property
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, final
+from typing import TYPE_CHECKING, Any, Self, final
 
 import yaml
+from cachetools import cached
 
 from kpops.component_handlers.helm_wrapper.exception import ReleaseNotFoundException
 from kpops.component_handlers.helm_wrapper.model import (
@@ -29,16 +32,34 @@ if TYPE_CHECKING:
 log = logging.getLogger("Helm")
 
 
+def cache_key(
+    _: Helm,
+    repository_name: str,
+    repository_url: str,
+    repo_auth_flags: RepoAuthFlags | None = None,
+) -> Hashable:
+    return repository_name, repository_url
+
+
 @final
 class Helm:
+    _instance: Self | None = None
+
+    def __new__(cls, *args: Any, **kwargs: Any) -> Self:
+        """Return singleton instance."""
+        if not cls._instance:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
     def __init__(self, helm_config: HelmConfig) -> None:
         self._context = helm_config.context
         self._debug = helm_config.debug
-        self._version = self.get_version()
-        if self._version.major != 3:
-            msg = f"The supported Helm version is 3.x.x. The current Helm version is {self._version.major}.{self._version.minor}.{self._version.patch}"
+
+        if self.version.major != 3:
+            msg = f"The supported Helm version is 3.x.x. The current Helm version is {self.version.major}.{self.version.minor}.{self.version.patch}"
             raise RuntimeError(msg)
 
+    @cached(cache={}, key=cache_key)
     def add_repo(
         self,
         repository_name: str,
@@ -71,7 +92,7 @@ class Helm:
             else:
                 raise
 
-        if self._version.minor > 7:
+        if self.version.minor > 7:
             self.__execute(["helm", "repo", "update", repository_name])
         else:
             self.__execute(["helm", "repo", "update"])
@@ -210,7 +231,8 @@ class Helm:
         except ReleaseNotFoundException:
             return ()
 
-    def get_version(self) -> Version:
+    @cached_property
+    def version(self) -> Version:
         command = ["helm", "version", "--short"]
         short_version = self.__execute(command)
         version_match = re.search(r"^v(\d+(?:\.\d+){0,2})", short_version)
