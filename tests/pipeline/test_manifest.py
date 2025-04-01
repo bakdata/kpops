@@ -32,13 +32,16 @@ class TestManifest:
         return mock_execute
 
     @pytest.fixture()
-    def mock_get_version(self, mocker: MockerFixture) -> MagicMock:
-        mock_get_version = mocker.patch.object(Helm, "get_version")
-        mock_get_version.return_value = Version(major=3, minor=12, patch=0)
-        return mock_get_version
+    def mock_version(self, mocker: MockerFixture) -> MagicMock:
+        return mocker.patch.object(
+            Helm,
+            "version",
+            return_value=Version(major=3, minor=12, patch=0),
+            new_callable=mocker.PropertyMock,
+        )
 
     @pytest.fixture(autouse=True)
-    def helm(self, mock_get_version: MagicMock) -> Helm:
+    def helm(self, mock_version: MagicMock) -> Helm:
         return Helm(helm_config=HelmConfig())
 
     def test_default_config(self, mock_execute: MagicMock):
