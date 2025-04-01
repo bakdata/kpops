@@ -1,6 +1,6 @@
 [project]
 name = "kpops"
-version = "10.1.2"
+version = "10.1.3"
 description = "KPOps is a tool to deploy Kafka pipelines to Kubernetes"
 authors = [
   { name = "bakdata", email = "opensource@bakdata.com" },
