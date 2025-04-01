@@ -5,10 +5,13 @@ import logging
 import re
 import subprocess
 import tempfile
+from collections.abc import Hashable
+from functools import cached_property
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, final
+from typing import TYPE_CHECKING, Any, Self, final
 
 import yaml
+from cachetools import cached
 
 from kpops.component_handlers.helm_wrapper.exception import ReleaseNotFoundException
 from kpops.component_handlers.helm_wrapper.model import (
@@ -29,36 +32,40 @@ if TYPE_CHECKING:
 log = logging.getLogger("Helm")
 
 
+def cache_key(
+    _: Helm,
+    repository_name: str,
+    repository_url: str,
+    repo_auth_flags: RepoAuthFlags | None = None,
+) -> Hashable:
+    return repository_name, repository_url
+
+
 @final
 class Helm:
-    _already_run_helm_version: bool = False
-    _version: Version
-    _repos: dict[str, str] = {}
-    _context: str | None = None
-    _debug: bool = False
+    _instance: Self | None = None
+
+    def __new__(cls, *args: Any, **kwargs: Any) -> Self:
+        """Return singleton instance."""
+        if not cls._instance:
+            cls._instance = super().__new__(cls)
+        return cls._instance
 
     def __init__(self, helm_config: HelmConfig) -> None:
-        Helm._version = (
-            Helm.get_version() if not Helm._already_run_helm_version else Helm._version
-        )
-        Helm._context = helm_config.context
-        Helm._debug = helm_config.debug
+        self._context = helm_config.context
+        self._debug = helm_config.debug
 
-        if Helm._version.major != 3:
-            msg = f"The supported Helm version is 3.x.x. The current Helm version is {Helm._version.major}.{Helm._version.minor}.{Helm._version.patch}"
+        if self.version.major != 3:
+            msg = f"The supported Helm version is 3.x.x. The current Helm version is {self.version.major}.{self.version.minor}.{self.version.patch}"
             raise RuntimeError(msg)
 
+    @cached(cache={}, key=cache_key)
     def add_repo(
         self,
         repository_name: str,
         repository_url: str,
         repo_auth_flags: RepoAuthFlags | None = None,
     ) -> None:
-        if Helm._repos.get(repository_name) == repository_url:
-            log.debug(
-                f"Repository {repository_name} already added, skipping helm command."
-            )
-            return
         if repo_auth_flags is None:
             repo_auth_flags = RepoAuthFlags()
         command = [
@@ -72,7 +79,6 @@ class Helm:
 
         try:
             self.__execute(command)
-            Helm._repos[repository_name] = repository_url
         except (ReleaseNotFoundException, RuntimeError) as e:
             if (
                 len(e.args) == 1
@@ -86,7 +92,7 @@ class Helm:
             else:
                 raise
 
-        if Helm._version.minor > 7:
+        if self.version.minor > 7:
             self.__execute(["helm", "repo", "update", repository_name])
         else:
             self.__execute(["helm", "repo", "update"])
@@ -225,22 +231,16 @@ class Helm:
         except ReleaseNotFoundException:
             return ()
 
-    @staticmethod
-    def clear_state_cache() -> None:
-        Helm._already_run_helm_version = False
-        Helm._repos = {}
-
-    @staticmethod
-    def get_version() -> Version:
+    @cached_property
+    def version(self) -> Version:
         command = ["helm", "version", "--short"]
-        short_version = Helm.__execute(command)
+        short_version = self.__execute(command)
         version_match = re.search(r"^v(\d+(?:\.\d+){0,2})", short_version)
         if version_match is None:
             msg = f"Could not parse the Helm version.\n\nHelm output:\n{short_version}"
             raise RuntimeError(msg)
         version = map(int, version_match.group(1).split("."))
-        Helm._version = Version(*version)
-        return Helm._version
+        return Version(*version)
 
     @staticmethod
     def load_manifest(yaml_contents: str) -> Iterator[HelmTemplate]:
@@ -265,11 +265,7 @@ class Helm:
                 current_yaml_doc.append(line)
 
     def __execute(self, command: list[str]) -> str:
-        return Helm.__execute(command=command)
-
-    @staticmethod
-    def __execute(command: list[str]) -> str:
-        command = Helm.__set_global_flags(command)
+        command = self.__set_global_flags(command)
         log.debug(f"Executing {' '.join(command)}")
         process = subprocess.run(
             command,
@@ -282,11 +278,7 @@ class Helm:
         return process.stdout
 
     async def __async_execute(self, command: list[str]):
-        return Helm.__async_execute(command=command)
-
-    @staticmethod
-    async def __async_execute(command: list[str]):
-        command = Helm.__set_global_flags(command)
+        command = self.__set_global_flags(command)
         log.debug(f"Executing {' '.join(command)}")
         proc = await asyncio.create_subprocess_exec(
             *command,
@@ -299,12 +291,11 @@ class Helm:
         log.debug(stdout)
         return stdout.decode()
 
-    @staticmethod
-    def __set_global_flags(command: list[str]) -> list[str]:
-        if Helm._context:
-            log.debug(f"Changing the Kubernetes context to {Helm._context}")
-            command.extend(["--kube-context", Helm._context])
-        if Helm._debug:
+    def __set_global_flags(self, command: list[str]) -> list[str]:
+        if self._context:
+            log.debug(f"Changing the Kubernetes context to {self._context}")
+            command.extend(["--kube-context", self._context])
+        if self._debug:
             log.debug("Enabling verbose mode.")
             command.append("--debug")
         return command

@@ -46,14 +46,77 @@ class TestHelmWrapper:
         return mocker.patch("kpops.component_handlers.helm_wrapper.helm.log.warning")
 
     @pytest.fixture()
-    def mock_get_version(self, mocker: MockerFixture) -> MagicMock:
-        mock_get_version = mocker.patch.object(Helm, "get_version")
-        mock_get_version.return_value = Version(major=3, minor=12, patch=0)
-        return mock_get_version
+    def mock_version(self, mocker: MockerFixture) -> MagicMock:
+        return mocker.patch.object(
+            Helm,
+            "version",
+            return_value=Version(major=3, minor=12, patch=0),
+            new_callable=mocker.PropertyMock,
+        )
 
     @pytest.fixture()
-    def helm(self, mock_get_version: MagicMock) -> Helm:
+    def helm(self, mock_version: MagicMock) -> Helm:
         return Helm(helm_config=HelmConfig())
+
+    @pytest.fixture(autouse=True)
+    def cache_clear(self) -> None:
+        helm = Helm._instance
+        if not helm:
+            return
+        helm.add_repo.cache_clear()  # pyright: ignore[reportFunctionMemberAccess]
+        if hasattr(helm, "version"):
+            del helm.version
+
+    def test_singleton(self, helm: Helm) -> None:
+        assert Helm(helm_config=HelmConfig()) is helm
+
+    def test_version_cached(self, helm: Helm, mock_execute: MagicMock):
+        assert helm.version
+        mock_execute.assert_not_called()
+
+    def test_add_repo_cached(self, helm: Helm, mock_execute: MagicMock):
+        helm.add_repo("test-foo", "fake")
+        helm.add_repo("test-bar", "fake")
+        helm.add_repo("test-foo", "fake")
+        helm.add_repo("test-bar", "fake2")
+        assert mock_execute.mock_calls == [
+            mock.call(
+                [
+                    "helm",
+                    "repo",
+                    "add",
+                    "test-foo",
+                    "fake",
+                ],
+            ),
+            mock.call(
+                ["helm", "repo", "update", "test-foo"],
+            ),
+            mock.call(
+                [
+                    "helm",
+                    "repo",
+                    "add",
+                    "test-bar",
+                    "fake",
+                ],
+            ),
+            mock.call(
+                ["helm", "repo", "update", "test-bar"],
+            ),
+            mock.call(
+                [
+                    "helm",
+                    "repo",
+                    "add",
+                    "test-bar",
+                    "fake2",
+                ],
+            ),
+            mock.call(
+                ["helm", "repo", "update", "test-bar"],
+            ),
+        ]
 
     async def test_should_call_run_command_method_when_helm_install_with_defaults(
         self, helm: Helm, run_command_async: AsyncMock
@@ -87,8 +150,12 @@ class TestHelmWrapper:
     def test_should_include_configured_tls_parameters_on_add_when_version_is_old(
         self, mock_execute: MagicMock, mocker: MockerFixture
     ):
-        mock_get_version = mocker.patch.object(Helm, "get_version")
-        mock_get_version.return_value = Version(major=3, minor=6, patch=0)
+        mocker.patch.object(
+            Helm,
+            "version",
+            return_value=Version(major=3, minor=6, patch=0),
+            new_callable=mocker.PropertyMock,
+        )
         helm = Helm(HelmConfig())
 
         helm.add_repo(
@@ -117,7 +184,6 @@ class TestHelmWrapper:
     def test_should_include_configured_tls_parameters_on_add_when_version_is_new(
         self, helm: Helm, mock_execute: MagicMock
     ):
-        Helm.clear_state_cache()
         helm.add_repo(
             "test-repository",
             "fake",
@@ -530,14 +596,13 @@ class TestHelmWrapper:
             ("v3", Version(3, 0, 0)),
         ],
     )
-    def test_should_call_helm_version(
+    def test_parse_version(
         self,
         mock_execute: MagicMock,
         raw_version: str,
         expected_version: Version,
     ):
         mock_execute.return_value = raw_version
-        Helm.clear_state_cache()
         helm = Helm(helm_config=HelmConfig())
 
         mock_execute.assert_called_once_with(
@@ -547,8 +612,7 @@ class TestHelmWrapper:
                 "--short",
             ],
         )
-
-        assert helm._version == expected_version
+        assert helm.version == expected_version
 
     def test_should_raise_exception_if_helm_version_is_old(
         self, mock_execute: MagicMock
@@ -558,7 +622,6 @@ class TestHelmWrapper:
             RuntimeError,
             match="The supported Helm version is 3.x.x. The current Helm version is 2.9.0",
         ):
-            Helm.clear_state_cache()
             Helm(helm_config=HelmConfig())
 
     def test_should_raise_exception_if_helm_version_cannot_be_parsed(
@@ -568,5 +631,4 @@ class TestHelmWrapper:
         with pytest.raises(
             RuntimeError, match="Could not parse the Helm version.\n\nHelm output:\n123"
         ):
-            Helm.clear_state_cache()
             Helm(helm_config=HelmConfig())
