@@ -43,11 +43,15 @@ Environment variables such as `$PATH` can be used in the pipeline definition and
 
 These are special variables that refer to the name and path of a pipeline.
 
-- `${pipeline.name}`: Concatenated path of the parent directory where pipeline.yaml is defined in.
+- `${pipeline.name}`: Concatenated path of the directory that contains the file pipeline.yaml.
   For instance, `./data/pipelines/v1/pipeline.yaml`, here the value for the variable would be `data-pipelines-v1`.
 
 - `${pipeline_name_<level>}`: Similar to the previous variable, each `<level>` contains a part of the path to the `pipeline.yaml` file.
   Consider the previous example, `${pipeline_name_0}` would be `data`, `${pipeline_name_1}` would be `pipelines`, and `${pipeline_name_2}` equals to `v1`.
+
+- `${pipeline.parent.name}`: Like `${pipeline.name}` but only up to the _parent directory_ of the directory that contains the file pipeline.yaml.
+  For instance, `./data/pipelines/v1/pipeline.yaml`, here the value for the variable would be `data-pipelines`.
+  This can be useful e.g. to read from a component of a pipeline defined in `./data/pipelines/pipeline.yaml` (without `/v1`).
 
 ## Advanced use cases
 
