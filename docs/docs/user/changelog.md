@@ -2,10 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [10.2.0](https://github.com/bakdata/kpops/tree/10.2.0) - 2025-04-02
+### What's changed
+
+* feat: add substitution variable `${pipeline.parent.name}` by @jkbe in [#582](https://github.com/bakdata/kpops/pull/582)
+
+
+**Full Changelog**: https://github.com/bakdata/kpops/compare/10.1.3...10.2.0
+
 ## [10.1.3](https://github.com/bakdata/kpops/tree/10.1.3) - 2025-04-01
 ### What's changed
 
 * refactor(helm): cache repos and version across components by @daconstenla in [#622](https://github.com/bakdata/kpops/pull/622)
+
+* Bump version 10.1.2 → 10.1.3 by @bakdata-bot
 
 
 **Full Changelog**: https://github.com/bakdata/kpops/compare/10.1.2...10.1.3
