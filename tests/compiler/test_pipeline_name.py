@@ -17,13 +17,12 @@ def test_should_set_pipeline_name_with_default_base_dir():
     PipelineGenerator.set_pipeline_name_env_vars(PIPELINE_BASE_DIR, PIPELINE_PATH)
 
     assert ENV["pipeline.name"] == "some-random-path-for-testing"
+    assert ENV["pipeline.parent.name"] == "some-random-path-for"
     assert ENV["pipeline.name_0"] == "some"
     assert ENV["pipeline.name_1"] == "random"
     assert ENV["pipeline.name_2"] == "path"
     assert ENV["pipeline.name_3"] == "for"
     assert ENV["pipeline.name_4"] == "testing"
-
-    assert ENV["pipeline.parent_name"] == "some-random-path-for"
 
 
 def test_should_set_pipeline_name_with_specific_relative_base_dir():
