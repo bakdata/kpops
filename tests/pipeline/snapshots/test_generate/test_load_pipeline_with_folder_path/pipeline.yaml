@@ -1,4 +1,6 @@
-- name: scheduled-producer
+- helm_name_override: resources-pipeline-folders-pipeline-1-schedule-066a8
+  helm_release_name: resources-pipeline-folders-pipeline-1-scheduled-066a8
+  name: scheduled-producer
   namespace: example-namespace
   prefix: resources-pipeline-folders-pipeline-1-
   to:
@@ -24,7 +26,9 @@
     schedule: 30 3/8 * * *
   version: 3.6.1
 
-- name: converter
+- helm_name_override: resources-pipeline-folders-pipeline-2-converter
+  helm_release_name: resources-pipeline-folders-pipeline-2-converter
+  name: converter
   namespace: example-namespace
   prefix: resources-pipeline-folders-pipeline-2-
   to:
@@ -67,7 +71,9 @@
     statefulSet: false
   version: 3.6.1
 
-- name: a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
+- helm_name_override: resources-pipeline-folders-pipeline-3-a-long-name-a-long--f9195
+  helm_release_name: resources-pipeline-folders-pipeline-3-a-long-na-f9195
+  name: a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
   namespace: example-namespace
   prefix: resources-pipeline-folders-pipeline-3-
   to:

@@ -3,6 +3,8 @@
     topics:
       example-topic:
         type: input
+  helm_name_override: resources-kafka-connect-sink-streams-app
+  helm_release_name: resources-kafka-connect-sink-streams-app
   name: streams-app
   namespace: example-namespace
   prefix: resources-kafka-connect-sink-

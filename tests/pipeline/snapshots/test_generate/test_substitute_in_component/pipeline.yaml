@@ -1,4 +1,6 @@
-- name: scheduled-producer
+- helm_name_override: resources-component-type-substitution-schedule-b0010
+  helm_release_name: resources-component-type-substitution-scheduled-b0010
+  name: scheduled-producer
   namespace: example-namespace
   prefix: resources-component-type-substitution-
   to:
@@ -27,7 +29,9 @@
       app_type: scheduled-producer
     schedule: 30 3/8 * * *
   version: 3.6.1
-- name: converter
+- helm_name_override: resources-component-type-substitution-converter
+  helm_release_name: resources-component-type-substitution-converter
+  name: converter
   namespace: example-namespace
   prefix: resources-component-type-substitution-
   to:
@@ -71,7 +75,9 @@
         memory: 2G
     statefulSet: false
   version: 3.6.1
-- name: filter-app
+- helm_name_override: resources-component-type-substitution-filter-app
+  helm_release_name: resources-component-type-substitution-filter-app
+  name: filter-app
   namespace: example-namespace
   prefix: resources-component-type-substitution-
   to:

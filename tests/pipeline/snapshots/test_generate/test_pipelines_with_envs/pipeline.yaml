@@ -1,4 +1,6 @@
-- name: input-producer
+- helm_name_override: resources-pipeline-with-envs-input-producer
+  helm_release_name: resources-pipeline-with-envs-input-producer
+  name: input-producer
   namespace: example-namespace
   prefix: resources-pipeline-with-envs-
   to:
@@ -23,7 +25,9 @@
       schemaRegistryUrl: http://localhost:8081/
     schedule: 20 3/8 * * *
   version: 3.6.1
-- name: converter
+- helm_name_override: resources-pipeline-with-envs-converter
+  helm_release_name: resources-pipeline-with-envs-converter
+  name: converter
   namespace: example-namespace
   prefix: resources-pipeline-with-envs-
   to:
@@ -67,7 +71,9 @@
         memory: 2G
     statefulSet: false
   version: 3.6.1
-- name: filter
+- helm_name_override: resources-pipeline-with-envs-filter
+  helm_release_name: resources-pipeline-with-envs-filter
+  name: filter
   namespace: example-namespace
   prefix: resources-pipeline-with-envs-
   to:

@@ -1,4 +1,6 @@
-- name: data-producer
+- helm_name_override: word-count-data-producer
+  helm_release_name: word-count-data-producer
+  name: data-producer
   namespace: ${NAMESPACE}
   prefix: word-count-
   to:
@@ -21,7 +23,9 @@
         enabled: false
     replicaCount: 1
   version: 3.1.0
-- name: word-count-app
+- helm_name_override: word-count-word-count-app
+  helm_release_name: word-count-word-count-app
+  name: word-count-app
   namespace: ${NAMESPACE}
   prefix: word-count-
   to:

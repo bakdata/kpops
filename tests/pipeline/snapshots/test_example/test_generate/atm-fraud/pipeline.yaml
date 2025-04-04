@@ -1,4 +1,6 @@
-- name: account-producer
+- helm_name_override: atm-fraud-account-producer
+  helm_release_name: atm-fraud-account-producer
+  name: account-producer
   namespace: ${NAMESPACE}
   prefix: atm-fraud-
   to:
@@ -25,7 +27,9 @@
       schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
     suspend: true
   version: 2.9.0
-- name: transaction-avro-producer
+- helm_name_override: atm-fraud-transaction-avro-producer
+  helm_release_name: atm-fraud-transaction-avro-producer
+  name: transaction-avro-producer
   namespace: ${NAMESPACE}
   prefix: atm-fraud-
   to:
@@ -55,7 +59,9 @@
       schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
     suspend: true
   version: 2.9.0
-- name: transaction-joiner
+- helm_name_override: atm-fraud-transaction-joiner
+  helm_release_name: atm-fraud-transaction-joiner
+  name: transaction-joiner
   namespace: ${NAMESPACE}
   prefix: atm-fraud-
   to:
@@ -94,7 +100,9 @@
       outputTopic: atm-fraud-transaction-joiner-topic
       schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
   version: 2.9.0
-- name: fraud-detector
+- helm_name_override: atm-fraud-fraud-detector
+  helm_release_name: atm-fraud-fraud-detector
+  name: fraud-detector
   namespace: ${NAMESPACE}
   prefix: atm-fraud-
   to:
@@ -140,6 +148,8 @@
       fraud-detector:
         type: input
     topics: {}
+  helm_name_override: atm-fraud-account-linker
+  helm_release_name: atm-fraud-account-linker
   name: account-linker
   namespace: ${NAMESPACE}
   prefix: atm-fraud-

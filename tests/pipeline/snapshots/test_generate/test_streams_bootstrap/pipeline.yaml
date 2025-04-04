@@ -1,4 +1,6 @@
-- name: my-producer-app
+- helm_name_override: resources-streams-bootstrap-my-producer-app
+  helm_release_name: resources-streams-bootstrap-my-producer-app
+  name: my-producer-app
   namespace: example-namespace
   prefix: resources-streams-bootstrap-
   to:
@@ -57,6 +59,8 @@
         type: pattern
       my-labeled-input-topic:
         label: my-input-topic-label
+  helm_name_override: resources-streams-bootstrap-my-streams-app
+  helm_release_name: resources-streams-bootstrap-my-streams-app
   name: my-streams-app
   namespace: example-namespace
   prefix: resources-streams-bootstrap-
