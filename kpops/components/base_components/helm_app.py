@@ -5,7 +5,7 @@ from functools import cached_property
 from typing import Annotated, Any
 
 import pydantic
-from pydantic import Field
+from pydantic import Field, computed_field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
@@ -109,11 +109,13 @@ class HelmApp(KubernetesApp):
     def _dry_run_handler(self) -> DryRunHandler:
         return DryRunHandler(self._helm, self._helm_diff, self.namespace)
 
+    @computed_field  # NOTE: we want to see them in the generate output
     @property
     def helm_release_name(self) -> str:
         """The name for the Helm release."""
         return create_helm_release_name(self.full_name)
 
+    @computed_field  # NOTE: we want to see them in the generate output
     @property
     def helm_name_override(self) -> str:
         """Helm chart name override."""

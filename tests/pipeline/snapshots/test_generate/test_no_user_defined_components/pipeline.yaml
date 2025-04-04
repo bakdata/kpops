@@ -3,6 +3,8 @@
     topics:
       example-topic:
         type: input
+  helm_name_override: resources-no-user-defined-components-streams-app
+  helm_release_name: resources-no-user-defined-components-streams-app
   name: streams-app
   namespace: example-namespace
   prefix: resources-no-user-defined-components-

@@ -1,4 +1,6 @@
-- name: account-producer
+- helm_name_override: from-pipeline-component-account-producer
+  helm_release_name: from-pipeline-component-account-producer
+  name: account-producer
   namespace: ${NAMESPACE}
   prefix: from-pipeline-component-
   type: producer-app
