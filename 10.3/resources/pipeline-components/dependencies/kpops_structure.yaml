@@ -1,0 +1,220 @@
+kpops_components_fields:
+  helm-app:
+  - name
+  - prefix
+  - from_
+  - to
+  - namespace
+  - values
+  - repo_config
+  - diff_config
+  - version
+  kafka-app:
+  - name
+  - prefix
+  - from_
+  - to
+  kafka-connector:
+  - name
+  - prefix
+  - from_
+  - to
+  - config
+  - state
+  - resetter_namespace
+  - resetter_values
+  kafka-sink-connector:
+  - name
+  - prefix
+  - from_
+  - to
+  - config
+  - state
+  - resetter_namespace
+  - resetter_values
+  kafka-source-connector:
+  - name
+  - prefix
+  - from_
+  - to
+  - config
+  - state
+  - resetter_namespace
+  - resetter_values
+  - offset_topic
+  kubernetes-app:
+  - name
+  - prefix
+  - from_
+  - to
+  - namespace
+  - values
+  pipeline-component:
+  - name
+  - prefix
+  - from_
+  - to
+  producer-app:
+  - name
+  - prefix
+  - from_
+  - to
+  - namespace
+  - values
+  - repo_config
+  - diff_config
+  - version
+  producer-app-v2:
+  - name
+  - prefix
+  - from_
+  - to
+  - namespace
+  - values
+  - repo_config
+  - diff_config
+  - version
+  streams-app:
+  - name
+  - prefix
+  - from_
+  - to
+  - namespace
+  - values
+  - repo_config
+  - diff_config
+  - version
+  streams-app-v2:
+  - name
+  - prefix
+  - from_
+  - to
+  - namespace
+  - values
+  - repo_config
+  - diff_config
+  - version
+  streams-bootstrap:
+  - name
+  - prefix
+  - from_
+  - to
+  - namespace
+  - values
+  - repo_config
+  - diff_config
+  - version
+  streams-bootstrap-v2:
+  - name
+  - prefix
+  - from_
+  - to
+  - namespace
+  - values
+  - repo_config
+  - diff_config
+  - version
+kpops_components_inheritance_ref:
+  helm-app:
+    bases:
+    - kubernetes-app
+    parents:
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component
+  kafka-app:
+    bases:
+    - pipeline-component
+    parents:
+    - pipeline-component
+    - base-defaults-component
+  kafka-connector:
+    bases:
+    - pipeline-component
+    parents:
+    - pipeline-component
+    - base-defaults-component
+  kafka-sink-connector:
+    bases:
+    - kafka-connector
+    parents:
+    - kafka-connector
+    - pipeline-component
+    - base-defaults-component
+  kafka-source-connector:
+    bases:
+    - kafka-connector
+    parents:
+    - kafka-connector
+    - pipeline-component
+    - base-defaults-component
+  kubernetes-app:
+    bases:
+    - pipeline-component
+    parents:
+    - pipeline-component
+    - base-defaults-component
+  pipeline-component:
+    bases: []
+    parents:
+    - base-defaults-component
+  producer-app:
+    bases:
+    - streams-bootstrap
+    parents:
+    - streams-bootstrap
+    - kafka-app
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component
+  producer-app-v2:
+    bases:
+    - streams-bootstrap-v2
+    parents:
+    - streams-bootstrap-v2
+    - kafka-app
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component
+  streams-app:
+    bases:
+    - streams-bootstrap
+    parents:
+    - streams-bootstrap
+    - kafka-app
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component
+  streams-app-v2:
+    bases:
+    - streams-bootstrap-v2
+    parents:
+    - streams-bootstrap-v2
+    - kafka-app
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component
+  streams-bootstrap:
+    bases:
+    - kafka-app
+    - helm-app
+    parents:
+    - kafka-app
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component
+  streams-bootstrap-v2:
+    bases:
+    - kafka-app
+    - helm-app
+    parents:
+    - kafka-app
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component

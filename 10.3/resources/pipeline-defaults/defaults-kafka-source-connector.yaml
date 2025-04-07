@@ -1,0 +1,9 @@
+# Kafka source connector
+#
+# Child of: KafkaConnector
+kafka-source-connector:
+  # The source connector has no `from` section
+  # from:
+  # offset.storage.topic
+  # https://kafka.apache.org/documentation/#connect_running
+  offset_topic: offset_topic
