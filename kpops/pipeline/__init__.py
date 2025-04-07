@@ -96,7 +96,7 @@ class Pipeline:
         return [component.generate() for component in self.components]
 
     def to_yaml(self) -> str:
-        return yaml.dump(self.generate(), Dumper=CustomSafeDumper)
+        return yaml.dump(self.generate(), sort_keys=False, Dumper=CustomSafeDumper)
 
     def build_execution_graph(
         self,
