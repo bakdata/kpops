@@ -1,54 +1,54 @@
-- from:
-    components: {}
+- type: streams-app
+  name: streams-app
+  prefix: resources-kafka-connect-sink-
+  from:
     topics:
       example-topic:
         type: input
-  helm_name_override: resources-kafka-connect-sink-streams-app
-  helm_release_name: resources-kafka-connect-sink-streams-app
-  name: streams-app
-  namespace: example-namespace
-  prefix: resources-kafka-connect-sink-
+    components: {}
   to:
-    models: {}
     topics:
       example-output:
-        configs: {}
         type: output
+        configs: {}
       resources-kafka-connect-sink-streams-app-error:
-        configs:
-          cleanup.policy: compact,delete
-        partitions_count: 1
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
-  type: streams-app
+        partitions_count: 1
+        configs:
+          cleanup.policy: compact,delete
+    models: {}
+  namespace: example-namespace
   values:
     image: fake-image
     kafka:
       bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      config:
-        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-      errorTopic: resources-kafka-connect-sink-streams-app-error
+      schemaRegistryUrl: http://localhost:8081/
+      outputTopic: example-output
       inputTopics:
         - example-topic
-      outputTopic: example-output
-      schemaRegistryUrl: http://localhost:8081/
+      errorTopic: resources-kafka-connect-sink-streams-app-error
+      config:
+        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
     statefulSet: false
   version: 3.6.1
-- config:
+  helm_release_name: resources-kafka-connect-sink-streams-app
+  helm_name_override: resources-kafka-connect-sink-streams-app
+- type: kafka-sink-connector
+  name: es-sink-connector
+  prefix: resources-kafka-connect-sink-
+  config:
+    connector.class: io.confluent.connect.elasticsearch.ElasticsearchSinkConnector
+    name: resources-kafka-connect-sink-es-sink-connector
+    topics: example-output
     batch.size: '2000'
     behavior.on.malformed.documents: warn
     behavior.on.null.values: delete
     connection.compression: 'true'
-    connector.class: io.confluent.connect.elasticsearch.ElasticsearchSinkConnector
     key.ignore: 'false'
     linger.ms: '5000'
     max.buffered.records: '20000'
-    name: resources-kafka-connect-sink-es-sink-connector
     read.timeout.ms: '120000'
     tasks.max: '1'
-    topics: example-output
-  name: es-sink-connector
-  prefix: resources-kafka-connect-sink-
   resetter_values: {}
-  type: kafka-sink-connector
 

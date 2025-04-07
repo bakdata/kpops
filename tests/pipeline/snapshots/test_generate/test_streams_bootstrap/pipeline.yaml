@@ -1,26 +1,34 @@
-- helm_name_override: resources-streams-bootstrap-my-producer-app
-  helm_release_name: resources-streams-bootstrap-my-producer-app
+- type: my-producer-app
   name: my-producer-app
-  namespace: example-namespace
   prefix: resources-streams-bootstrap-
   to:
-    models: {}
     topics:
+      my-producer-app-output-topic:
+        type: output
+        configs: {}
       my-labeled-producer-app-topic-output:
         configs: {}
         label: my-producer-app-output-topic-label
-      my-producer-app-output-topic:
-        configs: {}
-        type: output
-  type: my-producer-app
+    models: {}
+  namespace: example-namespace
   values:
+    image: my-registry/my-producer-image
+    imageTag: 1.0.0
+    imagePullPolicy: IfNotPresent
+    kafka:
+      bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      schemaRegistryUrl: http://localhost:8081/
+      labeledOutputTopics:
+        my-producer-app-output-topic-label: my-labeled-producer-app-topic-output
+      outputTopic: my-producer-app-output-topic
     commandLine:
-      BOOL: true
-      FLOAT: 0.1
-      INT: 1
       STR: fake-arg-value
+      BOOL: true
+      INT: 1
+      FLOAT: 0.1
     files:
       log4j2.xml:
+        mountPath: app/resources
         content: |
           <?xml version="1.0" encoding="UTF-8"?>
           <Configuration>
@@ -35,55 +43,88 @@
                   </Root>
               </Loggers>
           </Configuration>
-        mountPath: app/resources
-    image: my-registry/my-producer-image
-    imagePullPolicy: IfNotPresent
-    imageTag: 1.0.0
-    kafka:
-      bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      labeledOutputTopics:
-        my-producer-app-output-topic-label: my-labeled-producer-app-topic-output
-      outputTopic: my-producer-app-output-topic
-      schemaRegistryUrl: http://localhost:8081/
     schedule: 30 3/8 * * *
   version: 3.6.1
-- from:
-    components: {}
+  helm_release_name: resources-streams-bootstrap-my-producer-app
+  helm_name_override: resources-streams-bootstrap-my-producer-app
+- type: my-streams-app
+  name: my-streams-app
+  prefix: resources-streams-bootstrap-
+  from:
     topics:
-      my-input-pattern:
-        type: pattern
       my-input-topic:
         type: input
-      my-labeled-input-pattern:
-        label: my-input-topic-labeled-pattern
-        type: pattern
       my-labeled-input-topic:
         label: my-input-topic-label
-  helm_name_override: resources-streams-bootstrap-my-streams-app
-  helm_release_name: resources-streams-bootstrap-my-streams-app
-  name: my-streams-app
-  namespace: example-namespace
-  prefix: resources-streams-bootstrap-
+      my-input-pattern:
+        type: pattern
+      my-labeled-input-pattern:
+        type: pattern
+        label: my-input-topic-labeled-pattern
+    components: {}
   to:
-    models: {}
     topics:
-      my-error-topic:
+      my-output-topic:
+        type: output
         configs: {}
+      my-error-topic:
         type: error
+        configs: {}
       my-labeled-topic-output:
         configs: {}
         label: my-output-topic-label
-      my-output-topic:
-        configs: {}
-        type: output
       resources-streams-bootstrap-my-streams-app-error:
-        configs:
-          cleanup.policy: compact,delete
-        partitions_count: 1
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
-  type: my-streams-app
+        partitions_count: 1
+        configs:
+          cleanup.policy: compact,delete
+    models: {}
+  namespace: example-namespace
   values:
+    image: my-registry/my-streams-app-image
+    imageTag: 1.0.0
+    imagePullPolicy: IfNotPresent
+    kafka:
+      bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      schemaRegistryUrl: http://localhost:8081/
+      labeledOutputTopics:
+        my-output-topic-label: my-labeled-topic-output
+      outputTopic: my-output-topic
+      applicationId: my-streams-app-id
+      inputTopics:
+        - my-input-topic
+      inputPattern: my-input-pattern
+      labeledInputTopics:
+        my-input-topic-label:
+          - my-labeled-input-topic
+      labeledInputPatterns:
+        my-input-topic-labeled-pattern: my-labeled-input-pattern
+      errorTopic: resources-streams-bootstrap-my-streams-app-error
+      config:
+        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+    commandLine:
+      CONVERT_XML: true
+    files:
+      log4j2.xml:
+        mountPath: app/resources
+        content: |
+          <?xml version="1.0" encoding="UTF-8"?>
+          <Configuration>
+              <Appenders>
+                  <Console name="Console" target="SYSTEM_OUT">
+                      <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n"/>
+                  </Console>
+              </Appenders>
+              <Loggers>
+                  <Root level="info">
+                      <AppenderRef ref="Console"/>
+                  </Root>
+              </Loggers>
+          </Configuration>
+    javaOptions:
+      maxRAMPercentage: 85
+      others: []
     affinity:
       nodeAffinity:
         preferredDuringSchedulingIgnoredDuringExecution:
@@ -99,48 +140,7 @@
                   operator: DoesNotExist
                   values: []
             weight: 1
-    commandLine:
-      CONVERT_XML: true
-    files:
-      log4j2.xml:
-        content: |
-          <?xml version="1.0" encoding="UTF-8"?>
-          <Configuration>
-              <Appenders>
-                  <Console name="Console" target="SYSTEM_OUT">
-                      <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n"/>
-                  </Console>
-              </Appenders>
-              <Loggers>
-                  <Root level="info">
-                      <AppenderRef ref="Console"/>
-                  </Root>
-              </Loggers>
-          </Configuration>
-        mountPath: app/resources
-    image: my-registry/my-streams-app-image
-    imagePullPolicy: IfNotPresent
-    imageTag: 1.0.0
-    javaOptions:
-      maxRAMPercentage: 85
-      others: []
-    kafka:
-      applicationId: my-streams-app-id
-      bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      config:
-        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-      errorTopic: resources-streams-bootstrap-my-streams-app-error
-      inputPattern: my-input-pattern
-      inputTopics:
-        - my-input-topic
-      labeledInputPatterns:
-        my-input-topic-labeled-pattern: my-labeled-input-pattern
-      labeledInputTopics:
-        my-input-topic-label:
-          - my-labeled-input-topic
-      labeledOutputTopics:
-        my-output-topic-label: my-labeled-topic-output
-      outputTopic: my-output-topic
-      schemaRegistryUrl: http://localhost:8081/
     statefulSet: false
   version: 3.6.1
+  helm_release_name: resources-streams-bootstrap-my-streams-app
+  helm_name_override: resources-streams-bootstrap-my-streams-app

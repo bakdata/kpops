@@ -1,15 +1,13 @@
-- helm_name_override: word-count-data-producer
-  helm_release_name: word-count-data-producer
+- type: producer-app
   name: data-producer
-  namespace: ${NAMESPACE}
   prefix: word-count-
   to:
-    models: {}
     topics:
       word-count-data-producer-topic:
-        configs: {}
         partitions_count: 3
-  type: producer-app
+        configs: {}
+    models: {}
+  namespace: ${NAMESPACE}
   values:
     image: bakdata/kpops-demo-sentence-producer
     imageTag: 2.0.0
@@ -23,51 +21,53 @@
         enabled: false
     replicaCount: 1
   version: 3.1.0
-- helm_name_override: word-count-word-count-app
-  helm_release_name: word-count-word-count-app
+  helm_release_name: word-count-data-producer
+  helm_name_override: word-count-data-producer
+- type: streams-app
   name: word-count-app
-  namespace: ${NAMESPACE}
   prefix: word-count-
   to:
-    models: {}
     topics:
-      word-count-word-count-app-dead-letter-topic:
-        configs: {}
-        partitions_count: 1
-        type: error
       word-count-word-count-app-topic:
+        type: output
+        partitions_count: 3
         configs:
           cleanup.policy: compact
-        partitions_count: 3
-        type: output
-  type: streams-app
+      word-count-word-count-app-dead-letter-topic:
+        type: error
+        partitions_count: 1
+        configs: {}
+    models: {}
+  namespace: ${NAMESPACE}
   values:
     image: bakdata/kpops-demo-word-count-app
     imageTag: 2.0.0
     kafka:
       bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      errorTopic: word-count-word-count-app-dead-letter-topic
+      outputTopic: word-count-word-count-app-topic
       inputTopics:
         - word-count-data-producer-topic
-      outputTopic: word-count-word-count-app-topic
-    labels:
-      pipeline: word-count
+      errorTopic: word-count-word-count-app-dead-letter-topic
+    statefulSet: false
     prometheus:
       jmx:
         enabled: false
     replicaCount: 1
-    statefulSet: false
+    labels:
+      pipeline: word-count
   version: 3.1.0
-- config:
-    connector.class: com.github.jcustenborder.kafka.connect.redis.RedisSinkConnector
-    key.converter: org.apache.kafka.connect.storage.StringConverter
-    name: word-count-redis-sink-connector
-    redis.database: '0'
-    redis.hosts: redis-headless:6379
-    tasks.max: '1'
-    topics: word-count-word-count-app-topic
-    value.converter: org.apache.kafka.connect.storage.StringConverter
+  helm_release_name: word-count-word-count-app
+  helm_name_override: word-count-word-count-app
+- type: kafka-sink-connector
   name: redis-sink-connector
   prefix: word-count-
+  config:
+    connector.class: com.github.jcustenborder.kafka.connect.redis.RedisSinkConnector
+    name: word-count-redis-sink-connector
+    topics: word-count-word-count-app-topic
+    redis.hosts: redis-headless:6379
+    redis.database: '0'
+    tasks.max: '1'
+    key.converter: org.apache.kafka.connect.storage.StringConverter
+    value.converter: org.apache.kafka.connect.storage.StringConverter
   resetter_values: {}
-  type: kafka-sink-connector
