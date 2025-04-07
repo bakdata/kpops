@@ -4,7 +4,14 @@ from abc import ABC
 from collections.abc import Iterator
 from typing import Any, ClassVar
 
-from pydantic import AliasChoices, ConfigDict, Field
+import pydantic
+from pydantic import (
+    AliasChoices,
+    ConfigDict,
+    Field,
+    SerializationInfo,
+    SerializerFunctionWrapHandler,
+)
 
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
@@ -24,10 +31,10 @@ from kpops.components.common.topic import (
 )
 from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import SerializeAsOptionalModel
+from kpops.utils.pydantic import exclude_by_name, exclude_by_value
 
 
-class PipelineComponent(SerializeAsOptionalModel, BaseDefaultsComponent, ABC):
+class PipelineComponent(BaseDefaultsComponent, ABC):
     """Base class for all components.
 
     :param name: Component name
@@ -60,6 +67,21 @@ class PipelineComponent(SerializeAsOptionalModel, BaseDefaultsComponent, ABC):
     model_config: ClassVar[ConfigDict] = ConfigDict(
         extra="allow", use_enum_values=False
     )
+
+    @pydantic.model_serializer(mode="wrap", when_used="always")
+    def sort_model(
+        self,
+        default_serialize_handler: SerializerFunctionWrapHandler,
+        info: SerializationInfo,
+    ) -> dict[str, Any]:
+        result = default_serialize_handler(self)
+        if info.context != "generate":
+            return result
+        result = exclude_by_name(result, "type", "name")
+        # NOTE: from SerializeAsOptionalModel
+        if info.exclude_none:
+            result = exclude_by_value(result, None)
+        return {"type": self.type, "name": self.name, **result}
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
