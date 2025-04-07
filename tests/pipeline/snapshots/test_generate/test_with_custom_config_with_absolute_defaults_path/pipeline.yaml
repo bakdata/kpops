@@ -1,60 +1,60 @@
-- helm_name_override: resources-custom-config-app1
-  helm_release_name: resources-custom-config-app1
+- type: producer-app
   name: app1
-  namespace: development-namespace
   prefix: resources-custom-config-
   to:
-    models: {}
     topics:
       app1-test-topic:
-        configs: {}
-        partitions_count: 3
         type: output
-  type: producer-app
+        partitions_count: 3
+        configs: {}
+    models: {}
+  namespace: development-namespace
   values:
     image: bakdata-demo-producer-app
     kafka:
       bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      outputTopic: app1-test-topic
       schemaRegistryUrl: http://localhost:8081/
+      outputTopic: app1-test-topic
     resources:
-      limits:
-        memory: 2G
       requests:
         memory: 2G
+      limits:
+        memory: 2G
   version: 3.6.1
-- helm_name_override: resources-custom-config-app2
-  helm_release_name: resources-custom-config-app2
+  helm_release_name: resources-custom-config-app1
+  helm_name_override: resources-custom-config-app1
+- type: streams-app
   name: app2
-  namespace: development-namespace
   prefix: resources-custom-config-
   to:
-    models: {}
     topics:
       app2-dead-letter-topic:
-        configs:
-          cleanup.policy: compact,delete
-        partitions_count: 1
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
+        partitions_count: 1
+        configs:
+          cleanup.policy: compact,delete
       app2-test-topic:
-        configs: {}
-        partitions_count: 3
         type: output
-  type: streams-app
+        partitions_count: 3
+        configs: {}
+    models: {}
+  namespace: development-namespace
   values:
     image: some-image
     kafka:
       bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      config:
-        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-      errorTopic: app2-dead-letter-topic
+      schemaRegistryUrl: http://localhost:8081/
+      outputTopic: app2-test-topic
       inputTopics:
         - app1-test-topic
-      outputTopic: app2-test-topic
-      schemaRegistryUrl: http://localhost:8081/
+      errorTopic: app2-dead-letter-topic
+      config:
+        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+    statefulSet: false
     labels:
       pipeline: resources-custom-config
-    statefulSet: false
   version: 3.6.1
+  helm_release_name: resources-custom-config-app2
+  helm_name_override: resources-custom-config-app2
 

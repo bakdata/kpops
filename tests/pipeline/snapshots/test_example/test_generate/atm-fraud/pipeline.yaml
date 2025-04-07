@@ -1,221 +1,221 @@
-- helm_name_override: atm-fraud-account-producer
-  helm_release_name: atm-fraud-account-producer
+- type: producer-app-v2
   name: account-producer
-  namespace: ${NAMESPACE}
   prefix: atm-fraud-
   to:
-    models: {}
     topics:
       atm-fraud-account-producer-topic:
-        configs: {}
         partitions_count: 3
-  type: producer-app-v2
+        configs: {}
+    models: {}
+  namespace: ${NAMESPACE}
   values:
-    image: ${DOCKER_REGISTRY}/atm-demo-accountproducer
     imageTag: 1.0.0
+    streams:
+      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
+      outputTopic: atm-fraud-account-producer-topic
+      optimizeLeaveGroupBehavior: false
+    image: ${DOCKER_REGISTRY}/atm-demo-accountproducer
+    schedule: 0 12 * * *
+    suspend: true
     labels:
       pipeline: atm-fraud
     prometheus:
       jmx:
         enabled: false
     replicaCount: 1
-    schedule: 0 12 * * *
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      optimizeLeaveGroupBehavior: false
-      outputTopic: atm-fraud-account-producer-topic
-      schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
-    suspend: true
   version: 2.9.0
-- helm_name_override: atm-fraud-transaction-avro-producer
-  helm_release_name: atm-fraud-transaction-avro-producer
+  helm_release_name: atm-fraud-account-producer
+  helm_name_override: atm-fraud-account-producer
+- type: producer-app-v2
   name: transaction-avro-producer
-  namespace: ${NAMESPACE}
   prefix: atm-fraud-
   to:
-    models: {}
     topics:
       atm-fraud-transaction-avro-producer-topic:
-        configs: {}
         partitions_count: 3
-  type: producer-app-v2
+        configs: {}
+    models: {}
+  namespace: ${NAMESPACE}
   values:
-    commandLine:
-      ITERATION: 20
-      REAL_TX: 19
-    image: ${DOCKER_REGISTRY}/atm-demo-transactionavroproducer
     imageTag: 1.0.0
+    streams:
+      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
+      outputTopic: atm-fraud-transaction-avro-producer-topic
+      optimizeLeaveGroupBehavior: false
+    image: ${DOCKER_REGISTRY}/atm-demo-transactionavroproducer
+    commandLine:
+      REAL_TX: 19
+      ITERATION: 20
+    schedule: 0 12 * * *
+    suspend: true
     labels:
       pipeline: atm-fraud
     prometheus:
       jmx:
         enabled: false
     replicaCount: 1
-    schedule: 0 12 * * *
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      optimizeLeaveGroupBehavior: false
-      outputTopic: atm-fraud-transaction-avro-producer-topic
-      schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
-    suspend: true
   version: 2.9.0
-- helm_name_override: atm-fraud-transaction-joiner
-  helm_release_name: atm-fraud-transaction-joiner
+  helm_release_name: atm-fraud-transaction-avro-producer
+  helm_name_override: atm-fraud-transaction-avro-producer
+- type: streams-app-v2
   name: transaction-joiner
-  namespace: ${NAMESPACE}
   prefix: atm-fraud-
   to:
-    models: {}
     topics:
       atm-fraud-transaction-joiner-dead-letter-topic:
-        configs: {}
-        partitions_count: 1
         type: error
-      atm-fraud-transaction-joiner-topic:
+        partitions_count: 1
         configs: {}
+      atm-fraud-transaction-joiner-topic:
         partitions_count: 3
-  type: streams-app-v2
+        configs: {}
+    models: {}
+  namespace: ${NAMESPACE}
   values:
+    imageTag: 1.0.0
+    streams:
+      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
+      outputTopic: atm-fraud-transaction-joiner-topic
+      inputTopics:
+        - atm-fraud-transaction-avro-producer-topic
+      errorTopic: atm-fraud-transaction-joiner-dead-letter-topic
+      optimizeLeaveGroupBehavior: false
+    statefulSet: false
+    persistence:
+      enabled: false
+    image: ${DOCKER_REGISTRY}/atm-demo-transactionjoiner
     annotations:
       consumerGroup: atm-transactionjoiner-atm-fraud-joinedtransactions-topic
     commandLine:
       PRODUCTIVE: false
-    image: ${DOCKER_REGISTRY}/atm-demo-transactionjoiner
-    imageTag: 1.0.0
     labels:
       pipeline: atm-fraud
-    persistence:
-      enabled: false
     prometheus:
       jmx:
         enabled: false
     replicaCount: 1
-    statefulSet: false
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      errorTopic: atm-fraud-transaction-joiner-dead-letter-topic
-      inputTopics:
-        - atm-fraud-transaction-avro-producer-topic
-      optimizeLeaveGroupBehavior: false
-      outputTopic: atm-fraud-transaction-joiner-topic
-      schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
   version: 2.9.0
-- helm_name_override: atm-fraud-fraud-detector
-  helm_release_name: atm-fraud-fraud-detector
+  helm_release_name: atm-fraud-transaction-joiner
+  helm_name_override: atm-fraud-transaction-joiner
+- type: streams-app-v2
   name: fraud-detector
-  namespace: ${NAMESPACE}
   prefix: atm-fraud-
   to:
-    models: {}
     topics:
       atm-fraud-fraud-detector-dead-letter-topic:
-        configs: {}
-        partitions_count: 1
         type: error
-      atm-fraud-fraud-detector-topic:
+        partitions_count: 1
         configs: {}
+      atm-fraud-fraud-detector-topic:
         partitions_count: 3
-  type: streams-app-v2
+        configs: {}
+    models: {}
+  namespace: ${NAMESPACE}
   values:
+    imageTag: 1.0.0
+    streams:
+      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
+      outputTopic: atm-fraud-fraud-detector-topic
+      inputTopics:
+        - atm-fraud-transaction-joiner-topic
+      errorTopic: atm-fraud-fraud-detector-dead-letter-topic
+      optimizeLeaveGroupBehavior: false
+    statefulSet: false
+    persistence:
+      enabled: false
+    image: ${DOCKER_REGISTRY}/atm-demo-frauddetector
     annotations:
       consumerGroup: atm-frauddetector-atm-fraud-possiblefraudtransactions-topic
     commandLine:
       PRODUCTIVE: false
-    image: ${DOCKER_REGISTRY}/atm-demo-frauddetector
-    imageTag: 1.0.0
     labels:
       pipeline: atm-fraud
-    persistence:
-      enabled: false
     prometheus:
       jmx:
         enabled: false
     replicaCount: 1
-    statefulSet: false
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      errorTopic: atm-fraud-fraud-detector-dead-letter-topic
-      inputTopics:
-        - atm-fraud-transaction-joiner-topic
-      optimizeLeaveGroupBehavior: false
-      outputTopic: atm-fraud-fraud-detector-topic
-      schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
   version: 2.9.0
-- from:
+  helm_release_name: atm-fraud-fraud-detector
+  helm_name_override: atm-fraud-fraud-detector
+- type: streams-app-v2
+  name: account-linker
+  prefix: atm-fraud-
+  from:
+    topics: {}
     components:
-      account-producer:
-        label: accounts
       fraud-detector:
         type: input
-    topics: {}
-  helm_name_override: atm-fraud-account-linker
-  helm_release_name: atm-fraud-account-linker
-  name: account-linker
-  namespace: ${NAMESPACE}
-  prefix: atm-fraud-
+      account-producer:
+        label: accounts
   to:
-    models: {}
     topics:
       atm-fraud-account-linker-dead-letter-topic:
-        configs: {}
-        partitions_count: 1
         type: error
-      atm-fraud-account-linker-topic:
+        partitions_count: 1
         configs: {}
+      atm-fraud-account-linker-topic:
         partitions_count: 3
-  type: streams-app-v2
+        configs: {}
+    models: {}
+  namespace: ${NAMESPACE}
   values:
+    imageTag: 1.0.0
+    streams:
+      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
+      outputTopic: atm-fraud-account-linker-topic
+      inputTopics:
+        - atm-fraud-fraud-detector-topic
+      extraInputTopics:
+        accounts:
+          - atm-fraud-account-producer-topic
+      errorTopic: atm-fraud-account-linker-dead-letter-topic
+      optimizeLeaveGroupBehavior: false
+    statefulSet: false
+    persistence:
+      enabled: false
+    image: ${DOCKER_REGISTRY}/atm-demo-accountlinker
     annotations:
       consumerGroup: atm-accountlinker-atm-fraud-output-topic
     commandLine:
       PRODUCTIVE: false
-    image: ${DOCKER_REGISTRY}/atm-demo-accountlinker
-    imageTag: 1.0.0
     labels:
       pipeline: atm-fraud
-    persistence:
-      enabled: false
     prometheus:
       jmx:
         enabled: false
     replicaCount: 1
-    statefulSet: false
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      errorTopic: atm-fraud-account-linker-dead-letter-topic
-      extraInputTopics:
-        accounts:
-          - atm-fraud-account-producer-topic
-      inputTopics:
-        - atm-fraud-fraud-detector-topic
-      optimizeLeaveGroupBehavior: false
-      outputTopic: atm-fraud-account-linker-topic
-      schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
   version: 2.9.0
-- config:
-    auto.create: 'true'
-    connection.ds.pool.size: '5'
-    connection.password: AppPassword
-    connection.url: jdbc:postgresql://postgresql-dev.${NAMESPACE}.svc.cluster.local:5432/app_db
-    connection.user: app1
-    connector.class: io.confluent.connect.jdbc.JdbcSinkConnector
-    errors.deadletterqueue.context.headers.enable: 'true'
-    errors.deadletterqueue.topic.name: postgres-request-sink-dead-letters
-    errors.deadletterqueue.topic.replication.factor: '1'
-    errors.tolerance: all
-    insert.mode: insert
-    insert.mode.databaselevel: 'true'
-    key.converter: org.apache.kafka.connect.storage.StringConverter
-    name: atm-fraud-postgresql-connector
-    pk.mode: record_value
-    table.name.format: fraud_transactions
-    tasks.max: '1'
-    topics: atm-fraud-account-linker-topic
-    transforms: flatten
-    transforms.flatten.type: org.apache.kafka.connect.transforms.Flatten$Value
-    value.converter: io.confluent.connect.avro.AvroConverter
-    value.converter.schema.registry.url: http://k8kafka-cp-schema-registry.${NAMESPACE}.svc.cluster.local:8081
+  helm_release_name: atm-fraud-account-linker
+  helm_name_override: atm-fraud-account-linker
+- type: kafka-sink-connector
   name: postgresql-connector
   prefix: atm-fraud-
+  config:
+    connector.class: io.confluent.connect.jdbc.JdbcSinkConnector
+    name: atm-fraud-postgresql-connector
+    topics: atm-fraud-account-linker-topic
+    errors.deadletterqueue.topic.name: postgres-request-sink-dead-letters
+    tasks.max: '1'
+    connection.url: jdbc:postgresql://postgresql-dev.${NAMESPACE}.svc.cluster.local:5432/app_db
+    connection.user: app1
+    connection.password: AppPassword
+    connection.ds.pool.size: '5'
+    insert.mode: insert
+    insert.mode.databaselevel: 'true'
+    value.converter: io.confluent.connect.avro.AvroConverter
+    value.converter.schema.registry.url: http://k8kafka-cp-schema-registry.${NAMESPACE}.svc.cluster.local:8081
+    key.converter: org.apache.kafka.connect.storage.StringConverter
+    transforms: flatten
+    transforms.flatten.type: org.apache.kafka.connect.transforms.Flatten$Value
+    auto.create: 'true'
+    table.name.format: fraud_transactions
+    errors.deadletterqueue.context.headers.enable: 'true'
+    errors.deadletterqueue.topic.replication.factor: '1'
+    errors.tolerance: all
+    pk.mode: record_value
   resetter_values: {}
-  type: kafka-sink-connector

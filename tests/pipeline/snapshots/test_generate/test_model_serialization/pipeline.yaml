@@ -1,14 +1,14 @@
-- helm_name_override: resources-pipeline-with-paths-account-producer
-  helm_release_name: resources-pipeline-with-paths-account-producer
+- type: producer-app
   name: account-producer
-  namespace: test
   prefix: resources-pipeline-with-paths-
-  type: producer-app
+  namespace: test
   values:
     image: bakdata-demo-producer-app
     kafka:
       bootstrapServers: test
-      outputTopic: out
       schemaRegistryUrl: http://localhost:8081/
+      outputTopic: out
   version: 3.6.1
+  helm_release_name: resources-pipeline-with-paths-account-producer
+  helm_name_override: resources-pipeline-with-paths-account-producer
 
