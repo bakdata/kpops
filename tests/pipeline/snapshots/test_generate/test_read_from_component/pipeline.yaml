@@ -1,4 +1,6 @@
-- name: producer1
+- helm_name_override: resources-read-from-component-producer1
+  helm_release_name: resources-read-from-component-producer1
+  name: producer1
   namespace: example-namespace
   prefix: resources-read-from-component-
   to:
@@ -15,7 +17,9 @@
       outputTopic: resources-read-from-component-producer1
       schemaRegistryUrl: http://localhost:8081/
   version: 3.6.1
-- name: producer2
+- helm_name_override: producer2
+  helm_release_name: producer2
+  name: producer2
   namespace: example-namespace
   prefix: ''
   to:
@@ -32,7 +36,9 @@
       outputTopic: resources-read-from-component-producer2
       schemaRegistryUrl: http://localhost:8081/
   version: 3.6.1
-- name: inflate-step
+- helm_name_override: resources-read-from-component-inflate-step
+  helm_release_name: resources-read-from-component-inflate-step
+  name: inflate-step
   namespace: example-namespace
   prefix: resources-read-from-component-
   to:
@@ -98,7 +104,9 @@
         configs: {}
         type: output
   type: kafka-sink-connector
-- name: inflate-step-inflated-streams-app
+- helm_name_override: resources-read-from-component-inflate-step-inflated-streams-app
+  helm_release_name: resources-read-from-component-inflate-step-infl-5def2
+  name: inflate-step-inflated-streams-app
   namespace: example-namespace
   prefix: resources-read-from-component-
   to:
@@ -127,7 +135,9 @@
       schemaRegistryUrl: http://localhost:8081/
     statefulSet: false
   version: 3.6.1
-- name: inflate-step-without-prefix
+- helm_name_override: inflate-step-without-prefix
+  helm_release_name: inflate-step-without-prefix
+  name: inflate-step-without-prefix
   namespace: example-namespace
   prefix: ''
   to:
@@ -193,7 +203,9 @@
         configs: {}
         type: output
   type: kafka-sink-connector
-- name: inflate-step-without-prefix-inflated-streams-app
+- helm_name_override: resources-read-from-component-inflate-step-without-prefix-000dc
+  helm_release_name: resources-read-from-component-inflate-step-with-000dc
+  name: inflate-step-without-prefix-inflated-streams-app
   namespace: example-namespace
   prefix: resources-read-from-component-
   to:
@@ -227,6 +239,8 @@
       producer1:
         type: input
     topics: {}
+  helm_name_override: resources-read-from-component-consumer1
+  helm_release_name: resources-read-from-component-consumer1
   name: consumer1
   namespace: example-namespace
   prefix: resources-read-from-component-
@@ -263,6 +277,8 @@
       producer1:
         type: input
     topics: {}
+  helm_name_override: resources-read-from-component-consumer2
+  helm_release_name: resources-read-from-component-consumer2
   name: consumer2
   namespace: example-namespace
   prefix: resources-read-from-component-
@@ -296,6 +312,8 @@
     topics:
       resources-read-from-component-producer1:
         type: input
+  helm_name_override: resources-read-from-component-consumer3
+  helm_release_name: resources-read-from-component-consumer3
   name: consumer3
   namespace: example-namespace
   prefix: resources-read-from-component-
@@ -327,6 +345,8 @@
       inflate-step:
         type: input
     topics: {}
+  helm_name_override: resources-read-from-component-consumer4
+  helm_release_name: resources-read-from-component-consumer4
   name: consumer4
   namespace: example-namespace
   prefix: resources-read-from-component-
@@ -357,6 +377,8 @@
       inflate-step-without-prefix:
         type: input
     topics: {}
+  helm_name_override: resources-read-from-component-consumer5
+  helm_release_name: resources-read-from-component-consumer5
   name: consumer5
   namespace: example-namespace
   prefix: resources-read-from-component-

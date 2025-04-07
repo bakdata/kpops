@@ -1,4 +1,6 @@
-- name: scheduled-producer
+- helm_name_override: resources-pipeline-with-inflate-scheduled-producer
+  helm_release_name: resources-pipeline-with-inflate-scheduled-producer
+  name: scheduled-producer
   namespace: example-namespace
   prefix: resources-pipeline-with-inflate-
   to:
@@ -23,7 +25,9 @@
       schemaRegistryUrl: http://localhost:8081/
     schedule: 30 3/8 * * *
   version: 3.6.1
-- name: converter
+- helm_name_override: resources-pipeline-with-inflate-converter
+  helm_release_name: resources-pipeline-with-inflate-converter
+  name: converter
   namespace: example-namespace
   prefix: resources-pipeline-with-inflate-
   to:
@@ -67,7 +71,9 @@
         memory: 2G
     statefulSet: false
   version: 3.6.1
-- name: should-inflate
+- helm_name_override: resources-pipeline-with-inflate-should-inflate
+  helm_release_name: resources-pipeline-with-inflate-should-inflate
+  name: should-inflate
   namespace: example-namespace
   prefix: resources-pipeline-with-inflate-
   to:
@@ -140,7 +146,9 @@
         configs: {}
         label: test
   type: kafka-sink-connector
-- name: should-inflate-inflated-streams-app
+- helm_name_override: resources-pipeline-with-inflate-should-inflate-inflated-s-2ea20
+  helm_release_name: resources-pipeline-with-inflate-should-inflate--2ea20
+  name: should-inflate-inflated-streams-app
   namespace: example-namespace
   prefix: resources-pipeline-with-inflate-
   to:

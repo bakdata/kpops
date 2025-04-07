@@ -1,4 +1,6 @@
-- name: app1
+- helm_name_override: resources-custom-config-app1
+  helm_release_name: resources-custom-config-app1
+  name: app1
   namespace: development-namespace
   prefix: resources-custom-config-
   to:
@@ -21,7 +23,9 @@
       requests:
         memory: 2G
   version: 3.6.1
-- name: app2
+- helm_name_override: resources-custom-config-app2
+  helm_release_name: resources-custom-config-app2
+  name: app2
   namespace: development-namespace
   prefix: resources-custom-config-
   to:

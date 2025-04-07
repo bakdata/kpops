@@ -3,6 +3,8 @@
     topics:
       .*:
         type: pattern
+  helm_name_override: resources-no-input-topic-pipeline-app1
+  helm_release_name: resources-no-input-topic-pipeline-app1
   name: app1
   namespace: example-namespace
   prefix: resources-no-input-topic-pipeline-
@@ -38,7 +40,9 @@
         memory: 2G
     statefulSet: false
   version: 3.6.1
-- name: app2
+- helm_name_override: resources-no-input-topic-pipeline-app2
+  helm_release_name: resources-no-input-topic-pipeline-app2
+  name: app2
   namespace: example-namespace
   prefix: resources-no-input-topic-pipeline-
   to:
