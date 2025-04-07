@@ -225,7 +225,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                         "connector": CONNECTOR_FULL_NAME,
                         "offsetTopic": OFFSETS_TOPIC,
                     },
-                    "nameOverride": CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
+                    "fullnameOverride": CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
                 },
                 HelmUpgradeInstallFlags(
                     version="1.0.4",
@@ -303,7 +303,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                 dry_run,
                 RESETTER_NAMESPACE,
                 {
-                    "nameOverride": CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
+                    "fullnameOverride": CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
                     "connectorType": CONNECTOR_TYPE,
                     "config": {
                         "brokers": "broker:9092",
@@ -383,7 +383,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                 dry_run,
                 RESETTER_NAMESPACE,
                 {
-                    "nameOverride": CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
+                    "fullnameOverride": CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
                     "connectorType": CONNECTOR_TYPE,
                     "config": {
                         "brokers": "broker:9092",

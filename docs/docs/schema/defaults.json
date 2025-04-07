@@ -219,7 +219,7 @@
             "additionalProperties": true,
             "description": "Helm app values.",
             "properties": {
-                "nameOverride": {
+                "fullnameOverride": {
                     "anyOf": [
                         {
                             "maxLength": 63,
@@ -230,8 +230,8 @@
                         }
                     ],
                     "default": null,
-                    "description": "Helm chart name override, assigned automatically",
-                    "title": "Nameoverride"
+                    "description": "Helm chart fullname override, assigned automatically",
+                    "title": "FullnameOverride"
                 }
             },
             "title": "HelmAppValues",
@@ -1752,14 +1752,7 @@
                     "default": null,
                     "description": "Map to configure pod affinities https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity."
                 },
-                "imageTag": {
-                    "default": "latest",
-                    "description": "Docker image tag of the streams-bootstrap-v2 app.",
-                    "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
-                    "title": "Imagetag",
-                    "type": "string"
-                },
-                "nameOverride": {
+                "fullnameOverride": {
                     "anyOf": [
                         {
                             "maxLength": 63,
@@ -1770,8 +1763,15 @@
                         }
                     ],
                     "default": null,
-                    "description": "Helm chart name override, assigned automatically",
-                    "title": "Nameoverride"
+                    "description": "Helm chart fullname override, assigned automatically",
+                    "title": "FullnameOverride"
+                },
+                "imageTag": {
+                    "default": "latest",
+                    "description": "Docker image tag of the streams-bootstrap-v2 app.",
+                    "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
+                    "title": "Imagetag",
+                    "type": "string"
                 },
                 "streams": {
                     "$ref": "#/$defs/ProducerStreamsConfig",
@@ -1926,6 +1926,20 @@
                     "description": "Map of files to mount for the app. File will be mounted as $value.mountPath/$key. $value.content denotes file content (recommended to be used with --set-file).",
                     "title": "Files"
                 },
+                "fullnameOverride": {
+                    "anyOf": [
+                        {
+                            "maxLength": 63,
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Helm chart fullname override, assigned automatically",
+                    "title": "FullnameOverride"
+                },
                 "image": {
                     "description": "Docker image of the Kafka producer app.",
                     "title": "Image",
@@ -2004,20 +2018,6 @@
                     "default": {},
                     "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
                     "title": "Livenessprobe"
-                },
-                "nameOverride": {
-                    "anyOf": [
-                        {
-                            "maxLength": 63,
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Helm chart name override, assigned automatically",
-                    "title": "Nameoverride"
                 },
                 "podAnnotations": {
                     "anyOf": [
@@ -2898,14 +2898,7 @@
                     "default": null,
                     "description": "Kubernetes event-driven autoscaling config"
                 },
-                "imageTag": {
-                    "default": "latest",
-                    "description": "Docker image tag of the streams-bootstrap-v2 app.",
-                    "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
-                    "title": "Imagetag",
-                    "type": "string"
-                },
-                "nameOverride": {
+                "fullnameOverride": {
                     "anyOf": [
                         {
                             "maxLength": 63,
@@ -2916,8 +2909,15 @@
                         }
                     ],
                     "default": null,
-                    "description": "Helm chart name override, assigned automatically",
-                    "title": "Nameoverride"
+                    "description": "Helm chart fullname override, assigned automatically",
+                    "title": "FullnameOverride"
+                },
+                "imageTag": {
+                    "default": "latest",
+                    "description": "Docker image tag of the streams-bootstrap-v2 app.",
+                    "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
+                    "title": "Imagetag",
+                    "type": "string"
                 },
                 "persistence": {
                     "$ref": "#/$defs/kpops__components__streams_bootstrap_v2__streams__model__PersistenceConfig",
@@ -3060,6 +3060,20 @@
                     "description": "Map of files to mount for the app. File will be mounted as $value.mountPath/$key. $value.content denotes file content (recommended to be used with --set-file).",
                     "title": "Files"
                 },
+                "fullnameOverride": {
+                    "anyOf": [
+                        {
+                            "maxLength": 63,
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Helm chart fullname override, assigned automatically",
+                    "title": "FullnameOverride"
+                },
                 "image": {
                     "description": "Docker image of the Kafka producer app.",
                     "title": "Image",
@@ -3150,20 +3164,6 @@
                     "default": {},
                     "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
                     "title": "Livenessprobe"
-                },
-                "nameOverride": {
-                    "anyOf": [
-                        {
-                            "maxLength": 63,
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Helm chart name override, assigned automatically",
-                    "title": "Nameoverride"
                 },
                 "persistence": {
                     "anyOf": [
@@ -3559,14 +3559,7 @@
                     "default": null,
                     "description": "Map to configure pod affinities https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity."
                 },
-                "imageTag": {
-                    "default": "latest",
-                    "description": "Docker image tag of the streams-bootstrap-v2 app.",
-                    "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
-                    "title": "Imagetag",
-                    "type": "string"
-                },
-                "nameOverride": {
+                "fullnameOverride": {
                     "anyOf": [
                         {
                             "maxLength": 63,
@@ -3577,8 +3570,15 @@
                         }
                     ],
                     "default": null,
-                    "description": "Helm chart name override, assigned automatically",
-                    "title": "Nameoverride"
+                    "description": "Helm chart fullname override, assigned automatically",
+                    "title": "FullnameOverride"
+                },
+                "imageTag": {
+                    "default": "latest",
+                    "description": "Docker image tag of the streams-bootstrap-v2 app.",
+                    "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
+                    "title": "Imagetag",
+                    "type": "string"
                 },
                 "streams": {
                     "$ref": "#/$defs/KafkaStreamsConfig",
@@ -3694,6 +3694,20 @@
                     "description": "Map of files to mount for the app. File will be mounted as $value.mountPath/$key. $value.content denotes file content (recommended to be used with --set-file).",
                     "title": "Files"
                 },
+                "fullnameOverride": {
+                    "anyOf": [
+                        {
+                            "maxLength": 63,
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Helm chart fullname override, assigned automatically",
+                    "title": "FullnameOverride"
+                },
                 "image": {
                     "description": "Docker image of the Kafka producer app.",
                     "title": "Image",
@@ -3772,20 +3786,6 @@
                     "default": {},
                     "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
                     "title": "Livenessprobe"
-                },
-                "nameOverride": {
-                    "anyOf": [
-                        {
-                            "maxLength": 63,
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Helm chart name override, assigned automatically",
-                    "title": "Nameoverride"
                 },
                 "podAnnotations": {
                     "anyOf": [

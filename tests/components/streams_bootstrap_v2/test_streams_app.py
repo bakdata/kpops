@@ -170,7 +170,7 @@ class TestStreamsApp:
 
     def test_cleaner_helm_name_override(self, streams_app: StreamsAppV2):
         assert (
-            streams_app._cleaner.to_helm_values()["nameOverride"]
+            streams_app._cleaner.to_helm_values()["fullnameOverride"]
             == STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE
         )
 
@@ -448,7 +448,7 @@ class TestStreamsApp:
                 dry_run,
                 "test-namespace",
                 {
-                    "nameOverride": STREAMS_APP_HELM_NAME_OVERRIDE,
+                    "fullnameOverride": STREAMS_APP_HELM_NAME_OVERRIDE,
                     "streams": {
                         "brokers": "fake-broker:9092",
                         "extraOutputTopics": {
@@ -521,7 +521,7 @@ class TestStreamsApp:
                 dry_run,
                 "test-namespace",
                 {
-                    "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                    "fullnameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
                     "streams": {
                         "brokers": "fake-broker:9092",
                         "outputTopic": "streams-app-output-topic",
@@ -573,7 +573,7 @@ class TestStreamsApp:
                 dry_run,
                 "test-namespace",
                 {
-                    "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                    "fullnameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
                     "streams": {
                         "brokers": "fake-broker:9092",
                         "outputTopic": "streams-app-output-topic",
@@ -601,7 +601,7 @@ class TestStreamsApp:
             return_value={
                 "image": "registry/streams-app",
                 "imageTag": image_tag_in_cluster,
-                "nameOverride": STREAMS_APP_NAME,
+                "fullnameOverride": STREAMS_APP_NAME,
                 "replicaCount": 1,
                 "persistence": {"enabled": False, "size": "1Gi"},
                 "statefulSet": False,
@@ -647,7 +647,7 @@ class TestStreamsApp:
             "test-namespace",
             {
                 "image": "registry/streams-app",
-                "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                "fullnameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
                 "imageTag": image_tag_in_cluster,
                 "persistence": {"size": "1Gi"},
                 "replicaCount": 1,
@@ -672,7 +672,7 @@ class TestStreamsApp:
             return_value={
                 "image": "registry/streams-app",
                 "imageTag": image_tag_in_cluster,
-                "nameOverride": STREAMS_APP_NAME,
+                "fullnameOverride": STREAMS_APP_NAME,
                 "replicaCount": 1,
                 "persistence": {"enabled": False, "size": "1Gi"},
                 "statefulSet": False,
@@ -720,7 +720,7 @@ class TestStreamsApp:
             "test-namespace",
             {
                 "image": "registry/streams-app",
-                "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                "fullnameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
                 "imageTag": image_tag_in_cluster,
                 "persistence": {"size": "1Gi"},
                 "replicaCount": 1,
@@ -891,7 +891,7 @@ class TestStreamsApp:
                 dry_run,
                 "test-namespace",
                 {
-                    "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                    "fullnameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
                     "statefulSet": True,
                     "persistence": {"enabled": True, "size": "5Gi"},
                     "streams": {
@@ -954,7 +954,7 @@ class TestStreamsApp:
             return_value={
                 "image": "registry/producer-app",
                 "imageTag": "1.1.1",
-                "nameOverride": STREAMS_APP_NAME,
+                "fullnameOverride": STREAMS_APP_NAME,
                 "kafka": {
                     "bootstrapServers": "fake-broker:9092",
                     "inputTopics": ["test-input-topic"],
@@ -1006,7 +1006,7 @@ class TestStreamsApp:
             "test-namespace",
             {
                 "image": "registry/streams-app",
-                "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                "fullnameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
                 "imageTag": "2.2.2",
                 "streams": {
                     "brokers": "fake-broker:9092",

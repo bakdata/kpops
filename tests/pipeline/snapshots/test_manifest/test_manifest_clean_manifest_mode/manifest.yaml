@@ -3,7 +3,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   labels:
-    app: resources-manifest-pipeline-my-producer-app-clean
+    app: bakdata-producer-app-job
     chart: producer-app-cleanup-job-3.6.1
     release: resources-manifest-pipeline-my-producer-app-clean
   name: resources-manifest-pipeline-my-producer-app-clean
@@ -12,7 +12,7 @@ spec:
   template:
     metadata:
       labels:
-        app: resources-manifest-pipeline-my-producer-app-clean
+        app: bakdata-producer-app-job
         release: resources-manifest-pipeline-my-producer-app-clean
     spec:
       containers:
@@ -33,7 +33,7 @@ spec:
               value: '-XX:MaxRAMPercentage=75.0 '
           image: my-registry/my-producer-image:1.0.0
           imagePullPolicy: Always
-          name: resources-manifest-pipeline-my-producer-app-clean
+          name: bakdata-producer-app-job
           resources:
             limits:
               cpu: 500m
@@ -49,7 +49,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   labels:
-    app: resources-manifest-pipeline-my-streams-app-clean
+    app: bakdata-streams-app-job
     chart: streams-app-cleanup-job-3.6.1
     release: resources-manifest-pipeline-my-streams-app-clean
   name: resources-manifest-pipeline-my-streams-app-clean
@@ -58,7 +58,7 @@ spec:
   template:
     metadata:
       labels:
-        app: resources-manifest-pipeline-my-streams-app-clean
+        app: bakdata-streams-app-job
         release: resources-manifest-pipeline-my-streams-app-clean
     spec:
       containers:
@@ -93,7 +93,7 @@ spec:
               value: '-XX:MaxRAMPercentage=75.0 '
           image: my-registry/my-streams-app-image:1.0.0
           imagePullPolicy: Always
-          name: resources-manifest-pipeline-my-streams-app-clean
+          name: bakdata-streams-app-job
           resources:
             limits:
               cpu: 500m
