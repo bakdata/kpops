@@ -77,11 +77,12 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         result = default_serialize_handler(self)
         if info.context != "generate":
             return result
-        result = exclude_by_name(result, "type", "name")
+        ordered_fields = {"type": self.type, "name": self.name}
+        result = exclude_by_name(result, *ordered_fields.keys())
         # NOTE: from SerializeAsOptionalModel
         if info.exclude_none:
             result = exclude_by_value(result, None)
-        return {"type": self.type, "name": self.name, **result}
+        return {**ordered_fields, **result}
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
