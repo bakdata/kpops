@@ -27,7 +27,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   labels:
-    app: bakdata-streams-app-job
+    app: resources-manifest-pipeline-my-streams-app-clean
     chart: streams-app-cleanup-job-3.6.1
     release: resources-manifest-pipeline-my-streams-app-clean
   name: resources-manifest-pipeline-my-streams-app-clean
@@ -36,7 +36,7 @@ spec:
   template:
     metadata:
       labels:
-        app: bakdata-streams-app-job
+        app: resources-manifest-pipeline-my-streams-app-clean
         release: resources-manifest-pipeline-my-streams-app-clean
     spec:
       containers:
@@ -71,7 +71,7 @@ spec:
               value: '-XX:MaxRAMPercentage=75.0 '
           image: my-registry/my-streams-app-image:1.0.0
           imagePullPolicy: Always
-          name: bakdata-streams-app-job
+          name: resources-manifest-pipeline-my-streams-app-clean
           resources:
             limits:
               cpu: 500m

@@ -3,7 +3,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   labels:
-    app: bakdata-producer-app
+    app: resources-custom-config-app1
     chart: producer-app-3.6.1
     release: resources-custom-config-app1
     streams-bootstrap/kind: producer-app
@@ -13,7 +13,7 @@ spec:
   template:
     metadata:
       labels:
-        app: bakdata-producer-app
+        app: resources-custom-config-app1
         release: resources-custom-config-app1
         streams-bootstrap/kind: producer-app
     spec:
@@ -31,7 +31,7 @@ spec:
               value: '-XX:MaxRAMPercentage=75.0 '
           image: bakdata-demo-producer-app:latest
           imagePullPolicy: Always
-          name: bakdata-producer-app
+          name: resources-custom-config-app1
           resources:
             limits:
               cpu: 500m
@@ -58,7 +58,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: bakdata-streams-app
+    app: resources-custom-config-app2
     chart: streams-app-3.6.1
     pipeline: resources-custom-config
     release: resources-custom-config-app2
@@ -68,12 +68,12 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: bakdata-streams-app
+      app: resources-custom-config-app2
       release: resources-custom-config-app2
   template:
     metadata:
       labels:
-        app: bakdata-streams-app
+        app: resources-custom-config-app2
         release: resources-custom-config-app2
         streams-bootstrap/kind: streams-app
     spec:
@@ -100,7 +100,7 @@ spec:
                 -Dcom.sun.management.jmxremote.ssl=false -XX:MaxRAMPercentage=75.0 '
           image: some-image:latest
           imagePullPolicy: Always
-          name: bakdata-streams-app
+          name: resources-custom-config-app2
           resources:
             limits:
               cpu: 500m

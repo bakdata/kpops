@@ -83,6 +83,7 @@ class TestStreamsBootstrap:
             True,
             "test-namespace",
             {
+                "nameOverride": "${pipeline.name}-example-name",
                 "fullnameOverride": "${pipeline.name}-example-name",
                 "image": "streamsBootstrap",
                 "imageTag": "1.0.0",

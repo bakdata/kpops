@@ -70,6 +70,7 @@ class TestHelmApp:
             False,
             "test-namespace",
             {
+                "nameOverride": "${pipeline.name}-test-helm-app",
                 "fullnameOverride": "${pipeline.name}-test-helm-app",
                 "foo": "test-value",
             },
@@ -114,6 +115,7 @@ class TestHelmApp:
                 False,
                 "test-namespace",
                 {
+                    "nameOverride": "${pipeline.name}-test-helm-app",
                     "fullnameOverride": "${pipeline.name}-test-helm-app",
                     "foo": "test-value",
                 },
@@ -150,6 +152,7 @@ class TestHelmApp:
             False,
             "test-namespace",
             {
+                "nameOverride": "${pipeline.name}-test-app-with-local-chart",
                 "fullnameOverride": "${pipeline.name}-test-app-with-local-chart",
                 "foo": "test-value",
             },
@@ -232,7 +235,12 @@ class TestHelmApp:
             repo_config=repo_config,
         )
         assert (
+            helm_app.to_helm_values()["nameOverride"]
+            == "test-pipeline-prefix-with-a-long-name-helm-app-name-is-ve-3fbb7"
+        )
+        assert (
             helm_app.to_helm_values()["fullnameOverride"]
             == "test-pipeline-prefix-with-a-long-name-helm-app-name-is-ve-3fbb7"
         )
+        assert len(helm_app.to_helm_values()["nameOverride"]) == K8S_LABEL_MAX_LEN
         assert len(helm_app.to_helm_values()["fullnameOverride"]) == K8S_LABEL_MAX_LEN

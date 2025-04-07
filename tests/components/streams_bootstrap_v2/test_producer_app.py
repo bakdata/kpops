@@ -83,6 +83,10 @@ class TestProducerApp:
 
     def test_cleaner_helm_name_override(self, producer_app: ProducerAppV2):
         assert (
+            producer_app._cleaner.to_helm_values()["nameOverride"]
+            == PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE
+        )
+        assert (
             producer_app._cleaner.to_helm_values()["fullnameOverride"]
             == PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE
         )
@@ -143,6 +147,7 @@ class TestProducerApp:
                 False,
                 "test-namespace",
                 {
+                    "nameOverride": PRODUCER_APP_HELM_NAME_OVERRIDE,
                     "fullnameOverride": PRODUCER_APP_HELM_NAME_OVERRIDE,
                     "streams": {
                         "brokers": "fake-broker:9092",
@@ -213,6 +218,7 @@ class TestProducerApp:
                 True,
                 "test-namespace",
                 {
+                    "nameOverride": PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE,
                     "fullnameOverride": PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE,
                     "streams": {
                         "brokers": "fake-broker:9092",
@@ -268,6 +274,7 @@ class TestProducerApp:
                 False,
                 "test-namespace",
                 {
+                    "nameOverride": PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE,
                     "fullnameOverride": PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE,
                     "streams": {
                         "brokers": "fake-broker:9092",
@@ -328,6 +335,7 @@ class TestProducerApp:
             return_value={
                 "image": "registry/producer-app",
                 "imageTag": image_tag_in_cluster,
+                "nameOverride": PRODUCER_APP_NAME,
                 "fullnameOverride": PRODUCER_APP_NAME,
                 "replicaCount": 1,
                 "streams": {
@@ -373,6 +381,7 @@ class TestProducerApp:
             return_value={
                 "image": "registry/producer-app",
                 "imageTag": image_tag_in_cluster,
+                "nameOverride": PRODUCER_APP_NAME,
                 "fullnameOverride": PRODUCER_APP_NAME,
                 "replicaCount": 1,
                 "streams": {
@@ -411,6 +420,7 @@ class TestProducerApp:
             "test-namespace",
             {
                 "image": "registry/producer-app",
+                "nameOverride": PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE,
                 "fullnameOverride": PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE,
                 "imageTag": image_tag_in_cluster,
                 "replicaCount": 1,
@@ -435,6 +445,7 @@ class TestProducerApp:
             return_value={
                 "image": "registry/producer-app",
                 "imageTag": "1.1.1",
+                "nameOverride": PRODUCER_APP_NAME,
                 "fullnameOverride": PRODUCER_APP_NAME,
                 "kafka": {
                     "boostrapServers": "fake-broker:9092",
@@ -480,6 +491,7 @@ class TestProducerApp:
             {
                 "image": "registry/producer-app",
                 "imageTag": "2.2.2",
+                "nameOverride": PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE,
                 "fullnameOverride": PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE,
                 "streams": {
                     "brokers": "fake-broker:9092",

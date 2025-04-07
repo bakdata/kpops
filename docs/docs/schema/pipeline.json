@@ -232,6 +232,20 @@
                     "default": null,
                     "description": "Helm chart fullname override, assigned automatically",
                     "title": "FullnameOverride"
+                },
+                "nameOverride": {
+                    "anyOf": [
+                        {
+                            "maxLength": 63,
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Helm chart name override, assigned automatically",
+                    "title": "NameOverride"
                 }
             },
             "title": "HelmAppValues",
@@ -1433,6 +1447,20 @@
                     "title": "Imagetag",
                     "type": "string"
                 },
+                "nameOverride": {
+                    "anyOf": [
+                        {
+                            "maxLength": 63,
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Helm chart name override, assigned automatically",
+                    "title": "NameOverride"
+                },
                 "streams": {
                     "$ref": "#/$defs/ProducerStreamsConfig",
                     "description": "Kafka Streams settings"
@@ -1678,6 +1706,20 @@
                     "default": {},
                     "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
                     "title": "Livenessprobe"
+                },
+                "nameOverride": {
+                    "anyOf": [
+                        {
+                            "maxLength": 63,
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Helm chart name override, assigned automatically",
+                    "title": "NameOverride"
                 },
                 "podAnnotations": {
                     "anyOf": [
@@ -2579,6 +2621,20 @@
                     "title": "Imagetag",
                     "type": "string"
                 },
+                "nameOverride": {
+                    "anyOf": [
+                        {
+                            "maxLength": 63,
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Helm chart name override, assigned automatically",
+                    "title": "NameOverride"
+                },
                 "persistence": {
                     "$ref": "#/$defs/kpops__components__streams_bootstrap_v2__streams__model__PersistenceConfig",
                     "default": {
@@ -2824,6 +2880,20 @@
                     "default": {},
                     "description": "See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core",
                     "title": "Livenessprobe"
+                },
+                "nameOverride": {
+                    "anyOf": [
+                        {
+                            "maxLength": 63,
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Helm chart name override, assigned automatically",
+                    "title": "NameOverride"
                 },
                 "persistence": {
                     "anyOf": [

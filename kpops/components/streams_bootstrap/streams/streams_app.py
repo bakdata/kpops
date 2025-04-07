@@ -163,6 +163,7 @@ class StreamsApp(StreamsBootstrap):
             name_override = self._cleaner.helm_name_override
             try:
                 self._cleaner.values = self.values.model_validate(cluster_values)
+                self._cleaner.values.name_override = name_override
                 self._cleaner.values.fullname_override = name_override
             except ValidationError as validation_error:
                 warning_msg = f"The values in the cluster are invalid with the current model. Falling back to the enriched values of {PIPELINE_YAML} and {DEFAULTS_YAML}"

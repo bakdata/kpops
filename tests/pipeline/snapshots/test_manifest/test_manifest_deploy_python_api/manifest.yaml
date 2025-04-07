@@ -3,7 +3,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   labels:
-    app: bakdata-producer-app
+    app: resources-manifest-pipeline-my-producer-app
     chart: producer-app-3.6.1
     release: resources-manifest-pipeline-my-producer-app
     streams-bootstrap/kind: producer-app
@@ -13,7 +13,7 @@ spec:
   template:
     metadata:
       labels:
-        app: bakdata-producer-app
+        app: resources-manifest-pipeline-my-producer-app
         release: resources-manifest-pipeline-my-producer-app
         streams-bootstrap/kind: producer-app
     spec:
@@ -33,7 +33,7 @@ spec:
               value: '-XX:MaxRAMPercentage=75.0 '
           image: my-registry/my-producer-image:1.0.0
           imagePullPolicy: Always
-          name: bakdata-producer-app
+          name: resources-manifest-pipeline-my-producer-app
           resources:
             limits:
               cpu: 500m
@@ -74,7 +74,7 @@ metadata:
   annotations:
     consumerGroup: my-streams-app-id
   labels:
-    app: bakdata-streams-app
+    app: resources-manifest-pipeline-my-streams-app
     chart: streams-app-3.6.1
     release: resources-manifest-pipeline-my-streams-app
     streams-bootstrap/kind: streams-app
@@ -83,12 +83,12 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: bakdata-streams-app
+      app: resources-manifest-pipeline-my-streams-app
       release: resources-manifest-pipeline-my-streams-app
   template:
     metadata:
       labels:
-        app: bakdata-streams-app
+        app: resources-manifest-pipeline-my-streams-app
         release: resources-manifest-pipeline-my-streams-app
         streams-bootstrap/kind: streams-app
     spec:
@@ -125,7 +125,7 @@ spec:
                 -Dcom.sun.management.jmxremote.ssl=false -XX:MaxRAMPercentage=75.0 '
           image: my-registry/my-streams-app-image:1.0.0
           imagePullPolicy: Always
-          name: bakdata-streams-app
+          name: resources-manifest-pipeline-my-streams-app
           resources:
             limits:
               cpu: 500m

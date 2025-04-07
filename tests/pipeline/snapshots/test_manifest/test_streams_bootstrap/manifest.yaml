@@ -17,14 +17,14 @@ data:
     </Configuration>
 kind: ConfigMap
 metadata:
-  name: bakdata-producer-app
+  name: resources-streams-bootstrap-my-producer-app
 
 ---
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
   labels:
-    app: bakdata-producer-app
+    app: resources-streams-bootstrap-my-producer-app
     chart: producer-app-3.6.1
     release: resources-streams-bootstrap-my-producer-app
     streams-bootstrap/kind: producer-app
@@ -38,7 +38,7 @@ spec:
       template:
         metadata:
           labels:
-            app: bakdata-producer-app
+            app: resources-streams-bootstrap-my-producer-app
             release: resources-streams-bootstrap-my-producer-app
             streams-bootstrap/kind: producer-app
         spec:
@@ -66,7 +66,7 @@ spec:
                   value: '-XX:MaxRAMPercentage=75.0 '
               image: my-registry/my-producer-image:1.0.0
               imagePullPolicy: IfNotPresent
-              name: bakdata-producer-app
+              name: resources-streams-bootstrap-my-producer-app
               resources:
                 limits:
                   cpu: 500m
@@ -81,7 +81,7 @@ spec:
           restartPolicy: OnFailure
           volumes:
             - configMap:
-                name: bakdata-producer-app
+                name: resources-streams-bootstrap-my-producer-app
               name: config
   schedule: 30 3/8 * * *
   successfulJobsHistoryLimit: 1
@@ -130,7 +130,7 @@ data:
     </Configuration>
 kind: ConfigMap
 metadata:
-  name: bakdata-streams-app
+  name: resources-streams-bootstrap-my-streams-app
 
 ---
 apiVersion: apps/v1
@@ -139,7 +139,7 @@ metadata:
   annotations:
     consumerGroup: my-streams-app-id
   labels:
-    app: bakdata-streams-app
+    app: resources-streams-bootstrap-my-streams-app
     chart: streams-app-3.6.1
     release: resources-streams-bootstrap-my-streams-app
     streams-bootstrap/kind: streams-app
@@ -148,14 +148,14 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: bakdata-streams-app
+      app: resources-streams-bootstrap-my-streams-app
       release: resources-streams-bootstrap-my-streams-app
   template:
     metadata:
       annotations:
-        checksum/config: 649c8f7b1562e5c4f120ea1a9c7d34bec0165d693eb7c13e2cc312451780ad25
+        checksum/config: 7fa55f62bffb69b723535187aa4e5ee14a91be308d56f5a8ca49c3159bf80aef
       labels:
-        app: bakdata-streams-app
+        app: resources-streams-bootstrap-my-streams-app
         release: resources-streams-bootstrap-my-streams-app
         streams-bootstrap/kind: streams-app
     spec:
@@ -207,7 +207,7 @@ spec:
                 -Dcom.sun.management.jmxremote.ssl=false -XX:MaxRAMPercentage=85.0 '
           image: my-registry/my-streams-app-image:1.0.0
           imagePullPolicy: IfNotPresent
-          name: bakdata-streams-app
+          name: resources-streams-bootstrap-my-streams-app
           resources:
             limits:
               cpu: 500m
@@ -222,7 +222,7 @@ spec:
       terminationGracePeriodSeconds: 300
       volumes:
         - configMap:
-            name: bakdata-streams-app
+            name: resources-streams-bootstrap-my-streams-app
           name: config
 
 ---
