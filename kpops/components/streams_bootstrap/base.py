@@ -119,6 +119,7 @@ class StreamsBootstrapCleaner(Cleaner, ABC):
         )
         cleaner = cls(**parent_kwargs)
         cleaner.values.name_override = None
+        cleaner.values.fullname_override = None
         return cleaner
 
     @property

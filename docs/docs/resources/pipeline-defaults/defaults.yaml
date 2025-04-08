@@ -203,6 +203,7 @@ producer-app:
         output_role1: output_topic1
         output_role2: output_topic2
     nameOverride: override-with-this-name # kafka-app-specific
+    fullnameOverride: override-with-this-name # kafka-app-specific
 # StreamsApp component that configures a streams bootstrap app.
 #
 # Child of: KafkaApp
@@ -237,6 +238,7 @@ streams-app:
       config:
         my.streams.config: my.value
     nameOverride: override-with-this-name # streams-app-specific
+    fullnameOverride: override-with-this-name # streams-app-specific
     autoscaling: # streams-app-specific
       consumerGroup: consumer-group # required
       lagThreshold: 0 # Average target value to trigger scaling actions.

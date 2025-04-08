@@ -74,6 +74,7 @@ class TestStreamsBootstrap:
             "test-namespace",
             {
                 "nameOverride": "${pipeline.name}-example-name",
+                "fullnameOverride": "${pipeline.name}-example-name",
                 "imageTag": "1.0.0",
                 "streams": {
                     "brokers": "fake-broker:9092",

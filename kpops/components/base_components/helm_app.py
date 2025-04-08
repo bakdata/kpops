@@ -41,14 +41,22 @@ class HelmAppValues(KubernetesAppValues):
     """Helm app values.
 
     :param name_override: Helm chart name override, assigned automatically
+    :param fullname_override: Helm chart fullname override, assigned automatically
     """
 
     name_override: (
         Annotated[str, pydantic.StringConstraints(max_length=K8S_LABEL_MAX_LEN)] | None
     ) = Field(
         default=None,
-        title="Nameoverride",
+        title="NameOverride",
         description=describe_attr("name_override", __doc__),
+    )
+    fullname_override: (
+        Annotated[str, pydantic.StringConstraints(max_length=K8S_LABEL_MAX_LEN)] | None
+    ) = Field(
+        default=None,
+        title="FullnameOverride",
+        description=describe_attr("fullname_override", __doc__),
     )
 
     # TODO(Ivan Yordanov): Replace with a function decorated with `@model_serializer`
@@ -198,8 +206,11 @@ class HelmApp(KubernetesApp):
 
         :returns: The values to be used by Helm
         """
+        name_override = self.helm_name_override
         if self.values.name_override is None:
-            self.values.name_override = self.helm_name_override
+            self.values.name_override = name_override
+        if self.values.fullname_override is None:
+            self.values.fullname_override = name_override
         return self.values.model_dump()
 
     def print_helm_diff(self, stdout: str) -> None:

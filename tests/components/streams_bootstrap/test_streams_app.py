@@ -139,6 +139,10 @@ class TestStreamsApp:
             streams_app._cleaner.to_helm_values()["nameOverride"]
             == STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE
         )
+        assert (
+            streams_app._cleaner.to_helm_values()["fullnameOverride"]
+            == STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE
+        )
 
     def test_set_topics(self):
         streams_app = StreamsApp.model_validate(
@@ -423,6 +427,7 @@ class TestStreamsApp:
                 "test-namespace",
                 {
                     "nameOverride": STREAMS_APP_HELM_NAME_OVERRIDE,
+                    "fullnameOverride": STREAMS_APP_HELM_NAME_OVERRIDE,
                     "image": "streamsApp",
                     "kafka": {
                         "bootstrapServers": "fake-broker:9092",
@@ -497,6 +502,7 @@ class TestStreamsApp:
                 "test-namespace",
                 {
                     "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                    "fullnameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
                     "image": "streamsApp",
                     "kafka": {
                         "bootstrapServers": "fake-broker:9092",
@@ -550,6 +556,7 @@ class TestStreamsApp:
                 "test-namespace",
                 {
                     "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                    "fullnameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
                     "image": "streamsApp",
                     "kafka": {
                         "bootstrapServers": "fake-broker:9092",
@@ -579,6 +586,7 @@ class TestStreamsApp:
                 "image": "registry/streams-app",
                 "imageTag": image_tag_in_cluster,
                 "nameOverride": STREAMS_APP_NAME,
+                "fullnameOverride": STREAMS_APP_NAME,
                 "replicaCount": 1,
                 "persistence": {"enabled": False, "size": "1Gi"},
                 "statefulSet": False,
@@ -633,6 +641,7 @@ class TestStreamsApp:
             {
                 "image": "registry/streams-app",
                 "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                "fullnameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
                 "imageTag": image_tag_in_cluster,
                 "persistence": {"size": "1Gi"},
                 "replicaCount": 1,
@@ -658,6 +667,7 @@ class TestStreamsApp:
                 "image": "registry/streams-app",
                 "imageTag": image_tag_in_cluster,
                 "nameOverride": STREAMS_APP_NAME,
+                "fullnameOverride": STREAMS_APP_NAME,
                 "replicaCount": 1,
                 "persistence": {"enabled": False, "size": "1Gi"},
                 "statefulSet": False,
@@ -712,6 +722,7 @@ class TestStreamsApp:
             {
                 "image": "registry/streams-app",
                 "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                "fullnameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
                 "imageTag": image_tag_in_cluster,
                 "persistence": {"size": "1Gi"},
                 "replicaCount": 1,
@@ -871,6 +882,7 @@ class TestStreamsApp:
                 "test-namespace",
                 {
                     "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                    "fullnameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
                     "image": "streamsApp",
                     "kafka": {
                         "bootstrapServers": "fake-broker:9092",
@@ -935,6 +947,7 @@ class TestStreamsApp:
                 "image": "registry/producer-app",
                 "imageTag": "1.1.1",
                 "nameOverride": STREAMS_APP_NAME,
+                "fullnameOverride": STREAMS_APP_NAME,
                 "streams": {
                     "brokers": "fake-broker:9092",
                     "inputTopics": ["test-input-topic"],
@@ -992,6 +1005,7 @@ class TestStreamsApp:
             {
                 "image": "registry/streams-app",
                 "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                "fullnameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
                 "imageTag": "2.2.2",
                 "kafka": {
                     "bootstrapServers": "fake-broker:9092",

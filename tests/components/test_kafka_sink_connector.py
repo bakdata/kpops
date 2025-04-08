@@ -81,6 +81,10 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             connector._resetter.to_helm_values()["nameOverride"]
             == CONNECTOR_CLEAN_HELM_NAMEOVERRIDE
         )
+        assert (
+            connector._resetter.to_helm_values()["fullnameOverride"]
+            == CONNECTOR_CLEAN_HELM_NAMEOVERRIDE
+        )
 
     def test_resetter_inheritance(self, connector: KafkaSinkConnector):
         setattr(connector.resetter_values, "testKey", "foo")
@@ -291,6 +295,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                     RESETTER_NAMESPACE,
                     {
                         "nameOverride": CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
+                        "fullnameOverride": CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
                         "connectorType": CONNECTOR_TYPE,
                         "config": {
                             "brokers": "broker:9092",
@@ -393,6 +398,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                 RESETTER_NAMESPACE,
                 {
                     "nameOverride": CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
+                    "fullnameOverride": CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
                     "connectorType": CONNECTOR_TYPE,
                     "config": {
                         "brokers": "broker:9092",
@@ -488,6 +494,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                 RESETTER_NAMESPACE,
                 {
                     "nameOverride": CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
+                    "fullnameOverride": CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
                     "connectorType": CONNECTOR_TYPE,
                     "config": {
                         "brokers": "broker:9092",
