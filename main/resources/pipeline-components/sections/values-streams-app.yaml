@@ -27,6 +27,7 @@
       config:
         my.streams.config: my.value
     nameOverride: override-with-this-name # streams-app-specific
+    fullnameOverride: override-with-this-name # streams-app-specific
     autoscaling: # streams-app-specific
       consumerGroup: consumer-group # required
       lagThreshold: 0 # Average target value to trigger scaling actions.
