@@ -15,7 +15,7 @@ on:
 
 jobs:
   create-github-release-push-tag:
-    uses: ./.github/workflows/python-uv-release.yaml
+    uses: bakdata/ci-templates/.github/workflows/python-uv-release.yaml@feat/python-uv-release
     name: Release
     with:
       release-type: ${{ inputs.release-type }}
