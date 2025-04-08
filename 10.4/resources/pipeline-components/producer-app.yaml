@@ -1,0 +1,53 @@
+# Holds configuration to use as values for the streams bootstrap producer-app Helm
+# chart.
+# More documentation on ProducerApp:
+# https://github.com/bakdata/streams-bootstrap
+- type: producer-app
+  name: producer-app # required
+  # Pipeline prefix that will prefix every component name. If you wish to not
+  # have any prefix you can specify an empty string.
+  prefix: ${pipeline.name}-
+  # from: # While the producer-app does inherit from kafka-app, it does not need a
+  # `from` section, hence it does not support it.
+  # Topic(s) into which the component will write output
+  to:
+    topics:
+      ${pipeline.name}-output-topic:
+        type: output # Implied when role is NOT specified
+      ${pipeline.name}-extra-topic:
+        role: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
+      ${pipeline.name}-error-topic:
+        type: error
+        # Currently KPOps supports Avro and JSON schemas.
+        key_schema: key-schema # must implement SchemaProvider to use
+        value_schema: value-schema
+        partitions_count: 1
+        replication_factor: 1
+        configs: # https://kafka.apache.org/documentation/#topicconfigs
+          cleanup.policy: compact
+    models: # SchemaProvider is initiated with the values given here
+      model: model
+  namespace: namespace # required
+  # Allowed configs:
+  # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
+  values: # required
+    streams: # required, producer-app-specific
+      brokers: ${config.kafka_brokers} # required
+      schemaRegistryUrl: ${config.schema_registry.url}
+      outputTopic: output_topic
+      extraOutputTopics:
+        output_role1: output_topic1
+        output_role2: output_topic2
+    nameOverride: override-with-this-name # kafka-app-specific
+    fullnameOverride: override-with-this-name # kafka-app-specific
+  # Helm repository configuration (optional)
+  # If not set the helm repo add will not be called. Useful when using local Helm charts
+  repo_config:
+    repository_name: bakdata-streams-bootstrap # required
+    url: https://bakdata.github.io/streams-bootstrap/ # required
+    repo_auth_flags:
+      username: user
+      password: pass
+      ca_file: /home/user/path/to/ca-file
+      insecure_skip_tls_verify: false
+  version: "2.12.0" # Helm chart version
