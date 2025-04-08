@@ -2,12 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [10.4.0](https://github.com/bakdata/kpops/tree/10.4.0) - 2025-04-08
+### What's changed
+
+* feat(helm-app): set fullnameOverride by @philipp94831 in [#626](https://github.com/bakdata/kpops/pull/626)
+
+
+**Full Changelog**: https://github.com/bakdata/kpops/compare/10.3.0...10.4.0
+
 ## [10.3.0](https://github.com/bakdata/kpops/tree/10.3.0) - 2025-04-07
 ### What's changed
 
 * feat(helm-app): add properties to generate output by @philipp94831 in [#624](https://github.com/bakdata/kpops/pull/624)
 
 * refactor(pipeline): set custom attribute order by @disrupted in [#625](https://github.com/bakdata/kpops/pull/625)
+
+* Bump version 10.2.0 → 10.3.0 by @bakdata-bot
 
 
 **Full Changelog**: https://github.com/bakdata/kpops/compare/10.2.0...10.3.0
