@@ -246,6 +246,7 @@ class PipelineGenerator:
         :raises TypeError: The env-specific pipeline definition should contain a list of components
         :returns: Initialized pipeline object
         """
+        ENV.clear()
         PipelineGenerator.set_pipeline_name_env_vars(
             self.config.pipeline_base_dir, path
         )
