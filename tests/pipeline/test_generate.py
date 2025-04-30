@@ -20,6 +20,7 @@ from kpops.components.streams_bootstrap.producer.producer_app import ProducerApp
 from kpops.components.streams_bootstrap.streams.streams_app import StreamsApp
 from kpops.const.file_type import PIPELINE_YAML, KpopsFileType
 from kpops.core.exception import ParsingException, ValidationError
+from kpops.utils.environment import ENV
 
 runner = CliRunner()
 
@@ -84,6 +85,12 @@ class TestGenerate:
         assert result.exit_code == 0, result.stdout
 
         snapshot.assert_match(result.stdout, PIPELINE_YAML)
+
+    def test_load_yaml_clear_env(self) -> None:
+        kpops.generate(RESOURCE_PATH / "pipeline-folders/pipeline-1/pipeline.yaml")
+        assert ENV["pipeline.name_2"] == "pipeline-1"
+        kpops.generate(RESOURCE_PATH / "first-pipeline" / PIPELINE_YAML)
+        assert "pipeline.name_2" not in ENV
 
     def test_load_pipeline_with_folder_path(self, snapshot: Snapshot):
         result = runner.invoke(
