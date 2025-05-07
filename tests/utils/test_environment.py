@@ -79,3 +79,9 @@ def test_dict_unpacking(environment: Environment):
         "ENVIRONMENT": "here",
         "PYTEST_CURRENT_TEST": ANY,
     }
+
+
+def test_clear(environment: Environment):
+    environment["TEST"] = "test"
+    environment.clear()
+    assert not environment
