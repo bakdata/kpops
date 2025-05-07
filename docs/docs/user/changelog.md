@@ -2,10 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [10.4.1](https://github.com/bakdata/kpops/tree/10.4.1) - 2025-05-07
+### What's changed
+
+* ci: upstream Python uv release workflow by @disrupted in [#627](https://github.com/bakdata/kpops/pull/627)
+
+* fix(pipeline-generator): clear env on load YAML by @disrupted in [#628](https://github.com/bakdata/kpops/pull/628)
+
+
+**Full Changelog**: https://github.com/bakdata/kpops/compare/10.4.0...10.4.1
+
 ## [10.4.0](https://github.com/bakdata/kpops/tree/10.4.0) - 2025-04-08
 ### What's changed
 
 * feat(helm-app): set fullnameOverride by @philipp94831 in [#626](https://github.com/bakdata/kpops/pull/626)
+
+* Bump version 10.3.0 → 10.4.0 by @bakdata-bot
 
 
 **Full Changelog**: https://github.com/bakdata/kpops/compare/10.3.0...10.4.0
