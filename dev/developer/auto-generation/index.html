@@ -2035,10 +2035,12 @@
 <p>Generated</p>
 <ul>
 <li><code>pipeline-components/dependencies/*</code>
-  Cached information about KPOps components</li>
+  Cached information about KPOps components<ul>
 <li><code>pipeline_component_dependencies.yaml</code> -- Specifies per component which files in the <code>sections</code> dir should be used for the <code>pipeline.yaml</code> generation.</li>
 <li><code>defaults_pipeline_component_dependencies.yaml</code> -- Specifies per component which files in the <code>sections</code> dir should be used for the <code>defaults.yaml</code> generation.</li>
 <li><code>kpops_structure.yaml</code> -- Specifies the inheritance hierarchy of the components and what sections exist in each component.</li>
+</ul>
+</li>
 <li><code>pipeline-components/*\.yaml</code> -- All single-component pipeline definitions and one big (complete) <code>pipeline.yaml</code> that contains all of them.</li>
 <li><code>pipeline-defaults/*\.yaml</code> -- All single-component defaults definitions and one big (complete) <code>defaults.yaml</code> that contains all of them.</li>
 </ul>
