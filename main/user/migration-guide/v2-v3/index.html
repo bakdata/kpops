@@ -2441,18 +2441,16 @@ It is configured using the <code>resetter_namespace</code> (formerly <code>names
 <h2 id="make-kafka-rest-proxy-kafka-connect-hosts-default-and-improve-schema-registry-config"><a href="https://github.com/bakdata/kpops/pull/354">Make Kafka REST Proxy &amp; Kafka Connect hosts default and improve Schema Registry config</a><a class="headerlink" href="#make-kafka-rest-proxy-kafka-connect-hosts-default-and-improve-schema-registry-config" title="Permanent link">&para;</a></h2>
 <p>The breaking changes target the <code>config.yaml</code> file:</p>
 <ul>
-<li>
-<p>The <code>schema_registry_url</code> is replaced with <code>schema_registry.url</code> (default <code>http://localhost:8081</code>) and <code>schema_registry.enabled</code> (default <code>false</code>).</p>
-</li>
-<li>
-<p><code>kafka_rest_host</code> is renamed to <code>kafka_rest.url</code> (default <code>http://localhost:8082</code>).</p>
-</li>
-<li>
-<p><code>kafka_connect_host</code> is replaced with <code>kafka_connect.url</code> (default <code>http://localhost:8083</code>).</p>
-</li>
-<li>
-<p><code>brokers</code> is renamed to <code>kafka_brokers</code>.</p>
-</li>
+<li>The <code>schema_registry_url</code> is replaced with <code>schema_registry.url</code> (default <code>http://localhost:8081</code>) and <code>schema_registry.enabled</code> (default <code>false</code>).</li>
+</ul>
+<ul>
+<li><code>kafka_rest_host</code> is renamed to <code>kafka_rest.url</code> (default <code>http://localhost:8082</code>).</li>
+</ul>
+<ul>
+<li><code>kafka_connect_host</code> is replaced with <code>kafka_connect.url</code> (default <code>http://localhost:8083</code>).</li>
+</ul>
+<ul>
+<li><code>brokers</code> is renamed to <code>kafka_brokers</code>.</li>
 </ul>
 <p>The environment variable names of these config fields changed respectively. Please refer to the <a href="../../core-concepts/variables/environment_variables/">environment variables documentation page</a> to see the newest changes.</p>
 <h4 id="configyaml">config.yaml<a class="headerlink" href="#configyaml" title="Permanent link">&para;</a></h4>

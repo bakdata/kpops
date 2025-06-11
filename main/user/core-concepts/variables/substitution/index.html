@@ -2054,19 +2054,17 @@
 <h2 id="pipeline-name-variables">Pipeline name variables<a class="headerlink" href="#pipeline-name-variables" title="Permanent link">&para;</a></h2>
 <p>These are special variables that refer to the name and path of a pipeline.</p>
 <ul>
-<li>
-<p><code>${pipeline.name}</code>: Concatenated path of the directory that contains the file pipeline.yaml.
-  For instance, <code>./data/pipelines/v1/pipeline.yaml</code>, here the value for the variable would be <code>data-pipelines-v1</code>.</p>
-</li>
-<li>
-<p><code>${pipeline_name_&lt;level&gt;}</code>: Similar to the previous variable, each <code>&lt;level&gt;</code> contains a part of the path to the <code>pipeline.yaml</code> file.
-  Consider the previous example, <code>${pipeline_name_0}</code> would be <code>data</code>, <code>${pipeline_name_1}</code> would be <code>pipelines</code>, and <code>${pipeline_name_2}</code> equals to <code>v1</code>.</p>
-</li>
-<li>
-<p><code>${pipeline.parent.name}</code>: Like <code>${pipeline.name}</code> but only up to the <em>parent directory</em> of the directory that contains the file pipeline.yaml.
+<li><code>${pipeline.name}</code>: Concatenated path of the directory that contains the file pipeline.yaml.
+  For instance, <code>./data/pipelines/v1/pipeline.yaml</code>, here the value for the variable would be <code>data-pipelines-v1</code>.</li>
+</ul>
+<ul>
+<li><code>${pipeline_name_&lt;level&gt;}</code>: Similar to the previous variable, each <code>&lt;level&gt;</code> contains a part of the path to the <code>pipeline.yaml</code> file.
+  Consider the previous example, <code>${pipeline_name_0}</code> would be <code>data</code>, <code>${pipeline_name_1}</code> would be <code>pipelines</code>, and <code>${pipeline_name_2}</code> equals to <code>v1</code>.</li>
+</ul>
+<ul>
+<li><code>${pipeline.parent.name}</code>: Like <code>${pipeline.name}</code> but only up to the <em>parent directory</em> of the directory that contains the file pipeline.yaml.
   For instance, <code>./data/pipelines/v1/pipeline.yaml</code>, here the value for the variable would be <code>data-pipelines</code>.
-  This can be useful e.g. to read from a component of a pipeline defined in <code>./data/pipelines/pipeline.yaml</code> (without <code>/v1</code>).</p>
-</li>
+  This can be useful e.g. to read from a component of a pipeline defined in <code>./data/pipelines/pipeline.yaml</code> (without <code>/v1</code>).</li>
 </ul>
 <h2 id="advanced-use-cases">Advanced use cases<a class="headerlink" href="#advanced-use-cases" title="Permanent link">&para;</a></h2>
 <ol>

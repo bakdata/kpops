@@ -2276,21 +2276,17 @@ destroyed correctly.</p>
 <!-- dprint-ignore-start -->
 
 <ul>
-<li><code>deploy</code> fails:<ol>
-<li>Read the error message.</li>
-<li>Try to correct the mistakes if there were any. Likely the configuration is incorrect, or the port-forwarding is not working as intended.</li>
-<li>Run <code>clean</code>.</li>
-<li>Run <code>deploy --dry-run</code> to avoid having to <code>clean</code> again. If an error is dropped, start over from step 1.</li>
-<li>If the dry-run is successful, run <code>deploy</code>.</li>
-</ol>
-</li>
-<li><code>clean</code> fails:<ol>
-<li>Read the error message.</li>
-<li>Try to correct the indicated mistakes if there were any. Likely the configuration is incorrect, or the port-forwarding is not working as intended.</li>
-<li>Run <code>clean</code>.</li>
-<li>If <code>clean</code> fails, follow the steps in <a href="../teardown">teardown</a>.</li>
-</ol>
-</li>
+<li><code>deploy</code> fails:
+    1. Read the error message.
+    2. Try to correct the mistakes if there were any. Likely the configuration is incorrect, or the port-forwarding is not working as intended.
+    3. Run <code>clean</code>.
+    4. Run <code>deploy --dry-run</code> to avoid having to <code>clean</code> again. If an error is dropped, start over from step 1.
+    5. If the dry-run is successful, run <code>deploy</code>.</li>
+<li><code>clean</code> fails:
+    1. Read the error message.
+    2. Try to correct the indicated mistakes if there were any. Likely the configuration is incorrect, or the port-forwarding is not working as intended.
+    3. Run <code>clean</code>.
+    4. If <code>clean</code> fails, follow the steps in <a href="../teardown">teardown</a>.</li>
 </ul>
 <!-- dprint-ignore-end -->
 
