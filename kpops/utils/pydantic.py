@@ -8,7 +8,6 @@ from pydantic import (
     BaseModel,
     BeforeValidator,
     ConfigDict,
-    Field,
     GetCoreSchemaHandler,
     SerializationInfo,
     SerializerFunctionWrapHandler,
@@ -51,7 +50,10 @@ def by_alias(model: BaseModel, field_name: str) -> str:
     :param field_name: Name of the field to get alias of
     :param model: Model that owns the field
     """
-    return model.model_fields.get(field_name, Field()).alias or field_name
+    field_info = model.model_fields.get(field_name)
+    if not field_info:
+        return field_name
+    return field_info.alias or field_name
 
 
 def to_str(value: Any) -> str:
