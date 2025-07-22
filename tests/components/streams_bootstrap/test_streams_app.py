@@ -1,4 +1,5 @@
 import logging
+import re
 from collections.abc import AsyncIterator
 from pathlib import Path
 from unittest.mock import ANY, MagicMock
@@ -10,6 +11,7 @@ from lightkube.models.core_v1 import (
     PersistentVolumeClaimStatus,
 )
 from lightkube.models.meta_v1 import ObjectMeta
+from pydantic import ValidationError
 from pytest_mock import MockerFixture
 
 from kpops.component_handlers import get_handlers
@@ -30,6 +32,7 @@ from kpops.components.common.topic import (
 )
 from kpops.components.streams_bootstrap import StreamsApp
 from kpops.components.streams_bootstrap.streams.model import (
+    PersistenceConfig,
     StreamsAppAutoScaling,
 )
 from kpops.components.streams_bootstrap.streams.streams_app import (
@@ -795,6 +798,17 @@ class TestStreamsApp:
             KafkaTopic(name="topic-extra3"),
             KafkaTopic(name="topic-extra"),
         ]
+
+    def test_raise_validation_error_when_persistence_enabled_and_size_not_set(
+        self, stateful_streams_app: StreamsApp
+    ):
+        with pytest.raises(
+            ValidationError,
+            match=re.escape(
+                "If app.persistence.enabled is set to true, the field app.persistence.size needs to be set."
+            ),
+        ):
+            stateful_streams_app.values.persistence = PersistenceConfig(enabled=True)
 
     @pytest.fixture()
     def pvc1(self) -> PersistentVolumeClaim:

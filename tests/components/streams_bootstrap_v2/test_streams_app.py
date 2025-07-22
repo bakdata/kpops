@@ -1,4 +1,5 @@
 import logging
+import re
 from collections.abc import AsyncIterator
 from pathlib import Path
 from unittest.mock import ANY, MagicMock
@@ -807,15 +808,13 @@ class TestStreamsApp:
     def test_raise_validation_error_when_persistence_enabled_and_size_not_set(
         self, stateful_streams_app: StreamsAppV2
     ):
-        with pytest.raises(ValidationError) as error:
-            stateful_streams_app.values.persistence = PersistenceConfig(
-                enabled=True,
-            )
-        msg = (
-            "If app.persistence.enabled is set to true, "
-            "the field app.persistence.size needs to be set."
-        )
-        assert str(error.value) == msg
+        with pytest.raises(
+            ValidationError,
+            match=re.escape(
+                "If app.persistence.enabled is set to true, the field app.persistence.size needs to be set."
+            ),
+        ):
+            stateful_streams_app.values.persistence = PersistenceConfig(enabled=True)
 
     @pytest.fixture()
     def pvc1(self) -> PersistentVolumeClaim:

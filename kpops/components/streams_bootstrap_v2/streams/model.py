@@ -3,14 +3,13 @@ from __future__ import annotations
 from typing import Any, ClassVar, Self
 
 import pydantic
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import ConfigDict, Field
 
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
 from kpops.components.streams_bootstrap_v2.base import (
     KafkaStreamsConfig,
     StreamsBootstrapV2Values,
 )
-from kpops.core.exception import ValidationError
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
@@ -193,18 +192,18 @@ class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
     )
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 
-    @model_validator(mode="after")
+    @pydantic.model_validator(mode="after")
     def validate_mandatory_fields_are_set(self) -> Self:
         if self.enabled and (self.consumer_group is None or self.lag_threshold is None):
             msg = (
                 "If app.autoscaling.enabled is set to true, "
                 "the fields app.autoscaling.consumer_group and app.autoscaling.lag_threshold should be set."
             )
-            raise ValidationError(msg)
+            raise ValueError(msg)
         return self
 
 
-class PersistenceConfig(BaseModel):
+class PersistenceConfig(CamelCaseConfigModel, DescConfigModel):
     """streams-bootstrap persistence configurations.
 
     :param enabled: Whether to use a persistent volume to store the state of the streams app.
@@ -225,14 +224,14 @@ class PersistenceConfig(BaseModel):
         description="Storage class to use for the persistent volume.",
     )
 
-    @model_validator(mode="after")
+    @pydantic.model_validator(mode="after")
     def validate_mandatory_fields_are_set(self) -> Self:
         if self.enabled and self.size is None:
             msg = (
                 "If app.persistence.enabled is set to true, "
                 "the field app.persistence.size needs to be set."
             )
-            raise ValidationError(msg)
+            raise ValueError(msg)
         return self
 
 
