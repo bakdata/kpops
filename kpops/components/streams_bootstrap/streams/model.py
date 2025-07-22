@@ -4,7 +4,7 @@ from enum import StrEnum
 from typing import Any, ClassVar
 
 import pydantic
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import ConfigDict, Field
 
 from kpops.components.common.kubernetes_model import (
     ImagePullPolicy,
@@ -211,7 +211,7 @@ class StreamsAppAutoScaling(
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 
 
-class PersistenceConfig(BaseModel):
+class PersistenceConfig(CamelCaseConfigModel, DescConfigModel):
     """streams-bootstrap persistence configurations.
 
     :param enabled: Whether to use a persistent volume to store the state of the streams app.

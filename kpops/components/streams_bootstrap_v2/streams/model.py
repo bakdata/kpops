@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, ClassVar, Self
 
 import pydantic
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import ConfigDict, Field, model_validator
 
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
 from kpops.components.streams_bootstrap_v2.base import (
@@ -204,7 +204,7 @@ class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
         return self
 
 
-class PersistenceConfig(BaseModel):
+class PersistenceConfig(CamelCaseConfigModel, DescConfigModel):
     """streams-bootstrap persistence configurations.
 
     :param enabled: Whether to use a persistent volume to store the state of the streams app.
