@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import StrEnum
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Self
 
 import pydantic
 from pydantic import ConfigDict, Field
@@ -231,6 +231,16 @@ class PersistenceConfig(CamelCaseConfigModel, DescConfigModel):
         default=None,
         description="Storage class to use for the persistent volume.",
     )
+
+    @pydantic.model_validator(mode="after")
+    def validate_mandatory_fields_are_set(self) -> Self:
+        if self.enabled and self.size is None:
+            msg = (
+                "If app.persistence.enabled is set to true, "
+                "the field app.persistence.size needs to be set."
+            )
+            raise ValueError(msg)
+        return self
 
 
 class JmxRuleType(StrEnum):
