@@ -4,7 +4,7 @@ from enum import StrEnum
 from typing import Any, ClassVar
 
 import pydantic
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import ConfigDict, Field
 
 from kpops.components.common.kubernetes_model import (
     ImagePullPolicy,
