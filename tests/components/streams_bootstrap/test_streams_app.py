@@ -934,7 +934,11 @@ class TestStreamsApp:
                         "deleteOutput": True,
                     },
                     "statefulSet": True,
-                    "persistence": {"enabled": True, "size": "5Gi"},
+                    "persistence": {
+                        "enabled": True,
+                        "size": "5Gi",
+                        "storageClass": "foo",
+                    },
                 },
                 HelmUpgradeInstallFlags(version="3.6.1", wait=True, wait_for_jobs=True),
             ),

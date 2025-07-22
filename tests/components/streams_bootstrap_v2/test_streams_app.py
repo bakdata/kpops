@@ -35,7 +35,6 @@ from kpops.components.streams_bootstrap_v2.streams.streams_app import (
     StreamsAppCleaner,
     StreamsAppV2,
 )
-from kpops.core.exception import ValidationError
 
 RESOURCES_PATH = Path(__file__).parent / "resources"
 
@@ -127,41 +126,39 @@ class TestStreamsApp:
     def test_raise_validation_error_when_autoscaling_enabled_and_mandatory_fields_not_set(
         self, streams_app: StreamsAppV2
     ):
-        with pytest.raises(ValidationError) as error:
-            streams_app.values.autoscaling = StreamsAppAutoScaling(
-                enabled=True,
-            )
-        msg = (
-            "If app.autoscaling.enabled is set to true, "
-            "the fields app.autoscaling.consumer_group and app.autoscaling.lag_threshold should be set."
-        )
-        assert str(error.value) == msg
+        with pytest.raises(
+            ValueError,
+            match=re.escape(
+                "If app.autoscaling.enabled is set to true, the fields app.autoscaling.consumer_group and app.autoscaling.lag_threshold should be set."
+            ),
+        ):
+            streams_app.values.autoscaling = StreamsAppAutoScaling(enabled=True)
 
     def test_raise_validation_error_when_autoscaling_enabled_and_only_consumer_group_set(
         self, streams_app: StreamsAppV2
     ):
-        with pytest.raises(ValidationError) as error:
+        with pytest.raises(
+            ValueError,
+            match=re.escape(
+                "If app.autoscaling.enabled is set to true, the fields app.autoscaling.consumer_group and app.autoscaling.lag_threshold should be set."
+            ),
+        ):
             streams_app.values.autoscaling = StreamsAppAutoScaling(
                 enabled=True, consumer_group="a-test-group"
             )
-        msg = (
-            "If app.autoscaling.enabled is set to true, "
-            "the fields app.autoscaling.consumer_group and app.autoscaling.lag_threshold should be set."
-        )
-        assert str(error.value) == msg
 
     def test_raise_validation_error_when_autoscaling_enabled_and_only_lag_threshold_is_set(
         self, streams_app: StreamsAppV2
     ):
-        with pytest.raises(ValidationError) as error:
+        with pytest.raises(
+            ValueError,
+            match=re.escape(
+                "If app.autoscaling.enabled is set to true, the fields app.autoscaling.consumer_group and app.autoscaling.lag_threshold should be set."
+            ),
+        ):
             streams_app.values.autoscaling = StreamsAppAutoScaling(
                 enabled=True, lag_threshold=1000
             )
-        msg = (
-            "If app.autoscaling.enabled is set to true, "
-            "the fields app.autoscaling.consumer_group and app.autoscaling.lag_threshold should be set."
-        )
-        assert str(error.value) == msg
 
     def test_cleaner_helm_release_name(self, streams_app: StreamsAppV2):
         assert (
@@ -809,7 +806,7 @@ class TestStreamsApp:
         self, stateful_streams_app: StreamsAppV2
     ):
         with pytest.raises(
-            ValidationError,
+            ValueError,
             match=re.escape(
                 "If app.persistence.enabled is set to true, the field app.persistence.size needs to be set."
             ),
