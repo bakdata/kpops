@@ -204,7 +204,7 @@ class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
         return self
 
 
-class PersistenceConfig(BaseModel):
+class PersistenceConfig(CamelCaseConfigModel, DescConfigModel):
     """streams-bootstrap persistence configurations.
 
     :param enabled: Whether to use a persistent volume to store the state of the streams app.
