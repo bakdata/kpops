@@ -2279,62 +2279,88 @@
 <h3 id="deploy"><code>deploy</code><a class="headerlink" href="#deploy" title="Permanent link">&para;</a></h3>
 <h4 id="manifest-mode"><strong>Manifest Mode</strong><a class="headerlink" href="#manifest-mode" title="Permanent link">&para;</a></h4>
 <ul>
-<li><strong>streams-bootstrap Applications</strong>:</li>
+<li><strong>streams-bootstrap Applications</strong>:<ul>
 <li>Depending on your pipeline configuration, Kubernetes <code>Job</code>, <code>Deployment</code>, <code>ConfigMap</code>, and <code>Service</code> resources.</li>
 <li>Please refer to <a href="https://github.com/bakdata/streams-bootstrap/tree/master/charts">streams-bootstrap Helm Charts</a>.</li>
-<li><strong>Topics</strong>:</li>
+</ul>
+</li>
+<li><strong>Topics</strong>:<ul>
 <li>Strimzi <code>KafkaTopic</code> CRDs.</li>
+</ul>
+</li>
 </ul>
 <h4 id="argo-mode"><strong>Argo Mode</strong><a class="headerlink" href="#argo-mode" title="Permanent link">&para;</a></h4>
 <ul>
-<li><strong>streams-bootstrap Applications</strong>:</li>
+<li><strong>streams-bootstrap Applications</strong>:<ul>
 <li>Depending on your pipeline configuration, Kubernetes <code>Job</code>, <code>Deployment</code>, <code>ConfigMap</code>, and <code>Service</code> resources.</li>
 <li>Additional Argo <code>sync-wave</code> annotation to ensure Kafka topics are created first (default <code>sync-wave=0</code>) before deploying apps (lower priority <code>sync-wave&gt;0</code>). All components of each sync wave are deployed in parallel by Argo.</li>
 <li>Please refer to <a href="https://github.com/bakdata/streams-bootstrap/tree/master/charts">streams-bootstrap Helm Charts</a>.</li>
-<li><strong>Topics</strong>:</li>
+</ul>
+</li>
+<li><strong>Topics</strong>:<ul>
 <li>Strimzi <code>KafkaTopic</code> CRDs.</li>
-<li><strong>Cleanup Jobs</strong>:</li>
+</ul>
+</li>
+<li><strong>Cleanup Jobs</strong>:<ul>
 <li>Kubernetes <code>Job</code> resources configured <strong>with</strong> ArgoCD <code>PostDelete</code> hooks, ensuring cleanup tasks are executed after ArgoCD application deletion.</li>
+</ul>
+</li>
 </ul>
 <hr />
 <h3 id="reset"><code>reset</code><a class="headerlink" href="#reset" title="Permanent link">&para;</a></h3>
 <h4 id="manifest-mode_1"><strong>Manifest Mode</strong><a class="headerlink" href="#manifest-mode_1" title="Permanent link">&para;</a></h4>
 <ul>
-<li><strong>Topics</strong>:</li>
+<li><strong>Topics</strong>:<ul>
 <li>Strimzi <code>KafkaTopic</code> CRDs.</li>
-<li><strong>Reset Jobs</strong>:</li>
+</ul>
+</li>
+<li><strong>Reset Jobs</strong>:<ul>
 <li>Kubernetes <code>Job</code> resources for resetting Kafka Streams application states.</li>
+</ul>
+</li>
 </ul>
 <h4 id="argo-mode_1"><strong>Argo Mode</strong><a class="headerlink" href="#argo-mode_1" title="Permanent link">&para;</a></h4>
 <ul>
-<li><strong>Topics</strong>:</li>
+<li><strong>Topics</strong>:<ul>
 <li>Strimzi <code>KafkaTopic</code> CRDs.</li>
-<li><strong>Reset Jobs</strong>:</li>
+</ul>
+</li>
+<li><strong>Reset Jobs</strong>:<ul>
 <li>Kubernetes <code>Job</code> resources <strong>without</strong> ArgoCD <code>PostDelete</code> hooks, providing a simpler reset process.</li>
+</ul>
+</li>
 </ul>
 <hr />
 <h3 id="clean"><code>clean</code><a class="headerlink" href="#clean" title="Permanent link">&para;</a></h3>
 <h4 id="manifest-mode_2"><strong>Manifest Mode</strong><a class="headerlink" href="#manifest-mode_2" title="Permanent link">&para;</a></h4>
 <ul>
-<li><strong>Clean Jobs</strong>:</li>
+<li><strong>Clean Jobs</strong>:<ul>
 <li>Kubernetes <code>Job</code> resources for cleaning up temporary resources or artifacts using application container images.</li>
+</ul>
+</li>
 </ul>
 <h4 id="argo-mode_2"><strong>Argo Mode</strong><a class="headerlink" href="#argo-mode_2" title="Permanent link">&para;</a></h4>
 <ul>
-<li><strong>Not Applicable</strong>:</li>
+<li><strong>Not Applicable</strong>:<ul>
 <li>The <code>clean</code> command is not supported in Argo mode. The clean is instead achieved through cleanup job hooks during the <code>deploy</code> command.</li>
+</ul>
+</li>
 </ul>
 <hr />
 <h3 id="destroy"><code>destroy</code><a class="headerlink" href="#destroy" title="Permanent link">&para;</a></h3>
 <h4 id="manifest-mode_3"><strong>Manifest Mode</strong><a class="headerlink" href="#manifest-mode_3" title="Permanent link">&para;</a></h4>
 <ul>
-<li><strong>Topics</strong>:</li>
+<li><strong>Topics</strong>:<ul>
 <li>Strimzi <code>KafkaTopic</code> CRDs.</li>
+</ul>
+</li>
 </ul>
 <h4 id="argo-mode_3"><strong>Argo Mode</strong><a class="headerlink" href="#argo-mode_3" title="Permanent link">&para;</a></h4>
 <ul>
-<li><strong>Topics</strong>:</li>
+<li><strong>Topics</strong>:<ul>
 <li>Strimzi <code>KafkaTopic</code> CRDs.</li>
+</ul>
+</li>
 </ul>
 <hr />
 <h2 id="use-cases-for-each-mode">Use Cases for Each Mode<a class="headerlink" href="#use-cases-for-each-mode" title="Permanent link">&para;</a></h2>

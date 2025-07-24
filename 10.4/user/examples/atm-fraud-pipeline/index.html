@@ -2266,17 +2266,21 @@ destroyed correctly.</p>
 
 <h2 id="common-errors">Common errors<a class="headerlink" href="#common-errors" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>deploy</code> fails:</li>
+<li><code>deploy</code> fails:<ol>
 <li>Read the error message.</li>
 <li>Try to correct the mistakes if there were any. Likely the configuration is incorrect, or the port-forwarding is not working as intended.</li>
 <li>Run <code>clean</code>.</li>
 <li>Run <code>deploy --dry-run</code> to avoid havig to <code>clean</code> again. If an error is dropped, start over from step 1.</li>
 <li>If the dry-run is succesful, run <code>deploy</code>.</li>
-<li><code>clean</code> fails:</li>
+</ol>
+</li>
+<li><code>clean</code> fails:<ol>
 <li>Read the error message.</li>
 <li>Try to correct the indicated mistakes if there were any. Likely the configuration is incorrect, or the port-forwarding is not working as intended.</li>
 <li>Run <code>clean</code>.</li>
 <li>If <code>clean</code> fails, follow the steps in <a href="../../getting-started/teardown/">teardown</a>.</li>
+</ol>
+</li>
 </ul>
 
 
