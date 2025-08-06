@@ -21,8 +21,6 @@ from kpops.utils.pydantic import (
     DescConfigModel,
     SerializeAsOptional,
     SerializeAsOptionalModel,
-    exclude_by_value,
-    exclude_defaults,
 )
 
 # Source of the pattern: https://kubernetes.io/docs/concepts/containers/images/#image-names
@@ -238,7 +236,7 @@ class StreamsBootstrapValues(SerializeAsOptionalModel, HelmAppValues):
         return values
 
 
-class KafkaConfig(CamelCaseConfigModel, DescConfigModel):
+class KafkaConfig(SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigModel):
     """Kafka Streams config.
 
     :param bootstrap_servers: Brokers
@@ -258,7 +256,7 @@ class KafkaConfig(CamelCaseConfigModel, DescConfigModel):
         ),  # TODO: same for other camelcase fields, avoids duplicates during enrichment
         description=describe_attr("schema_registry_url", __doc__),
     )
-    labeled_output_topics: dict[str, KafkaTopicStr] = Field(
+    labeled_output_topics: SerializeAsOptional[dict[str, KafkaTopicStr]] = Field(
         default={}, description=describe_attr("labeled_output_topics", __doc__)
     )
     output_topic: KafkaTopicStr | None = Field(
@@ -284,16 +282,7 @@ class KafkaConfig(CamelCaseConfigModel, DescConfigModel):
     @pydantic.field_serializer("labeled_output_topics")
     def serialize_labeled_output_topics(
         self, labeled_output_topics: dict[str, KafkaTopic]
-    ) -> dict[str, str]:
-        return {label: topic.name for label, topic in labeled_output_topics.items()}
-
-    # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
-    @pydantic.model_serializer(mode="wrap", when_used="always")
-    def serialize_model(
-        self,
-        default_serialize_handler: pydantic.SerializerFunctionWrapHandler,
-        info: pydantic.SerializationInfo,
-    ) -> dict[str, Any]:
-        return exclude_defaults(
-            self, exclude_by_value(default_serialize_handler(self), None)
-        )
+    ) -> dict[str, str] | None:
+        return {
+            label: topic.name for label, topic in labeled_output_topics.items()
+        } or None

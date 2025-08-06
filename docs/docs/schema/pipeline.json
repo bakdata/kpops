@@ -1692,7 +1692,12 @@
                 },
                 "kafka": {
                     "$ref": "#/$defs/ProducerConfig",
-                    "default": {},
+                    "default": {
+                        "bootstrapServers": "${config.kafka_brokers}",
+                        "labeledOutputTopics": null,
+                        "outputTopic": null,
+                        "schemaRegistryUrl": null
+                    },
                     "description": "Kafka Streams settings"
                 },
                 "livenessProbe": {
@@ -1950,13 +1955,20 @@
                     "type": "string"
                 },
                 "labeledOutputTopics": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
+                    "anyOf": [
+                        {
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "default": {},
                     "description": "Extra output topics",
-                    "title": "Labeledoutputtopics",
-                    "type": "object"
+                    "title": "Labeledoutputtopics"
                 },
                 "outputTopic": {
                     "anyOf": [
@@ -2864,7 +2876,20 @@
                 },
                 "kafka": {
                     "$ref": "#/$defs/kpops__components__streams_bootstrap__streams__model__StreamsConfig",
-                    "default": {},
+                    "default": {
+                        "applicationId": null,
+                        "bootstrapServers": "${config.kafka_brokers}",
+                        "config": null,
+                        "deleteOutput": null,
+                        "errorTopic": null,
+                        "inputPattern": null,
+                        "inputTopics": null,
+                        "labeledInputPatterns": null,
+                        "labeledInputTopics": null,
+                        "labeledOutputTopics": null,
+                        "outputTopic": null,
+                        "schemaRegistryUrl": null
+                    },
                     "description": "streams-bootstrap kafka section"
                 },
                 "livenessProbe": {
@@ -3507,10 +3532,17 @@
                     "type": "string"
                 },
                 "config": {
+                    "anyOf": [
+                        {
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "default": {},
                     "description": "Configuration",
-                    "title": "Config",
-                    "type": "object"
+                    "title": "Config"
                 },
                 "deleteOutput": {
                     "anyOf": [
@@ -3551,43 +3583,71 @@
                     "title": "Inputpattern"
                 },
                 "inputTopics": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "default": [],
                     "description": "Input topics",
-                    "items": {
-                        "type": "string"
-                    },
-                    "title": "Inputtopics",
-                    "type": "array"
+                    "title": "Inputtopics"
                 },
                 "labeledInputPatterns": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
+                    "anyOf": [
+                        {
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "default": {},
                     "description": "Extra input patterns",
-                    "title": "Labeledinputpatterns",
-                    "type": "object"
+                    "title": "Labeledinputpatterns"
                 },
                 "labeledInputTopics": {
-                    "additionalProperties": {
-                        "items": {
-                            "type": "string"
+                    "anyOf": [
+                        {
+                            "additionalProperties": {
+                                "items": {
+                                    "type": "string"
+                                },
+                                "type": "array"
+                            },
+                            "type": "object"
                         },
-                        "type": "array"
-                    },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "default": {},
                     "description": "Extra input topics",
-                    "title": "Labeledinputtopics",
-                    "type": "object"
+                    "title": "Labeledinputtopics"
                 },
                 "labeledOutputTopics": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
+                    "anyOf": [
+                        {
+                            "additionalProperties": {
+                                "type": "string"
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "default": {},
                     "description": "Extra output topics",
-                    "title": "Labeledoutputtopics",
-                    "type": "object"
+                    "title": "Labeledoutputtopics"
                 },
                 "outputTopic": {
                     "anyOf": [

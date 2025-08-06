@@ -24,6 +24,10 @@ from kpops.utils.pydantic import (
 )
 
 
+def serialize_topics(topics: list[KafkaTopic]) -> list[str]:
+    return [topic.name for topic in topics]
+
+
 class StreamsConfig(KafkaConfig):
     """streams-bootstrap kafka section.
 
@@ -42,22 +46,22 @@ class StreamsConfig(KafkaConfig):
         title="Unique application ID",
         description=describe_attr("application_id", __doc__),
     )
-    input_topics: list[KafkaTopicStr] = Field(
+    input_topics: SerializeAsOptional[list[KafkaTopicStr]] = Field(
         default=[], description=describe_attr("input_topics", __doc__)
     )
     input_pattern: str | None = Field(
         default=None, description=describe_attr("input_pattern", __doc__)
     )
-    labeled_input_topics: dict[str, list[KafkaTopicStr]] = Field(
+    labeled_input_topics: SerializeAsOptional[dict[str, list[KafkaTopicStr]]] = Field(
         default={}, description=describe_attr("labeled_input_topics", __doc__)
     )
-    labeled_input_patterns: dict[str, str] = Field(
+    labeled_input_patterns: SerializeAsOptional[dict[str, str]] = Field(
         default={}, description=describe_attr("labeled_input_patterns", __doc__)
     )
     error_topic: KafkaTopicStr | None = Field(
         default=None, description=describe_attr("error_topic", __doc__)
     )
-    config: dict[str, Any] = Field(
+    config: SerializeAsOptional[dict[str, Any]] = Field(
         default={}, description=describe_attr("config", __doc__)
     )
     delete_output: bool | None = Field(
@@ -86,17 +90,17 @@ class StreamsConfig(KafkaConfig):
         return labeled_input_topics
 
     @pydantic.field_serializer("input_topics")
-    def serialize_topics(self, input_topics: list[KafkaTopic]) -> list[str]:
-        return [topic.name for topic in input_topics]
+    def serialize_topics(self, input_topics: list[KafkaTopic]) -> list[str] | None:
+        return serialize_topics(input_topics) or None
 
     @pydantic.field_serializer("labeled_input_topics")
     def serialize_labeled_input_topics(
         self, labeled_input_topics: dict[str, list[KafkaTopic]]
-    ) -> dict[str, list[str]]:
+    ) -> dict[str, list[str]] | None:
         return {
-            label: self.serialize_topics(topics)
+            label: serialize_topics(topics)
             for label, topics in labeled_input_topics.items()
-        }
+        } or None
 
     def add_input_topics(self, topics: list[KafkaTopic]) -> None:
         """Add given topics to the list of input topics.
