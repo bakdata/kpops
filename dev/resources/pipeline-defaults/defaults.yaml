@@ -213,7 +213,7 @@ streams-app:
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/streams-app
   values: # required
-    # streams-bootstrap config
+    # streams-bootstrap kafka section
     kafka: # required, streams-app-specific
       bootstrapServers: ${config.kafka_brokers} # required
       schemaRegistryUrl: ${config.schema_registry.url}
