@@ -1,4 +1,4 @@
-  # No arbitrary keys are allowed under `app`here
+  # No arbitrary keys are allowed under `app` here
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/streams-app
   values: # required
