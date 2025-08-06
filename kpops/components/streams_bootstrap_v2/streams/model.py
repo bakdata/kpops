@@ -18,7 +18,7 @@ from kpops.utils.pydantic import (
 
 
 class StreamsConfig(KafkaStreamsConfig):
-    """Streams Bootstrap streams section.
+    """streams-bootstrap streams section.
 
     :param input_topics: Input topics, defaults to []
     :param input_pattern: Input pattern, defaults to None

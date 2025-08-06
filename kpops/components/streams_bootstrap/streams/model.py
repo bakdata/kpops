@@ -25,7 +25,7 @@ from kpops.utils.pydantic import (
 
 
 class StreamsConfig(KafkaConfig):
-    """Streams Bootstrap kafka section.
+    """streams-bootstrap kafka section.
 
     :param application_id: Unique application ID for Kafka Streams. Required for auto-scaling
     :param input_topics: Input topics, defaults to []
