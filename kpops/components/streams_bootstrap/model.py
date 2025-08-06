@@ -248,7 +248,8 @@ class KafkaConfig(CamelCaseConfigModel, DescConfigModel):
     """
 
     bootstrap_servers: str = Field(
-        description=describe_attr("bootstrap_servers", __doc__)
+        default="${config.kafka_brokers}",
+        description=describe_attr("bootstrap_servers", __doc__),
     )
     schema_registry_url: str | None = Field(
         default=None,

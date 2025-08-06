@@ -610,6 +610,7 @@
             "description": "Kafka Streams config.",
             "properties": {
                 "bootstrapServers": {
+                    "default": "${config.kafka_brokers}",
                     "description": "Brokers",
                     "title": "Bootstrapservers",
                     "type": "string"
@@ -649,9 +650,6 @@
                     "title": "Schema Registry Url"
                 }
             },
-            "required": [
-                "bootstrapServers"
-            ],
             "title": "KafkaConfig",
             "type": "object"
         },
@@ -2032,6 +2030,7 @@
                 },
                 "kafka": {
                     "$ref": "#/$defs/ProducerConfig",
+                    "default": {},
                     "description": "Kafka Streams settings"
                 },
                 "livenessProbe": {
@@ -2273,8 +2272,7 @@
                 }
             },
             "required": [
-                "image",
-                "kafka"
+                "image"
             ],
             "title": "ProducerAppValues",
             "type": "object"
@@ -2284,6 +2282,7 @@
             "description": "Kafka Streams settings specific to Producer.",
             "properties": {
                 "bootstrapServers": {
+                    "default": "${config.kafka_brokers}",
                     "description": "Brokers",
                     "title": "Bootstrapservers",
                     "type": "string"
@@ -2323,9 +2322,6 @@
                     "title": "Schema Registry Url"
                 }
             },
-            "required": [
-                "bootstrapServers"
-            ],
             "title": "ProducerConfig",
             "type": "object"
         },
@@ -3206,6 +3202,7 @@
                 },
                 "kafka": {
                     "$ref": "#/$defs/kpops__components__streams_bootstrap__streams__model__StreamsConfig",
+                    "default": {},
                     "description": "streams-bootstrap kafka section"
                 },
                 "livenessProbe": {
@@ -3426,8 +3423,7 @@
                 }
             },
             "required": [
-                "image",
-                "kafka"
+                "image"
             ],
             "title": "StreamsAppValues",
             "type": "object"
@@ -4450,6 +4446,7 @@
                     "title": "Unique application ID"
                 },
                 "bootstrapServers": {
+                    "default": "${config.kafka_brokers}",
                     "description": "Brokers",
                     "title": "Bootstrapservers",
                     "type": "string"
@@ -4563,9 +4560,6 @@
                     "title": "Schema Registry Url"
                 }
             },
-            "required": [
-                "bootstrapServers"
-            ],
             "title": "StreamsConfig",
             "type": "object"
         },

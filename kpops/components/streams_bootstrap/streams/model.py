@@ -394,6 +394,7 @@ class StreamsAppValues(StreamsBootstrapValues):
     """
 
     kafka: StreamsConfig = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
+        default=StreamsConfig(),
         description=describe_attr("kafka", __doc__),
     )
 
