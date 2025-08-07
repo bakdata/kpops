@@ -31,7 +31,6 @@ from kpops.core.operation import OperationMode
 from kpops.manifests.argo import ArgoSyncWave, enrich_annotations
 from kpops.manifests.kubernetes import K8S_LABEL_MAX_LEN, KubernetesManifest
 from kpops.utils.colorify import magentaify
-from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import SkipGenerate
 
 log = logging.getLogger("HelmApp")
@@ -49,14 +48,12 @@ class HelmAppValues(KubernetesAppValues):
     ) = Field(
         default=None,
         title="NameOverride",
-        description=describe_attr("name_override", __doc__),
     )
     fullname_override: (
         Annotated[str, pydantic.StringConstraints(max_length=K8S_LABEL_MAX_LEN)] | None
     ) = Field(
         default=None,
         title="FullnameOverride",
-        description=describe_attr("fullname_override", __doc__),
     )
 
     # TODO(Ivan Yordanov): Replace with a function decorated with `@model_serializer`
@@ -82,18 +79,14 @@ class HelmApp(KubernetesApp):
 
     repo_config: SkipGenerate[HelmRepoConfig | None] = Field(
         default=None,
-        description=describe_attr("repo_config", __doc__),
     )
     diff_config: SkipGenerate[HelmDiffConfig] = Field(
         default=HelmDiffConfig(),
-        description=describe_attr("diff_config", __doc__),
     )
     version: str | None = Field(
         default=None,
-        description=describe_attr("version", __doc__),
     )
     values: HelmAppValues = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
-        description=describe_attr("values", __doc__),
     )
 
     @cached_property

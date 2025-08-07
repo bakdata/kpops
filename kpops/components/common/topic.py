@@ -7,7 +7,6 @@ from typing import Annotated, Any, ClassVar
 import pydantic
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import DescConfigModel, to_str
 
 
@@ -34,34 +33,27 @@ class TopicConfig(DescConfigModel):
     :param label: Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`
     """
 
-    type: OutputTopicTypes | None = Field(
-        default=None, title="Topic type", description=describe_attr("type", __doc__)
-    )
+    type: OutputTopicTypes | None = Field(default=None, title="Topic type")
     key_schema: str | None = Field(
         default=None,
         title="Key schema",
-        description=describe_attr("key_schema", __doc__),
     )
     value_schema: str | None = Field(
         default=None,
         title="Value schema",
-        description=describe_attr("value_schema", __doc__),
     )
     partitions_count: int | None = Field(
         default=None,
         title="Partitions count",
-        description=describe_attr("partitions_count", __doc__),
     )
     replication_factor: int | None = Field(
         default=None,
         title="Replication factor",
-        description=describe_attr("replication_factor", __doc__),
     )
     configs: dict[str, str | int] = Field(
         default={},  # pyright: ignore[reportUnknownArgumentType]
-        description=describe_attr("configs", __doc__),
     )
-    label: str | None = Field(default=None, description=describe_attr("label", __doc__))
+    label: str | None = Field(default=None)
 
     model_config: ClassVar[ConfigDict] = ConfigDict(
         extra="forbid",

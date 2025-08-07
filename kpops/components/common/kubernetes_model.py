@@ -76,11 +76,10 @@ class NodeSelectorRequirement(DescConfigModel, CamelCaseConfigModel):
     :param values: An array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. If the operator is Gt or Lt, the values array must have a single element, which will be interpreted as an integer. This array is replaced during a strategic merge patch.
     """
 
-    key: str = Field(description=describe_attr("key", __doc__))
+    key: str = Field()
     operator: NodeSelectorOperator
     values: list[str] = Field(
         default=[],  # pyright: ignore[reportUnknownArgumentType]
-        description=describe_attr("values", __doc__),
     )
 
     @model_validator(mode="after")
@@ -110,11 +109,9 @@ class NodeSelectorTerm(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfi
 
     match_expressions: SerializeAsOptional[list[NodeSelectorRequirement]] = Field(
         default=[],  # pyright: ignore[reportUnknownArgumentType]
-        description=describe_attr("match_expressions", __doc__),
     )
     match_fields: SerializeAsOptional[list[NodeSelectorRequirement]] = Field(
         default=[],  # pyright: ignore[reportUnknownArgumentType]
-        description=describe_attr("match_fields", __doc__),
     )
 
 
@@ -124,9 +121,7 @@ class NodeSelector(DescConfigModel, CamelCaseConfigModel):
     :param node_selector_terms: A list of node selector terms. The terms are ORed.
     """
 
-    node_selector_terms: list[NodeSelectorTerm] = Field(
-        description=describe_attr("node_selector_terms", __doc__)
-    )
+    node_selector_terms: list[NodeSelectorTerm] = Field()
 
 
 class PreferredSchedulingTerm(DescConfigModel, CamelCaseConfigModel):
@@ -136,10 +131,8 @@ class PreferredSchedulingTerm(DescConfigModel, CamelCaseConfigModel):
     :param weight: Weight associated with matching the corresponding nodeSelectorTerm, in the range 1-100.
     """
 
-    preference: NodeSelectorTerm = Field(
-        description=describe_attr("preference", __doc__)
-    )
-    weight: Weight = Field(description=describe_attr("weight", __doc__))
+    preference: NodeSelectorTerm = Field()
+    weight: Weight = Field()
 
 
 class NodeAffinity(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfigModel):
@@ -181,13 +174,10 @@ class LabelSelectorRequirement(DescConfigModel, CamelCaseConfigModel):
     :param values: An array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.
     """
 
-    key: str = Field(
-        description=describe_attr("key", __doc__),
-    )
+    key: str = Field()
     operator: LabelSelectorOperator
     values: list[str] = Field(
         default=[],  # pyright: ignore[reportUnknownArgumentType]
-        description=describe_attr("values", __doc__),
     )
 
     @model_validator(mode="after")
@@ -213,11 +203,9 @@ class LabelSelector(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfigMo
 
     match_labels: SerializeAsOptional[dict[str, str]] = Field(
         default={},  # pyright: ignore[reportUnknownArgumentType]
-        description=describe_attr("match_labels", __doc__),
     )
     match_expressions: SerializeAsOptional[list[LabelSelectorRequirement]] = Field(
         default=[],  # pyright: ignore[reportUnknownArgumentType]
-        description=describe_attr("match_expressions", __doc__),
     )
 
 
@@ -234,26 +222,19 @@ class PodAffinityTerm(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfig
 
     label_selector: LabelSelector | None = Field(
         default=None,
-        description=describe_attr("label_selector", __doc__),
     )
     match_label_keys: SerializeAsOptional[list[str]] = Field(
         default=[],  # pyright: ignore[reportUnknownArgumentType]
-        description=describe_attr("match_label_keys", __doc__),
     )
     mismatch_label_keys: SerializeAsOptional[list[str]] = Field(
         default=[],  # pyright: ignore[reportUnknownArgumentType]
-        description=describe_attr("mismatch_label_keys", __doc__),
     )
-    topology_key: str = Field(
-        description=describe_attr("topology_key", __doc__),
-    )
+    topology_key: str = Field()
     namespaces: SerializeAsOptional[list[str]] = Field(
         default=[],  # pyright: ignore[reportUnknownArgumentType]
-        description=describe_attr("namespaces", __doc__),
     )
     namespace_selector: LabelSelector | None = Field(
         default=None,
-        description=describe_attr("namespace_selector", __doc__),
     )
 
 
@@ -264,12 +245,8 @@ class WeightedPodAffinityTerm(DescConfigModel, CamelCaseConfigModel):
     :param weight: weight associated with matching the corresponding podAffinityTerm, in the range 1-100.
     """
 
-    pod_affinity_term: PodAffinityTerm = Field(
-        description=describe_attr("pod_affinity_term", __doc__),
-    )
-    weight: Weight = Field(
-        description=describe_attr("weight", __doc__),
-    )
+    pod_affinity_term: PodAffinityTerm = Field()
+    weight: Weight = Field()
 
 
 class PodAffinity(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfigModel):
@@ -307,15 +284,9 @@ class Affinity(DescConfigModel, CamelCaseConfigModel):
     :param pod_anti_affinity: Describes pod anti-affinity scheduling rules (e.g. avoid putting this pod in the same node, zone, etc. as some other pod(s)).
     """
 
-    node_affinity: NodeAffinity | None = Field(
-        default=None, description=describe_attr("node_affinity", __doc__)
-    )
-    pod_affinity: PodAffinity | None = Field(
-        default=None, description=describe_attr("pod_affinity", __doc__)
-    )
-    pod_anti_affinity: PodAffinity | None = Field(
-        default=None, description=describe_attr("pod_anti_affinity", __doc__)
-    )
+    node_affinity: NodeAffinity | None = Field(default=None)
+    pod_affinity: PodAffinity | None = Field(default=None)
+    pod_anti_affinity: PodAffinity | None = Field(default=None)
 
 
 class Operation(str, enum.Enum):
@@ -347,17 +318,15 @@ class Toleration(DescConfigModel, CamelCaseConfigModel):
     :param toleration_seconds: The duration for which the toleration is valid.
     """
 
-    key: str = Field(description=describe_attr("key", __doc__))
+    key: str = Field()
 
-    operator: Operation = Field(description=describe_attr("operator", __doc__))
+    operator: Operation = Field()
 
-    effect: Effects = Field(description=describe_attr("effect", __doc__))
+    effect: Effects = Field()
 
-    value: str | None = Field(default=None, description=describe_attr("value", __doc__))
+    value: str | None = Field(default=None)
 
-    toleration_seconds: int | None = Field(
-        default=None, description=describe_attr("toleration_seconds", __doc__)
-    )
+    toleration_seconds: int | None = Field(default=None)
 
 
 CPUStr = Annotated[str, pydantic.StringConstraints(pattern=r"^\d+m$")]
@@ -378,16 +347,13 @@ class ResourceDefinition(DescConfigModel):
 
     cpu: CPUStr | pydantic.PositiveInt | None = Field(
         default=None,
-        description=describe_attr("cpu", __doc__),
     )
     memory: MemoryStr | pydantic.PositiveInt | None = Field(
         default=None,
-        description=describe_attr("memory", __doc__),
     )
     ephemeral_storage: MemoryStr | pydantic.PositiveInt | None = Field(
         default=None,
         alias="ephemeral-storage",
-        description=describe_attr("ephemeral_storage", __doc__),
     )
 
 
@@ -400,9 +366,7 @@ class Resources(DescConfigModel):
 
     requests: ResourceDefinition | None = Field(
         default=None,
-        description=describe_attr("requests", __doc__),
     )
     limits: ResourceDefinition | None = Field(
         default=None,
-        description=describe_attr("limits", __doc__),
     )

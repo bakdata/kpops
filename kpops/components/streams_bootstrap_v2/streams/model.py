@@ -10,7 +10,6 @@ from kpops.components.streams_bootstrap_v2.base import (
     KafkaStreamsConfig,
     StreamsBootstrapV2Values,
 )
-from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
     DescConfigModel,
@@ -29,27 +28,13 @@ class StreamsConfig(KafkaStreamsConfig):
     :param delete_output: Whether the output topics with their associated schemas and the consumer group should be deleted during the cleanup, defaults to None
     """
 
-    input_topics: list[KafkaTopicStr] = Field(
-        default=[], description=describe_attr("input_topics", __doc__)
-    )
-    input_pattern: str | None = Field(
-        default=None, description=describe_attr("input_pattern", __doc__)
-    )
-    extra_input_topics: dict[str, list[KafkaTopicStr]] = Field(
-        default={}, description=describe_attr("extra_input_topics", __doc__)
-    )
-    extra_input_patterns: dict[str, str] = Field(
-        default={}, description=describe_attr("extra_input_patterns", __doc__)
-    )
-    error_topic: KafkaTopicStr | None = Field(
-        default=None, description=describe_attr("error_topic", __doc__)
-    )
-    config: dict[str, Any] = Field(
-        default={}, description=describe_attr("config", __doc__)
-    )
-    delete_output: bool | None = Field(
-        default=None, description=describe_attr("delete_output", __doc__)
-    )
+    input_topics: list[KafkaTopicStr] = Field(default=[])
+    input_pattern: str | None = Field(default=None)
+    extra_input_topics: dict[str, list[KafkaTopicStr]] = Field(default={})
+    extra_input_patterns: dict[str, str] = Field(default={})
+    error_topic: KafkaTopicStr | None = Field(default=None)
+    config: dict[str, Any] = Field(default={})
+    delete_output: bool | None = Field(default=None)
 
     @pydantic.field_validator("input_topics", mode="before")
     @classmethod
@@ -144,51 +129,41 @@ class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
 
     enabled: bool = Field(
         default=False,
-        description=describe_attr("streams", __doc__),
     )
     consumer_group: str | None = Field(
         default=None,
         title="Consumer group",
-        description=describe_attr("consumer_group", __doc__),
     )
     lag_threshold: int | None = Field(
         default=None,
         title="Lag threshold",
-        description=describe_attr("lag_threshold", __doc__),
     )
     polling_interval: int = Field(
         default=30,
         title="Polling interval",
-        description=describe_attr("polling_interval", __doc__),
     )
     cooldown_period: int = Field(
         default=300,
         title="Cooldown period",
-        description=describe_attr("cooldown_period", __doc__),
     )
     offset_reset_policy: str = Field(
         default="earliest",
         title="Offset reset policy",
-        description=describe_attr("offset_reset_policy", __doc__),
     )
     min_replicas: int = Field(
         default=0,
         title="Min replica count",
-        description=describe_attr("min_replicas", __doc__),
     )
     max_replicas: int = Field(
         default=1,
         title="Max replica count",
-        description=describe_attr("max_replicas", __doc__),
     )
     idle_replicas: int | None = Field(
         default=None,
         title="Idle replica count",
-        description=describe_attr("idle_replicas", __doc__),
     )
     topics: list[str] = Field(
         default=[],
-        description=describe_attr("topics", __doc__),
     )
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 
@@ -245,11 +220,9 @@ class StreamsAppV2Values(StreamsBootstrapV2Values):
     """
 
     streams: StreamsConfig = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
-        description=describe_attr("streams", __doc__),
     )
     autoscaling: StreamsAppAutoScaling | None = Field(
         default=None,
-        description=describe_attr("autoscaling", __doc__),
     )
     stateful_set: bool = Field(
         default=False,
@@ -257,6 +230,5 @@ class StreamsAppV2Values(StreamsBootstrapV2Values):
     )
     persistence: PersistenceConfig = Field(
         default=PersistenceConfig(),
-        description=describe_attr("persistence", __doc__),
     )
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")

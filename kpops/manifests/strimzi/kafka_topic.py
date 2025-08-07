@@ -8,7 +8,6 @@ from kpops.components.common.topic import KafkaTopic
 from kpops.config import get_config
 from kpops.core.exception import ValidationError
 from kpops.manifests.kubernetes import KubernetesManifest, ObjectMeta
-from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import CamelCaseConfigModel
 
 
@@ -21,15 +20,9 @@ class TopicSpec(CamelCaseConfigModel):
 
     """
 
-    partitions: int = Field(
-        default=1, ge=1, description=describe_attr("partitions", __doc__)
-    )
-    replicas: int = Field(
-        default=1, ge=1, le=32767, description=describe_attr("replicas", __doc__)
-    )
-    config: dict[str, Any] | None = Field(
-        default=None, description=describe_attr("config", __doc__)
-    )
+    partitions: int = Field(default=1, ge=1)
+    replicas: int = Field(default=1, ge=1, le=32767)
+    config: dict[str, Any] | None = Field(default=None)
 
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 

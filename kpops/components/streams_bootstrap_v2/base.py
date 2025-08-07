@@ -13,7 +13,6 @@ from kpops.components.base_components import KafkaApp
 from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
 from kpops.components.common.kubernetes_model import Affinity, Toleration
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
-from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
     DescConfigModel,
@@ -45,20 +44,16 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
     :param output_topic: Output topic, defaults to None
     """
 
-    brokers: str = Field(description=describe_attr("brokers", __doc__))
+    brokers: str = Field()
     schema_registry_url: str | None = Field(
         default=None,
         validation_alias=AliasChoices(
             "schema_registry_url", "schemaRegistryUrl"
         ),  # TODO: same for other camelcase fields, avoids duplicates during enrichment
-        description=describe_attr("schema_registry_url", __doc__),
     )
-    extra_output_topics: dict[str, KafkaTopicStr] = Field(
-        default={}, description=describe_attr("extra_output_topics", __doc__)
-    )
+    extra_output_topics: dict[str, KafkaTopicStr] = Field(default={})
     output_topic: KafkaTopicStr | None = Field(
         default=None,
-        description=describe_attr("output_topic", __doc__),
         json_schema_extra={},
     )
 
@@ -105,21 +100,16 @@ class StreamsBootstrapV2Values(SerializeAsOptionalModel, HelmAppValues):
     image_tag: str = Field(
         default="latest",
         pattern=IMAGE_TAG_PATTERN,
-        description=describe_attr("image_tag", __doc__),
     )
 
-    streams: KafkaStreamsConfig = Field(
-        description=describe_attr("streams", __doc__),
-    )
+    streams: KafkaStreamsConfig = Field()
 
     affinity: Affinity | None = Field(
         default=None,
-        description=describe_attr("affinity", __doc__),
     )
 
     tolerations: SerializeAsOptional[list[Toleration]] = Field(
         default=[],
-        description=describe_attr("tolerations", __doc__),
     )
 
 
@@ -134,15 +124,12 @@ class StreamsBootstrapV2(KafkaApp, HelmApp, ABC):
     """
 
     values: StreamsBootstrapV2Values = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
-        description=describe_attr("values", __doc__),
     )
     repo_config: SkipGenerate[HelmRepoConfig] = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         default=STREAMS_BOOTSTRAP_HELM_REPO,
-        description=describe_attr("repo_config", __doc__),
     )
     version: str | None = Field(
         default=STREAMS_BOOTSTRAP_VERSION,
-        description=describe_attr("version", __doc__),
     )
 
     @pydantic.model_validator(mode="after")

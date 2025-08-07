@@ -4,7 +4,6 @@ from typing import Any, ClassVar, NewType
 from pydantic import ConfigDict, Field, model_validator
 
 from kpops.components.base_components.models import TopicName
-from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import DescConfigModel
 
 
@@ -27,10 +26,8 @@ class FromTopic(DescConfigModel):
         define only if `type` is `pattern` or `None`, defaults to None
     """
 
-    type: InputTopicTypes | None = Field(
-        default=None, description=describe_attr("type", __doc__)
-    )
-    label: str | None = Field(default=None, description=describe_attr("label", __doc__))
+    type: InputTopicTypes | None = Field(default=None)
+    label: str | None = Field(default=None)
 
     model_config: ClassVar[ConfigDict] = ConfigDict(
         extra="forbid",
@@ -58,11 +55,9 @@ class FromSection(DescConfigModel):
 
     topics: dict[TopicName, FromTopic] = Field(
         default={},  # pyright: ignore[reportUnknownArgumentType]
-        description=describe_attr("topics", __doc__),
     )
     components: dict[ComponentName, FromTopic] = Field(
         default={},  # pyright: ignore[reportUnknownArgumentType]
-        description=describe_attr("components", __doc__),
     )
 
     model_config: ClassVar[ConfigDict] = ConfigDict(

@@ -15,7 +15,6 @@ from kpops.components.streams_bootstrap.model import (
     KafkaConfig,
     StreamsBootstrapValues,
 )
-from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
     DescConfigModel,
@@ -53,35 +52,24 @@ class StreamsConfig(KafkaConfig):
     application_id: str | None = Field(
         default=None,
         title="Unique application ID",
-        description=describe_attr("application_id", __doc__),
     )
     input_topics: SerializeAsOptional[
         Annotated[
             list[KafkaTopicStr],
             pydantic.PlainSerializer(serialize_topics),
         ]
-    ] = Field(default=[], description=describe_attr("input_topics", __doc__))
-    input_pattern: str | None = Field(
-        default=None, description=describe_attr("input_pattern", __doc__)
-    )
+    ] = Field(default=[])
+    input_pattern: str | None = Field(default=None)
     labeled_input_topics: SerializeAsOptional[
         Annotated[
             dict[str, list[KafkaTopicStr]],
             pydantic.PlainSerializer(serialize_labeled_input_topics),
         ]
     ] = Field(default={})
-    labeled_input_patterns: SerializeAsOptional[dict[str, str]] = Field(
-        default={}, description=describe_attr("labeled_input_patterns", __doc__)
-    )
-    error_topic: KafkaTopicStr | None = Field(
-        default=None, description=describe_attr("error_topic", __doc__)
-    )
-    config: SerializeAsOptional[dict[str, Any]] = Field(
-        default={}, description=describe_attr("config", __doc__)
-    )
-    delete_output: bool | None = Field(
-        default=None, description=describe_attr("delete_output", __doc__)
-    )
+    labeled_input_patterns: SerializeAsOptional[dict[str, str]] = Field(default={})
+    error_topic: KafkaTopicStr | None = Field(default=None)
+    config: SerializeAsOptional[dict[str, Any]] = Field(default={})
+    delete_output: bool | None = Field(default=None)
 
     @pydantic.field_validator("input_topics", mode="before")
     @classmethod
@@ -165,54 +153,43 @@ class StreamsAppAutoScaling(
 
     enabled: bool = Field(
         default=False,
-        description=describe_attr("enabled", __doc__),
     )
     lag_threshold: int | None = Field(
         default=None,
         title="Lag threshold",
-        description=describe_attr("lag_threshold", __doc__),
     )
     polling_interval: int | None = Field(
         default=None,
         title="Polling interval",
-        description=describe_attr("polling_interval", __doc__),
     )
     cooldown_period: int | None = Field(
         default=None,
         title="Cooldown period",
-        description=describe_attr("cooldown_period", __doc__),
     )
     offset_reset_policy: str | None = Field(
         default=None,
         title="Offset reset policy",
-        description=describe_attr("offset_reset_policy", __doc__),
     )
     min_replicas: int | None = Field(
         default=None,
         title="Min replica count",
-        description=describe_attr("min_replicas", __doc__),
     )
     max_replicas: int | None = Field(
         default=None,
         title="Max replica count",
-        description=describe_attr("max_replicas", __doc__),
     )
     idle_replicas: int | None = Field(
         default=None,
         title="Idle replica count",
-        description=describe_attr("idle_replicas", __doc__),
     )
     internal_topics: SerializeAsOptional[list[str]] = Field(
         default=[],
-        description=describe_attr("internal_topics", __doc__),
     )
     topics: SerializeAsOptional[list[str]] = Field(
         default=[],
-        description=describe_attr("topics", __doc__),
     )
     additional_triggers: SerializeAsOptional[list[str]] = Field(
         default=[],
-        description=describe_attr("additional_triggers", __doc__),
     )
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 
@@ -271,39 +248,30 @@ class JMXRule(SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigModel):
 
     pattern: str | None = Field(
         default=None,
-        description=describe_attr("pattern", __doc__),
     )
     name: str | None = Field(
         default=None,
-        description=describe_attr("name", __doc__),
     )
     value: str | bool | int | float | None = Field(
         default=None,
-        description=describe_attr("value", __doc__),
     )
     value_factor: float | None = Field(
         default=None,
-        description=describe_attr("value_factor", __doc__),
     )
     help: str | None = Field(
         default=None,
-        description=describe_attr("help", __doc__),
     )
     attr_name_snake_case: bool | None = Field(
         default=None,
-        description=describe_attr("attr_name_snake_case", __doc__),
     )
     cache: bool | None = Field(
         default=None,
-        description=describe_attr("cache", __doc__),
     )
     type: JmxRuleType | None = Field(
         default=None,
-        description=describe_attr("type", __doc__),
     )
     labels: SerializeAsOptional[dict[str, str]] = Field(
         default={},
-        description=describe_attr("labels", __doc__),
     )
 
 
@@ -330,36 +298,28 @@ class PrometheusExporterConfig(CamelCaseConfigModel, DescConfigModel):
 
         enabled: bool | None = Field(
             default=None,
-            description=describe_attr("enabled", __doc__),
         )
         image: str | None = Field(
             default=None,
-            description=describe_attr("image", __doc__),
         )
         image_tag: str | None = Field(
             default=None,
-            description=describe_attr("image_tag", __doc__),
         )
         image_pull_policy: ImagePullPolicy | None = Field(
             default=None,
-            description=describe_attr("image_pull_policy", __doc__),
         )
         port: int | None = Field(
             default=None,
-            description=describe_attr("port", __doc__),
         )
         resources: Resources | None = Field(
             default=None,
-            description=describe_attr("resources", __doc__),
         )
         metric_rules: SerializeAsOptional[list[JMXRule]] = Field(
             default=[],
-            description=describe_attr("metric_rules", __doc__),
         )
 
     jmx: PrometheusJMXExporterConfig | None = Field(
         default=None,
-        description=describe_attr("jmx", __doc__),
     )
 
 
@@ -373,15 +333,12 @@ class JMXConfig(CamelCaseConfigModel, DescConfigModel):
 
     enabled: bool | None = Field(
         default=None,
-        description=describe_attr("enabled", __doc__),
     )
     host: str | None = Field(
         default=None,
-        description=describe_attr("host", __doc__),
     )
     port: int | None = Field(
         default=None,
-        description=describe_attr("port", __doc__),
     )
 
 
@@ -401,37 +358,30 @@ class StreamsAppValues(StreamsBootstrapValues):
 
     kafka: StreamsConfig = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         default=StreamsConfig(),
-        description=describe_attr("kafka", __doc__),
     )
 
     autoscaling: StreamsAppAutoScaling | None = Field(
         default=None,
-        description=describe_attr("autoscaling", __doc__),
     )
 
     stateful_set: bool = Field(
         default=False,
-        description=describe_attr("stateful_set", __doc__),
     )
 
     persistence: PersistenceConfig | None = Field(
         default=None,
-        description=describe_attr("persistence", __doc__),
     )
 
     prometheus: PrometheusExporterConfig | None = Field(
         default=None,
-        description=describe_attr("prometheus", __doc__),
     )
 
     jmx: JMXConfig | None = Field(
         default=None,
-        description=describe_attr("jmx", __doc__),
     )
 
     termination_grace_period_seconds: int | None = Field(
         default=None,
-        description=describe_attr("termination_grace_period_seconds", __doc__),
     )
 
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")

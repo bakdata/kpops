@@ -130,6 +130,9 @@
                     },
                     "description": "Helm diff config"
                 },
+                "enrich": {
+                    "description": "Whether to enrich component with defaults"
+                },
                 "from": {
                     "anyOf": [
                         {
@@ -140,8 +143,10 @@
                         }
                     ],
                     "default": null,
-                    "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
+                },
+                "from_": {
+                    "description": "Topic(s) and/or components from which the component will read input"
                 },
                 "name": {
                     "description": "Component name",
@@ -630,6 +635,9 @@
                     "$ref": "#/$defs/KafkaConnectorConfig",
                     "description": "Connector config"
                 },
+                "enrich": {
+                    "description": "Whether to enrich component with defaults"
+                },
                 "from": {
                     "anyOf": [
                         {
@@ -640,8 +648,10 @@
                         }
                     ],
                     "default": null,
-                    "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
+                },
+                "from_": {
+                    "description": "Topic(s) and/or components from which the component will read input"
                 },
                 "name": {
                     "description": "Component name",
@@ -717,6 +727,9 @@
                     "$ref": "#/$defs/KafkaConnectorConfig",
                     "description": "Connector config"
                 },
+                "enrich": {
+                    "description": "Whether to enrich component with defaults"
+                },
                 "from": {
                     "anyOf": [
                         {
@@ -727,8 +740,10 @@
                         }
                     ],
                     "default": null,
-                    "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
+                },
+                "from_": {
+                    "description": "Topic(s) and/or components from which the component will read input"
                 },
                 "name": {
                     "description": "Component name",
@@ -1148,7 +1163,6 @@
                         }
                     ],
                     "default": [],
-                    "description": "",
                     "title": "Namespaces"
                 },
                 "topologyKey": {
@@ -1186,8 +1200,7 @@
                 },
                 "schema": {
                     "$ref": "#/$defs/ProtocolSchema",
-                    "default": "TCP",
-                    "description": "Protocol for port. Must be UDP, TCP, or SCTP."
+                    "default": "TCP"
                 },
                 "servicePort": {
                     "anyOf": [
@@ -1241,6 +1254,9 @@
                         "ignore": null
                     },
                     "description": "Helm diff config"
+                },
+                "enrich": {
+                    "description": "Whether to enrich component with defaults"
                 },
                 "from": {
                     "default": null,
@@ -1328,6 +1344,9 @@
                         "ignore": null
                     },
                     "description": "Helm diff config"
+                },
+                "enrich": {
+                    "description": "Whether to enrich component with defaults"
                 },
                 "from": {
                     "default": null,
@@ -1687,8 +1706,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
-                    "description": ""
+                    "default": null
                 },
                 "kafka": {
                     "$ref": "#/$defs/ProducerConfig",
@@ -1772,7 +1790,6 @@
                         }
                     ],
                     "default": [],
-                    "description": "",
                     "title": "Ports"
                 },
                 "readinessProbe": {
@@ -1879,8 +1896,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
-                    "description": ""
+                    "default": null
                 },
                 "successfulJobsHistoryLimit": {
                     "anyOf": [
@@ -1982,6 +1998,9 @@
                     "default": null,
                     "description": "Output topic"
                 },
+                "schemaRegistryUrl": {
+                    "description": "URL of the schema registry"
+                },
                 "schema_registry_url": {
                     "anyOf": [
                         {
@@ -1992,7 +2011,6 @@
                         }
                     ],
                     "default": null,
-                    "description": "URL of the schema registry",
                     "title": "Schema Registry Url"
                 }
             },
@@ -2029,6 +2047,9 @@
                     "default": null,
                     "description": "Output topic"
                 },
+                "schemaRegistryUrl": {
+                    "description": "URL of the schema registry"
+                },
                 "schema_registry_url": {
                     "anyOf": [
                         {
@@ -2039,7 +2060,6 @@
                         }
                     ],
                     "default": null,
-                    "description": "URL of the schema registry",
                     "title": "Schema Registry Url"
                 }
             },
@@ -2400,6 +2420,9 @@
                     },
                     "description": "Helm diff config"
                 },
+                "enrich": {
+                    "description": "Whether to enrich component with defaults"
+                },
                 "from": {
                     "anyOf": [
                         {
@@ -2410,8 +2433,10 @@
                         }
                     ],
                     "default": null,
-                    "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
+                },
+                "from_": {
+                    "description": "Topic(s) and/or components from which the component will read input"
                 },
                 "name": {
                     "description": "Component name",
@@ -2494,6 +2519,9 @@
                     },
                     "description": "Helm diff config"
                 },
+                "enrich": {
+                    "description": "Whether to enrich component with defaults"
+                },
                 "from": {
                     "anyOf": [
                         {
@@ -2504,8 +2532,10 @@
                         }
                     ],
                     "default": null,
-                    "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
+                },
+                "from_": {
+                    "description": "Topic(s) and/or components from which the component will read input"
                 },
                 "name": {
                     "description": "Component name",
@@ -2651,8 +2681,7 @@
                         "enabled": false,
                         "size": null,
                         "storageClass": null
-                    },
-                    "description": ""
+                    }
                 },
                 "statefulSet": {
                     "default": false,
@@ -2859,8 +2888,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
-                    "description": ""
+                    "default": null
                 },
                 "jmx": {
                     "anyOf": [
@@ -2976,7 +3004,6 @@
                         }
                     ],
                     "default": [],
-                    "description": "",
                     "title": "Ports"
                 },
                 "prometheus": {
@@ -3070,8 +3097,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
-                    "description": ""
+                    "default": null
                 },
                 "statefulSet": {
                     "default": false,
@@ -3661,6 +3687,9 @@
                     "default": null,
                     "description": "Output topic"
                 },
+                "schemaRegistryUrl": {
+                    "description": "URL of the schema registry"
+                },
                 "schema_registry_url": {
                     "anyOf": [
                         {
@@ -3671,7 +3700,6 @@
                         }
                     ],
                     "default": null,
-                    "description": "URL of the schema registry",
                     "title": "Schema Registry Url"
                 }
             },
@@ -3913,6 +3941,9 @@
                     "default": null,
                     "description": "Output topic"
                 },
+                "schemaRegistryUrl": {
+                    "description": "URL of the schema registry"
+                },
                 "schema_registry_url": {
                     "anyOf": [
                         {
@@ -3923,7 +3954,6 @@
                         }
                     ],
                     "default": null,
-                    "description": "URL of the schema registry",
                     "title": "Schema Registry Url"
                 }
             },

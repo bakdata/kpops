@@ -28,7 +28,6 @@ from kpops.utils.dict_ops import (
     update_nested,
     update_nested_pair,
 )
-from kpops.utils.docstring import describe_attr
 from kpops.utils.environment import ENV, PIPELINE_PATH
 from kpops.utils.pydantic import DescConfigModel, issubclass_patched, to_dash
 from kpops.utils.types import JsonType
@@ -54,13 +53,11 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
     )
     enrich: SkipJsonSchema[bool] = Field(
         default=True,
-        description=describe_attr("enrich", __doc__),
         exclude=True,
     )
     validate_: SkipJsonSchema[bool] = Field(
         validation_alias=AliasChoices("validate", "validate_"),
         default=False,
-        description=describe_attr("validate", __doc__),
         exclude=True,
     )
 

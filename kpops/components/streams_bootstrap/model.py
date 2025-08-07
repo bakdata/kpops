@@ -15,7 +15,6 @@ from kpops.components.common.kubernetes_model import (
     Toleration,
 )
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
-from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
     DescConfigModel,
@@ -36,21 +35,16 @@ class PortConfig(CamelCaseConfigModel, DescConfigModel):
     :param service_port: Number of the port of the service (optional)
     """
 
-    container_port: int = Field(
-        description=describe_attr("ports", __doc__),
-    )
+    container_port: int = Field()
     name: str | None = Field(
         default=None,
-        description=describe_attr("name", __doc__),
     )
     schema_: ProtocolSchema = Field(
         default=ProtocolSchema.TCP,
         alias="schema",  # because schema is already a builtin of Pydantic
-        description=describe_attr("schema", __doc__),
     )
     service_port: int | None = Field(
         default=None,
-        description=describe_attr("service_port", __doc__),
     )
 
 
@@ -64,15 +58,12 @@ class ServiceConfig(CamelCaseConfigModel, DescConfigModel):
 
     enabled: bool = Field(
         default=False,
-        description=describe_attr("enabled", __doc__),
     )
     labels: dict[str, str] = Field(
         default_factory=dict,
-        description=describe_attr("labels", __doc__),
     )
     type: ServiceType | None = Field(
         default=None,
-        description=describe_attr("type", __doc__),
     )
 
 
@@ -85,11 +76,9 @@ class JavaOptions(CamelCaseConfigModel, DescConfigModel):
 
     max_RAM_percentage: int | None = Field(
         default=None,
-        description=describe_attr("max_RAM_percentage", __doc__),
     )
     others: list[str] = Field(
         default_factory=list,
-        description=describe_attr("others", __doc__),
     )
 
 
@@ -117,113 +106,89 @@ class StreamsBootstrapValues(SerializeAsOptionalModel, HelmAppValues):
     :param tolerations: Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.
     """
 
-    image: str = Field(
-        description=describe_attr("image", __doc__),
-    )
+    image: str = Field()
 
     image_tag: str | None = Field(
         default=None,
         pattern=IMAGE_TAG_PATTERN,
-        description=describe_attr("image_tag", __doc__),
     )
 
     image_pull_policy: ImagePullPolicy | None = Field(
         default=None,
-        description=describe_attr("image_pull_policy", __doc__),
     )
 
     image_pull_secrets: SerializeAsOptional[list[dict[str, str]]] = Field(
         default=[],
-        description=describe_attr("image_pull_secret", __doc__),
     )
 
-    kafka: KafkaConfig = Field(
-        description=describe_attr("kafka", __doc__),
-    )
+    kafka: KafkaConfig = Field()
 
     resources: Resources | None = Field(
         default=None,
-        description=describe_attr("resources", __doc__),
     )
 
     ports: SerializeAsOptional[list[PortConfig]] = Field(
         default=[],
-        description=describe_attr("ports", __doc__),
     )
 
     service: ServiceConfig | None = Field(
         default=None,
-        description=describe_attr("service", __doc__),
     )
 
     configuration_env_prefix: str | None = Field(
         default=None,
-        description=describe_attr("configuration_env_prefix", __doc__),
     )
 
     command_line: SerializeAsOptional[dict[str, str | bool | int | float]] = Field(
         default={},
-        description=describe_attr("command_line", __doc__),
     )
 
     env: SerializeAsOptional[dict[str, str]] = Field(
         default={},
-        description=describe_attr("env", __doc__),
     )
 
     secrets: SerializeAsOptional[dict[str, str]] = Field(
         default={},
-        description=describe_attr("secrets", __doc__),
     )
 
     secret_refs: SerializeAsOptional[dict[str, Any]] = Field(
         default={},
-        description=describe_attr("secret_refs", __doc__),
     )
 
     secret_files_refs: SerializeAsOptional[list[str]] = Field(
         default=[],
-        description=describe_attr("secret_files_refs", __doc__),
     )
 
     files: SerializeAsOptional[dict[str, Any]] = Field(
         default={},
-        description=describe_attr("files", __doc__),
     )
 
     java_options: JavaOptions | None = Field(
         default=None,
-        description=describe_attr("java_options", __doc__),
     )
 
     pod_annotations: SerializeAsOptional[dict[str, str]] = Field(
         default={},
-        description=describe_attr("pod_annotations", __doc__),
     )
 
     pod_labels: SerializeAsOptional[dict[str, str]] = Field(
         default={},
-        description=describe_attr("pod_labels", __doc__),
     )
 
     liveness_probe: SerializeAsOptional[dict[str, Any]] = Field(
         default={},
-        description=describe_attr("liveness_probe", __doc__),
     )
 
     readiness_probe: SerializeAsOptional[dict[str, Any]] = Field(
         default={},
-        description=describe_attr("readiness_probe", __doc__),
     )
 
     affinity: Affinity | None = Field(
         default=None,
-        description=describe_attr("affinity", __doc__),
     )
 
     tolerations: SerializeAsOptional[list[Toleration]] = Field(
         default=[],
-        description=describe_attr("tolerations", __doc__),
     )
 
     @pydantic.model_validator(mode="before")
@@ -253,14 +218,12 @@ class KafkaConfig(SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigMode
 
     bootstrap_servers: str = Field(
         default="${config.kafka_brokers}",
-        description=describe_attr("bootstrap_servers", __doc__),
     )
     schema_registry_url: str | None = Field(
         default=None,
         validation_alias=AliasChoices(
             "schema_registry_url", "schemaRegistryUrl"
         ),  # TODO: same for other camelcase fields, avoids duplicates during enrichment
-        description=describe_attr("schema_registry_url", __doc__),
     )
     labeled_output_topics: SerializeAsOptional[
         Annotated[
@@ -270,7 +233,6 @@ class KafkaConfig(SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigMode
     ] = Field(default={})
     output_topic: KafkaTopicStr | None = Field(
         default=None,
-        description=describe_attr("output_topic", __doc__),
         json_schema_extra={},
     )
 
