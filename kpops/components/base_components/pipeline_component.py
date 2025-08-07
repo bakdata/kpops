@@ -46,7 +46,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         defaults to None
     """
 
-    name: str = Field()
+    name: str
     prefix: str = Field(
         default="${pipeline.name}-",
     )

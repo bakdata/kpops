@@ -44,7 +44,7 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
     :param output_topic: Output topic, defaults to None
     """
 
-    brokers: str = Field()
+    brokers: str
     schema_registry_url: str | None = Field(
         default=None,
         validation_alias=AliasChoices(
@@ -102,7 +102,7 @@ class StreamsBootstrapV2Values(SerializeAsOptionalModel, HelmAppValues):
         pattern=IMAGE_TAG_PATTERN,
     )
 
-    streams: KafkaStreamsConfig = Field()
+    streams: KafkaStreamsConfig
 
     affinity: Affinity | None = Field(
         default=None,

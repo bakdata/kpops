@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import ClassVar
 
 import pytest
-from pydantic import ConfigDict, Field
+from pydantic import ConfigDict
 from typer.testing import CliRunner
 
 from kpops.cli.main import app
@@ -67,7 +67,7 @@ class SubPipelineComponentCorrectDocstr(SubPipelineComponent):
     :param error_marker: error_marker
     """
 
-    example_attr: str = Field()
+    example_attr: str
 
 
 @pytest.mark.filterwarnings(

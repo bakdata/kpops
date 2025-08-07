@@ -76,7 +76,7 @@ class NodeSelectorRequirement(DescConfigModel, CamelCaseConfigModel):
     :param values: An array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. If the operator is Gt or Lt, the values array must have a single element, which will be interpreted as an integer. This array is replaced during a strategic merge patch.
     """
 
-    key: str = Field()
+    key: str
     operator: NodeSelectorOperator
     values: list[str] = Field(
         default=[],  # pyright: ignore[reportUnknownArgumentType]
@@ -121,7 +121,7 @@ class NodeSelector(DescConfigModel, CamelCaseConfigModel):
     :param node_selector_terms: A list of node selector terms. The terms are ORed.
     """
 
-    node_selector_terms: list[NodeSelectorTerm] = Field()
+    node_selector_terms: list[NodeSelectorTerm]
 
 
 class PreferredSchedulingTerm(DescConfigModel, CamelCaseConfigModel):
@@ -131,8 +131,8 @@ class PreferredSchedulingTerm(DescConfigModel, CamelCaseConfigModel):
     :param weight: Weight associated with matching the corresponding nodeSelectorTerm, in the range 1-100.
     """
 
-    preference: NodeSelectorTerm = Field()
-    weight: Weight = Field()
+    preference: NodeSelectorTerm
+    weight: Weight
 
 
 class NodeAffinity(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfigModel):
@@ -174,7 +174,7 @@ class LabelSelectorRequirement(DescConfigModel, CamelCaseConfigModel):
     :param values: An array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.
     """
 
-    key: str = Field()
+    key: str
     operator: LabelSelectorOperator
     values: list[str] = Field(
         default=[],  # pyright: ignore[reportUnknownArgumentType]
@@ -229,7 +229,7 @@ class PodAffinityTerm(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfig
     mismatch_label_keys: SerializeAsOptional[list[str]] = Field(
         default=[],  # pyright: ignore[reportUnknownArgumentType]
     )
-    topology_key: str = Field()
+    topology_key: str
     namespaces: SerializeAsOptional[list[str]] = Field(
         default=[],  # pyright: ignore[reportUnknownArgumentType]
     )
@@ -245,8 +245,8 @@ class WeightedPodAffinityTerm(DescConfigModel, CamelCaseConfigModel):
     :param weight: weight associated with matching the corresponding podAffinityTerm, in the range 1-100.
     """
 
-    pod_affinity_term: PodAffinityTerm = Field()
-    weight: Weight = Field()
+    pod_affinity_term: PodAffinityTerm
+    weight: Weight
 
 
 class PodAffinity(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfigModel):
@@ -318,11 +318,11 @@ class Toleration(DescConfigModel, CamelCaseConfigModel):
     :param toleration_seconds: The duration for which the toleration is valid.
     """
 
-    key: str = Field()
+    key: str
 
-    operator: Operation = Field()
+    operator: Operation
 
-    effect: Effects = Field()
+    effect: Effects
 
     value: str | None = None
 

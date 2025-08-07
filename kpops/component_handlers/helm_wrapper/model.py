@@ -65,8 +65,8 @@ class HelmRepoConfig(DescConfigModel):
     :param repo_auth_flags: Authorisation-related flags
     """
 
-    repository_name: str = Field()
-    url: str = Field()
+    repository_name: str
+    url: str
     repo_auth_flags: RepoAuthFlags = Field(default=RepoAuthFlags())
 
 

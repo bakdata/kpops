@@ -111,7 +111,7 @@ class KafkaConnector(PipelineComponent, ABC):
         defaults to empty HelmAppValues
     """
 
-    config: KafkaConnectorConfig = Field()
+    config: KafkaConnectorConfig
     state: ConnectorNewState | None = Field(
         default=None,
     )

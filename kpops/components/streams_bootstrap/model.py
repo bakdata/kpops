@@ -35,7 +35,7 @@ class PortConfig(CamelCaseConfigModel, DescConfigModel):
     :param service_port: Number of the port of the service (optional)
     """
 
-    container_port: int = Field()
+    container_port: int
     name: str | None = Field(
         default=None,
     )
@@ -106,7 +106,7 @@ class StreamsBootstrapValues(SerializeAsOptionalModel, HelmAppValues):
     :param tolerations: Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.
     """
 
-    image: str = Field()
+    image: str
 
     image_tag: str | None = Field(
         default=None,
@@ -121,7 +121,7 @@ class StreamsBootstrapValues(SerializeAsOptionalModel, HelmAppValues):
         default=[],
     )
 
-    kafka: KafkaConfig = Field()
+    kafka: KafkaConfig
 
     resources: Resources | None = Field(
         default=None,
