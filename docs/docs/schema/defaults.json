@@ -650,9 +650,6 @@
                     "description": "Output topic"
                 },
                 "schemaRegistryUrl": {
-                    "description": "URL of the schema registry"
-                },
-                "schema_registry_url": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -662,7 +659,8 @@
                         }
                     ],
                     "default": null,
-                    "title": "Schema Registry Url"
+                    "description": "URL of the schema registry",
+                    "title": "Schemaregistryurl"
                 }
             },
             "title": "KafkaConfig",
@@ -1040,9 +1038,6 @@
                     "description": "Output topic"
                 },
                 "schemaRegistryUrl": {
-                    "description": "URL of the schema registry"
-                },
-                "schema_registry_url": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -1052,7 +1047,8 @@
                         }
                     ],
                     "default": null,
-                    "title": "Schema Registry Url"
+                    "description": "URL of the schema registry",
+                    "title": "Schemaregistryurl"
                 }
             },
             "required": [
@@ -2354,9 +2350,6 @@
                     "description": "Output topic"
                 },
                 "schemaRegistryUrl": {
-                    "description": "URL of the schema registry"
-                },
-                "schema_registry_url": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -2366,7 +2359,8 @@
                         }
                     ],
                     "default": null,
-                    "title": "Schema Registry Url"
+                    "description": "URL of the schema registry",
+                    "title": "Schemaregistryurl"
                 }
             },
             "title": "ProducerConfig",
@@ -2403,9 +2397,6 @@
                     "description": "Output topic"
                 },
                 "schemaRegistryUrl": {
-                    "description": "URL of the schema registry"
-                },
-                "schema_registry_url": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -2415,7 +2406,8 @@
                         }
                     ],
                     "default": null,
-                    "title": "Schema Registry Url"
+                    "description": "URL of the schema registry",
+                    "title": "Schemaregistryurl"
                 }
             },
             "required": [
@@ -4648,9 +4640,6 @@
                     "description": "Output topic"
                 },
                 "schemaRegistryUrl": {
-                    "description": "URL of the schema registry"
-                },
-                "schema_registry_url": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -4660,7 +4649,8 @@
                         }
                     ],
                     "default": null,
-                    "title": "Schema Registry Url"
+                    "description": "URL of the schema registry",
+                    "title": "Schemaregistryurl"
                 }
             },
             "title": "StreamsConfig",
@@ -4902,9 +4892,6 @@
                     "description": "Output topic"
                 },
                 "schemaRegistryUrl": {
-                    "description": "URL of the schema registry"
-                },
-                "schema_registry_url": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -4914,7 +4901,8 @@
                         }
                     ],
                     "default": null,
-                    "title": "Schema Registry Url"
+                    "description": "URL of the schema registry",
+                    "title": "Schemaregistryurl"
                 }
             },
             "required": [

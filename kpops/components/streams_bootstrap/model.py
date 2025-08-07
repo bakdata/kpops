@@ -222,7 +222,7 @@ class KafkaConfig(SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigMode
     schema_registry_url: str | None = Field(
         default=None,
         validation_alias=AliasChoices(
-            "schema_registry_url", "schemaRegistryUrl"
+            "schemaRegistryUrl", "schema_registry_url"
         ),  # TODO: same for other camelcase fields, avoids duplicates during enrichment
     )
     labeled_output_topics: SerializeAsOptional[

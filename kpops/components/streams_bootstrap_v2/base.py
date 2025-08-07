@@ -48,7 +48,7 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
     schema_registry_url: str | None = Field(
         default=None,
         validation_alias=AliasChoices(
-            "schema_registry_url", "schemaRegistryUrl"
+            "schemaRegistryUrl", "schema_registry_url"
         ),  # TODO: same for other camelcase fields, avoids duplicates during enrichment
     )
     extra_output_topics: dict[str, KafkaTopicStr] = Field(default={})
