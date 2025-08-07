@@ -67,7 +67,7 @@ class HelmRepoConfig(DescConfigModel):
 
     repository_name: str
     url: str
-    repo_auth_flags: RepoAuthFlags = Field(default=RepoAuthFlags())
+    repo_auth_flags: RepoAuthFlags = RepoAuthFlags()
 
 
 class HelmConfig(DescConfigModel):
