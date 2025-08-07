@@ -143,10 +143,8 @@
                         }
                     ],
                     "default": null,
+                    "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
-                },
-                "from_": {
-                    "description": "Topic(s) and/or components from which the component will read input"
                 },
                 "name": {
                     "description": "Component name",
@@ -648,10 +646,8 @@
                         }
                     ],
                     "default": null,
+                    "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
-                },
-                "from_": {
-                    "description": "Topic(s) and/or components from which the component will read input"
                 },
                 "name": {
                     "description": "Component name",
@@ -740,10 +736,8 @@
                         }
                     ],
                     "default": null,
+                    "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
-                },
-                "from_": {
-                    "description": "Topic(s) and/or components from which the component will read input"
                 },
                 "name": {
                     "description": "Component name",
@@ -2433,10 +2427,8 @@
                         }
                     ],
                     "default": null,
+                    "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
-                },
-                "from_": {
-                    "description": "Topic(s) and/or components from which the component will read input"
                 },
                 "name": {
                     "description": "Component name",
@@ -2532,10 +2524,8 @@
                         }
                     ],
                     "default": null,
+                    "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
-                },
-                "from_": {
-                    "description": "Topic(s) and/or components from which the component will read input"
                 },
                 "name": {
                     "description": "Component name",

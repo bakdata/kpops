@@ -53,7 +53,7 @@ def by_alias(model: BaseModel | type[BaseModel], field_name: str) -> str:
     field_info = model.model_fields.get(field_name)
     if not field_info:
         return field_name
-    return field_info.alias or field_name
+    return field_info.alias or field_info.serialization_alias or field_name
 
 
 def to_str(value: Any) -> str:
