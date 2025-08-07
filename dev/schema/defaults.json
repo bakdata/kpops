@@ -130,9 +130,6 @@
                     },
                     "description": "Helm diff config"
                 },
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
-                },
                 "from": {
                     "anyOf": [
                         {
@@ -565,9 +562,6 @@
             "additionalProperties": true,
             "description": "Base component for Kafka-based components.",
             "properties": {
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
-                },
                 "from": {
                     "anyOf": [
                         {
@@ -649,9 +643,6 @@
                     "default": null,
                     "description": "Output topic"
                 },
-                "schemaRegistryUrl": {
-                    "description": "URL of the schema registry"
-                },
                 "schema_registry_url": {
                     "anyOf": [
                         {
@@ -662,6 +653,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "URL of the schema registry",
                     "title": "Schema Registry Url"
                 }
             },
@@ -675,9 +667,6 @@
                 "config": {
                     "$ref": "#/$defs/KafkaConnectorConfig",
                     "description": "Connector config"
-                },
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
                 },
                 "from": {
                     "anyOf": [
@@ -824,9 +813,6 @@
                     "$ref": "#/$defs/KafkaConnectorConfig",
                     "description": "Connector config"
                 },
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
-                },
                 "from": {
                     "anyOf": [
                         {
@@ -913,9 +899,6 @@
                 "config": {
                     "$ref": "#/$defs/KafkaConnectorConfig",
                     "description": "Connector config"
-                },
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
                 },
                 "from": {
                     "anyOf": [
@@ -1039,9 +1022,6 @@
                     "default": null,
                     "description": "Output topic"
                 },
-                "schemaRegistryUrl": {
-                    "description": "URL of the schema registry"
-                },
                 "schema_registry_url": {
                     "anyOf": [
                         {
@@ -1052,6 +1032,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "URL of the schema registry",
                     "title": "Schema Registry Url"
                 }
             },
@@ -1065,9 +1046,6 @@
             "additionalProperties": true,
             "description": "Base class for all Kubernetes apps.\nAll built-in components are Kubernetes apps, except for the Kafka connectors.",
             "properties": {
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
-                },
                 "from": {
                     "anyOf": [
                         {
@@ -1361,9 +1339,6 @@
             "additionalProperties": true,
             "description": "Base class for all components.",
             "properties": {
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
-                },
                 "from": {
                     "anyOf": [
                         {
@@ -1518,6 +1493,7 @@
                         }
                     ],
                     "default": [],
+                    "description": "",
                     "title": "Namespaces"
                 },
                 "topologyKey": {
@@ -1536,7 +1512,7 @@
             "description": "Base class for the port configuration of the Kafka Streams application.",
             "properties": {
                 "containerPort": {
-                    "description": "Number of the port to expose.",
+                    "description": "",
                     "title": "Containerport",
                     "type": "integer"
                 },
@@ -1555,7 +1531,8 @@
                 },
                 "schema": {
                     "$ref": "#/$defs/ProtocolSchema",
-                    "default": "TCP"
+                    "default": "TCP",
+                    "description": "Protocol for port. Must be UDP, TCP, or SCTP."
                 },
                 "servicePort": {
                     "anyOf": [
@@ -1609,9 +1586,6 @@
                         "ignore": null
                     },
                     "description": "Helm diff config"
-                },
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
                 },
                 "from": {
                     "default": null,
@@ -1699,9 +1673,6 @@
                         "ignore": null
                     },
                     "description": "Helm diff config"
-                },
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
                 },
                 "from": {
                     "default": null,
@@ -2035,7 +2006,7 @@
                         }
                     ],
                     "default": [],
-                    "description": "Secrets to be used for private registries.",
+                    "description": "",
                     "title": "Imagepullsecrets"
                 },
                 "imageTag": {
@@ -2061,7 +2032,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": ""
                 },
                 "kafka": {
                     "$ref": "#/$defs/ProducerConfig",
@@ -2145,6 +2117,7 @@
                         }
                     ],
                     "default": [],
+                    "description": "",
                     "title": "Ports"
                 },
                 "readinessProbe": {
@@ -2251,7 +2224,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": ""
                 },
                 "successfulJobsHistoryLimit": {
                     "anyOf": [
@@ -2353,9 +2327,6 @@
                     "default": null,
                     "description": "Output topic"
                 },
-                "schemaRegistryUrl": {
-                    "description": "URL of the schema registry"
-                },
                 "schema_registry_url": {
                     "anyOf": [
                         {
@@ -2366,6 +2337,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "URL of the schema registry",
                     "title": "Schema Registry Url"
                 }
             },
@@ -2402,9 +2374,6 @@
                     "default": null,
                     "description": "Output topic"
                 },
-                "schemaRegistryUrl": {
-                    "description": "URL of the schema registry"
-                },
                 "schema_registry_url": {
                     "anyOf": [
                         {
@@ -2415,6 +2384,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "URL of the schema registry",
                     "title": "Schema Registry Url"
                 }
             },
@@ -2775,9 +2745,6 @@
                     },
                     "description": "Helm diff config"
                 },
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
-                },
                 "from": {
                     "anyOf": [
                         {
@@ -2871,9 +2838,6 @@
                         "ignore": null
                     },
                     "description": "Helm diff config"
-                },
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
                 },
                 "from": {
                     "anyOf": [
@@ -3032,7 +2996,8 @@
                         "enabled": false,
                         "size": null,
                         "storageClass": null
-                    }
+                    },
+                    "description": ""
                 },
                 "statefulSet": {
                     "default": false,
@@ -3213,7 +3178,7 @@
                         }
                     ],
                     "default": [],
-                    "description": "Secrets to be used for private registries.",
+                    "description": "",
                     "title": "Imagepullsecrets"
                 },
                 "imageTag": {
@@ -3239,7 +3204,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": ""
                 },
                 "jmx": {
                     "anyOf": [
@@ -3355,6 +3321,7 @@
                         }
                     ],
                     "default": [],
+                    "description": "",
                     "title": "Ports"
                 },
                 "prometheus": {
@@ -3448,7 +3415,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": ""
                 },
                 "statefulSet": {
                     "default": false,
@@ -3502,9 +3470,6 @@
                         "ignore": null
                     },
                     "description": "Helm diff config"
-                },
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
                 },
                 "from": {
                     "anyOf": [
@@ -3593,9 +3558,6 @@
                         "ignore": null
                     },
                     "description": "Helm diff config"
-                },
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
                 },
                 "from": {
                     "anyOf": [
@@ -3731,7 +3693,8 @@
                     "title": "NameOverride"
                 },
                 "streams": {
-                    "$ref": "#/$defs/KafkaStreamsConfig"
+                    "$ref": "#/$defs/KafkaStreamsConfig",
+                    "description": ""
                 },
                 "tolerations": {
                     "anyOf": [
@@ -3890,7 +3853,7 @@
                         }
                     ],
                     "default": [],
-                    "description": "Secrets to be used for private registries.",
+                    "description": "",
                     "title": "Imagepullsecrets"
                 },
                 "imageTag": {
@@ -3916,7 +3879,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": ""
                 },
                 "kafka": {
                     "$ref": "#/$defs/KafkaConfig",
@@ -3994,6 +3958,7 @@
                         }
                     ],
                     "default": [],
+                    "description": "",
                     "title": "Ports"
                 },
                 "readinessProbe": {
@@ -4075,7 +4040,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": ""
                 },
                 "tolerations": {
                     "anyOf": [
@@ -4647,9 +4613,6 @@
                     "default": null,
                     "description": "Output topic"
                 },
-                "schemaRegistryUrl": {
-                    "description": "URL of the schema registry"
-                },
                 "schema_registry_url": {
                     "anyOf": [
                         {
@@ -4660,6 +4623,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "URL of the schema registry",
                     "title": "Schema Registry Url"
                 }
             },
@@ -4730,7 +4694,7 @@
                 },
                 "enabled": {
                     "default": false,
-                    "description": "Whether to enable auto-scaling using KEDA.",
+                    "description": "",
                     "title": "Enabled",
                     "type": "boolean"
                 },
@@ -4901,9 +4865,6 @@
                     "default": null,
                     "description": "Output topic"
                 },
-                "schemaRegistryUrl": {
-                    "description": "URL of the schema registry"
-                },
                 "schema_registry_url": {
                     "anyOf": [
                         {
@@ -4914,6 +4875,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "URL of the schema registry",
                     "title": "Schema Registry Url"
                 }
             },
