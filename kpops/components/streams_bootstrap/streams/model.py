@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import StrEnum
-from typing import Any, ClassVar, Self
+from typing import Annotated, Any, ClassVar, Self
 
 import pydantic
 from pydantic import ConfigDict, Field
@@ -28,6 +28,15 @@ def serialize_topics(topics: list[KafkaTopic]) -> list[str]:
     return [topic.name for topic in topics]
 
 
+def serialize_labeled_input_topics(
+    labeled_input_topics: dict[str, list[KafkaTopic]],
+) -> dict[str, list[str]]:
+    return {
+        label: serialize_topics(topics)
+        for label, topics in labeled_input_topics.items()
+    }
+
+
 class StreamsConfig(KafkaConfig):
     """streams-bootstrap kafka section.
 
@@ -46,15 +55,21 @@ class StreamsConfig(KafkaConfig):
         title="Unique application ID",
         description=describe_attr("application_id", __doc__),
     )
-    input_topics: SerializeAsOptional[list[KafkaTopicStr]] = Field(
-        default=[], description=describe_attr("input_topics", __doc__)
-    )
+    input_topics: SerializeAsOptional[
+        Annotated[
+            list[KafkaTopicStr],
+            pydantic.PlainSerializer(serialize_topics),
+        ]
+    ] = Field(default=[], description=describe_attr("input_topics", __doc__))
     input_pattern: str | None = Field(
         default=None, description=describe_attr("input_pattern", __doc__)
     )
-    labeled_input_topics: SerializeAsOptional[dict[str, list[KafkaTopicStr]]] = Field(
-        default={}, description=describe_attr("labeled_input_topics", __doc__)
-    )
+    labeled_input_topics: SerializeAsOptional[
+        Annotated[
+            dict[str, list[KafkaTopicStr]],
+            pydantic.PlainSerializer(serialize_labeled_input_topics),
+        ]
+    ] = Field(default={}, description=describe_attr("labeled_input_topics", __doc__))
     labeled_input_patterns: SerializeAsOptional[dict[str, str]] = Field(
         default={}, description=describe_attr("labeled_input_patterns", __doc__)
     )
@@ -88,19 +103,6 @@ class StreamsConfig(KafkaConfig):
                 for label, topics in labeled_input_topics.items()
             }
         return labeled_input_topics
-
-    @pydantic.field_serializer("input_topics")
-    def serialize_topics(self, input_topics: list[KafkaTopic]) -> list[str] | None:
-        return serialize_topics(input_topics) or None
-
-    @pydantic.field_serializer("labeled_input_topics")
-    def serialize_labeled_input_topics(
-        self, labeled_input_topics: dict[str, list[KafkaTopic]]
-    ) -> dict[str, list[str]] | None:
-        return {
-            label: serialize_topics(topics)
-            for label, topics in labeled_input_topics.items()
-        } or None
 
     def add_input_topics(self, topics: list[KafkaTopic]) -> None:
         """Add given topics to the list of input topics.

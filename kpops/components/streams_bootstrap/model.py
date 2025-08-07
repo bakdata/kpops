@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, ClassVar
+from typing import Annotated, Any, ClassVar
 
 import pydantic
 from pydantic import AliasChoices, ConfigDict, Field
@@ -236,6 +236,12 @@ class StreamsBootstrapValues(SerializeAsOptionalModel, HelmAppValues):
         return values
 
 
+def serialize_labeled_output_topics(
+    labeled_output_topics: dict[str, KafkaTopic],
+) -> dict[str, str]:
+    return {label: topic.name for label, topic in labeled_output_topics.items()}
+
+
 class KafkaConfig(SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigModel):
     """Kafka Streams config.
 
@@ -256,9 +262,12 @@ class KafkaConfig(SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigMode
         ),  # TODO: same for other camelcase fields, avoids duplicates during enrichment
         description=describe_attr("schema_registry_url", __doc__),
     )
-    labeled_output_topics: SerializeAsOptional[dict[str, KafkaTopicStr]] = Field(
-        default={}, description=describe_attr("labeled_output_topics", __doc__)
-    )
+    labeled_output_topics: SerializeAsOptional[
+        Annotated[
+            dict[str, KafkaTopicStr],
+            pydantic.PlainSerializer(serialize_labeled_output_topics),
+        ]
+    ] = Field(default={}, description=describe_attr("labeled_output_topics", __doc__))
     output_topic: KafkaTopicStr | None = Field(
         default=None,
         description=describe_attr("output_topic", __doc__),
@@ -278,11 +287,3 @@ class KafkaConfig(SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigMode
                 for label, topic_name in labeled_output_topics.items()
             }
         return labeled_output_topics
-
-    @pydantic.field_serializer("labeled_output_topics")
-    def serialize_labeled_output_topics(
-        self, labeled_output_topics: dict[str, KafkaTopic]
-    ) -> dict[str, str] | None:
-        return {
-            label: topic.name for label, topic in labeled_output_topics.items()
-        } or None
