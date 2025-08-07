@@ -643,7 +643,7 @@
                     "default": null,
                     "description": "Output topic"
                 },
-                "schema_registry_url": {
+                "schemaRegistryUrl": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -654,7 +654,7 @@
                     ],
                     "default": null,
                     "description": "URL of the schema registry",
-                    "title": "Schema Registry Url"
+                    "title": "Schemaregistryurl"
                 }
             },
             "title": "KafkaConfig",
@@ -1022,7 +1022,7 @@
                     "default": null,
                     "description": "Output topic"
                 },
-                "schema_registry_url": {
+                "schemaRegistryUrl": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -1033,7 +1033,7 @@
                     ],
                     "default": null,
                     "description": "URL of the schema registry",
-                    "title": "Schema Registry Url"
+                    "title": "Schemaregistryurl"
                 }
             },
             "required": [
@@ -1493,7 +1493,6 @@
                         }
                     ],
                     "default": [],
-                    "description": "",
                     "title": "Namespaces"
                 },
                 "topologyKey": {
@@ -1512,7 +1511,7 @@
             "description": "Base class for the port configuration of the Kafka Streams application.",
             "properties": {
                 "containerPort": {
-                    "description": "",
+                    "description": "Number of the port to expose.",
                     "title": "Containerport",
                     "type": "integer"
                 },
@@ -1531,8 +1530,7 @@
                 },
                 "schema": {
                     "$ref": "#/$defs/ProtocolSchema",
-                    "default": "TCP",
-                    "description": "Protocol for port. Must be UDP, TCP, or SCTP."
+                    "default": "TCP"
                 },
                 "servicePort": {
                     "anyOf": [
@@ -2006,7 +2004,7 @@
                         }
                     ],
                     "default": [],
-                    "description": "",
+                    "description": "Secrets to be used for private registries.",
                     "title": "Imagepullsecrets"
                 },
                 "imageTag": {
@@ -2032,8 +2030,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
-                    "description": ""
+                    "default": null
                 },
                 "kafka": {
                     "$ref": "#/$defs/ProducerConfig",
@@ -2117,7 +2114,6 @@
                         }
                     ],
                     "default": [],
-                    "description": "",
                     "title": "Ports"
                 },
                 "readinessProbe": {
@@ -2224,8 +2220,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
-                    "description": ""
+                    "default": null
                 },
                 "successfulJobsHistoryLimit": {
                     "anyOf": [
@@ -2327,7 +2322,7 @@
                     "default": null,
                     "description": "Output topic"
                 },
-                "schema_registry_url": {
+                "schemaRegistryUrl": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -2338,7 +2333,7 @@
                     ],
                     "default": null,
                     "description": "URL of the schema registry",
-                    "title": "Schema Registry Url"
+                    "title": "Schemaregistryurl"
                 }
             },
             "title": "ProducerConfig",
@@ -2374,7 +2369,7 @@
                     "default": null,
                     "description": "Output topic"
                 },
-                "schema_registry_url": {
+                "schemaRegistryUrl": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -2385,7 +2380,7 @@
                     ],
                     "default": null,
                     "description": "URL of the schema registry",
-                    "title": "Schema Registry Url"
+                    "title": "Schemaregistryurl"
                 }
             },
             "required": [
@@ -2996,8 +2991,7 @@
                         "enabled": false,
                         "size": null,
                         "storageClass": null
-                    },
-                    "description": ""
+                    }
                 },
                 "statefulSet": {
                     "default": false,
@@ -3178,7 +3172,7 @@
                         }
                     ],
                     "default": [],
-                    "description": "",
+                    "description": "Secrets to be used for private registries.",
                     "title": "Imagepullsecrets"
                 },
                 "imageTag": {
@@ -3204,8 +3198,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
-                    "description": ""
+                    "default": null
                 },
                 "jmx": {
                     "anyOf": [
@@ -3321,7 +3314,6 @@
                         }
                     ],
                     "default": [],
-                    "description": "",
                     "title": "Ports"
                 },
                 "prometheus": {
@@ -3415,8 +3407,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
-                    "description": ""
+                    "default": null
                 },
                 "statefulSet": {
                     "default": false,
@@ -3693,8 +3684,7 @@
                     "title": "NameOverride"
                 },
                 "streams": {
-                    "$ref": "#/$defs/KafkaStreamsConfig",
-                    "description": ""
+                    "$ref": "#/$defs/KafkaStreamsConfig"
                 },
                 "tolerations": {
                     "anyOf": [
@@ -3853,7 +3843,7 @@
                         }
                     ],
                     "default": [],
-                    "description": "",
+                    "description": "Secrets to be used for private registries.",
                     "title": "Imagepullsecrets"
                 },
                 "imageTag": {
@@ -3879,8 +3869,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
-                    "description": ""
+                    "default": null
                 },
                 "kafka": {
                     "$ref": "#/$defs/KafkaConfig",
@@ -3958,7 +3947,6 @@
                         }
                     ],
                     "default": [],
-                    "description": "",
                     "title": "Ports"
                 },
                 "readinessProbe": {
@@ -4040,8 +4028,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
-                    "description": ""
+                    "default": null
                 },
                 "tolerations": {
                     "anyOf": [
@@ -4613,7 +4600,7 @@
                     "default": null,
                     "description": "Output topic"
                 },
-                "schema_registry_url": {
+                "schemaRegistryUrl": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -4624,7 +4611,7 @@
                     ],
                     "default": null,
                     "description": "URL of the schema registry",
-                    "title": "Schema Registry Url"
+                    "title": "Schemaregistryurl"
                 }
             },
             "title": "StreamsConfig",
@@ -4694,7 +4681,7 @@
                 },
                 "enabled": {
                     "default": false,
-                    "description": "",
+                    "description": "Whether to enable auto-scaling using KEDA.",
                     "title": "Enabled",
                     "type": "boolean"
                 },
@@ -4865,7 +4852,7 @@
                     "default": null,
                     "description": "Output topic"
                 },
-                "schema_registry_url": {
+                "schemaRegistryUrl": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -4876,7 +4863,7 @@
                     ],
                     "default": null,
                     "description": "URL of the schema registry",
-                    "title": "Schema Registry Url"
+                    "title": "Schemaregistryurl"
                 }
             },
             "required": [
