@@ -20,7 +20,7 @@ from pydantic_settings import BaseSettings, PydanticBaseSettingsSource
 from typing_extensions import TypeVar, override
 
 from kpops.utils.dict_ops import update_nested_pair
-from kpops.utils.docstring import describe_object
+from kpops.utils.docstring import describe_attr, describe_object
 from kpops.utils.yaml import load_yaml_file
 
 
@@ -44,7 +44,7 @@ def to_dot(s: str) -> str:
     return s.replace("_", ".")
 
 
-def by_alias(model: BaseModel, field_name: str) -> str:
+def by_alias(model: BaseModel | type[BaseModel], field_name: str) -> str:
     """Return field alias if exists else field name.
 
     :param field_name: Name of the field to get alias of
@@ -163,10 +163,32 @@ class CamelCaseConfigModel(BaseModel):
     )
 
 
+def find_defining_class(
+    class_: type[BaseModel], field_name: str
+) -> type[BaseModel] | None:
+    for base in class_.mro():
+        if not issubclass(base, BaseModel):
+            continue
+        if field_name in base.__annotations__:
+            return base
+    return None
+
+
 class DescConfigModel(BaseModel):
     @staticmethod
     def json_schema_extra(schema: dict[str, Any], model: type[BaseModel]) -> None:
         schema["description"] = describe_object(model.__doc__)
+        for field_name, field_info in model.model_fields.items():
+            if field_info.description:
+                continue  # skip, manually assigned description takes precedence
+            field_alias = by_alias(model, field_name)
+            defining_class = find_defining_class(model, field_name)
+            if not defining_class:
+                continue
+            if description := describe_attr(field_name, defining_class.__doc__):
+                if field_alias not in schema["properties"]:
+                    schema["properties"][field_alias] = {}
+                schema["properties"][field_alias]["description"] = description
 
     model_config: ClassVar[ConfigDict] = ConfigDict(
         json_schema_extra=json_schema_extra, use_enum_values=True

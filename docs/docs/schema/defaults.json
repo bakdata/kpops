@@ -1512,7 +1512,7 @@
             "description": "Base class for the port configuration of the Kafka Streams application.",
             "properties": {
                 "containerPort": {
-                    "description": "",
+                    "description": "Number of the port to expose.",
                     "title": "Containerport",
                     "type": "integer"
                 },
@@ -2006,7 +2006,7 @@
                         }
                     ],
                     "default": [],
-                    "description": "",
+                    "description": "Secrets to be used for private registries.",
                     "title": "Imagepullsecrets"
                 },
                 "imageTag": {
@@ -3178,7 +3178,7 @@
                         }
                     ],
                     "default": [],
-                    "description": "",
+                    "description": "Secrets to be used for private registries.",
                     "title": "Imagepullsecrets"
                 },
                 "imageTag": {
@@ -3853,7 +3853,7 @@
                         }
                     ],
                     "default": [],
-                    "description": "",
+                    "description": "Secrets to be used for private registries.",
                     "title": "Imagepullsecrets"
                 },
                 "imageTag": {
@@ -4694,7 +4694,7 @@
                 },
                 "enabled": {
                     "default": false,
-                    "description": "",
+                    "description": "Whether to enable auto-scaling using KEDA.",
                     "title": "Enabled",
                     "type": "boolean"
                 },

@@ -267,7 +267,7 @@ class KafkaConfig(SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigMode
             dict[str, KafkaTopicStr],
             pydantic.PlainSerializer(serialize_labeled_output_topics),
         ]
-    ] = Field(default={}, description=describe_attr("labeled_output_topics", __doc__))
+    ] = Field(default={})
     output_topic: KafkaTopicStr | None = Field(
         default=None,
         description=describe_attr("output_topic", __doc__),

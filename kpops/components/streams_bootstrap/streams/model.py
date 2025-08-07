@@ -69,7 +69,7 @@ class StreamsConfig(KafkaConfig):
             dict[str, list[KafkaTopicStr]],
             pydantic.PlainSerializer(serialize_labeled_input_topics),
         ]
-    ] = Field(default={}, description=describe_attr("labeled_input_topics", __doc__))
+    ] = Field(default={})
     labeled_input_patterns: SerializeAsOptional[dict[str, str]] = Field(
         default={}, description=describe_attr("labeled_input_patterns", __doc__)
     )
