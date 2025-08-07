@@ -130,9 +130,6 @@
                     },
                     "description": "Helm diff config"
                 },
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
-                },
                 "from": {
                     "anyOf": [
                         {
@@ -565,9 +562,6 @@
             "additionalProperties": true,
             "description": "Base component for Kafka-based components.",
             "properties": {
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
-                },
                 "from": {
                     "anyOf": [
                         {
@@ -673,9 +667,6 @@
                 "config": {
                     "$ref": "#/$defs/KafkaConnectorConfig",
                     "description": "Connector config"
-                },
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
                 },
                 "from": {
                     "anyOf": [
@@ -822,9 +813,6 @@
                     "$ref": "#/$defs/KafkaConnectorConfig",
                     "description": "Connector config"
                 },
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
-                },
                 "from": {
                     "anyOf": [
                         {
@@ -911,9 +899,6 @@
                 "config": {
                     "$ref": "#/$defs/KafkaConnectorConfig",
                     "description": "Connector config"
-                },
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
                 },
                 "from": {
                     "anyOf": [
@@ -1061,9 +1046,6 @@
             "additionalProperties": true,
             "description": "Base class for all Kubernetes apps.\nAll built-in components are Kubernetes apps, except for the Kafka connectors.",
             "properties": {
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
-                },
                 "from": {
                     "anyOf": [
                         {
@@ -1357,9 +1339,6 @@
             "additionalProperties": true,
             "description": "Base class for all components.",
             "properties": {
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
-                },
                 "from": {
                     "anyOf": [
                         {
@@ -1606,9 +1585,6 @@
                     },
                     "description": "Helm diff config"
                 },
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
-                },
                 "from": {
                     "default": null,
                     "description": "Producer doesn't support FromSection",
@@ -1695,9 +1671,6 @@
                         "ignore": null
                     },
                     "description": "Helm diff config"
-                },
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
                 },
                 "from": {
                     "default": null,
@@ -2767,9 +2740,6 @@
                     },
                     "description": "Helm diff config"
                 },
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
-                },
                 "from": {
                     "anyOf": [
                         {
@@ -2863,9 +2833,6 @@
                         "ignore": null
                     },
                     "description": "Helm diff config"
-                },
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
                 },
                 "from": {
                     "anyOf": [
@@ -3495,9 +3462,6 @@
                     },
                     "description": "Helm diff config"
                 },
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
-                },
                 "from": {
                     "anyOf": [
                         {
@@ -3585,9 +3549,6 @@
                         "ignore": null
                     },
                     "description": "Helm diff config"
-                },
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
                 },
                 "from": {
                     "anyOf": [

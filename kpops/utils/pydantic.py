@@ -15,6 +15,7 @@ from pydantic import (
     model_serializer,
 )
 from pydantic.fields import FieldInfo
+from pydantic.json_schema import SkipJsonSchema
 from pydantic_core import PydanticUseDefault, core_schema
 from pydantic_settings import BaseSettings, PydanticBaseSettingsSource
 from typing_extensions import TypeVar, override
@@ -181,6 +182,8 @@ class DescConfigModel(BaseModel):
         for field_name, field_info in model.model_fields.items():
             if field_info.description:
                 continue  # skip, manually assigned description takes precedence
+            if any(isinstance(m, SkipJsonSchema) for m in field_info.metadata):  # pyright: ignore[reportArgumentType]
+                continue
             field_alias = by_alias(model, field_name)
             defining_class = find_defining_class(model, field_name)
             if not defining_class:

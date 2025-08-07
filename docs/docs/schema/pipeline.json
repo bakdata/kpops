@@ -130,9 +130,6 @@
                     },
                     "description": "Helm diff config"
                 },
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
-                },
                 "from": {
                     "anyOf": [
                         {
@@ -633,9 +630,6 @@
                     "$ref": "#/$defs/KafkaConnectorConfig",
                     "description": "Connector config"
                 },
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
-                },
                 "from": {
                     "anyOf": [
                         {
@@ -722,9 +716,6 @@
                 "config": {
                     "$ref": "#/$defs/KafkaConnectorConfig",
                     "description": "Connector config"
-                },
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
                 },
                 "from": {
                     "anyOf": [
@@ -1249,9 +1240,6 @@
                     },
                     "description": "Helm diff config"
                 },
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
-                },
                 "from": {
                     "default": null,
                     "description": "Producer doesn't support FromSection",
@@ -1338,9 +1326,6 @@
                         "ignore": null
                     },
                     "description": "Helm diff config"
-                },
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
                 },
                 "from": {
                     "default": null,
@@ -2410,9 +2395,6 @@
                     },
                     "description": "Helm diff config"
                 },
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
-                },
                 "from": {
                     "anyOf": [
                         {
@@ -2506,9 +2488,6 @@
                         "ignore": null
                     },
                     "description": "Helm diff config"
-                },
-                "enrich": {
-                    "description": "Whether to enrich component with defaults"
                 },
                 "from": {
                     "anyOf": [
