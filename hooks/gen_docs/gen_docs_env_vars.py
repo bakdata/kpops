@@ -20,6 +20,7 @@ from hooks.gen_docs import IterableStrEnum
 from kpops.cli import main
 from kpops.config import KpopsConfig
 from kpops.utils.dict_ops import generate_substitution
+from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import collect_fields
 
 PATH_DOCS_RESOURCES = ROOT / "docs/docs/resources"
@@ -264,6 +265,7 @@ def fill_csv_pipeline_config(target: Path) -> None:
             env_var_name = KpopsConfig.model_config["env_prefix"] + env_var_name  # pyright: ignore[reportTypedDictNotRequiredAccess]
         field_description: str = (
             field_value.description
+            or describe_attr(field_name, KpopsConfig.__doc__)
             or "No description available, please refer to the pipeline config documentation."
         )
         field_default = field_value.default
