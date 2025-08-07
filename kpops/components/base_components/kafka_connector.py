@@ -115,7 +115,7 @@ class KafkaConnector(PipelineComponent, ABC):
     state: ConnectorNewState | None = Field(
         default=None,
     )
-    resetter_namespace: str | None = Field(default=None)
+    resetter_namespace: str | None = None
     resetter_values: HelmAppValues = Field(
         default_factory=HelmAppValues,
     )

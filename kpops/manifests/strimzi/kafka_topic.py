@@ -22,7 +22,7 @@ class TopicSpec(CamelCaseConfigModel):
 
     partitions: int = Field(default=1, ge=1)
     replicas: int = Field(default=1, ge=1, le=32767)
-    config: dict[str, Any] | None = Field(default=None)
+    config: dict[str, Any] | None = None
 
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 

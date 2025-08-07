@@ -53,7 +53,7 @@ class TopicConfig(DescConfigModel):
     configs: dict[str, str | int] = Field(
         default={},  # pyright: ignore[reportUnknownArgumentType]
     )
-    label: str | None = Field(default=None)
+    label: str | None = None
 
     model_config: ClassVar[ConfigDict] = ConfigDict(
         extra="forbid",

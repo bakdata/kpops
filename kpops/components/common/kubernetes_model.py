@@ -284,9 +284,9 @@ class Affinity(DescConfigModel, CamelCaseConfigModel):
     :param pod_anti_affinity: Describes pod anti-affinity scheduling rules (e.g. avoid putting this pod in the same node, zone, etc. as some other pod(s)).
     """
 
-    node_affinity: NodeAffinity | None = Field(default=None)
-    pod_affinity: PodAffinity | None = Field(default=None)
-    pod_anti_affinity: PodAffinity | None = Field(default=None)
+    node_affinity: NodeAffinity | None = None
+    pod_affinity: PodAffinity | None = None
+    pod_anti_affinity: PodAffinity | None = None
 
 
 class Operation(str, enum.Enum):
@@ -324,9 +324,9 @@ class Toleration(DescConfigModel, CamelCaseConfigModel):
 
     effect: Effects = Field()
 
-    value: str | None = Field(default=None)
+    value: str | None = None
 
-    toleration_seconds: int | None = Field(default=None)
+    toleration_seconds: int | None = None
 
 
 CPUStr = Annotated[str, pydantic.StringConstraints(pattern=r"^\d+m$")]

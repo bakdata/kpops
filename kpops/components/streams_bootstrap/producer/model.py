@@ -33,25 +33,25 @@ class ProducerAppValues(StreamsBootstrapValues):
         default=ProducerConfig(),
     )
 
-    deployment: bool | None = Field(default=None)
+    deployment: bool | None = None
 
     restart_policy: RestartPolicy | None = Field(
         default=None,
     )
 
-    schedule: str | None = Field(default=None)
+    schedule: str | None = None
 
-    suspend: bool | None = Field(default=None)
+    suspend: bool | None = None
 
     successful_jobs_history_limit: int | None = Field(
         default=None,
     )
 
-    failed_jobs_history_limit: int | None = Field(default=None)
+    failed_jobs_history_limit: int | None = None
 
-    backoff_limit: int | None = Field(default=None)
+    backoff_limit: int | None = None
 
-    ttl_seconds_after_finished: int | None = Field(default=None)
+    ttl_seconds_after_finished: int | None = None
 
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 

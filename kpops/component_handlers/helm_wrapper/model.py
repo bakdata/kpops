@@ -36,11 +36,11 @@ class RepoAuthFlags(DescConfigModel):
         , defaults to False
     """
 
-    username: str | None = Field(default=None)
-    password: str | None = Field(default=None)
-    ca_file: Path | None = Field(default=None)
-    cert_file: Path | None = Field(default=None)
-    insecure_skip_tls_verify: bool = Field(default=False)
+    username: str | None = None
+    password: str | None = None
+    ca_file: Path | None = None
+    cert_file: Path | None = None
+    insecure_skip_tls_verify: bool = False
 
     def to_command(self) -> list[str]:
         command: list[str] = []

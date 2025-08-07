@@ -26,8 +26,8 @@ class FromTopic(DescConfigModel):
         define only if `type` is `pattern` or `None`, defaults to None
     """
 
-    type: InputTopicTypes | None = Field(default=None)
-    label: str | None = Field(default=None)
+    type: InputTopicTypes | None = None
+    label: str | None = None
 
     model_config: ClassVar[ConfigDict] = ConfigDict(
         extra="forbid",

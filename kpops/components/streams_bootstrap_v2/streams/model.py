@@ -29,12 +29,12 @@ class StreamsConfig(KafkaStreamsConfig):
     """
 
     input_topics: list[KafkaTopicStr] = Field(default=[])
-    input_pattern: str | None = Field(default=None)
+    input_pattern: str | None = None
     extra_input_topics: dict[str, list[KafkaTopicStr]] = Field(default={})
     extra_input_patterns: dict[str, str] = Field(default={})
-    error_topic: KafkaTopicStr | None = Field(default=None)
+    error_topic: KafkaTopicStr | None = None
     config: dict[str, Any] = Field(default={})
-    delete_output: bool | None = Field(default=None)
+    delete_output: bool | None = None
 
     @pydantic.field_validator("input_topics", mode="before")
     @classmethod

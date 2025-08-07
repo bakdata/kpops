@@ -59,7 +59,7 @@ class StreamsConfig(KafkaConfig):
             pydantic.PlainSerializer(serialize_topics),
         ]
     ] = Field(default=[])
-    input_pattern: str | None = Field(default=None)
+    input_pattern: str | None = None
     labeled_input_topics: SerializeAsOptional[
         Annotated[
             dict[str, list[KafkaTopicStr]],
@@ -67,9 +67,9 @@ class StreamsConfig(KafkaConfig):
         ]
     ] = Field(default={})
     labeled_input_patterns: SerializeAsOptional[dict[str, str]] = Field(default={})
-    error_topic: KafkaTopicStr | None = Field(default=None)
+    error_topic: KafkaTopicStr | None = None
     config: SerializeAsOptional[dict[str, Any]] = Field(default={})
-    delete_output: bool | None = Field(default=None)
+    delete_output: bool | None = None
 
     @pydantic.field_validator("input_topics", mode="before")
     @classmethod
