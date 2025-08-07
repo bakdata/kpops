@@ -1530,7 +1530,8 @@
                 },
                 "schema": {
                     "$ref": "#/$defs/ProtocolSchema",
-                    "default": "TCP"
+                    "default": "TCP",
+                    "description": "Protocol for port. Must be UDP, TCP, or SCTP."
                 },
                 "servicePort": {
                     "anyOf": [

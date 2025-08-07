@@ -188,7 +188,10 @@ class DescConfigModel(BaseModel):
             defining_class = find_defining_class(model, field_name)
             if not defining_class:
                 continue
-            if description := describe_attr(field_name, defining_class.__doc__):
+            description = describe_attr(
+                field_name, defining_class.__doc__
+            ) or describe_attr(field_alias, defining_class.__doc__)
+            if description:
                 if field_alias not in schema["properties"]:
                     schema["properties"][field_alias] = {}
                 schema["properties"][field_alias]["description"] = description
