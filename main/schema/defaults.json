@@ -4434,7 +4434,7 @@
         },
         "kpops__components__streams_bootstrap__streams__model__StreamsConfig": {
             "additionalProperties": true,
-            "description": "Streams Bootstrap kafka section.",
+            "description": "streams-bootstrap kafka section.",
             "properties": {
                 "applicationId": {
                     "anyOf": [
@@ -4702,7 +4702,7 @@
         },
         "kpops__components__streams_bootstrap_v2__streams__model__StreamsConfig": {
             "additionalProperties": true,
-            "description": "Streams Bootstrap streams section.",
+            "description": "streams-bootstrap streams section.",
             "properties": {
                 "brokers": {
                     "description": "Brokers",
