@@ -6,7 +6,6 @@ from kpops.components.streams_bootstrap_v2.base import (
     KafkaStreamsConfig,
     StreamsBootstrapV2Values,
 )
-from kpops.utils.docstring import describe_attr
 
 
 class ProducerStreamsConfig(KafkaStreamsConfig):
@@ -20,7 +19,6 @@ class ProducerAppV2Values(StreamsBootstrapV2Values):
     """
 
     streams: ProducerStreamsConfig = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
-        description=describe_attr("streams", __doc__)
     )
 
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")

@@ -6,7 +6,6 @@ from pydantic import ConfigDict, Field
 
 from kpops.components.base_components.models import ModelName, ModelVersion, TopicName
 from kpops.components.common.topic import KafkaTopic, TopicConfig
-from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import DescConfigModel
 
 
@@ -19,11 +18,9 @@ class ToSection(DescConfigModel):
 
     topics: dict[TopicName, TopicConfig] = Field(
         default={},  # pyright: ignore[reportUnknownArgumentType]
-        description=describe_attr("topics", __doc__),
     )
     models: dict[ModelName, ModelVersion] = Field(
         default={},  # pyright: ignore[reportUnknownArgumentType]
-        description=describe_attr("models", __doc__),
     )
 
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="forbid")
