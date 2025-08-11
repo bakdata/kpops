@@ -4,7 +4,7 @@
   values: # required
     # streams-bootstrap kafka section
     kafka: # required, streams-app-specific
-      bootstrapServers: ${config.kafka_brokers} # required
+      bootstrapServers: ${config.kafka_brokers}
       schemaRegistryUrl: ${config.schema_registry.url}
       applicationId: example-id
       inputTopics:
