@@ -610,26 +610,18 @@
             "description": "Kafka Streams config.",
             "properties": {
                 "bootstrapServers": {
-                    "default": "${config.kafka_brokers}",
                     "description": "Brokers",
                     "title": "Bootstrapservers",
                     "type": "string"
                 },
                 "labeledOutputTopics": {
-                    "anyOf": [
-                        {
-                            "additionalProperties": {
-                                "type": "string"
-                            },
-                            "type": "object"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
+                    "additionalProperties": {
+                        "type": "string"
+                    },
                     "default": {},
                     "description": "Extra output topics",
-                    "title": "Labeledoutputtopics"
+                    "title": "Labeledoutputtopics",
+                    "type": "object"
                 },
                 "outputTopic": {
                     "anyOf": [
@@ -643,7 +635,7 @@
                     "default": null,
                     "description": "Output topic"
                 },
-                "schemaRegistryUrl": {
+                "schema_registry_url": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -654,9 +646,12 @@
                     ],
                     "default": null,
                     "description": "URL of the schema registry",
-                    "title": "Schemaregistryurl"
+                    "title": "Schema Registry Url"
                 }
             },
+            "required": [
+                "bootstrapServers"
+            ],
             "title": "KafkaConfig",
             "type": "object"
         },
@@ -1022,7 +1017,7 @@
                     "default": null,
                     "description": "Output topic"
                 },
-                "schemaRegistryUrl": {
+                "schema_registry_url": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -1033,7 +1028,7 @@
                     ],
                     "default": null,
                     "description": "URL of the schema registry",
-                    "title": "Schemaregistryurl"
+                    "title": "Schema Registry Url"
                 }
             },
             "required": [
@@ -1493,6 +1488,7 @@
                         }
                     ],
                     "default": [],
+                    "description": "",
                     "title": "Namespaces"
                 },
                 "topologyKey": {
@@ -1511,7 +1507,7 @@
             "description": "Base class for the port configuration of the Kafka Streams application.",
             "properties": {
                 "containerPort": {
-                    "description": "Number of the port to expose.",
+                    "description": "",
                     "title": "Containerport",
                     "type": "integer"
                 },
@@ -2005,7 +2001,7 @@
                         }
                     ],
                     "default": [],
-                    "description": "Secrets to be used for private registries.",
+                    "description": "",
                     "title": "Imagepullsecrets"
                 },
                 "imageTag": {
@@ -2031,16 +2027,11 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": ""
                 },
                 "kafka": {
                     "$ref": "#/$defs/ProducerConfig",
-                    "default": {
-                        "bootstrapServers": "${config.kafka_brokers}",
-                        "labeledOutputTopics": null,
-                        "outputTopic": null,
-                        "schemaRegistryUrl": null
-                    },
                     "description": "Kafka Streams settings"
                 },
                 "livenessProbe": {
@@ -2115,6 +2106,7 @@
                         }
                     ],
                     "default": [],
+                    "description": "",
                     "title": "Ports"
                 },
                 "readinessProbe": {
@@ -2221,7 +2213,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": ""
                 },
                 "successfulJobsHistoryLimit": {
                     "anyOf": [
@@ -2280,7 +2273,8 @@
                 }
             },
             "required": [
-                "image"
+                "image",
+                "kafka"
             ],
             "title": "ProducerAppValues",
             "type": "object"
@@ -2290,26 +2284,18 @@
             "description": "Kafka Streams settings specific to Producer.",
             "properties": {
                 "bootstrapServers": {
-                    "default": "${config.kafka_brokers}",
                     "description": "Brokers",
                     "title": "Bootstrapservers",
                     "type": "string"
                 },
                 "labeledOutputTopics": {
-                    "anyOf": [
-                        {
-                            "additionalProperties": {
-                                "type": "string"
-                            },
-                            "type": "object"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
+                    "additionalProperties": {
+                        "type": "string"
+                    },
                     "default": {},
                     "description": "Extra output topics",
-                    "title": "Labeledoutputtopics"
+                    "title": "Labeledoutputtopics",
+                    "type": "object"
                 },
                 "outputTopic": {
                     "anyOf": [
@@ -2323,7 +2309,7 @@
                     "default": null,
                     "description": "Output topic"
                 },
-                "schemaRegistryUrl": {
+                "schema_registry_url": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -2334,9 +2320,12 @@
                     ],
                     "default": null,
                     "description": "URL of the schema registry",
-                    "title": "Schemaregistryurl"
+                    "title": "Schema Registry Url"
                 }
             },
+            "required": [
+                "bootstrapServers"
+            ],
             "title": "ProducerConfig",
             "type": "object"
         },
@@ -2370,7 +2359,7 @@
                     "default": null,
                     "description": "Output topic"
                 },
-                "schemaRegistryUrl": {
+                "schema_registry_url": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -2381,7 +2370,7 @@
                     ],
                     "default": null,
                     "description": "URL of the schema registry",
-                    "title": "Schemaregistryurl"
+                    "title": "Schema Registry Url"
                 }
             },
             "required": [
@@ -2992,7 +2981,8 @@
                         "enabled": false,
                         "size": null,
                         "storageClass": null
-                    }
+                    },
+                    "description": ""
                 },
                 "statefulSet": {
                     "default": false,
@@ -3173,7 +3163,7 @@
                         }
                     ],
                     "default": [],
-                    "description": "Secrets to be used for private registries.",
+                    "description": "",
                     "title": "Imagepullsecrets"
                 },
                 "imageTag": {
@@ -3199,7 +3189,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": ""
                 },
                 "jmx": {
                     "anyOf": [
@@ -3215,20 +3206,6 @@
                 },
                 "kafka": {
                     "$ref": "#/$defs/kpops__components__streams_bootstrap__streams__model__StreamsConfig",
-                    "default": {
-                        "applicationId": null,
-                        "bootstrapServers": "${config.kafka_brokers}",
-                        "config": null,
-                        "deleteOutput": null,
-                        "errorTopic": null,
-                        "inputPattern": null,
-                        "inputTopics": null,
-                        "labeledInputPatterns": null,
-                        "labeledInputTopics": null,
-                        "labeledOutputTopics": null,
-                        "outputTopic": null,
-                        "schemaRegistryUrl": null
-                    },
                     "description": "streams-bootstrap kafka section"
                 },
                 "livenessProbe": {
@@ -3315,6 +3292,7 @@
                         }
                     ],
                     "default": [],
+                    "description": "",
                     "title": "Ports"
                 },
                 "prometheus": {
@@ -3408,7 +3386,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": ""
                 },
                 "statefulSet": {
                     "default": false,
@@ -3447,7 +3426,8 @@
                 }
             },
             "required": [
-                "image"
+                "image",
+                "kafka"
             ],
             "title": "StreamsAppValues",
             "type": "object"
@@ -3685,7 +3665,8 @@
                     "title": "NameOverride"
                 },
                 "streams": {
-                    "$ref": "#/$defs/KafkaStreamsConfig"
+                    "$ref": "#/$defs/KafkaStreamsConfig",
+                    "description": ""
                 },
                 "tolerations": {
                     "anyOf": [
@@ -3844,7 +3825,7 @@
                         }
                     ],
                     "default": [],
-                    "description": "Secrets to be used for private registries.",
+                    "description": "",
                     "title": "Imagepullsecrets"
                 },
                 "imageTag": {
@@ -3870,7 +3851,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": ""
                 },
                 "kafka": {
                     "$ref": "#/$defs/KafkaConfig",
@@ -3948,6 +3930,7 @@
                         }
                     ],
                     "default": [],
+                    "description": "",
                     "title": "Ports"
                 },
                 "readinessProbe": {
@@ -4029,7 +4012,8 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": ""
                 },
                 "tolerations": {
                     "anyOf": [
@@ -4466,23 +4450,15 @@
                     "title": "Unique application ID"
                 },
                 "bootstrapServers": {
-                    "default": "${config.kafka_brokers}",
                     "description": "Brokers",
                     "title": "Bootstrapservers",
                     "type": "string"
                 },
                 "config": {
-                    "anyOf": [
-                        {
-                            "type": "object"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
                     "default": {},
                     "description": "Configuration",
-                    "title": "Config"
+                    "title": "Config",
+                    "type": "object"
                 },
                 "deleteOutput": {
                     "anyOf": [
@@ -4523,71 +4499,43 @@
                     "title": "Inputpattern"
                 },
                 "inputTopics": {
-                    "anyOf": [
-                        {
-                            "items": {
-                                "type": "string"
-                            },
-                            "type": "array"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
                     "default": [],
                     "description": "Input topics",
-                    "title": "Inputtopics"
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Inputtopics",
+                    "type": "array"
                 },
                 "labeledInputPatterns": {
-                    "anyOf": [
-                        {
-                            "additionalProperties": {
-                                "type": "string"
-                            },
-                            "type": "object"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
+                    "additionalProperties": {
+                        "type": "string"
+                    },
                     "default": {},
                     "description": "Extra input patterns",
-                    "title": "Labeledinputpatterns"
+                    "title": "Labeledinputpatterns",
+                    "type": "object"
                 },
                 "labeledInputTopics": {
-                    "anyOf": [
-                        {
-                            "additionalProperties": {
-                                "items": {
-                                    "type": "string"
-                                },
-                                "type": "array"
-                            },
-                            "type": "object"
+                    "additionalProperties": {
+                        "items": {
+                            "type": "string"
                         },
-                        {
-                            "type": "null"
-                        }
-                    ],
+                        "type": "array"
+                    },
                     "default": {},
                     "description": "Extra input topics",
-                    "title": "Labeledinputtopics"
+                    "title": "Labeledinputtopics",
+                    "type": "object"
                 },
                 "labeledOutputTopics": {
-                    "anyOf": [
-                        {
-                            "additionalProperties": {
-                                "type": "string"
-                            },
-                            "type": "object"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
+                    "additionalProperties": {
+                        "type": "string"
+                    },
                     "default": {},
                     "description": "Extra output topics",
-                    "title": "Labeledoutputtopics"
+                    "title": "Labeledoutputtopics",
+                    "type": "object"
                 },
                 "outputTopic": {
                     "anyOf": [
@@ -4601,7 +4549,7 @@
                     "default": null,
                     "description": "Output topic"
                 },
-                "schemaRegistryUrl": {
+                "schema_registry_url": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -4612,9 +4560,12 @@
                     ],
                     "default": null,
                     "description": "URL of the schema registry",
-                    "title": "Schemaregistryurl"
+                    "title": "Schema Registry Url"
                 }
             },
+            "required": [
+                "bootstrapServers"
+            ],
             "title": "StreamsConfig",
             "type": "object"
         },
@@ -4682,7 +4633,7 @@
                 },
                 "enabled": {
                     "default": false,
-                    "description": "Whether to enable auto-scaling using KEDA.",
+                    "description": "",
                     "title": "Enabled",
                     "type": "boolean"
                 },
@@ -4853,7 +4804,7 @@
                     "default": null,
                     "description": "Output topic"
                 },
-                "schemaRegistryUrl": {
+                "schema_registry_url": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -4864,7 +4815,7 @@
                     ],
                     "default": null,
                     "description": "URL of the schema registry",
-                    "title": "Schemaregistryurl"
+                    "title": "Schema Registry Url"
                 }
             },
             "required": [
