@@ -708,10 +708,6 @@
                 },
                 "resetter_values": {
                     "$ref": "#/$defs/HelmAppValues",
-                    "default": {
-                        "fullnameOverride": null,
-                        "nameOverride": null
-                    },
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
                 },
                 "state": {
@@ -857,10 +853,6 @@
                 },
                 "resetter_values": {
                     "$ref": "#/$defs/HelmAppValues",
-                    "default": {
-                        "fullnameOverride": null,
-                        "nameOverride": null
-                    },
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
                 },
                 "state": {
@@ -961,10 +953,6 @@
                 },
                 "resetter_values": {
                     "$ref": "#/$defs/HelmAppValues",
-                    "default": {
-                        "fullnameOverride": null,
-                        "nameOverride": null
-                    },
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
                 },
                 "state": {
