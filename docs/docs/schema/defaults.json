@@ -655,7 +655,7 @@
                     ],
                     "default": null,
                     "description": "URL of the schema registry",
-                    "title": "Schemaregistryurl"
+                    "title": "Schema Registry URL"
                 }
             },
             "title": "KafkaConfig",
@@ -2335,7 +2335,7 @@
                     ],
                     "default": null,
                     "description": "URL of the schema registry",
-                    "title": "Schemaregistryurl"
+                    "title": "Schema Registry URL"
                 }
             },
             "title": "ProducerConfig",
@@ -4614,7 +4614,7 @@
                     ],
                     "default": null,
                     "description": "URL of the schema registry",
-                    "title": "Schemaregistryurl"
+                    "title": "Schema Registry URL"
                 }
             },
             "title": "StreamsConfig",

@@ -149,6 +149,7 @@ class KafkaConfig(SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigMode
         validation_alias=AliasChoices(
             "schemaRegistryUrl", "schema_registry_url"
         ),  # TODO: same for other camelcase fields, avoids duplicates during enrichment
+        title="Schema Registry URL",
     )
     labeled_output_topics: SerializeAsOptional[
         Annotated[
