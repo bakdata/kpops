@@ -271,9 +271,7 @@ def fill_csv_pipeline_config(target: Path) -> None:
         field_description: str = (
             field_info.description
             or describe_attr(field_name, KpopsConfig.__doc__)
-            or describe_attr(
-                field_name, HelmConfig.__doc__
-            )  # HACK: does this work for the one special case
+            or describe_attr(field_name, HelmConfig.__doc__)  # HACK: special case
             or "No description available, please refer to the pipeline config documentation."
         )
         field_default = field_info.default
