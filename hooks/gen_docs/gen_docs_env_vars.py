@@ -270,7 +270,7 @@ def fill_csv_pipeline_config(target: Path) -> None:
             field_info.description
             or describe_attr(field_name, KpopsConfig.__doc__)
             or describe_attr(
-                field_name, HelmConfig.__doc__
+                field_name.rsplit(".", 1)[-1], HelmConfig.__doc__
             )  # HACK: does this work for the one special case
             or "No description available, please refer to the pipeline config documentation."
         )
