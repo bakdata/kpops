@@ -39,7 +39,7 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
     """Kafka Streams config.
 
     :param brokers: Brokers
-    :param schema_registry_url: URL of the schema registry, defaults to None
+    :param schema_registry_url: URL of the Schema Registry, defaults to None
     :param extra_output_topics: Extra output topics
     :param output_topic: Output topic, defaults to None
     """
@@ -50,12 +50,10 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
         validation_alias=AliasChoices(
             "schemaRegistryUrl", "schema_registry_url"
         ),  # TODO: same for other camelcase fields, avoids duplicates during enrichment
+        title="Schema Registry URL",
     )
-    extra_output_topics: dict[str, KafkaTopicStr] = Field(default={})
-    output_topic: KafkaTopicStr | None = Field(
-        default=None,
-        json_schema_extra={},
-    )
+    extra_output_topics: dict[str, KafkaTopicStr] = {}
+    output_topic: KafkaTopicStr | None = None
 
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 
@@ -101,16 +99,9 @@ class StreamsBootstrapV2Values(SerializeAsOptionalModel, HelmAppValues):
         default="latest",
         pattern=IMAGE_TAG_PATTERN,
     )
-
     streams: KafkaStreamsConfig
-
-    affinity: Affinity | None = Field(
-        default=None,
-    )
-
-    tolerations: SerializeAsOptional[list[Toleration]] = Field(
-        default=[],
-    )
+    affinity: Affinity | None = None
+    tolerations: SerializeAsOptional[list[Toleration]] = []
 
 
 @deprecated("StreamsBootstrapV2 component is deprecated, use StreamsBootstrap instead.")
@@ -123,14 +114,9 @@ class StreamsBootstrapV2(KafkaApp, HelmApp, ABC):
     :param version: Helm chart version, defaults to "2.9.0"
     """
 
-    values: StreamsBootstrapV2Values = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
-    )
-    repo_config: SkipGenerate[HelmRepoConfig] = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
-        default=STREAMS_BOOTSTRAP_HELM_REPO,
-    )
-    version: str | None = Field(
-        default=STREAMS_BOOTSTRAP_VERSION,
-    )
+    values: StreamsBootstrapV2Values
+    repo_config: SkipGenerate[HelmRepoConfig] = STREAMS_BOOTSTRAP_HELM_REPO  # pyright: ignore[reportIncompatibleVariableOverride]
+    version: str | None = STREAMS_BOOTSTRAP_VERSION
 
     @pydantic.model_validator(mode="after")
     def warning_for_latest_image_tag(self) -> Self:

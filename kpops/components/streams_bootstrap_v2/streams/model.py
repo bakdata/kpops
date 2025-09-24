@@ -28,12 +28,12 @@ class StreamsConfig(KafkaStreamsConfig):
     :param delete_output: Whether the output topics with their associated schemas and the consumer group should be deleted during the cleanup, defaults to None
     """
 
-    input_topics: list[KafkaTopicStr] = Field(default=[])
+    input_topics: list[KafkaTopicStr] = []
     input_pattern: str | None = None
-    extra_input_topics: dict[str, list[KafkaTopicStr]] = Field(default={})
-    extra_input_patterns: dict[str, str] = Field(default={})
+    extra_input_topics: dict[str, list[KafkaTopicStr]] = {}
+    extra_input_patterns: dict[str, str] = {}
     error_topic: KafkaTopicStr | None = None
-    config: dict[str, Any] = Field(default={})
+    config: dict[str, Any] = {}
     delete_output: bool | None = None
 
     @pydantic.field_validator("input_topics", mode="before")
@@ -127,9 +127,7 @@ class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
         defaults to []
     """
 
-    enabled: bool = Field(
-        default=False,
-    )
+    enabled: bool = False
     consumer_group: str | None = Field(
         default=None,
         title="Consumer group",
@@ -162,9 +160,8 @@ class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
         default=None,
         title="Idle replica count",
     )
-    topics: list[str] = Field(
-        default=[],
-    )
+    topics: list[str] = []
+
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 
     @pydantic.model_validator(mode="after")
@@ -186,18 +183,9 @@ class PersistenceConfig(CamelCaseConfigModel, DescConfigModel):
     :param storage_class: Storage class to use for the persistent volume.
     """
 
-    enabled: bool = Field(
-        default=False,
-        description="Whether to use a persistent volume to store the state of the streams app.	",
-    )
-    size: str | None = Field(
-        default=None,
-        description="The size of the PersistentVolume to allocate to each streams pod in the StatefulSet.",
-    )
-    storage_class: str | None = Field(
-        default=None,
-        description="Storage class to use for the persistent volume.",
-    )
+    enabled: bool = False
+    size: str | None = None
+    storage_class: str | None = None
 
     @pydantic.model_validator(mode="after")
     def validate_mandatory_fields_are_set(self) -> Self:
@@ -219,16 +207,9 @@ class StreamsAppV2Values(StreamsBootstrapV2Values):
     :param autoscaling: Kubernetes event-driven autoscaling config, defaults to None
     """
 
-    streams: StreamsConfig = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
-    )
-    autoscaling: StreamsAppAutoScaling | None = Field(
-        default=None,
-    )
-    stateful_set: bool = Field(
-        default=False,
-        description="Whether to use a Statefulset instead of a Deployment to deploy the streams app.",
-    )
-    persistence: PersistenceConfig = Field(
-        default=PersistenceConfig(),
-    )
+    streams: StreamsConfig  # pyright: ignore[reportIncompatibleVariableOverride]
+    autoscaling: StreamsAppAutoScaling | None = None
+    stateful_set: bool = False
+    persistence: PersistenceConfig = PersistenceConfig()
+
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")

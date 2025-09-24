@@ -42,8 +42,7 @@ class ProducerAppV2(StreamsBootstrapV2):
     :param from_: Producer doesn't support FromSection, defaults to None
     """
 
-    values: ProducerAppV2Values = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
-    )
+    values: ProducerAppV2Values  # pyright: ignore[reportIncompatibleVariableOverride]
     from_: None = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         default=None,
         alias="from",

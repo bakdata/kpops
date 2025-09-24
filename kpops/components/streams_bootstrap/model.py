@@ -138,7 +138,7 @@ class KafkaConfig(SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigMode
     """Kafka Streams config.
 
     :param bootstrap_servers: Brokers
-    :param schema_registry_url: URL of the schema registry, defaults to None
+    :param schema_registry_url: URL of the Schema Registry, defaults to None
     :param labeled_output_topics: Extra output topics
     :param output_topic: Output topic, defaults to None
     """
