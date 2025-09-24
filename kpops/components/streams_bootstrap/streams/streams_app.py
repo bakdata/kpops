@@ -1,7 +1,7 @@
 import logging
 from functools import cached_property
 
-from pydantic import Field, ValidationError
+from pydantic import ValidationError
 from typing_extensions import override
 
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
@@ -91,8 +91,7 @@ class StreamsApp(StreamsBootstrap):
     :param values: streams-bootstrap Helm values
     """
 
-    values: StreamsAppValues = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
-    )
+    values: StreamsAppValues  # pyright: ignore[reportIncompatibleVariableOverride]
 
     @cached_property
     def _cleaner(self) -> StreamsAppCleaner:

@@ -77,17 +77,10 @@ class HelmApp(KubernetesApp):
     :param values: Helm app values
     """
 
-    repo_config: SkipGenerate[HelmRepoConfig | None] = Field(
-        default=None,
-    )
-    diff_config: SkipGenerate[HelmDiffConfig] = Field(
-        default=HelmDiffConfig(),
-    )
-    version: str | None = Field(
-        default=None,
-    )
-    values: HelmAppValues = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
-    )
+    repo_config: SkipGenerate[HelmRepoConfig | None] = None
+    diff_config: SkipGenerate[HelmDiffConfig] = HelmDiffConfig()
+    version: str | None = None
+    values: HelmAppValues  # pyright: ignore[reportIncompatibleVariableOverride]
 
     @cached_property
     def _helm(self) -> Helm:

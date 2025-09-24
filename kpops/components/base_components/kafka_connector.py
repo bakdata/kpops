@@ -6,7 +6,7 @@ from functools import cached_property
 from typing import Any, Literal, NoReturn, Self
 
 import pydantic
-from pydantic import Field, PrivateAttr, ValidationInfo, field_validator
+from pydantic import PrivateAttr, ValidationInfo, field_validator
 from typing_extensions import override
 
 from kpops.component_handlers import get_handlers
@@ -53,13 +53,11 @@ class KafkaConnectorResetter(Cleaner, ABC):
     from_: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
     to: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
     values: KafkaConnectorResetterValues  # pyright: ignore[reportIncompatibleVariableOverride]
-    repo_config: SkipGenerate[HelmRepoConfig] = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
-        default=HelmRepoConfig(
-            repository_name="bakdata-kafka-connect-resetter",
-            url="https://bakdata.github.io/kafka-connect-resetter/",
-        )
+    repo_config: SkipGenerate[HelmRepoConfig] = HelmRepoConfig(  # pyright: ignore[reportIncompatibleVariableOverride]
+        repository_name="bakdata-kafka-connect-resetter",
+        url="https://bakdata.github.io/kafka-connect-resetter/",
     )
-    version: str | None = Field(default="1.0.4")
+    version: str | None = "1.0.4"
 
     @property
     @override
@@ -112,13 +110,9 @@ class KafkaConnector(PipelineComponent, ABC):
     """
 
     config: KafkaConnectorConfig
-    state: ConnectorNewState | None = Field(
-        default=None,
-    )
+    state: ConnectorNewState | None = None
     resetter_namespace: str | None = None
-    resetter_values: HelmAppValues = Field(
-        default_factory=HelmAppValues,
-    )
+    resetter_values: HelmAppValues = HelmAppValues()
     _connector_type: KafkaConnectorType = PrivateAttr()
 
     @field_validator("config", mode="before")
@@ -207,9 +201,7 @@ class KafkaSourceConnector(KafkaConnector):
         defaults to None
     """
 
-    offset_topic: str | None = Field(
-        default=None,
-    )
+    offset_topic: str | None = None
 
     _connector_type: KafkaConnectorType = PrivateAttr(KafkaConnectorType.SOURCE)
 
