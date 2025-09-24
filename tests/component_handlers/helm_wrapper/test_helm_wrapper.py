@@ -63,7 +63,7 @@ class TestHelmWrapper:
         helm = Helm._instance
         if not helm:
             return
-        helm.add_repo.cache_clear()  # pyright: ignore[reportFunctionMemberAccess]
+        helm.add_repo.cache_clear()  # pyright: ignore[reportAttributeAccessIssue,reportUnknownMemberType]
         if hasattr(helm, "version"):
             del helm.version
 

@@ -29,7 +29,7 @@ class AbstractBaseComponent(PipelineComponent, ABC): ...
 
 
 # abstract component with abstractmethods should be excluded
-class AbstractPipelineComponent(AbstractBaseComponent):
+class AbstractPipelineComponent(AbstractBaseComponent, ABC):
     @abstractmethod
     def not_implemented(self) -> None: ...
 
