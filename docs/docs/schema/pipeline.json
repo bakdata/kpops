@@ -538,6 +538,7 @@
                     "title": "Maxrampercentage"
                 },
                 "others": {
+                    "default": [],
                     "description": "List of Java VM options passed to the streams app.",
                     "items": {
                         "type": "string"
@@ -2354,6 +2355,7 @@
                     "additionalProperties": {
                         "type": "string"
                     },
+                    "default": {},
                     "description": "Additional service labels.",
                     "title": "Labels",
                     "type": "object"

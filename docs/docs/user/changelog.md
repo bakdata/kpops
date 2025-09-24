@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [10.5.0](https://github.com/bakdata/kpops/tree/10.5.0) - 2025-08-11
+### What's changed
+
+* ci: remove git cliff binary by @disrupted in [#639](https://github.com/bakdata/kpops/pull/639)
+
+* docs: update examples for streams-bootstrap v3 by @disrupted in [#636](https://github.com/bakdata/kpops/pull/636)
+
+* feat(streams-bootstrap): set default Kafka brokers from config by @disrupted in [#637](https://github.com/bakdata/kpops/pull/637)
+
+
+**Full Changelog**: https://github.com/bakdata/kpops/compare/10.4.2...10.5.0
+
 ## [10.4.2](https://github.com/bakdata/kpops/tree/10.4.2) - 2025-07-24
 ### What's changed
 
@@ -18,6 +30,8 @@ All notable changes to this project will be documented in this file.
 * fix(pvc-handler): update selector for PVC cleaning by @philipp94831 in [#633](https://github.com/bakdata/kpops/pull/633)
 
 * ci: update release workflow by @disrupted in [#635](https://github.com/bakdata/kpops/pull/635)
+
+* Bump version 10.4.1 → 10.4.2 by @bakdata-bot
 
 
 **Full Changelog**: https://github.com/bakdata/kpops/compare/10.4.1...10.4.2

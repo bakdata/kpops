@@ -36,16 +36,12 @@ class PortConfig(CamelCaseConfigModel, DescConfigModel):
     """
 
     container_port: int
-    name: str | None = Field(
-        default=None,
-    )
+    name: str | None = None
     schema_: ProtocolSchema = Field(
         default=ProtocolSchema.TCP,
         alias="schema",  # because schema is already a builtin of Pydantic
     )
-    service_port: int | None = Field(
-        default=None,
-    )
+    service_port: int | None = None
 
 
 class ServiceConfig(CamelCaseConfigModel, DescConfigModel):
@@ -56,15 +52,9 @@ class ServiceConfig(CamelCaseConfigModel, DescConfigModel):
     :param type: Service type.
     """
 
-    enabled: bool = Field(
-        default=False,
-    )
-    labels: dict[str, str] = Field(
-        default_factory=dict,
-    )
-    type: ServiceType | None = Field(
-        default=None,
-    )
+    enabled: bool = False
+    labels: dict[str, str] = {}
+    type: ServiceType | None = None
 
 
 class JavaOptions(CamelCaseConfigModel, DescConfigModel):
@@ -74,12 +64,8 @@ class JavaOptions(CamelCaseConfigModel, DescConfigModel):
     :param others: List of Java VM options passed to the streams app.
     """
 
-    max_RAM_percentage: int | None = Field(
-        default=None,
-    )
-    others: list[str] = Field(
-        default_factory=list,
-    )
+    max_RAM_percentage: int | None = None
+    others: list[str] = []
 
 
 class StreamsBootstrapValues(SerializeAsOptionalModel, HelmAppValues):
@@ -107,89 +93,30 @@ class StreamsBootstrapValues(SerializeAsOptionalModel, HelmAppValues):
     """
 
     image: str
-
     image_tag: str | None = Field(
         default=None,
         pattern=IMAGE_TAG_PATTERN,
     )
-
-    image_pull_policy: ImagePullPolicy | None = Field(
-        default=None,
-    )
-
-    image_pull_secrets: SerializeAsOptional[list[dict[str, str]]] = Field(
-        default=[],
-    )
-
+    image_pull_policy: ImagePullPolicy | None = None
+    image_pull_secrets: SerializeAsOptional[list[dict[str, str]]] = []
     kafka: KafkaConfig
-
-    resources: Resources | None = Field(
-        default=None,
-    )
-
-    ports: SerializeAsOptional[list[PortConfig]] = Field(
-        default=[],
-    )
-
-    service: ServiceConfig | None = Field(
-        default=None,
-    )
-
-    configuration_env_prefix: str | None = Field(
-        default=None,
-    )
-
-    command_line: SerializeAsOptional[dict[str, str | bool | int | float]] = Field(
-        default={},
-    )
-
-    env: SerializeAsOptional[dict[str, str]] = Field(
-        default={},
-    )
-
-    secrets: SerializeAsOptional[dict[str, str]] = Field(
-        default={},
-    )
-
-    secret_refs: SerializeAsOptional[dict[str, Any]] = Field(
-        default={},
-    )
-
-    secret_files_refs: SerializeAsOptional[list[str]] = Field(
-        default=[],
-    )
-
-    files: SerializeAsOptional[dict[str, Any]] = Field(
-        default={},
-    )
-
-    java_options: JavaOptions | None = Field(
-        default=None,
-    )
-
-    pod_annotations: SerializeAsOptional[dict[str, str]] = Field(
-        default={},
-    )
-
-    pod_labels: SerializeAsOptional[dict[str, str]] = Field(
-        default={},
-    )
-
-    liveness_probe: SerializeAsOptional[dict[str, Any]] = Field(
-        default={},
-    )
-
-    readiness_probe: SerializeAsOptional[dict[str, Any]] = Field(
-        default={},
-    )
-
-    affinity: Affinity | None = Field(
-        default=None,
-    )
-
-    tolerations: SerializeAsOptional[list[Toleration]] = Field(
-        default=[],
-    )
+    resources: Resources | None = None
+    ports: SerializeAsOptional[list[PortConfig]] = []
+    service: ServiceConfig | None = None
+    configuration_env_prefix: str | None = None
+    command_line: SerializeAsOptional[dict[str, str | bool | int | float]] = {}
+    env: SerializeAsOptional[dict[str, str]] = {}
+    secrets: SerializeAsOptional[dict[str, str]] = {}
+    secret_refs: SerializeAsOptional[dict[str, Any]] = {}
+    secret_files_refs: SerializeAsOptional[list[str]] = []
+    files: SerializeAsOptional[dict[str, Any]] = {}
+    java_options: JavaOptions | None = None
+    pod_annotations: SerializeAsOptional[dict[str, str]] = {}
+    pod_labels: SerializeAsOptional[dict[str, str]] = {}
+    liveness_probe: SerializeAsOptional[dict[str, Any]] = {}
+    readiness_probe: SerializeAsOptional[dict[str, Any]] = {}
+    affinity: Affinity | None = None
+    tolerations: SerializeAsOptional[list[Toleration]] = []
 
     @pydantic.model_validator(mode="before")
     @classmethod
@@ -216,9 +143,7 @@ class KafkaConfig(SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigMode
     :param output_topic: Output topic, defaults to None
     """
 
-    bootstrap_servers: str = Field(
-        default="${config.kafka_brokers}",
-    )
+    bootstrap_servers: str = "${config.kafka_brokers}"
     schema_registry_url: str | None = Field(
         default=None,
         validation_alias=AliasChoices(
@@ -230,11 +155,8 @@ class KafkaConfig(SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigMode
             dict[str, KafkaTopicStr],
             pydantic.PlainSerializer(serialize_labeled_output_topics),
         ]
-    ] = Field(default={})
-    output_topic: KafkaTopicStr | None = Field(
-        default=None,
-        json_schema_extra={},
-    )
+    ] = {}
+    output_topic: KafkaTopicStr | None = None
 
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 

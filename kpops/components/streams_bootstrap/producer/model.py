@@ -1,7 +1,7 @@
 from typing import ClassVar
 
 from croniter import croniter
-from pydantic import ConfigDict, Field, field_validator
+from pydantic import ConfigDict, field_validator
 
 from kpops.components.common.kubernetes_model import RestartPolicy
 from kpops.components.streams_bootstrap.model import (
@@ -29,28 +29,14 @@ class ProducerAppValues(StreamsBootstrapValues):
     :param ttl_seconds_after_finished: See https://kubernetes.io/docs/concepts/workloads/controllers/ttlafterfinished/#ttl-after-finished-controller
     """
 
-    kafka: ProducerConfig = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
-        default=ProducerConfig(),
-    )
-
+    kafka: ProducerConfig = ProducerConfig()  # pyright: ignore[reportIncompatibleVariableOverride]
     deployment: bool | None = None
-
-    restart_policy: RestartPolicy | None = Field(
-        default=None,
-    )
-
+    restart_policy: RestartPolicy | None = None
     schedule: str | None = None
-
     suspend: bool | None = None
-
-    successful_jobs_history_limit: int | None = Field(
-        default=None,
-    )
-
+    successful_jobs_history_limit: int | None = None
     failed_jobs_history_limit: int | None = None
-
     backoff_limit: int | None = None
-
     ttl_seconds_after_finished: int | None = None
 
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
