@@ -654,7 +654,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "URL of the schema registry",
+                    "description": "URL of the Schema Registry",
                     "title": "Schema Registry URL"
                 }
             },
@@ -1033,8 +1033,8 @@
                         }
                     ],
                     "default": null,
-                    "description": "URL of the schema registry",
-                    "title": "Schemaregistryurl"
+                    "description": "URL of the Schema Registry",
+                    "title": "Schema Registry URL"
                 }
             },
             "required": [
@@ -1335,6 +1335,45 @@
             ],
             "title": "OutputTopicTypes",
             "type": "string"
+        },
+        "PersistenceConfig": {
+            "description": "streams-bootstrap persistence configurations.",
+            "properties": {
+                "enabled": {
+                    "default": false,
+                    "description": "Whether to use a persistent volume to store the state of the streams app.",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
+                "size": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The size of the PersistentVolume to allocate to each streams pod in the StatefulSet.",
+                    "title": "Size"
+                },
+                "storageClass": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Storage class to use for the persistent volume.",
+                    "title": "Storageclass"
+                }
+            },
+            "title": "PersistenceConfig",
+            "type": "object"
         },
         "PipelineComponent": {
             "additionalProperties": true,
@@ -2334,7 +2373,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "URL of the schema registry",
+                    "description": "URL of the Schema Registry",
                     "title": "Schema Registry URL"
                 }
             },
@@ -2381,8 +2420,8 @@
                         }
                     ],
                     "default": null,
-                    "description": "URL of the schema registry",
-                    "title": "Schemaregistryurl"
+                    "description": "URL of the Schema Registry",
+                    "title": "Schema Registry URL"
                 }
             },
             "required": [
@@ -2989,7 +3028,7 @@
                     "title": "NameOverride"
                 },
                 "persistence": {
-                    "$ref": "#/$defs/kpops__components__streams_bootstrap_v2__streams__model__PersistenceConfig",
+                    "$ref": "#/$defs/PersistenceConfig",
                     "default": {
                         "enabled": false,
                         "size": null,
@@ -2998,7 +3037,6 @@
                 },
                 "statefulSet": {
                     "default": false,
-                    "description": "Whether to use a Statefulset instead of a Deployment to deploy the streams app.",
                     "title": "Statefulset",
                     "type": "boolean"
                 },
@@ -3263,7 +3301,7 @@
                 "persistence": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/kpops__components__streams_bootstrap__streams__model__PersistenceConfig"
+                            "$ref": "#/$defs/PersistenceConfig"
                         },
                         {
                             "type": "null"
@@ -4258,45 +4296,6 @@
             "title": "WeightedPodAffinityTerm",
             "type": "object"
         },
-        "kpops__components__streams_bootstrap__streams__model__PersistenceConfig": {
-            "description": "streams-bootstrap persistence configurations.",
-            "properties": {
-                "enabled": {
-                    "default": false,
-                    "description": "Whether to use a persistent volume to store the state of the streams app.",
-                    "title": "Enabled",
-                    "type": "boolean"
-                },
-                "size": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "The size of the PersistentVolume to allocate to each streams pod in the StatefulSet.",
-                    "title": "Size"
-                },
-                "storageClass": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Storage class to use for the persistent volume.",
-                    "title": "Storageclass"
-                }
-            },
-            "title": "PersistenceConfig",
-            "type": "object"
-        },
         "kpops__components__streams_bootstrap__streams__model__StreamsAppAutoScaling": {
             "additionalProperties": true,
             "description": "Kubernetes Event-driven Autoscaling config.",
@@ -4613,50 +4612,11 @@
                         }
                     ],
                     "default": null,
-                    "description": "URL of the schema registry",
+                    "description": "URL of the Schema Registry",
                     "title": "Schema Registry URL"
                 }
             },
             "title": "StreamsConfig",
-            "type": "object"
-        },
-        "kpops__components__streams_bootstrap_v2__streams__model__PersistenceConfig": {
-            "description": "streams-bootstrap persistence configurations.",
-            "properties": {
-                "enabled": {
-                    "default": false,
-                    "description": "Whether to use a persistent volume to store the state of the streams app.\t",
-                    "title": "Enabled",
-                    "type": "boolean"
-                },
-                "size": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "The size of the PersistentVolume to allocate to each streams pod in the StatefulSet.",
-                    "title": "Size"
-                },
-                "storageClass": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Storage class to use for the persistent volume.",
-                    "title": "Storageclass"
-                }
-            },
-            "title": "PersistenceConfig",
             "type": "object"
         },
         "kpops__components__streams_bootstrap_v2__streams__model__StreamsAppAutoScaling": {
@@ -4865,8 +4825,8 @@
                         }
                     ],
                     "default": null,
-                    "description": "URL of the schema registry",
-                    "title": "Schemaregistryurl"
+                    "description": "URL of the Schema Registry",
+                    "title": "Schema Registry URL"
                 }
             },
             "required": [
