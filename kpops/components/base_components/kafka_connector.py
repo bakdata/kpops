@@ -6,7 +6,7 @@ from functools import cached_property
 from typing import Any, Literal, NoReturn, Self
 
 import pydantic
-from pydantic import PrivateAttr, ValidationInfo, field_validator
+from pydantic import Field, PrivateAttr, ValidationInfo, field_validator
 from typing_extensions import override
 
 from kpops.component_handlers import get_handlers
@@ -112,7 +112,7 @@ class KafkaConnector(PipelineComponent, ABC):
     config: KafkaConnectorConfig
     state: ConnectorNewState | None = None
     resetter_namespace: str | None = None
-    resetter_values: HelmAppValues = HelmAppValues()
+    resetter_values: HelmAppValues = Field(default_factory=HelmAppValues)
     _connector_type: KafkaConnectorType = PrivateAttr()
 
     @field_validator("config", mode="before")
