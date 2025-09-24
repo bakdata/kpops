@@ -47,18 +47,14 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
     """
 
     name: str
-    prefix: str = Field(
-        default="${pipeline.name}-",
-    )
+    prefix: str = "${pipeline.name}-"
     from_: FromSection | None = Field(
         default=None,
         serialization_alias="from",
         validation_alias=AliasChoices("from", "from_"),
         title="From",
     )
-    to: ToSection | None = Field(
-        default=None,
-    )
+    to: ToSection | None = None
 
     model_config: ClassVar[ConfigDict] = ConfigDict(
         extra="allow", use_enum_values=False

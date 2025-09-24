@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import ClassVar
 
-from pydantic import ConfigDict, Field
+from pydantic import ConfigDict
 
 from kpops.components.base_components.models import ModelName, ModelVersion, TopicName
 from kpops.components.common.topic import KafkaTopic, TopicConfig
@@ -16,12 +16,8 @@ class ToSection(DescConfigModel):
     :param models: Data models
     """
 
-    topics: dict[TopicName, TopicConfig] = Field(
-        default={},  # pyright: ignore[reportUnknownArgumentType]
-    )
-    models: dict[ModelName, ModelVersion] = Field(
-        default={},  # pyright: ignore[reportUnknownArgumentType]
-    )
+    topics: dict[TopicName, TopicConfig] = {}
+    models: dict[ModelName, ModelVersion] = {}
 
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="forbid")
 

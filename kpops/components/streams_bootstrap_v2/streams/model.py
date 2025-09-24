@@ -128,26 +128,11 @@ class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
     """
 
     enabled: bool = False
-    consumer_group: str | None = Field(
-        default=None,
-        title="Consumer group",
-    )
-    lag_threshold: int | None = Field(
-        default=None,
-        title="Lag threshold",
-    )
-    polling_interval: int = Field(
-        default=30,
-        title="Polling interval",
-    )
-    cooldown_period: int = Field(
-        default=300,
-        title="Cooldown period",
-    )
-    offset_reset_policy: str = Field(
-        default="earliest",
-        title="Offset reset policy",
-    )
+    consumer_group: str | None = None
+    lag_threshold: int | None = None
+    polling_interval: int = 30
+    cooldown_period: int = 300
+    offset_reset_policy: str = "earliest"
     min_replicas: int = Field(
         default=0,
         title="Min replica count",

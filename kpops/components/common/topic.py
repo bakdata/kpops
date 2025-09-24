@@ -50,9 +50,7 @@ class TopicConfig(DescConfigModel):
         default=None,
         title="Replication factor",
     )
-    configs: dict[str, str | int] = Field(
-        default={},  # pyright: ignore[reportUnknownArgumentType]
-    )
+    configs: dict[str, str | int] = {}
     label: str | None = None
 
     model_config: ClassVar[ConfigDict] = ConfigDict(
@@ -84,7 +82,7 @@ class KafkaTopic(BaseModel):
     """
 
     name: str
-    config: TopicConfig = TopicConfig()  # pyright: ignore[reportUnknownArgumentType]
+    config: TopicConfig = TopicConfig()
 
     @property
     def id(self) -> str:

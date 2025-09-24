@@ -19,7 +19,7 @@ KeyPath = tuple[str, ...]
 
 class HelmDiffConfig(SerializeAsOptionalModel):
     ignore: SerializeAsOptional[list[KeyPath]] = Field(
-        default=[],  # pyright: ignore[reportUnknownArgumentType]
+        default=[],
         description="List of keypaths that should be excluded from the diff.",
         examples=[("name",), ("imageTag",), ("metadata", "labels", "helm.sh/chart")],
     )
@@ -82,9 +82,7 @@ class HelmConfig(DescConfigModel):
         default=None,
         examples=["dev-storage"],
     )
-    debug: bool = Field(
-        default=False,
-    )
+    debug: bool = False
     api_version: str | None = Field(
         default=None,
         title="API version",

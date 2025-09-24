@@ -1,7 +1,7 @@
 from enum import StrEnum
 from typing import Any, ClassVar, NewType
 
-from pydantic import ConfigDict, Field, model_validator
+from pydantic import ConfigDict, model_validator
 
 from kpops.components.base_components.models import TopicName
 from kpops.utils.pydantic import DescConfigModel
@@ -53,13 +53,7 @@ class FromSection(DescConfigModel):
     :param components: Components to read from
     """
 
-    topics: dict[TopicName, FromTopic] = Field(
-        default={},  # pyright: ignore[reportUnknownArgumentType]
-    )
-    components: dict[ComponentName, FromTopic] = Field(
-        default={},  # pyright: ignore[reportUnknownArgumentType]
-    )
+    topics: dict[TopicName, FromTopic] = {}
+    components: dict[ComponentName, FromTopic] = {}
 
-    model_config: ClassVar[ConfigDict] = ConfigDict(
-        extra="forbid",
-    )
+    model_config: ClassVar[ConfigDict] = ConfigDict(extra="forbid")

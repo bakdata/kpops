@@ -38,7 +38,7 @@ class ComponentHandlers:
 
 
 def get_handlers() -> ComponentHandlers:
-    if not ComponentHandlers._instance:  # pyright: ignore[reportPrivateUsage]
+    if not ComponentHandlers._instance:
         msg = f"{ComponentHandlers.__name__} has not been initialized"
         raise RuntimeError(msg)
-    return ComponentHandlers._instance  # pyright: ignore[reportPrivateUsage]
+    return ComponentHandlers._instance

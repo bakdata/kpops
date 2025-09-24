@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, Annotated
 import pydantic
 from pydantic import Field, model_validator
 
-from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
     DescConfigModel,
@@ -78,9 +77,7 @@ class NodeSelectorRequirement(DescConfigModel, CamelCaseConfigModel):
 
     key: str
     operator: NodeSelectorOperator
-    values: list[str] = Field(
-        default=[],  # pyright: ignore[reportUnknownArgumentType]
-    )
+    values: list[str] = []
 
     @model_validator(mode="after")
     def validate_values(self) -> Self:
@@ -107,12 +104,8 @@ class NodeSelectorTerm(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfi
     :param match_fields: A list of node selector requirements by node's fields.
     """
 
-    match_expressions: SerializeAsOptional[list[NodeSelectorRequirement]] = Field(
-        default=[],  # pyright: ignore[reportUnknownArgumentType]
-    )
-    match_fields: SerializeAsOptional[list[NodeSelectorRequirement]] = Field(
-        default=[],  # pyright: ignore[reportUnknownArgumentType]
-    )
+    match_expressions: SerializeAsOptional[list[NodeSelectorRequirement]] = []
+    match_fields: SerializeAsOptional[list[NodeSelectorRequirement]] = []
 
 
 class NodeSelector(DescConfigModel, CamelCaseConfigModel):
@@ -142,20 +135,10 @@ class NodeAffinity(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfigMod
     :param preferred_during_scheduling_ignored_during_execution: The scheduler will prefer to schedule pods to nodes that satisfy the affinity expressions specified by this field, but it may choose a node that violates one or more of the expressions. The node that is most preferred is the one with the greatest sum of weights, i.e. for each node that meets all of the scheduling requirements (resource request, requiredDuringScheduling affinity expressions, etc.), compute a sum by iterating through the elements of this field and adding *weight* to the sum if the node matches the corresponding matchExpressions; the node(s) with the highest sum are the most preferred.
     """
 
-    required_during_scheduling_ignored_during_execution: NodeSelector | None = Field(
-        default=None,
-        description=describe_attr(
-            "required_during_scheduling_ignored_during_execution", __doc__
-        ),
-    )
+    required_during_scheduling_ignored_during_execution: NodeSelector | None = None
     preferred_during_scheduling_ignored_during_execution: SerializeAsOptional[
         list[PreferredSchedulingTerm]
-    ] = Field(
-        default=[],  # pyright: ignore[reportUnknownArgumentType]
-        description=describe_attr(
-            "preferred_during_scheduling_ignored_during_execution", __doc__
-        ),
-    )
+    ] = []
 
 
 class LabelSelectorOperator(str, enum.Enum):
@@ -176,9 +159,7 @@ class LabelSelectorRequirement(DescConfigModel, CamelCaseConfigModel):
 
     key: str
     operator: LabelSelectorOperator
-    values: list[str] = Field(
-        default=[],  # pyright: ignore[reportUnknownArgumentType]
-    )
+    values: list[str] = []
 
     @model_validator(mode="after")
     def validate_values(self) -> Self:
@@ -201,12 +182,8 @@ class LabelSelector(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfigMo
     :param match_expressions: matchExpressions is a list of label selector requirements. The requirements are ANDed.
     """
 
-    match_labels: SerializeAsOptional[dict[str, str]] = Field(
-        default={},  # pyright: ignore[reportUnknownArgumentType]
-    )
-    match_expressions: SerializeAsOptional[list[LabelSelectorRequirement]] = Field(
-        default=[],  # pyright: ignore[reportUnknownArgumentType]
-    )
+    match_labels: SerializeAsOptional[dict[str, str]] = {}
+    match_expressions: SerializeAsOptional[list[LabelSelectorRequirement]] = []
 
 
 class PodAffinityTerm(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfigModel):
@@ -220,22 +197,12 @@ class PodAffinityTerm(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfig
     :param namespace_selector: A label query over the set of namespaces that the term applies to. The term is applied to the union of the namespaces selected by this field and the ones listed in the namespaces field. null selector and null or empty namespaces list means *this pod's namespace*. An empty selector ({}) matches all namespaces.
     """
 
-    label_selector: LabelSelector | None = Field(
-        default=None,
-    )
-    match_label_keys: SerializeAsOptional[list[str]] = Field(
-        default=[],  # pyright: ignore[reportUnknownArgumentType]
-    )
-    mismatch_label_keys: SerializeAsOptional[list[str]] = Field(
-        default=[],  # pyright: ignore[reportUnknownArgumentType]
-    )
+    label_selector: LabelSelector | None = None
+    match_label_keys: SerializeAsOptional[list[str]] = []
+    mismatch_label_keys: SerializeAsOptional[list[str]] = []
     topology_key: str
-    namespaces: SerializeAsOptional[list[str]] = Field(
-        default=[],  # pyright: ignore[reportUnknownArgumentType]
-    )
-    namespace_selector: LabelSelector | None = Field(
-        default=None,
-    )
+    namespaces: SerializeAsOptional[list[str]] = []
+    namespace_selector: LabelSelector | None = None
 
 
 class WeightedPodAffinityTerm(DescConfigModel, CamelCaseConfigModel):
@@ -258,20 +225,10 @@ class PodAffinity(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfigMode
 
     required_during_scheduling_ignored_during_execution: SerializeAsOptional[
         list[PodAffinityTerm]
-    ] = Field(
-        default=[],  # pyright: ignore[reportUnknownArgumentType]
-        description=describe_attr(
-            "required_during_scheduling_ignored_during_execution", __doc__
-        ),
-    )
+    ] = []
     preferred_during_scheduling_ignored_during_execution: SerializeAsOptional[
         list[WeightedPodAffinityTerm]
-    ] = Field(
-        default=[],  # pyright: ignore[reportUnknownArgumentType]
-        description=describe_attr(
-            "preferred_during_scheduling_ignored_during_execution", __doc__
-        ),
-    )
+    ] = []
 
 
 class Affinity(DescConfigModel, CamelCaseConfigModel):
@@ -345,12 +302,8 @@ class ResourceDefinition(DescConfigModel):
     :param ephemeral_storage: The amounf of local ephemeral storage for this container, as integer or string with valid units such as 'Mi' or 'Gi' (e.g., '2G').
     """
 
-    cpu: CPUStr | pydantic.PositiveInt | None = Field(
-        default=None,
-    )
-    memory: MemoryStr | pydantic.PositiveInt | None = Field(
-        default=None,
-    )
+    cpu: CPUStr | pydantic.PositiveInt | None = None
+    memory: MemoryStr | pydantic.PositiveInt | None = None
     ephemeral_storage: MemoryStr | pydantic.PositiveInt | None = Field(
         default=None,
         alias="ephemeral-storage",
@@ -364,9 +317,5 @@ class Resources(DescConfigModel):
     :param limits: The maximum resource limits for the container.
     """
 
-    requests: ResourceDefinition | None = Field(
-        default=None,
-    )
-    limits: ResourceDefinition | None = Field(
-        default=None,
-    )
+    requests: ResourceDefinition | None = None
+    limits: ResourceDefinition | None = None

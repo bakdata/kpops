@@ -18,7 +18,7 @@ class PVCHandler:
     async def list_pvcs(self) -> AsyncIterable[PersistentVolumeClaim]:
         return self._client.list(
             PersistentVolumeClaim, labels={"app.kubernetes.io/name": self.app_name}
-        )  # pyright: ignore[reportUnknownMemberType]
+        )
 
     async def delete_pvcs(self, dry_run: bool) -> None:
         pvc_names: list[str] = [

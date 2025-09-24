@@ -3387,7 +3387,7 @@
                     ],
                     "default": null,
                     "description": "The period to wait after the last trigger reported active before scaling the resource back to 0. https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod",
-                    "title": "Cooldown period"
+                    "title": "Cooldownperiod"
                 },
                 "enabled": {
                     "default": false,
@@ -3435,7 +3435,7 @@
                     ],
                     "default": null,
                     "description": "Average target value to trigger scaling actions. Mandatory to set when auto-scaling is enabled.",
-                    "title": "Lag threshold"
+                    "title": "Lagthreshold"
                 },
                 "maxReplicas": {
                     "anyOf": [
@@ -3474,7 +3474,7 @@
                     ],
                     "default": null,
                     "description": "The offset reset policy for the consumer if the consumer group is not yet subscribed to a partition.",
-                    "title": "Offset reset policy"
+                    "title": "Offsetresetpolicy"
                 },
                 "pollingInterval": {
                     "anyOf": [
@@ -3487,7 +3487,7 @@
                     ],
                     "default": null,
                     "description": "This is the interval to check each trigger on. https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval",
-                    "title": "Polling interval"
+                    "title": "Pollinginterval"
                 },
                 "topics": {
                     "anyOf": [
@@ -3694,12 +3694,12 @@
                     ],
                     "default": null,
                     "description": "Name of the consumer group used for checking the offset on the topic and processing the related lag. Mandatory to set when auto-scaling is enabled.",
-                    "title": "Consumer group"
+                    "title": "Consumergroup"
                 },
                 "cooldownPeriod": {
                     "default": 300,
                     "description": "The period to wait after the last trigger reported active before scaling the resource back to 0. https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod",
-                    "title": "Cooldown period",
+                    "title": "Cooldownperiod",
                     "type": "integer"
                 },
                 "enabled": {
@@ -3732,7 +3732,7 @@
                     ],
                     "default": null,
                     "description": "Average target value to trigger scaling actions. Mandatory to set when auto-scaling is enabled.",
-                    "title": "Lag threshold"
+                    "title": "Lagthreshold"
                 },
                 "maxReplicas": {
                     "default": 1,
@@ -3749,13 +3749,13 @@
                 "offsetResetPolicy": {
                     "default": "earliest",
                     "description": "The offset reset policy for the consumer if the consumer group is not yet subscribed to a partition.",
-                    "title": "Offset reset policy",
+                    "title": "Offsetresetpolicy",
                     "type": "string"
                 },
                 "pollingInterval": {
                     "default": 30,
                     "description": "This is the interval to check each trigger on. https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval",
-                    "title": "Polling interval",
+                    "title": "Pollinginterval",
                     "type": "integer"
                 },
                 "topics": {

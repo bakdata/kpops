@@ -149,22 +149,10 @@ class StreamsAppAutoScaling(
     """
 
     enabled: bool = False
-    lag_threshold: int | None = Field(
-        default=None,
-        title="Lag threshold",
-    )
-    polling_interval: int | None = Field(
-        default=None,
-        title="Polling interval",
-    )
-    cooldown_period: int | None = Field(
-        default=None,
-        title="Cooldown period",
-    )
-    offset_reset_policy: str | None = Field(
-        default=None,
-        title="Offset reset policy",
-    )
+    lag_threshold: int | None = None
+    polling_interval: int | None = None
+    cooldown_period: int | None = None
+    offset_reset_policy: str | None = None
     min_replicas: int | None = Field(
         default=None,
         title="Min replica count",
