@@ -11,6 +11,7 @@ from pathlib import Path
 from textwrap import fill
 from typing import Any, Self
 
+from pydantic.fields import FieldInfo
 from pydantic_core import PydanticUndefined
 from pytablewriter import MarkdownTableWriter
 from typer.models import ArgumentInfo, OptionInfo
@@ -18,6 +19,7 @@ from typer.models import ArgumentInfo, OptionInfo
 from hooks import ROOT
 from hooks.gen_docs import IterableStrEnum
 from kpops.cli import main
+from kpops.component_handlers.helm_wrapper.model import HelmConfig
 from kpops.config import KpopsConfig
 from kpops.utils.dict_ops import generate_substitution
 from kpops.utils.docstring import describe_attr
@@ -256,19 +258,23 @@ def fill_csv_pipeline_config(target: Path) -> None:
     :param target: The path to the `.csv` file. Note that it must already
         contain the column names
     """
-    for (field_name, field_value), env_var_name in zip(
+    for (field_name, field_info), env_var_name in zip(
         generate_substitution(collect_fields(KpopsConfig), separator=".").items(),
         generate_substitution(collect_fields(KpopsConfig), separator="__").keys(),
         strict=True,
     ):
+        assert isinstance(field_info, FieldInfo)
         with suppress(KeyError):  # In case the prefix is ever removed from KpopsConfig
             env_var_name = KpopsConfig.model_config["env_prefix"] + env_var_name  # pyright: ignore[reportTypedDictNotRequiredAccess]
         field_description: str = (
-            field_value.description
+            field_info.description
             or describe_attr(field_name, KpopsConfig.__doc__)
+            or describe_attr(
+                field_name, HelmConfig.__doc__
+            )  # HACK: does this work for the one special case
             or "No description available, please refer to the pipeline config documentation."
         )
-        field_default = field_value.default
+        field_default = field_info.default
         csv_append_env_var(
             target,
             env_var_name.upper(),

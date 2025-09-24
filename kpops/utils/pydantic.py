@@ -1,7 +1,7 @@
 import json
 import logging
 from pathlib import Path
-from typing import Annotated, Any, ClassVar, final
+from typing import Annotated, Any, ClassVar, TypeAlias, final
 
 import humps
 from pydantic import (
@@ -120,18 +120,21 @@ def exclude_defaults(model: BaseModel, dumped_model: dict[str, _V]) -> dict[str,
     }
 
 
-def collect_fields(model: type[BaseModel]) -> dict[str, Any]:
+ModelFields: TypeAlias = dict[str, "FieldInfo | ModelFields"]
+
+
+def collect_fields(model: type[BaseModel]) -> ModelFields:
     """Collect and return a ``dict`` of all fields in a settings class.
 
     :param model: settings class
     :return: ``dict`` of all fields in a settings class
     """
-    seen_fields: dict[str, Any] = {}
-    for field_name, field_value in model.model_fields.items():
-        if field_value.annotation and issubclass_patched(field_value.annotation):
-            seen_fields[field_name] = collect_fields(field_value.annotation)
+    seen_fields: ModelFields = {}
+    for field_name, field_info in model.model_fields.items():
+        if field_info.annotation and issubclass_patched(field_info.annotation):
+            seen_fields[field_name] = collect_fields(field_info.annotation)
         else:
-            seen_fields[field_name] = field_value
+            seen_fields[field_name] = field_info
     return seen_fields
 
 
