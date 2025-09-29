@@ -271,7 +271,10 @@ def fill_csv_pipeline_config(target: Path) -> None:
         field_description: str = (
             field_info.description
             or describe_attr(field_name, KpopsConfig.__doc__)
-            or describe_attr(field_name, HelmConfig.__doc__)  # HACK: special case
+            # HACK: current limitation: we only read the docs in KpopsConfig module
+            # HelmConfig is the only special case where the model is defined outside the KpopsConfig module
+            # we should probably iterate recursively over all the sub-models instead, but it's more difficult
+            or describe_attr(field_name, HelmConfig.__doc__)
             or "No description available, please refer to the pipeline config documentation."
         )
         field_default = field_info.default
