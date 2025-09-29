@@ -1,0 +1,36 @@
+- type: scheduled-producer
+  values:
+    labels:
+      app_type: "${component.type}"
+      app_name: "${component.name}"
+      app_schedule: "${component.values.schedule}"
+    commandLine:
+      FAKE_ARG: "fake-arg-value"
+    schedule: "30 3/8 * * *"
+- type: converter
+  values:
+    commandLine:
+      CONVERT_XML: true
+    resources:
+      limits:
+        memory: 2G
+      requests:
+        memory: 2G
+- type: filter
+  name: "filter-app"
+  values:
+    labels:
+      app_type: "${component.type}"
+      app_name: "${component.name}"
+      app_resources_requests_memory: "${component.values.resources.requests.memory}"
+      ${component.type}: "${component.values.labels.app_name}-${component.values.labels.app_type}"
+      test_placeholder_in_placeholder: "${component.values.labels.${component.type}}"
+    commandLine:
+      TYPE: "nothing"
+    resources:
+      requests:
+        memory: 3G
+    replicaCount: 4
+    autoscaling:
+      minReplicas: 4
+      maxReplicas: 4
