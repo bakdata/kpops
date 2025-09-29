@@ -538,6 +538,7 @@
                     "title": "Maxrampercentage"
                 },
                 "others": {
+                    "default": [],
                     "description": "List of Java VM options passed to the streams app.",
                     "items": {
                         "type": "string"
@@ -1037,6 +1038,45 @@
             "title": "OutputTopicTypes",
             "type": "string"
         },
+        "PersistenceConfig": {
+            "description": "streams-bootstrap persistence configurations.",
+            "properties": {
+                "enabled": {
+                    "default": false,
+                    "description": "Whether to use a persistent volume to store the state of the streams app.",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
+                "size": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The size of the PersistentVolume to allocate to each streams pod in the StatefulSet.",
+                    "title": "Size"
+                },
+                "storageClass": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Storage class to use for the persistent volume.",
+                    "title": "Storageclass"
+                }
+            },
+            "title": "PersistenceConfig",
+            "type": "object"
+        },
         "PodAffinity": {
             "description": "Pod affinity is a group of inter pod affinity scheduling rules.",
             "properties": {
@@ -1148,7 +1188,6 @@
                         }
                     ],
                     "default": [],
-                    "description": "",
                     "title": "Namespaces"
                 },
                 "topologyKey": {
@@ -1167,7 +1206,7 @@
             "description": "Base class for the port configuration of the Kafka Streams application.",
             "properties": {
                 "containerPort": {
-                    "description": "",
+                    "description": "Number of the port to expose.",
                     "title": "Containerport",
                     "type": "integer"
                 },
@@ -1661,7 +1700,7 @@
                         }
                     ],
                     "default": [],
-                    "description": "",
+                    "description": "Secrets to be used for private registries.",
                     "title": "Imagepullsecrets"
                 },
                 "imageTag": {
@@ -1687,8 +1726,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
-                    "description": ""
+                    "default": null
                 },
                 "kafka": {
                     "$ref": "#/$defs/ProducerConfig",
@@ -1772,7 +1810,6 @@
                         }
                     ],
                     "default": [],
-                    "description": "",
                     "title": "Ports"
                 },
                 "readinessProbe": {
@@ -1879,8 +1916,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
-                    "description": ""
+                    "default": null
                 },
                 "successfulJobsHistoryLimit": {
                     "anyOf": [
@@ -1982,7 +2018,7 @@
                     "default": null,
                     "description": "Output topic"
                 },
-                "schema_registry_url": {
+                "schemaRegistryUrl": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -1992,8 +2028,8 @@
                         }
                     ],
                     "default": null,
-                    "description": "URL of the schema registry",
-                    "title": "Schema Registry Url"
+                    "description": "URL of the Schema Registry",
+                    "title": "Schema Registry URL"
                 }
             },
             "title": "ProducerConfig",
@@ -2029,7 +2065,7 @@
                     "default": null,
                     "description": "Output topic"
                 },
-                "schema_registry_url": {
+                "schemaRegistryUrl": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -2039,8 +2075,8 @@
                         }
                     ],
                     "default": null,
-                    "description": "URL of the schema registry",
-                    "title": "Schema Registry Url"
+                    "description": "URL of the Schema Registry",
+                    "title": "Schema Registry URL"
                 }
             },
             "required": [
@@ -2358,6 +2394,7 @@
                     "additionalProperties": {
                         "type": "string"
                     },
+                    "default": {},
                     "description": "Additional service labels.",
                     "title": "Labels",
                     "type": "object"
@@ -2646,17 +2683,15 @@
                     "title": "NameOverride"
                 },
                 "persistence": {
-                    "$ref": "#/$defs/kpops__components__streams_bootstrap_v2__streams__model__PersistenceConfig",
+                    "$ref": "#/$defs/PersistenceConfig",
                     "default": {
                         "enabled": false,
                         "size": null,
                         "storageClass": null
-                    },
-                    "description": ""
+                    }
                 },
                 "statefulSet": {
                     "default": false,
-                    "description": "Whether to use a Statefulset instead of a Deployment to deploy the streams app.",
                     "title": "Statefulset",
                     "type": "boolean"
                 },
@@ -2833,7 +2868,7 @@
                         }
                     ],
                     "default": [],
-                    "description": "",
+                    "description": "Secrets to be used for private registries.",
                     "title": "Imagepullsecrets"
                 },
                 "imageTag": {
@@ -2859,8 +2894,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
-                    "description": ""
+                    "default": null
                 },
                 "jmx": {
                     "anyOf": [
@@ -2922,7 +2956,7 @@
                 "persistence": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/kpops__components__streams_bootstrap__streams__model__PersistenceConfig"
+                            "$ref": "#/$defs/PersistenceConfig"
                         },
                         {
                             "type": "null"
@@ -2976,7 +3010,6 @@
                         }
                     ],
                     "default": [],
-                    "description": "",
                     "title": "Ports"
                 },
                 "prometheus": {
@@ -3070,8 +3103,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
-                    "description": ""
+                    "default": null
                 },
                 "statefulSet": {
                     "default": false,
@@ -3316,45 +3348,6 @@
             "title": "WeightedPodAffinityTerm",
             "type": "object"
         },
-        "kpops__components__streams_bootstrap__streams__model__PersistenceConfig": {
-            "description": "streams-bootstrap persistence configurations.",
-            "properties": {
-                "enabled": {
-                    "default": false,
-                    "description": "Whether to use a persistent volume to store the state of the streams app.",
-                    "title": "Enabled",
-                    "type": "boolean"
-                },
-                "size": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "The size of the PersistentVolume to allocate to each streams pod in the StatefulSet.",
-                    "title": "Size"
-                },
-                "storageClass": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Storage class to use for the persistent volume.",
-                    "title": "Storageclass"
-                }
-            },
-            "title": "PersistenceConfig",
-            "type": "object"
-        },
         "kpops__components__streams_bootstrap__streams__model__StreamsAppAutoScaling": {
             "additionalProperties": true,
             "description": "Kubernetes Event-driven Autoscaling config.",
@@ -3386,7 +3379,7 @@
                     ],
                     "default": null,
                     "description": "The period to wait after the last trigger reported active before scaling the resource back to 0. https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod",
-                    "title": "Cooldown period"
+                    "title": "Cooldownperiod"
                 },
                 "enabled": {
                     "default": false,
@@ -3434,7 +3427,7 @@
                     ],
                     "default": null,
                     "description": "Average target value to trigger scaling actions. Mandatory to set when auto-scaling is enabled.",
-                    "title": "Lag threshold"
+                    "title": "Lagthreshold"
                 },
                 "maxReplicas": {
                     "anyOf": [
@@ -3473,7 +3466,7 @@
                     ],
                     "default": null,
                     "description": "The offset reset policy for the consumer if the consumer group is not yet subscribed to a partition.",
-                    "title": "Offset reset policy"
+                    "title": "Offsetresetpolicy"
                 },
                 "pollingInterval": {
                     "anyOf": [
@@ -3486,7 +3479,7 @@
                     ],
                     "default": null,
                     "description": "This is the interval to check each trigger on. https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval",
-                    "title": "Polling interval"
+                    "title": "Pollinginterval"
                 },
                 "topics": {
                     "anyOf": [
@@ -3661,7 +3654,7 @@
                     "default": null,
                     "description": "Output topic"
                 },
-                "schema_registry_url": {
+                "schemaRegistryUrl": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -3671,50 +3664,11 @@
                         }
                     ],
                     "default": null,
-                    "description": "URL of the schema registry",
-                    "title": "Schema Registry Url"
+                    "description": "URL of the Schema Registry",
+                    "title": "Schema Registry URL"
                 }
             },
             "title": "StreamsConfig",
-            "type": "object"
-        },
-        "kpops__components__streams_bootstrap_v2__streams__model__PersistenceConfig": {
-            "description": "streams-bootstrap persistence configurations.",
-            "properties": {
-                "enabled": {
-                    "default": false,
-                    "description": "Whether to use a persistent volume to store the state of the streams app.\t",
-                    "title": "Enabled",
-                    "type": "boolean"
-                },
-                "size": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "The size of the PersistentVolume to allocate to each streams pod in the StatefulSet.",
-                    "title": "Size"
-                },
-                "storageClass": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Storage class to use for the persistent volume.",
-                    "title": "Storageclass"
-                }
-            },
-            "title": "PersistenceConfig",
             "type": "object"
         },
         "kpops__components__streams_bootstrap_v2__streams__model__StreamsAppAutoScaling": {
@@ -3732,17 +3686,17 @@
                     ],
                     "default": null,
                     "description": "Name of the consumer group used for checking the offset on the topic and processing the related lag. Mandatory to set when auto-scaling is enabled.",
-                    "title": "Consumer group"
+                    "title": "Consumergroup"
                 },
                 "cooldownPeriod": {
                     "default": 300,
                     "description": "The period to wait after the last trigger reported active before scaling the resource back to 0. https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod",
-                    "title": "Cooldown period",
+                    "title": "Cooldownperiod",
                     "type": "integer"
                 },
                 "enabled": {
                     "default": false,
-                    "description": "",
+                    "description": "Whether to enable auto-scaling using KEDA.",
                     "title": "Enabled",
                     "type": "boolean"
                 },
@@ -3770,7 +3724,7 @@
                     ],
                     "default": null,
                     "description": "Average target value to trigger scaling actions. Mandatory to set when auto-scaling is enabled.",
-                    "title": "Lag threshold"
+                    "title": "Lagthreshold"
                 },
                 "maxReplicas": {
                     "default": 1,
@@ -3787,13 +3741,13 @@
                 "offsetResetPolicy": {
                     "default": "earliest",
                     "description": "The offset reset policy for the consumer if the consumer group is not yet subscribed to a partition.",
-                    "title": "Offset reset policy",
+                    "title": "Offsetresetpolicy",
                     "type": "string"
                 },
                 "pollingInterval": {
                     "default": 30,
                     "description": "This is the interval to check each trigger on. https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval",
-                    "title": "Polling interval",
+                    "title": "Pollinginterval",
                     "type": "integer"
                 },
                 "topics": {
@@ -3913,7 +3867,7 @@
                     "default": null,
                     "description": "Output topic"
                 },
-                "schema_registry_url": {
+                "schemaRegistryUrl": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -3923,8 +3877,8 @@
                         }
                     ],
                     "default": null,
-                    "description": "URL of the schema registry",
-                    "title": "Schema Registry Url"
+                    "description": "URL of the Schema Registry",
+                    "title": "Schema Registry URL"
                 }
             },
             "required": [

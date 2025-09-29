@@ -5,11 +5,10 @@ import re
 from abc import ABC
 from typing import ClassVar
 
-from pydantic import ConfigDict, Field
+from pydantic import ConfigDict
 from typing_extensions import override
 
 from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel
 
 log = logging.getLogger("KubernetesApp")
@@ -36,12 +35,8 @@ class KubernetesApp(PipelineComponent, ABC):
     :param values: Kubernetes app values
     """
 
-    namespace: str = Field(
-        description=describe_attr("namespace", __doc__),
-    )
-    values: KubernetesAppValues = Field(
-        description=describe_attr("values", __doc__),
-    )
+    namespace: str
+    values: KubernetesAppValues
 
     @override
     def _validate_custom(self) -> None:

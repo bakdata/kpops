@@ -6,12 +6,11 @@ from pathlib import Path
 from typing import ClassVar
 
 import pytest
-from pydantic import ConfigDict, Field
+from pydantic import ConfigDict
 from typer.testing import CliRunner
 
 from kpops.cli.main import app
 from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.utils.docstring import describe_attr
 from kpops.utils.gen_schema import COMPONENTS
 
 RESOURCE_PATH = Path(__file__).parent / "resources"
@@ -30,7 +29,7 @@ class AbstractBaseComponent(PipelineComponent, ABC): ...
 
 
 # abstract component with abstractmethods should be excluded
-class AbstractPipelineComponent(AbstractBaseComponent):
+class AbstractPipelineComponent(AbstractBaseComponent, ABC):
     @abstractmethod
     def not_implemented(self) -> None: ...
 
@@ -68,7 +67,7 @@ class SubPipelineComponentCorrectDocstr(SubPipelineComponent):
     :param error_marker: error_marker
     """
 
-    example_attr: str = Field(description=describe_attr("example_attr", __doc__))
+    example_attr: str
 
 
 @pytest.mark.filterwarnings(

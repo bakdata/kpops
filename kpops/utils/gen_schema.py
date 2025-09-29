@@ -87,7 +87,7 @@ def gen_pipeline_schema() -> None:
             ),
         )
 
-    PipelineComponents = Union[tuple(components)]  # pyright: ignore[reportInvalidTypeArguments,reportGeneralTypeIssues]
+    PipelineComponents = Union[tuple(components)]
     AnnotatedPipelineComponents = Annotated[
         PipelineComponents, Field(discriminator="type")
     ]

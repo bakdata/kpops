@@ -58,8 +58,8 @@ def topic_config() -> TopicConfig:
     return TopicConfig(
         type=OutputTopicTypes.OUTPUT,
         # pyright has no way of validating these aliased Pydantic fields because we're also using the allow_population_by_field_name setting
-        key_schema=None,  # pyright: ignore[reportGeneralTypeIssues]
-        value_schema="com.bakdata.kpops.test.SchemaHandlerTest",  # pyright: ignore[reportGeneralTypeIssues]
+        key_schema=None,
+        value_schema="com.bakdata.kpops.test.SchemaHandlerTest",
     )
 
 
@@ -74,7 +74,7 @@ def kpops_config() -> KpopsConfig:
         kafka_brokers="broker:9092",
         schema_registry=SchemaRegistryConfig(
             enabled=True,
-            url=TypeAdapter(AnyHttpUrl).validate_python("http://mock:8081"),  # pyright: ignore[reportCallIssue,reportArgumentType]
+            url=TypeAdapter(AnyHttpUrl).validate_python("http://mock:8081"),
         ),
     )
 

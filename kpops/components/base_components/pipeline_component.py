@@ -30,7 +30,6 @@ from kpops.components.common.topic import (
     TopicConfig,
 )
 from kpops.manifests.kubernetes import KubernetesManifest
-from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import exclude_by_name, exclude_by_value
 
 
@@ -47,22 +46,15 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         defaults to None
     """
 
-    name: str = Field(description=describe_attr("name", __doc__))
-    prefix: str = Field(
-        default="${pipeline.name}-",
-        description=describe_attr("prefix", __doc__),
-    )
+    name: str
+    prefix: str = "${pipeline.name}-"
     from_: FromSection | None = Field(
         default=None,
         serialization_alias="from",
         validation_alias=AliasChoices("from", "from_"),
         title="From",
-        description=describe_attr("from_", __doc__),
     )
-    to: ToSection | None = Field(
-        default=None,
-        description=describe_attr("to", __doc__),
-    )
+    to: ToSection | None = None
 
     model_config: ClassVar[ConfigDict] = ConfigDict(
         extra="allow", use_enum_values=False

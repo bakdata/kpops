@@ -25,7 +25,6 @@ from kpops.components.base_components.pipeline_component import PipelineComponen
 from kpops.components.common.topic import KafkaTopic
 from kpops.config import get_config
 from kpops.utils.colorify import magentaify
-from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import CamelCaseConfigModel, SkipGenerate
 
 log = logging.getLogger("KafkaConnector")
@@ -54,15 +53,11 @@ class KafkaConnectorResetter(Cleaner, ABC):
     from_: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
     to: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
     values: KafkaConnectorResetterValues  # pyright: ignore[reportIncompatibleVariableOverride]
-    repo_config: SkipGenerate[HelmRepoConfig] = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
-        default=HelmRepoConfig(
-            repository_name="bakdata-kafka-connect-resetter",
-            url="https://bakdata.github.io/kafka-connect-resetter/",
-        )
+    repo_config: SkipGenerate[HelmRepoConfig] = HelmRepoConfig(  # pyright: ignore[reportIncompatibleVariableOverride]
+        repository_name="bakdata-kafka-connect-resetter",
+        url="https://bakdata.github.io/kafka-connect-resetter/",
     )
-    version: str | None = Field(
-        default="1.0.4", description=describe_attr("version", __doc__)
-    )
+    version: str | None = "1.0.4"
 
     @property
     @override
@@ -114,20 +109,10 @@ class KafkaConnector(PipelineComponent, ABC):
         defaults to empty HelmAppValues
     """
 
-    config: KafkaConnectorConfig = Field(
-        description=describe_attr("config", __doc__),
-    )
-    state: ConnectorNewState | None = Field(
-        default=None,
-        description=describe_attr("state", __doc__),
-    )
-    resetter_namespace: str | None = Field(
-        default=None, description=describe_attr("resetter_namespace", __doc__)
-    )
-    resetter_values: HelmAppValues = Field(
-        default_factory=HelmAppValues,
-        description=describe_attr("resetter_values", __doc__),
-    )
+    config: KafkaConnectorConfig
+    state: ConnectorNewState | None = None
+    resetter_namespace: str | None = None
+    resetter_values: HelmAppValues = Field(default_factory=HelmAppValues)
     _connector_type: KafkaConnectorType = PrivateAttr()
 
     @field_validator("config", mode="before")
@@ -216,10 +201,7 @@ class KafkaSourceConnector(KafkaConnector):
         defaults to None
     """
 
-    offset_topic: str | None = Field(
-        default=None,
-        description=describe_attr("offset_topic", __doc__),
-    )
+    offset_topic: str | None = None
 
     _connector_type: KafkaConnectorType = PrivateAttr(KafkaConnectorType.SOURCE)
 

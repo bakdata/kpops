@@ -1,7 +1,7 @@
 import json
 import logging
 from pathlib import Path
-from typing import Annotated, Any, ClassVar, final
+from typing import Annotated, Any, ClassVar, TypeAlias, final
 
 import humps
 from pydantic import (
@@ -15,12 +15,13 @@ from pydantic import (
     model_serializer,
 )
 from pydantic.fields import FieldInfo
+from pydantic.json_schema import SkipJsonSchema
 from pydantic_core import PydanticUseDefault, core_schema
 from pydantic_settings import BaseSettings, PydanticBaseSettingsSource
 from typing_extensions import TypeVar, override
 
 from kpops.utils.dict_ops import update_nested_pair
-from kpops.utils.docstring import describe_object
+from kpops.utils.docstring import describe_attr, describe_object
 from kpops.utils.yaml import load_yaml_file
 
 
@@ -44,7 +45,7 @@ def to_dot(s: str) -> str:
     return s.replace("_", ".")
 
 
-def by_alias(model: BaseModel, field_name: str) -> str:
+def by_alias(model: BaseModel | type[BaseModel], field_name: str) -> str:
     """Return field alias if exists else field name.
 
     :param field_name: Name of the field to get alias of
@@ -53,7 +54,7 @@ def by_alias(model: BaseModel, field_name: str) -> str:
     field_info = model.model_fields.get(field_name)
     if not field_info:
         return field_name
-    return field_info.alias or field_name
+    return field_info.alias or field_info.serialization_alias or field_name
 
 
 def to_str(value: Any) -> str:
@@ -119,18 +120,21 @@ def exclude_defaults(model: BaseModel, dumped_model: dict[str, _V]) -> dict[str,
     }
 
 
-def collect_fields(model: type[BaseModel]) -> dict[str, Any]:
+ModelFields: TypeAlias = dict[str, "FieldInfo | ModelFields"]
+
+
+def collect_fields(model: type[BaseModel]) -> ModelFields:
     """Collect and return a ``dict`` of all fields in a settings class.
 
     :param model: settings class
     :return: ``dict`` of all fields in a settings class
     """
-    seen_fields: dict[str, Any] = {}
-    for field_name, field_value in model.model_fields.items():
-        if field_value.annotation and issubclass_patched(field_value.annotation):
-            seen_fields[field_name] = collect_fields(field_value.annotation)
+    seen_fields: ModelFields = {}
+    for field_name, field_info in model.model_fields.items():
+        if field_info.annotation and issubclass_patched(field_info.annotation):
+            seen_fields[field_name] = collect_fields(field_info.annotation)
         else:
-            seen_fields[field_name] = field_value
+            seen_fields[field_name] = field_info
     return seen_fields
 
 
@@ -163,10 +167,37 @@ class CamelCaseConfigModel(BaseModel):
     )
 
 
+def find_defining_class(
+    class_: type[BaseModel], field_name: str
+) -> type[BaseModel] | None:
+    for base in class_.mro():
+        if not issubclass(base, BaseModel):
+            continue
+        if field_name in base.__annotations__:
+            return base
+    return None
+
+
 class DescConfigModel(BaseModel):
     @staticmethod
     def json_schema_extra(schema: dict[str, Any], model: type[BaseModel]) -> None:
         schema["description"] = describe_object(model.__doc__)
+        for field_name, field_info in model.model_fields.items():
+            if field_info.description:
+                continue  # skip, manually assigned description takes precedence
+            if any(isinstance(m, SkipJsonSchema) for m in field_info.metadata):  # pyright: ignore[reportArgumentType]
+                continue
+            field_alias = by_alias(model, field_name)
+            defining_class = find_defining_class(model, field_name)
+            if not defining_class:
+                continue
+            description = describe_attr(
+                field_name, defining_class.__doc__
+            ) or describe_attr(field_alias, defining_class.__doc__)
+            if description:
+                if field_alias not in schema["properties"]:
+                    schema["properties"][field_alias] = {}
+                schema["properties"][field_alias]["description"] = description
 
     model_config: ClassVar[ConfigDict] = ConfigDict(
         json_schema_extra=json_schema_extra, use_enum_values=True

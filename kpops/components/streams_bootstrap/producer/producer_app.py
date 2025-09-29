@@ -22,7 +22,6 @@ from kpops.core.operation import OperationMode
 from kpops.manifests.argo import ArgoHook, enrich_annotations
 from kpops.manifests.kubernetes import K8S_CRON_JOB_NAME_MAX_LEN, KubernetesManifest
 from kpops.manifests.strimzi.kafka_topic import StrimziKafkaTopic
-from kpops.utils.docstring import describe_attr
 
 log = logging.getLogger("ProducerApp")
 
@@ -65,14 +64,11 @@ class ProducerApp(StreamsBootstrap):
     :param from_: Producer doesn't support FromSection, defaults to None
     """
 
-    values: ProducerAppValues = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
-        description=describe_attr("values", __doc__),
-    )
+    values: ProducerAppValues  # pyright: ignore[reportIncompatibleVariableOverride]
     from_: None = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         default=None,
         alias="from",
         title="From",
-        description=describe_attr("from_", __doc__),
     )
 
     @property

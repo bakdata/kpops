@@ -17,7 +17,6 @@ from kpops.components.streams_bootstrap.model import StreamsBootstrapValues
 from kpops.config import get_config
 from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.manifests.strimzi.kafka_topic import StrimziKafkaTopic
-from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import SkipGenerate
 
 if TYPE_CHECKING:
@@ -44,17 +43,11 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
     :param version: Helm chart version, defaults to "3.6.1"
     """
 
-    values: StreamsBootstrapValues = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
-        description=describe_attr("values", __doc__),
-    )
-    repo_config: SkipGenerate[HelmRepoConfig] = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
-        default=STREAMS_BOOTSTRAP_HELM_REPO,
-        description=describe_attr("repo_config", __doc__),
-    )
+    values: StreamsBootstrapValues  # pyright: ignore[reportIncompatibleVariableOverride]
+    repo_config: SkipGenerate[HelmRepoConfig] = STREAMS_BOOTSTRAP_HELM_REPO  # pyright: ignore[reportIncompatibleVariableOverride]
     version: str = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         default=STREAMS_BOOTSTRAP_VERSION,
         pattern=STREAMS_BOOTSTRAP_VERSION_PATTERN,
-        description=describe_attr("version", __doc__),
     )
 
     @pydantic.field_validator("version", mode="after")

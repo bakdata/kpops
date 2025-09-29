@@ -1,7 +1,7 @@
 from typing import ClassVar
 
 from croniter import croniter
-from pydantic import ConfigDict, Field, field_validator
+from pydantic import ConfigDict, field_validator
 
 from kpops.components.common.kubernetes_model import RestartPolicy
 from kpops.components.streams_bootstrap.model import (
@@ -9,7 +9,6 @@ from kpops.components.streams_bootstrap.model import (
     StreamsBootstrapValues,
 )
 from kpops.core.exception import ValidationError
-from kpops.utils.docstring import describe_attr
 
 
 class ProducerConfig(KafkaConfig):
@@ -30,44 +29,15 @@ class ProducerAppValues(StreamsBootstrapValues):
     :param ttl_seconds_after_finished: See https://kubernetes.io/docs/concepts/workloads/controllers/ttlafterfinished/#ttl-after-finished-controller
     """
 
-    kafka: ProducerConfig = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
-        default=ProducerConfig(),
-        description=describe_attr("kafka", __doc__),
-    )
-
-    deployment: bool | None = Field(
-        default=None, description=describe_attr("deployment", __doc__)
-    )
-
-    restart_policy: RestartPolicy | None = Field(
-        default=None,
-        description=describe_attr("restart_policy", __doc__),
-    )
-
-    schedule: str | None = Field(
-        default=None, description=describe_attr("schedule", __doc__)
-    )
-
-    suspend: bool | None = Field(
-        default=None, description=describe_attr("suspend", __doc__)
-    )
-
-    successful_jobs_history_limit: int | None = Field(
-        default=None,
-        description=describe_attr("successful_jobs_history_limit", __doc__),
-    )
-
-    failed_jobs_history_limit: int | None = Field(
-        default=None, description=describe_attr("failed_jobs_history_limit", __doc__)
-    )
-
-    backoff_limit: int | None = Field(
-        default=None, description=describe_attr("backoff_limit", __doc__)
-    )
-
-    ttl_seconds_after_finished: int | None = Field(
-        default=None, description=describe_attr("ttl_seconds_after_finished", __doc__)
-    )
+    kafka: ProducerConfig = ProducerConfig()  # pyright: ignore[reportIncompatibleVariableOverride]
+    deployment: bool | None = None
+    restart_policy: RestartPolicy | None = None
+    schedule: str | None = None
+    suspend: bool | None = None
+    successful_jobs_history_limit: int | None = None
+    failed_jobs_history_limit: int | None = None
+    backoff_limit: int | None = None
+    ttl_seconds_after_finished: int | None = None
 
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 

@@ -8,7 +8,6 @@ from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.exception import ParseError
 from kpops.manifests.kubernetes import KubernetesManifest
-from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     DescConfigModel,
     SerializeAsOptional,
@@ -20,7 +19,7 @@ KeyPath = tuple[str, ...]
 
 class HelmDiffConfig(SerializeAsOptionalModel):
     ignore: SerializeAsOptional[list[KeyPath]] = Field(
-        default=[],  # pyright: ignore[reportUnknownArgumentType]
+        default=[],
         description="List of keypaths that should be excluded from the diff.",
         examples=[("name",), ("imageTag",), ("metadata", "labels", "helm.sh/chart")],
     )
@@ -37,21 +36,11 @@ class RepoAuthFlags(DescConfigModel):
         , defaults to False
     """
 
-    username: str | None = Field(
-        default=None, description=describe_attr("username", __doc__)
-    )
-    password: str | None = Field(
-        default=None, description=describe_attr("password", __doc__)
-    )
-    ca_file: Path | None = Field(
-        default=None, description=describe_attr("ca_file", __doc__)
-    )
-    cert_file: Path | None = Field(
-        default=None, description=describe_attr("cert_file", __doc__)
-    )
-    insecure_skip_tls_verify: bool = Field(
-        default=False, description=describe_attr("insecure_skip_tls_verify", __doc__)
-    )
+    username: str | None = None
+    password: str | None = None
+    ca_file: Path | None = None
+    cert_file: Path | None = None
+    insecure_skip_tls_verify: bool = False
 
     def to_command(self) -> list[str]:
         command: list[str] = []
@@ -76,11 +65,9 @@ class HelmRepoConfig(DescConfigModel):
     :param repo_auth_flags: Authorisation-related flags
     """
 
-    repository_name: str = Field(description=describe_attr("repository_name", __doc__))
-    url: str = Field(description=describe_attr("url", __doc__))
-    repo_auth_flags: RepoAuthFlags = Field(
-        default=RepoAuthFlags(), description=describe_attr("repo_auth_flags", __doc__)
-    )
+    repository_name: str
+    url: str
+    repo_auth_flags: RepoAuthFlags = RepoAuthFlags()
 
 
 class HelmConfig(DescConfigModel):
@@ -93,17 +80,12 @@ class HelmConfig(DescConfigModel):
 
     context: str | None = Field(
         default=None,
-        description=describe_attr("context", __doc__),
         examples=["dev-storage"],
     )
-    debug: bool = Field(
-        default=False,
-        description=describe_attr("debug", __doc__),
-    )
+    debug: bool = False
     api_version: str | None = Field(
         default=None,
         title="API version",
-        description=describe_attr("api_version", __doc__),
     )
 
 

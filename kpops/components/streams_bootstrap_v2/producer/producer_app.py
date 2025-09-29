@@ -14,7 +14,6 @@ from kpops.components.streams_bootstrap.base import StreamsBootstrapCleaner
 from kpops.components.streams_bootstrap_v2.base import StreamsBootstrapV2
 from kpops.components.streams_bootstrap_v2.producer.model import ProducerAppV2Values
 from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
-from kpops.utils.docstring import describe_attr
 
 log = logging.getLogger("ProducerAppV2")
 
@@ -43,14 +42,11 @@ class ProducerAppV2(StreamsBootstrapV2):
     :param from_: Producer doesn't support FromSection, defaults to None
     """
 
-    values: ProducerAppV2Values = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
-        description=describe_attr("values", __doc__),
-    )
+    values: ProducerAppV2Values  # pyright: ignore[reportIncompatibleVariableOverride]
     from_: None = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         default=None,
         alias="from",
         title="From",
-        description=describe_attr("from_", __doc__),
     )
 
     @cached_property
