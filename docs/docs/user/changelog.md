@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [10.6.0](https://github.com/bakdata/kpops/tree/10.6.0) - 2025-09-29
+### What's changed
+
+* refactor(schema): automatically assign field description from model `__doc__` by @disrupted in [#638](https://github.com/bakdata/kpops/pull/638)
+
+
+**Full Changelog**: https://github.com/bakdata/kpops/compare/10.5.0...10.6.0
+
 ## [10.5.0](https://github.com/bakdata/kpops/tree/10.5.0) - 2025-08-11
 ### What's changed
 
@@ -10,6 +18,8 @@ All notable changes to this project will be documented in this file.
 * docs: update examples for streams-bootstrap v3 by @disrupted in [#636](https://github.com/bakdata/kpops/pull/636)
 
 * feat(streams-bootstrap): set default Kafka brokers from config by @disrupted in [#637](https://github.com/bakdata/kpops/pull/637)
+
+* Bump version 10.4.2 → 10.5.0 by @bakdata-bot
 
 
 **Full Changelog**: https://github.com/bakdata/kpops/compare/10.4.2...10.5.0
