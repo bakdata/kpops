@@ -1866,7 +1866,7 @@
                     "anyOf": [
                         {
                             "items": {
-                                "type": "string"
+                                "type": "object"
                             },
                             "type": "array"
                         },
@@ -3053,7 +3053,7 @@
                     "anyOf": [
                         {
                             "items": {
-                                "type": "string"
+                                "type": "object"
                             },
                             "type": "array"
                         },

@@ -108,7 +108,7 @@ class StreamsBootstrapValues(SerializeAsOptionalModel, HelmAppValues):
     env: SerializeAsOptional[dict[str, str]] = {}
     secrets: SerializeAsOptional[dict[str, str]] = {}
     secret_refs: SerializeAsOptional[dict[str, Any]] = {}
-    secret_files_refs: SerializeAsOptional[list[str]] = []
+    secret_files_refs: SerializeAsOptional[list[dict[str, Any]]] = []
     files: SerializeAsOptional[dict[str, Any]] = {}
     java_options: JavaOptions | None = None
     pod_annotations: SerializeAsOptional[dict[str, str]] = {}
