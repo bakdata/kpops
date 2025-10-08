@@ -289,3 +289,26 @@ class TestStreamsBootstrap:
                 }
             ],
         }
+
+    def test_secret_files_refs(self):
+        model = StreamsBootstrap.model_validate(
+            {
+                "name": "example-name",
+                "namespace": "test-namespace",
+                "values": {
+                    "image": "streamsBootstrap",
+                    "kafka": {
+                        "bootstrapServers": "localhost:9092",
+                    },
+                    "secretFilesRefs": [
+                        {
+                            "name": "foo",
+                            "volume": "bar",
+                            "mountPath": "/some/path/",
+                            "readOnly": True,
+                        }
+                    ],
+                },
+            },
+        )
+        assert model.values.secret_files_refs
