@@ -2,10 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [10.6.1](https://github.com/bakdata/kpops/tree/10.6.1) - 2025-10-08
+### What's changed
+
+* fix(streams-bootstrap): set correct type for secretFilesRefs by @disrupted in [#640](https://github.com/bakdata/kpops/pull/640)
+
+
+**Full Changelog**: https://github.com/bakdata/kpops/compare/10.6.0...10.6.1
+
 ## [10.6.0](https://github.com/bakdata/kpops/tree/10.6.0) - 2025-09-29
 ### What's changed
 
 * refactor(schema): automatically assign field description from model `__doc__` by @disrupted in [#638](https://github.com/bakdata/kpops/pull/638)
+
+* Bump version 10.5.0 → 10.6.0 by @bakdata-bot
 
 
 **Full Changelog**: https://github.com/bakdata/kpops/compare/10.5.0...10.6.0
