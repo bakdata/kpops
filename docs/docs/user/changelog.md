@@ -2,10 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [10.7.0](https://github.com/bakdata/kpops/tree/10.7.0) - 2026-01-29
+### What's changed
+
+* chore: bump `helm` support to `4.x` by @daconstenla in [#642](https://github.com/bakdata/kpops/pull/642)
+
+* feat: support disabling components from pipelines by @daconstenla in [#641](https://github.com/bakdata/kpops/pull/641)
+
+
+**Full Changelog**: https://github.com/bakdata/kpops/compare/10.6.1...10.7.0
+
 ## [10.6.1](https://github.com/bakdata/kpops/tree/10.6.1) - 2025-10-08
 ### What's changed
 
 * fix(streams-bootstrap): set correct type for secretFilesRefs by @disrupted in [#640](https://github.com/bakdata/kpops/pull/640)
+
+* Bump version 10.6.0 → 10.6.1 by @bakdata-bot
 
 
 **Full Changelog**: https://github.com/bakdata/kpops/compare/10.6.0...10.6.1
