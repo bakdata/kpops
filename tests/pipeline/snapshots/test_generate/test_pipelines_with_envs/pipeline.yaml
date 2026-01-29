@@ -1,5 +1,6 @@
 - type: scheduled-producer
   name: input-producer
+  enabled: true
   prefix: resources-pipeline-with-envs-
   to:
     topics:
@@ -27,6 +28,7 @@
   helm_name_override: resources-pipeline-with-envs-input-producer
 - type: converter
   name: converter
+  enabled: true
   prefix: resources-pipeline-with-envs-
   to:
     topics:
@@ -73,6 +75,7 @@
   helm_name_override: resources-pipeline-with-envs-converter
 - type: filter
   name: filter
+  enabled: true
   prefix: resources-pipeline-with-envs-
   to:
     topics:

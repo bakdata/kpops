@@ -1,5 +1,6 @@
 - type: producer-app
   name: producer1
+  enabled: true
   prefix: resources-read-from-component-
   to:
     topics:
@@ -19,6 +20,7 @@
   helm_name_override: resources-read-from-component-producer1
 - type: producer-app
   name: producer2
+  enabled: true
   prefix: ''
   to:
     topics:
@@ -38,6 +40,7 @@
   helm_name_override: producer2
 - type: should-inflate
   name: inflate-step
+  enabled: true
   prefix: resources-read-from-component-
   to:
     topics:
@@ -79,6 +82,7 @@
   helm_name_override: resources-read-from-component-inflate-step
 - type: kafka-sink-connector
   name: inflate-step-inflated-sink-connector
+  enabled: true
   prefix: resources-read-from-component-
   to:
     topics:
@@ -106,6 +110,7 @@
   resetter_values: {}
 - type: streams-app
   name: inflate-step-inflated-streams-app
+  enabled: true
   prefix: resources-read-from-component-
   to:
     topics:
@@ -137,6 +142,7 @@
   helm_name_override: resources-read-from-component-inflate-step-inflated-streams-app
 - type: should-inflate
   name: inflate-step-without-prefix
+  enabled: true
   prefix: ''
   to:
     topics:
@@ -178,6 +184,7 @@
   helm_name_override: inflate-step-without-prefix
 - type: kafka-sink-connector
   name: inflate-step-without-prefix-inflated-sink-connector
+  enabled: true
   prefix: resources-read-from-component-
   to:
     topics:
@@ -205,6 +212,7 @@
   resetter_values: {}
 - type: streams-app
   name: inflate-step-without-prefix-inflated-streams-app
+  enabled: true
   prefix: resources-read-from-component-
   to:
     topics:
@@ -236,6 +244,7 @@
   helm_name_override: resources-read-from-component-inflate-step-without-prefix-000dc
 - type: streams-app
   name: consumer1
+  enabled: true
   prefix: resources-read-from-component-
   from:
     topics: {}
@@ -272,6 +281,7 @@
   helm_name_override: resources-read-from-component-consumer1
 - type: streams-app
   name: consumer2
+  enabled: true
   prefix: resources-read-from-component-
   from:
     topics: {}
@@ -307,6 +317,7 @@
   helm_name_override: resources-read-from-component-consumer2
 - type: streams-app
   name: consumer3
+  enabled: true
   prefix: resources-read-from-component-
   from:
     topics:
@@ -342,6 +353,7 @@
   helm_name_override: resources-read-from-component-consumer3
 - type: streams-app
   name: consumer4
+  enabled: true
   prefix: resources-read-from-component-
   from:
     topics: {}
@@ -374,6 +386,7 @@
   helm_name_override: resources-read-from-component-consumer4
 - type: streams-app
   name: consumer5
+  enabled: true
   prefix: resources-read-from-component-
   from:
     topics: {}

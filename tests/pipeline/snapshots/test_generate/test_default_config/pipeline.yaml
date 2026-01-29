@@ -1,5 +1,6 @@
 - type: producer-app
   name: app1
+  enabled: true
   prefix: resources-custom-config-
   to:
     topics:
@@ -25,6 +26,7 @@
   helm_name_override: resources-custom-config-app1
 - type: streams-app
   name: app2
+  enabled: true
   prefix: resources-custom-config-
   to:
     topics:

@@ -1,5 +1,6 @@
 - type: scheduled-producer
   name: scheduled-producer
+  enabled: true
   prefix: resources-pipeline-folders-pipeline-1-
   to:
     topics:
@@ -28,6 +29,7 @@
 
 - type: converter
   name: converter
+  enabled: true
   prefix: resources-pipeline-folders-pipeline-2-
   to:
     topics:
@@ -73,6 +75,7 @@
 
 - type: filter
   name: a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
+  enabled: true
   prefix: resources-pipeline-folders-pipeline-3-
   to:
     topics:

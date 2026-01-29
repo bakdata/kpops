@@ -1,5 +1,6 @@
 - type: producer-app
   name: data-producer
+  enabled: true
   prefix: word-count-
   to:
     topics:
@@ -25,6 +26,7 @@
   helm_name_override: word-count-data-producer
 - type: streams-app
   name: word-count-app
+  enabled: true
   prefix: word-count-
   to:
     topics:
@@ -60,6 +62,7 @@
   helm_name_override: word-count-word-count-app
 - type: kafka-sink-connector
   name: redis-sink-connector
+  enabled: true
   prefix: word-count-
   config:
     connector.class: com.github.jcustenborder.kafka.connect.redis.RedisSinkConnector

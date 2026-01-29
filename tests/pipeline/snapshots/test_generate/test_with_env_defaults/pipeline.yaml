@@ -1,5 +1,6 @@
 - type: streams-app
   name: streams-app-development
+  enabled: true
   prefix: resources-pipeline-with-env-defaults-
   from:
     topics:
@@ -36,6 +37,7 @@
   helm_name_override: resources-pipeline-with-env-defaults-streams-app-development
 - type: kafka-sink-connector
   name: es-sink-connector
+  enabled: true
   prefix: resources-pipeline-with-env-defaults-
   config:
     connector.class: io.confluent.connect.elasticsearch.ElasticsearchSinkConnector
