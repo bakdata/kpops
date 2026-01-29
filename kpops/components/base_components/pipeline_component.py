@@ -47,6 +47,11 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
     """
 
     name: str
+    enabled: bool = Field(
+        default=True,
+        title="Enabled",
+        description="Whether the component is enabled and should be included in the pipeline",
+    )
     prefix: str = "${pipeline.name}-"
     from_: FromSection | None = Field(
         default=None,

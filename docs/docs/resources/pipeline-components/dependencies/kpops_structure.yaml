@@ -1,6 +1,7 @@
 kpops_components_fields:
   helm-app:
   - name
+  - enabled
   - prefix
   - from_
   - to
@@ -11,11 +12,13 @@ kpops_components_fields:
   - version
   kafka-app:
   - name
+  - enabled
   - prefix
   - from_
   - to
   kafka-connector:
   - name
+  - enabled
   - prefix
   - from_
   - to
@@ -25,6 +28,7 @@ kpops_components_fields:
   - resetter_values
   kafka-sink-connector:
   - name
+  - enabled
   - prefix
   - from_
   - to
@@ -34,6 +38,7 @@ kpops_components_fields:
   - resetter_values
   kafka-source-connector:
   - name
+  - enabled
   - prefix
   - from_
   - to
@@ -44,6 +49,7 @@ kpops_components_fields:
   - offset_topic
   kubernetes-app:
   - name
+  - enabled
   - prefix
   - from_
   - to
@@ -51,11 +57,13 @@ kpops_components_fields:
   - values
   pipeline-component:
   - name
+  - enabled
   - prefix
   - from_
   - to
   producer-app:
   - name
+  - enabled
   - prefix
   - from_
   - to
@@ -66,6 +74,7 @@ kpops_components_fields:
   - version
   producer-app-v2:
   - name
+  - enabled
   - prefix
   - from_
   - to
@@ -76,6 +85,7 @@ kpops_components_fields:
   - version
   streams-app:
   - name
+  - enabled
   - prefix
   - from_
   - to
@@ -86,6 +96,7 @@ kpops_components_fields:
   - version
   streams-app-v2:
   - name
+  - enabled
   - prefix
   - from_
   - to
@@ -96,6 +107,7 @@ kpops_components_fields:
   - version
   streams-bootstrap:
   - name
+  - enabled
   - prefix
   - from_
   - to
@@ -106,6 +118,7 @@ kpops_components_fields:
   - version
   streams-bootstrap-v2:
   - name
+  - enabled
   - prefix
   - from_
   - to
