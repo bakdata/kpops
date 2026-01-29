@@ -55,8 +55,8 @@ class Helm:
         self._context = helm_config.context
         self._debug = helm_config.debug
 
-        if self.version.major != 3:
-            msg = f"The supported Helm version is 3.x.x. The current Helm version is {self.version.major}.{self.version.minor}.{self.version.patch}"
+        if self.version.major < 3 or self.version.major > 4:
+            msg = f"The supported Helm version is 3.x.x|4.x.x. The current Helm version is {self.version.major}.{self.version.minor}.{self.version.patch}"
             raise RuntimeError(msg)
 
     @cached(cache={}, key=cache_key)

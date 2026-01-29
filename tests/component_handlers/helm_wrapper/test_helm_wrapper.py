@@ -594,6 +594,10 @@ class TestHelmWrapper:
             ("v3.12.0", Version(3, 12, 0)),
             ("v3.12", Version(3, 12, 0)),
             ("v3", Version(3, 0, 0)),
+            ("v4.1.0+4553a0a", Version(4, 1, 0)),
+            ("v4.1.0", Version(4, 1, 0)),
+            ("v4.1", Version(4, 1, 0)),
+            ("v4", Version(4, 0, 0)),
         ],
     )
     def test_parse_version(
@@ -620,7 +624,7 @@ class TestHelmWrapper:
         mock_execute.return_value = "v2.9.0+gc9f554d"
         with pytest.raises(
             RuntimeError,
-            match="The supported Helm version is 3.x.x. The current Helm version is 2.9.0",
+            match="The supported Helm version is 3.x.x|4.x.x. The current Helm version is 2.9.0",
         ):
             Helm(helm_config=HelmConfig())
 
