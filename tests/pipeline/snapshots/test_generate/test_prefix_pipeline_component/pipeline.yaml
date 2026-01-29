@@ -1,5 +1,6 @@
 - type: producer-app
   name: account-producer
+  enabled: true
   prefix: from-pipeline-component-
   namespace: ${NAMESPACE}
   values:

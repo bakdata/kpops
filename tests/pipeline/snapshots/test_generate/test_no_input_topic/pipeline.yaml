@@ -1,5 +1,6 @@
 - type: streams-app
   name: app1
+  enabled: true
   prefix: resources-no-input-topic-pipeline-
   from:
     topics:
@@ -42,6 +43,7 @@
   helm_name_override: resources-no-input-topic-pipeline-app1
 - type: streams-app
   name: app2
+  enabled: true
   prefix: resources-no-input-topic-pipeline-
   to:
     topics:

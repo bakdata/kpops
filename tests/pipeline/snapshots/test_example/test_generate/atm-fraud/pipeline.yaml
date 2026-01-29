@@ -1,5 +1,6 @@
 - type: producer-app-v2
   name: account-producer
+  enabled: true
   prefix: atm-fraud-
   to:
     topics:
@@ -29,6 +30,7 @@
   helm_name_override: atm-fraud-account-producer
 - type: producer-app-v2
   name: transaction-avro-producer
+  enabled: true
   prefix: atm-fraud-
   to:
     topics:
@@ -61,6 +63,7 @@
   helm_name_override: atm-fraud-transaction-avro-producer
 - type: streams-app-v2
   name: transaction-joiner
+  enabled: true
   prefix: atm-fraud-
   to:
     topics:
@@ -102,6 +105,7 @@
   helm_name_override: atm-fraud-transaction-joiner
 - type: streams-app-v2
   name: fraud-detector
+  enabled: true
   prefix: atm-fraud-
   to:
     topics:
@@ -143,6 +147,7 @@
   helm_name_override: atm-fraud-fraud-detector
 - type: streams-app-v2
   name: account-linker
+  enabled: true
   prefix: atm-fraud-
   from:
     topics: {}
@@ -194,6 +199,7 @@
   helm_name_override: atm-fraud-account-linker
 - type: kafka-sink-connector
   name: postgresql-connector
+  enabled: true
   prefix: atm-fraud-
   config:
     connector.class: io.confluent.connect.jdbc.JdbcSinkConnector

@@ -1,5 +1,6 @@
 - type: my-producer-app
   name: my-producer-app
+  enabled: true
   prefix: resources-streams-bootstrap-
   to:
     topics:
@@ -49,6 +50,7 @@
   helm_name_override: resources-streams-bootstrap-my-producer-app
 - type: my-streams-app
   name: my-streams-app
+  enabled: true
   prefix: resources-streams-bootstrap-
   from:
     topics:

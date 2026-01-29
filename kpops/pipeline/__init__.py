@@ -309,6 +309,9 @@ class PipelineGenerator:
         """
         component = component_class(**component_data)
         component = self.enrich_component_with_env(component)
+        # if component is disabled then we skip it
+        if not component.enabled:
+            return
         # inflate & enrich components
         for inflated_component in component.inflate():  # TODO: recursively
             if inflated_component.from_:

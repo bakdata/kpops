@@ -817,6 +817,7 @@ class TestStreamsApp:
             "helm_name_override": STREAMS_APP_HELM_NAME_OVERRIDE,
             "helm_release_name": STREAMS_APP_RELEASE_NAME,
             "name": STREAMS_APP_NAME,
+            "enabled": True,
             "namespace": NAMESPACE,
             "prefix": PREFIX,
             "to": {

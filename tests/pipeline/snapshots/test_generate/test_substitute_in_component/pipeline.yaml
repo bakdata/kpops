@@ -1,5 +1,6 @@
 - type: scheduled-producer
   name: scheduled-producer
+  enabled: true
   prefix: resources-component-type-substitution-
   to:
     topics:
@@ -31,6 +32,7 @@
   helm_name_override: resources-component-type-substitution-schedule-b0010
 - type: converter
   name: converter
+  enabled: true
   prefix: resources-component-type-substitution-
   to:
     topics:
@@ -77,6 +79,7 @@
   helm_name_override: resources-component-type-substitution-converter
 - type: filter
   name: filter-app
+  enabled: true
   prefix: resources-component-type-substitution-
   to:
     topics:

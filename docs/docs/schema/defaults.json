@@ -130,6 +130,12 @@
                     },
                     "description": "Helm diff config"
                 },
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
                 "from": {
                     "anyOf": [
                         {
@@ -563,6 +569,12 @@
             "additionalProperties": true,
             "description": "Base component for Kafka-based components.",
             "properties": {
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
                 "from": {
                     "anyOf": [
                         {
@@ -668,6 +680,12 @@
                 "config": {
                     "$ref": "#/$defs/KafkaConnectorConfig",
                     "description": "Connector config"
+                },
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
                 },
                 "from": {
                     "anyOf": [
@@ -814,6 +832,12 @@
                     "$ref": "#/$defs/KafkaConnectorConfig",
                     "description": "Connector config"
                 },
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
                 "from": {
                     "anyOf": [
                         {
@@ -900,6 +924,12 @@
                 "config": {
                     "$ref": "#/$defs/KafkaConnectorConfig",
                     "description": "Connector config"
+                },
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
                 },
                 "from": {
                     "anyOf": [
@@ -1047,6 +1077,12 @@
             "additionalProperties": true,
             "description": "Base class for all Kubernetes apps.\nAll built-in components are Kubernetes apps, except for the Kafka connectors.",
             "properties": {
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
                 "from": {
                     "anyOf": [
                         {
@@ -1379,6 +1415,12 @@
             "additionalProperties": true,
             "description": "Base class for all components.",
             "properties": {
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
                 "from": {
                     "anyOf": [
                         {
@@ -1626,6 +1668,12 @@
                     },
                     "description": "Helm diff config"
                 },
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
                 "from": {
                     "default": null,
                     "description": "Producer doesn't support FromSection",
@@ -1712,6 +1760,12 @@
                         "ignore": null
                     },
                     "description": "Helm diff config"
+                },
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
                 },
                 "from": {
                     "default": null,
@@ -2782,6 +2836,12 @@
                     },
                     "description": "Helm diff config"
                 },
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
                 "from": {
                     "anyOf": [
                         {
@@ -2875,6 +2935,12 @@
                         "ignore": null
                     },
                     "description": "Helm diff config"
+                },
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
                 },
                 "from": {
                     "anyOf": [
@@ -3503,6 +3569,12 @@
                     },
                     "description": "Helm diff config"
                 },
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
                 "from": {
                     "anyOf": [
                         {
@@ -3590,6 +3662,12 @@
                         "ignore": null
                     },
                     "description": "Helm diff config"
+                },
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
                 },
                 "from": {
                     "anyOf": [

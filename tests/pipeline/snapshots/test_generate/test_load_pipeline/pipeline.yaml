@@ -1,5 +1,6 @@
 - type: scheduled-producer
   name: scheduled-producer
+  enabled: true
   prefix: resources-first-pipeline-
   to:
     topics:
@@ -27,6 +28,7 @@
   helm_name_override: resources-first-pipeline-scheduled-producer
 - type: converter
   name: converter
+  enabled: true
   prefix: resources-first-pipeline-
   to:
     topics:
@@ -73,6 +75,7 @@
   helm_name_override: resources-first-pipeline-converter
 - type: filter
   name: a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
+  enabled: true
   prefix: resources-first-pipeline-
   to:
     topics:

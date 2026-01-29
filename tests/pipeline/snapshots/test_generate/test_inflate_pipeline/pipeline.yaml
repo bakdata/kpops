@@ -1,5 +1,6 @@
 - type: scheduled-producer
   name: scheduled-producer
+  enabled: true
   prefix: resources-pipeline-with-inflate-
   to:
     topics:
@@ -27,6 +28,7 @@
   helm_name_override: resources-pipeline-with-inflate-scheduled-producer
 - type: converter
   name: converter
+  enabled: true
   prefix: resources-pipeline-with-inflate-
   to:
     topics:
@@ -73,6 +75,7 @@
   helm_name_override: resources-pipeline-with-inflate-converter
 - type: should-inflate
   name: should-inflate
+  enabled: true
   prefix: resources-pipeline-with-inflate-
   to:
     topics:
@@ -121,6 +124,7 @@
   helm_name_override: resources-pipeline-with-inflate-should-inflate
 - type: kafka-sink-connector
   name: should-inflate-inflated-sink-connector
+  enabled: true
   prefix: resources-pipeline-with-inflate-
   to:
     topics:
@@ -148,6 +152,7 @@
   resetter_values: {}
 - type: streams-app
   name: should-inflate-inflated-streams-app
+  enabled: true
   prefix: resources-pipeline-with-inflate-
   to:
     topics:

@@ -1,5 +1,6 @@
 - type: streams-app
   name: streams-app
+  enabled: true
   prefix: resources-no-user-defined-components-
   from:
     topics:

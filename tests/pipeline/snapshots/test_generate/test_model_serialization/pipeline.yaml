@@ -1,5 +1,6 @@
 - type: producer-app
   name: account-producer
+  enabled: true
   prefix: resources-pipeline-with-paths-
   namespace: test
   values:
