@@ -1,0 +1,4 @@
+# Kafka source connector
+#
+# Child of: KafkaConnector
+kafka-source-connector:

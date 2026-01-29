@@ -1,0 +1,7 @@
+  values: # required
+    streams: # required
+      brokers: ${config.kafka_brokers} # required
+      schemaRegistryUrl: ${config.schema_registry.url}
+    nameOverride: override-with-this-name # kafka-app-specific
+    fullnameOverride: override-with-this-name # kafka-app-specific
+    imageTag: "1.0.0" # Example values that are shared between streams-app and producer-app
