@@ -2,12 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [10.7.1](https://github.com/bakdata/kpops/tree/10.7.1) - 2026-02-04
+### What's changed
+
+* fix(pipeline): avoid spawning unguarded coroutines by @disrupted in [#643](https://github.com/bakdata/kpops/pull/643)
+
+
+**Full Changelog**: https://github.com/bakdata/kpops/compare/10.7.0...10.7.1
+
 ## [10.7.0](https://github.com/bakdata/kpops/tree/10.7.0) - 2026-01-29
 ### What's changed
 
 * chore: bump `helm` support to `4.x` by @daconstenla in [#642](https://github.com/bakdata/kpops/pull/642)
 
 * feat: support disabling components from pipelines by @daconstenla in [#641](https://github.com/bakdata/kpops/pull/641)
+
+* Bump version 10.6.1 → 10.7.0 by @bakdata-bot
 
 
 **Full Changelog**: https://github.com/bakdata/kpops/compare/10.6.1...10.7.0
