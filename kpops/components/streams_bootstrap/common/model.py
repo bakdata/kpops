@@ -1,12 +1,32 @@
+from __future__ import annotations
+
 from enum import StrEnum
+from typing import ClassVar, Self
+
+import pydantic
+from pydantic import ConfigDict, Field
 
 from kpops.components.common.kubernetes_model import ImagePullPolicy, Resources
+from kpops.components.common.topic import KafkaTopic
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
     DescConfigModel,
     SerializeAsOptional,
     SerializeAsOptionalModel,
 )
+
+
+def serialize_topics(topics: list[KafkaTopic]) -> list[str]:
+    return [topic.name for topic in topics]
+
+
+def serialize_labeled_input_topics(
+    labeled_input_topics: dict[str, list[KafkaTopic]],
+) -> dict[str, list[str]]:
+    return {
+        label: serialize_topics(topics)
+        for label, topics in labeled_input_topics.items()
+    }
 
 
 class JmxRuleType(StrEnum):
@@ -83,3 +103,87 @@ class JMXConfig(CamelCaseConfigModel, DescConfigModel):
     enabled: bool | None = None
     host: str | None = None
     port: int | None = None
+
+
+class StreamsAppAutoScaling(
+    SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigModel
+):
+    """Kubernetes Event-driven Autoscaling config.
+
+    :param enabled: Whether to enable auto-scaling using KEDA., defaults to False
+    :param lag_threshold: Average target value to trigger scaling actions.
+        Mandatory to set when auto-scaling is enabled.
+    :param polling_interval: This is the interval to check each trigger on.
+        https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval,
+        defaults to 30
+    :param cooldown_period: The period to wait after the last trigger reported
+        active before scaling the resource back to 0.
+        https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod,
+        defaults to 300
+    :param offset_reset_policy: The offset reset policy for the consumer if the
+        consumer group is not yet subscribed to a partition.,
+        defaults to "earliest"
+    :param min_replicas: Minimum number of replicas KEDA will scale the resource down to.
+        "https://keda.sh/docs/2.9/concepts/scaling-deployments/#minreplicacount",
+        defaults to 0
+    :param max_replicas: This setting is passed to the HPA definition that KEDA
+        will create for a given resource and holds the maximum number of replicas
+        of the target resouce.
+        https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount,
+        defaults to 1
+    :param idle_replicas: If this property is set, KEDA will scale the resource
+        down to this number of replicas.
+        https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount,
+        defaults to None
+    :param internal_topics: List of auto-generated Kafka Streams topics used by the streams app, defaults to []
+    :param topics: List of topics used by the streams app, defaults to []
+    :param additional_triggers: List of additional KEDA triggers,
+        see https://keda.sh/docs/latest/scalers/,
+        defaults to []
+    """
+
+    enabled: bool = False
+    lag_threshold: int | None = None
+    polling_interval: int | None = None
+    cooldown_period: int | None = None
+    offset_reset_policy: str | None = None
+    min_replicas: int | None = Field(
+        default=None,
+        title="Min replica count",
+    )
+    max_replicas: int | None = Field(
+        default=None,
+        title="Max replica count",
+    )
+    idle_replicas: int | None = Field(
+        default=None,
+        title="Idle replica count",
+    )
+    internal_topics: SerializeAsOptional[list[str]] = []
+    topics: SerializeAsOptional[list[str]] = []
+    additional_triggers: SerializeAsOptional[list[str]] = []
+
+    model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
+
+
+class PersistenceConfig(CamelCaseConfigModel, DescConfigModel):
+    """streams-bootstrap persistence configurations.
+
+    :param enabled: Whether to use a persistent volume to store the state of the streams app.
+    :param size: The size of the PersistentVolume to allocate to each streams pod in the StatefulSet.
+    :param storage_class: Storage class to use for the persistent volume.
+    """
+
+    enabled: bool = False
+    size: str | None = None
+    storage_class: str | None = None
+
+    @pydantic.model_validator(mode="after")
+    def validate_mandatory_fields_are_set(self) -> Self:
+        if self.enabled and self.size is None:
+            msg = (
+                "If app.persistence.enabled is set to true, "
+                "the field app.persistence.size needs to be set."
+            )
+            raise ValueError(msg)
+        return self

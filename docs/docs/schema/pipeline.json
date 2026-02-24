@@ -2783,7 +2783,7 @@
                 "autoscaling": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/kpops__components__streams_bootstrap__streams__model__StreamsAppAutoScaling"
+                            "$ref": "#/$defs/kpops__components__streams_bootstrap__common__model__StreamsAppAutoScaling"
                         },
                         {
                             "type": "null"
@@ -3390,7 +3390,7 @@
             "title": "WeightedPodAffinityTerm",
             "type": "object"
         },
-        "kpops__components__streams_bootstrap__streams__model__StreamsAppAutoScaling": {
+        "kpops__components__streams_bootstrap__common__model__StreamsAppAutoScaling": {
             "additionalProperties": true,
             "description": "Kubernetes Event-driven Autoscaling config.",
             "properties": {
