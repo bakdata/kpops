@@ -51,6 +51,98 @@
             "title": "ConnectorNewState",
             "type": "string"
         },
+        "ConsumerApp": {
+            "additionalProperties": true,
+            "description": "StreamsApp component that configures a streams-bootstrap app.",
+            "properties": {
+                "diff_config": {
+                    "$ref": "#/$defs/HelmDiffConfig",
+                    "default": {
+                        "ignore": null
+                    },
+                    "description": "Helm diff config"
+                },
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
+                "from": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/FromSection"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Topic(s) and/or components from which the component will read input",
+                    "title": "From"
+                },
+                "name": {
+                    "description": "Component name",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "namespace": {
+                    "description": "Kubernetes namespace in which the component shall be deployed",
+                    "title": "Namespace",
+                    "type": "string"
+                },
+                "prefix": {
+                    "default": "${pipeline.name}-",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "title": "Prefix",
+                    "type": "string"
+                },
+                "repo_config": {
+                    "$ref": "#/$defs/HelmRepoConfig",
+                    "default": {
+                        "repo_auth_flags": {
+                            "ca_file": null,
+                            "cert_file": null,
+                            "insecure_skip_tls_verify": false,
+                            "password": null,
+                            "username": null
+                        },
+                        "repository_name": "bakdata-streams-bootstrap",
+                        "url": "https://bakdata.github.io/streams-bootstrap/"
+                    },
+                    "description": "Configuration of the Helm chart repo to be used for deploying the component"
+                },
+                "to": {
+                    "default": null,
+                    "title": "To",
+                    "type": "null"
+                },
+                "type": {
+                    "const": "consumer-app",
+                    "title": "Type",
+                    "type": "string"
+                },
+                "values": {
+                    "$ref": "#/$defs/StreamsAppValues",
+                    "description": "streams-bootstrap Helm values"
+                },
+                "version": {
+                    "default": "3.6.1",
+                    "description": "Helm chart version",
+                    "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
+                    "title": "Version",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "namespace",
+                "values",
+                "type"
+            ],
+            "title": "ConsumerApp",
+            "type": "object"
+        },
         "Effects": {
             "enum": [
                 "NoExecute",
@@ -3933,6 +4025,7 @@
     "items": {
         "discriminator": {
             "mapping": {
+                "consumer-app": "#/$defs/ConsumerApp",
                 "helm-app": "#/$defs/HelmApp",
                 "kafka-sink-connector": "#/$defs/KafkaSinkConnector",
                 "kafka-source-connector": "#/$defs/KafkaSourceConnector",
@@ -3952,6 +4045,9 @@
             },
             {
                 "$ref": "#/$defs/KafkaSourceConnector"
+            },
+            {
+                "$ref": "#/$defs/ConsumerApp"
             },
             {
                 "$ref": "#/$defs/ProducerApp"
