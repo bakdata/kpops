@@ -51,6 +51,98 @@
             "title": "ConnectorNewState",
             "type": "string"
         },
+        "ConsumerApp": {
+            "additionalProperties": true,
+            "description": "StreamsApp component that configures a streams-bootstrap app.",
+            "properties": {
+                "diff_config": {
+                    "$ref": "#/$defs/HelmDiffConfig",
+                    "default": {
+                        "ignore": null
+                    },
+                    "description": "Helm diff config"
+                },
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
+                "from": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/FromSection"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Topic(s) and/or components from which the component will read input",
+                    "title": "From"
+                },
+                "name": {
+                    "description": "Component name",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "namespace": {
+                    "description": "Kubernetes namespace in which the component shall be deployed",
+                    "title": "Namespace",
+                    "type": "string"
+                },
+                "prefix": {
+                    "default": "${pipeline.name}-",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "title": "Prefix",
+                    "type": "string"
+                },
+                "repo_config": {
+                    "$ref": "#/$defs/HelmRepoConfig",
+                    "default": {
+                        "repo_auth_flags": {
+                            "ca_file": null,
+                            "cert_file": null,
+                            "insecure_skip_tls_verify": false,
+                            "password": null,
+                            "username": null
+                        },
+                        "repository_name": "bakdata-streams-bootstrap",
+                        "url": "https://bakdata.github.io/streams-bootstrap/"
+                    },
+                    "description": "Configuration of the Helm chart repo to be used for deploying the component"
+                },
+                "to": {
+                    "default": null,
+                    "title": "To",
+                    "type": "null"
+                },
+                "type": {
+                    "const": "consumer-app",
+                    "title": "Type",
+                    "type": "string"
+                },
+                "values": {
+                    "$ref": "#/$defs/StreamsAppValues",
+                    "description": "streams-bootstrap Helm values"
+                },
+                "version": {
+                    "default": "3.6.1",
+                    "description": "Helm chart version",
+                    "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
+                    "title": "Version",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "namespace",
+                "values",
+                "type"
+            ],
+            "title": "ConsumerApp",
+            "type": "object"
+        },
         "Effects": {
             "enum": [
                 "NoExecute",
@@ -129,6 +221,12 @@
                         "ignore": null
                     },
                     "description": "Helm diff config"
+                },
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
                 },
                 "from": {
                     "anyOf": [
@@ -563,6 +661,12 @@
             "additionalProperties": true,
             "description": "Base component for Kafka-based components.",
             "properties": {
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
                 "from": {
                     "anyOf": [
                         {
@@ -668,6 +772,12 @@
                 "config": {
                     "$ref": "#/$defs/KafkaConnectorConfig",
                     "description": "Connector config"
+                },
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
                 },
                 "from": {
                     "anyOf": [
@@ -814,6 +924,12 @@
                     "$ref": "#/$defs/KafkaConnectorConfig",
                     "description": "Connector config"
                 },
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
                 "from": {
                     "anyOf": [
                         {
@@ -900,6 +1016,12 @@
                 "config": {
                     "$ref": "#/$defs/KafkaConnectorConfig",
                     "description": "Connector config"
+                },
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
                 },
                 "from": {
                     "anyOf": [
@@ -1047,6 +1169,12 @@
             "additionalProperties": true,
             "description": "Base class for all Kubernetes apps.\nAll built-in components are Kubernetes apps, except for the Kafka connectors.",
             "properties": {
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
                 "from": {
                     "anyOf": [
                         {
@@ -1379,6 +1507,12 @@
             "additionalProperties": true,
             "description": "Base class for all components.",
             "properties": {
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
                 "from": {
                     "anyOf": [
                         {
@@ -1626,6 +1760,12 @@
                     },
                     "description": "Helm diff config"
                 },
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
                 "from": {
                     "default": null,
                     "description": "Producer doesn't support FromSection",
@@ -1712,6 +1852,12 @@
                         "ignore": null
                     },
                     "description": "Helm diff config"
+                },
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
                 },
                 "from": {
                     "default": null,
@@ -2782,6 +2928,12 @@
                     },
                     "description": "Helm diff config"
                 },
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
                 "from": {
                     "anyOf": [
                         {
@@ -2875,6 +3027,12 @@
                         "ignore": null
                     },
                     "description": "Helm diff config"
+                },
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
                 },
                 "from": {
                     "anyOf": [
@@ -3086,7 +3244,7 @@
                 "autoscaling": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/kpops__components__streams_bootstrap__streams__model__StreamsAppAutoScaling"
+                            "$ref": "#/$defs/kpops__components__streams_bootstrap__common__model__StreamsAppAutoScaling"
                         },
                         {
                             "type": "null"
@@ -3503,6 +3661,12 @@
                     },
                     "description": "Helm diff config"
                 },
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
                 "from": {
                     "anyOf": [
                         {
@@ -3590,6 +3754,12 @@
                         "ignore": null
                     },
                     "description": "Helm diff config"
+                },
+                "enabled": {
+                    "default": true,
+                    "description": "Whether the component is enabled and should be included in the pipeline",
+                    "title": "Enabled",
+                    "type": "boolean"
                 },
                 "from": {
                     "anyOf": [
@@ -4296,7 +4466,7 @@
             "title": "WeightedPodAffinityTerm",
             "type": "object"
         },
-        "kpops__components__streams_bootstrap__streams__model__StreamsAppAutoScaling": {
+        "kpops__components__streams_bootstrap__common__model__StreamsAppAutoScaling": {
             "additionalProperties": true,
             "description": "Kubernetes Event-driven Autoscaling config.",
             "properties": {
@@ -4837,6 +5007,9 @@
         }
     },
     "properties": {
+        "consumer-app": {
+            "$ref": "#/$defs/ConsumerApp"
+        },
         "helm-app": {
             "$ref": "#/$defs/HelmApp"
         },
@@ -4885,6 +5058,7 @@
         "kafka-source-connector",
         "kubernetes-app",
         "pipeline-component",
+        "consumer-app",
         "producer-app",
         "streams-app",
         "streams-bootstrap",
