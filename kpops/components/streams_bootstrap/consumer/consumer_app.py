@@ -12,9 +12,7 @@ from kpops.components.streams_bootstrap.base import (
     StreamsBootstrap,
     StreamsBootstrapCleaner,
 )
-from kpops.components.streams_bootstrap.streams.model import (
-    StreamsAppValues,
-)
+from kpops.components.streams_bootstrap.consumer.model import ConsumerAppValues
 from kpops.config import get_config
 from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
 from kpops.core.operation import OperationMode
@@ -27,7 +25,7 @@ log = logging.getLogger("ConsumerApp")
 class ConsumerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
     from_: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
     to: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
-    values: StreamsAppValues  # pyright: ignore[reportIncompatibleVariableOverride]
+    values: ConsumerAppValues  # pyright: ignore[reportIncompatibleVariableOverride]
 
     @property
     @override
@@ -38,12 +36,10 @@ class ConsumerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
 
     @override
     async def reset(self, dry_run: bool) -> None:
-        self.values.kafka.delete_output = False
         await super().clean(dry_run)
 
     @override
     async def clean(self, dry_run: bool) -> None:
-        self.values.kafka.delete_output = True
         await super().clean(dry_run)
 
         if (
@@ -69,7 +65,6 @@ class ConsumerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
 
     @override
     def manifest_reset(self) -> tuple[KubernetesManifest, ...]:
-        self.values.kafka.delete_output = False
         values = self.to_helm_values()
 
         return self._helm.template(
@@ -92,7 +87,7 @@ class ConsumerApp(StreamsBootstrap):
     :param values: streams-bootstrap Helm values
     """
 
-    values: StreamsAppValues  # pyright: ignore[reportIncompatibleVariableOverride]
+    values: ConsumerAppValues  # pyright: ignore[reportIncompatibleVariableOverride]
     to: None = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         default=None,
         alias="to",

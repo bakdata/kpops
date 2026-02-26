@@ -29,7 +29,7 @@ class ConsumerConfig(KafkaConfig):
     :param config: Configuration, defaults to {}
     """
 
-    group_id: str | None = Field(default=None, title="Unique application ID")
+    group_id: str | None = Field(default=None, title="Unique consuemer group ID")
     input_topics: SerializeAsOptional[
         Annotated[
             list[KafkaTopicStr],

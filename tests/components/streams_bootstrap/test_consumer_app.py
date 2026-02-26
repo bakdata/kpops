@@ -114,7 +114,7 @@ class TestConsumerApp:
         assert not hasattr(cleaner, "_cleaner")
 
     def test_cleaner_inheritance(self, consumer_app: ConsumerApp):
-        consumer_app.values.kafka.application_id = "test-application-id"
+        consumer_app.values.kafka.group_id = "test-group-id"
         consumer_app.values.autoscaling = StreamsAppAutoScaling(
             enabled=True,
             lag_threshold=100,
@@ -376,7 +376,6 @@ class TestConsumerApp:
                     "image": "consumerApp",
                     "kafka": {
                         "bootstrapServers": "fake-broker:9092",
-                        "deleteOutput": False,
                     },
                 },
                 HelmUpgradeInstallFlags(version="3.6.1", wait=True, wait_for_jobs=True),
@@ -427,7 +426,6 @@ class TestConsumerApp:
                     "image": "consumerApp",
                     "kafka": {
                         "bootstrapServers": "fake-broker:9092",
-                        "deleteOutput": True,
                     },
                 },
                 HelmUpgradeInstallFlags(version="3.6.1", wait=True, wait_for_jobs=True),
@@ -505,7 +503,6 @@ class TestConsumerApp:
                 "kafka": {
                     "bootstrapServers": "fake-broker:9092",
                     "inputTopics": ["test-input-topic"],
-                    "deleteOutput": False,
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
@@ -576,7 +573,6 @@ class TestConsumerApp:
                 "kafka": {
                     "bootstrapServers": "fake-broker:9092",
                     "inputTopics": ["test-input-topic"],
-                    "deleteOutput": True,
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
@@ -754,7 +750,6 @@ class TestConsumerApp:
                     "image": "consumerApp",
                     "kafka": {
                         "bootstrapServers": "fake-broker:9092",
-                        "deleteOutput": True,
                     },
                     "statefulSet": True,
                     "persistence": {
@@ -872,7 +867,6 @@ class TestConsumerApp:
                 "kafka": {
                     "bootstrapServers": "fake-broker:9092",
                     "inputTopics": ["test-input-topic"],
-                    "deleteOutput": True,
                 },
             },
             HelmUpgradeInstallFlags(version="3.6.1", wait=True, wait_for_jobs=True),
