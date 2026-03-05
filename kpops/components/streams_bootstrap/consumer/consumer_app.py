@@ -23,8 +23,6 @@ log = logging.getLogger("ConsumerApp")
 
 
 class ConsumerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
-    from_: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
-    to: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
     values: ConsumerAppValues  # pyright: ignore[reportIncompatibleVariableOverride]
 
     @property

@@ -19,9 +19,9 @@ from kpops.utils.pydantic import (
 
 
 class ConsumerConfig(KafkaConfig):
-    """consuemr app kafka section.
+    """consumer app kafka section.
 
-    :param group_id: Unique consumer group ID for Kafka Streams. Required for auto-scaling #TODO true?
+    :param group_id: Unique consumer group ID for Kafka Streams. Required for auto-scaling.
     :param input_topics: Input topics, defaults to []
     :param input_pattern: Input pattern, defaults to None
     :param labeled_input_topics: Extra input topics, defaults to {}
@@ -29,7 +29,7 @@ class ConsumerConfig(KafkaConfig):
     :param config: Configuration, defaults to {}
     """
 
-    group_id: str | None = Field(default=None, title="Unique consuemer group ID")
+    group_id: str | None = Field(default=None, title="Unique consumer group ID")
     input_topics: SerializeAsOptional[
         Annotated[
             list[KafkaTopicStr],

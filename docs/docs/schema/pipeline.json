@@ -568,7 +568,7 @@
         },
         "ConsumerConfig": {
             "additionalProperties": true,
-            "description": "consuemr app kafka section.",
+            "description": "consumer app kafka section.",
             "properties": {
                 "bootstrapServers": {
                     "default": "${config.kafka_brokers}",
@@ -599,8 +599,8 @@
                         }
                     ],
                     "default": null,
-                    "description": "Unique consumer group ID for Kafka Streams. Required for auto-scaling #TODO true?",
-                    "title": "Unique consuemer group ID"
+                    "description": "Unique consumer group ID for Kafka Streams. Required for auto-scaling.",
+                    "title": "Unique consumer group ID"
                 },
                 "inputPattern": {
                     "anyOf": [
