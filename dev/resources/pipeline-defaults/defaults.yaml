@@ -242,7 +242,7 @@ kubernetes-app:
     image: exampleImage # Example
     debug: false # Example
     commandLine: {} # Example
-# Producer app component that configures a streams-bootstrap consumer app.
+# Producer app component that configures a streams-bootstrap producer app.
 #
 # Child of: KafkaApp
 # More documentation on ProducerApp: https://github.com/bakdata/streams-bootstrap
