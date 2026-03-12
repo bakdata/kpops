@@ -26,7 +26,7 @@ Configures a
 
 #### deploy
 
-Identical to [KubernetesApp's `deploy`](kubernetes-app.md#deploy). The consumer app has no `to` section, so no topics are created and no schemas are submitted.
+Identical to [StreamsBootstrap's `deploy`](streams-bootstrap.md#deploy). The consumer app has no `to` section, so no topics are created and no schemas are submitted.
 
 #### destroy
 
