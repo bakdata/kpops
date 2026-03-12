@@ -1,3 +1,61 @@
+# Consumer app component that configures a streams-bootstrap consumer app.
+#
+# Child of: KafkaApp
+# More documentation on ConsumerApp: https://github.com/bakdata/streams-bootstrap
+consumer-app:
+  # to: # While the consumer-app does inherit from kafka-app, it does not need a
+  # `to` section, hence it does not support it.
+  # Allowed configs:
+  # https://github.com/bakdata/streams-bootstrap/tree/master/charts/consumer-app
+  values: # required
+    kafka: # required, consumer-app-specific
+      bootstrapServers: ${config.kafka_brokers}
+      schemaRegistryUrl: ${config.schema_registry.url}
+      groupId: consumer-group-id
+      inputTopics:
+        - topic1
+        - topic2
+      inputPattern: input-pattern
+      labeledInputTopics:
+        input_role1:
+          - input_topic1
+          - input_topic2
+        input_role2:
+          - input_topic3
+          - input_topic4
+      labeledInputPatterns:
+        pattern_role1: input_pattern1
+      config:
+        my.consumer.config: my.value
+    nameOverride: override-with-this-name # kafka-app-specific
+    fullnameOverride: override-with-this-name # kafka-app-specific
+    autoscaling: # consumer-app-specific
+      enabled: false # Whether to enable auto-scaling using KEDA.
+      lagThreshold: 0 # Average target value to trigger scaling actions.
+      # This is the interval to check each trigger on.
+      # https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval
+      pollingInterval: 30
+      # The period to wait after the last trigger reported active before scaling
+      #  the resource back to 0. https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod
+      cooldownPeriod: 300
+      # The offset reset policy for the consumer if the the consumer group is
+      # not yet subscribed to a partition.
+      offsetResetPolicy: earliest
+      # This setting is passed to the HPA definition that KEDA will create for a
+      # given resource and holds the maximum number of replicas of the target resouce.
+      # https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount
+      maxReplicas: 1
+      # Minimum number of replicas KEDA will scale the resource down to.
+      # https://keda.sh/docs/2.7/concepts/scaling-deployments/#minreplicacount
+      minReplicas: 0
+      # If this property is set, KEDA will scale the resource down to this
+      # number of replicas.
+      # https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount
+      idleReplicas: 0
+      topics: # List of topics used by the consumer app.
+        - topic1
+        - topic2
+      additionalTriggers: [] # List of additional KEDA triggers.
 # Kubernetes app managed through Helm with an associated Helm chart
 #
 # Parent of: KafkaApp
@@ -184,8 +242,7 @@ kubernetes-app:
     image: exampleImage # Example
     debug: false # Example
     commandLine: {} # Example
-# Holds configuration to use as values for the streams bootstrap producer-app Helm
-# chart.
+# Producer app component that configures a streams-bootstrap consumer app.
 #
 # Child of: KafkaApp
 # More documentation on ProducerApp: https://github.com/bakdata/streams-bootstrap
@@ -204,7 +261,7 @@ producer-app:
         output_role2: output_topic2
     nameOverride: override-with-this-name # kafka-app-specific
     fullnameOverride: override-with-this-name # kafka-app-specific
-# StreamsApp component that configures a streams bootstrap app.
+# Streams app component that configures a streams bootstrap app.
 #
 # Child of: KafkaApp
 # More documentation on StreamsApp: https://github.com/bakdata/streams-bootstrap
