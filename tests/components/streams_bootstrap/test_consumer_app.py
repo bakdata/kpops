@@ -30,12 +30,12 @@ from kpops.components.common.topic import (
     TopicConfig,
 )
 from kpops.components.streams_bootstrap import ConsumerApp
-from kpops.components.streams_bootstrap.consumer.consumer_app import (
-    ConsumerAppCleaner,
-)
-from kpops.components.streams_bootstrap.streams.model import (
+from kpops.components.streams_bootstrap.common.model import (
     PersistenceConfig,
     StreamsAppAutoScaling,
+)
+from kpops.components.streams_bootstrap.consumer.consumer_app import (
+    ConsumerAppCleaner,
 )
 
 RESOURCES_PATH = Path(__file__).parent / "resources"
@@ -810,7 +810,7 @@ class TestConsumerApp:
             Helm,
             "get_values",
             return_value={
-                "image": "registry/producer-app",
+                "image": "registry/consumer-app",
                 "imageTag": "1.1.1",
                 "nameOverride": CONSUMER_APP_NAME,
                 "fullnameOverride": CONSUMER_APP_NAME,

@@ -31,7 +31,7 @@ from kpops.components.common.topic import (
     TopicConfig,
 )
 from kpops.components.streams_bootstrap import StreamsApp
-from kpops.components.streams_bootstrap.streams.model import (
+from kpops.components.streams_bootstrap.common.model import (
     PersistenceConfig,
     StreamsAppAutoScaling,
 )
