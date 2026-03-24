@@ -1,21 +1,20 @@
-# Streams app component that configures a streams bootstrap app.
+# Consumer app component that configures a streams-bootstrap consumer app.
 #
 # Child of: KafkaApp
-# More documentation on StreamsApp: https://github.com/bakdata/streams-bootstrap
-streams-app:
-  # No arbitrary keys are allowed under `app` here
+# More documentation on ConsumerApp: https://github.com/bakdata/streams-bootstrap
+consumer-app:
+  # to: # While the consumer-app does inherit from kafka-app, it does not need a
+  # `to` section, hence it does not support it.
   # Allowed configs:
-  # https://github.com/bakdata/streams-bootstrap/tree/master/charts/streams-app
+  # https://github.com/bakdata/streams-bootstrap/tree/master/charts/consumer-app
   values: # required
-    # streams-bootstrap kafka section
-    kafka: # required, streams-app-specific
+    kafka: # required, consumer-app-specific
       bootstrapServers: ${config.kafka_brokers}
       schemaRegistryUrl: ${config.schema_registry.url}
-      applicationId: example-id
+      groupId: consumer-group-id
       inputTopics:
         - topic1
         - topic2
-      outputTopic: output-topic
       inputPattern: input-pattern
       labeledInputTopics:
         input_role1:
@@ -26,16 +25,11 @@ streams-app:
           - input_topic4
       labeledInputPatterns:
         pattern_role1: input_pattern1
-      labeledOutputTopics:
-        output_role1: output_topic1
-        output_role2: output_topic2
-      errorTopic: error-topic
       config:
-        my.streams.config: my.value
-      deleteOutput: false
-    nameOverride: override-with-this-name # streams-app-specific
-    fullnameOverride: override-with-this-name # streams-app-specific
-    autoscaling: # streams-app-specific
+        my.consumer.config: my.value
+    nameOverride: override-with-this-name # kafka-app-specific
+    fullnameOverride: override-with-this-name # kafka-app-specific
+    autoscaling: # consumer-app-specific
       enabled: false # Whether to enable auto-scaling using KEDA.
       lagThreshold: 0 # Average target value to trigger scaling actions.
       # This is the interval to check each trigger on.
@@ -58,10 +52,7 @@ streams-app:
       # number of replicas.
       # https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount
       idleReplicas: 0
-      internalTopics: # List of auto-generated Kafka Streams topics used by the streams app.
-        - topic1
-        - topic2
-      topics: # List of topics used by the streams app.
+      topics: # List of topics used by the consumer app.
         - topic1
         - topic2
       additionalTriggers: [] # List of additional KEDA triggers.
