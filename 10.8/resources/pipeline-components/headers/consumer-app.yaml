@@ -1,0 +1,6 @@
+# Holds configuration to use as values for the streams bootstrap consumer-app Helm
+# chart.
+# More documentation on ConsumerApp:
+# https://github.com/bakdata/streams-bootstrap
+- type: consumer-app
+  name: consumer-app # required
