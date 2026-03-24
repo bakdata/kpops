@@ -2,10 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [10.8.0](https://github.com/bakdata/kpops/tree/10.8.0) - 2026-03-24
+### What's changed
+
+* feat: add consumer app by @jnsrnhld in [#644](https://github.com/bakdata/kpops/pull/644)
+
+
+### New Contributors
+* @jnsrnhld made their first contribution in [#644](https://github.com/bakdata/kpops/pull/644)
+
+**Full Changelog**: https://github.com/bakdata/kpops/compare/10.7.1...10.8.0
+
 ## [10.7.1](https://github.com/bakdata/kpops/tree/10.7.1) - 2026-02-04
 ### What's changed
 
 * fix(pipeline): avoid spawning unguarded coroutines by @disrupted in [#643](https://github.com/bakdata/kpops/pull/643)
+
+* Bump version 10.7.0 → 10.7.1 by @bakdata-bot
 
 
 **Full Changelog**: https://github.com/bakdata/kpops/compare/10.7.0...10.7.1
