@@ -5,6 +5,7 @@ flowchart BT
     StreamsBootstrap --> HelmApp
     StreamsApp --> StreamsBootstrap
     ProducerApp --> StreamsBootstrap
+    ConsumerApp --> StreamsBootstrap
     KafkaConnector --> PipelineComponent
     KafkaSourceConnector --> KafkaConnector
     KafkaSinkConnector --> KafkaConnector
@@ -14,6 +15,7 @@ flowchart BT
     click StreamsBootstrap "./../streams-bootstrap"
     click StreamsApp "./../streams-app"
     click ProducerApp "./../producer-app"
+    click ConsumerApp "./../consumer-app"
     click KafkaConnector "./../kafka-connector"
     click KafkaSourceConnector "./../kafka-source-connector"
     click KafkaSinkConnector "./../kafka-sink-connector"

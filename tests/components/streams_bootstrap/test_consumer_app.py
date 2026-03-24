@@ -14,7 +14,6 @@ from lightkube.models.meta_v1 import ObjectMeta
 from pydantic import ValidationError
 from pytest_mock import MockerFixture
 
-from kpops.component_handlers import get_handlers
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
@@ -30,69 +29,62 @@ from kpops.components.common.topic import (
     OutputTopicTypes,
     TopicConfig,
 )
-from kpops.components.streams_bootstrap import StreamsApp
+from kpops.components.streams_bootstrap import ConsumerApp
 from kpops.components.streams_bootstrap.common.model import (
     PersistenceConfig,
     StreamsAppAutoScaling,
 )
-from kpops.components.streams_bootstrap.streams.streams_app import (
-    StreamsAppCleaner,
+from kpops.components.streams_bootstrap.consumer.consumer_app import (
+    ConsumerAppCleaner,
 )
 
 RESOURCES_PATH = Path(__file__).parent / "resources"
 
 NAMESPACE = "test-namespace"
 PREFIX = "${pipeline.name}-"
-STREAMS_APP_NAME = "test-streams-app-with-long-name-0123456789abcdefghijklmnop"
-STREAMS_APP_FULL_NAME = PREFIX + STREAMS_APP_NAME
-STREAMS_APP_HELM_NAME_OVERRIDE = (
-    PREFIX + "test-streams-app-with-long-name-01234567-a35c6"
+CONSUMER_APP_NAME = "test-consumer-app-with-long-name-0123456789abcdefghijklmnop"
+CONSUMER_APP_FULL_NAME = PREFIX + CONSUMER_APP_NAME
+CONSUMER_APP_HELM_NAME_OVERRIDE = (
+    PREFIX + "test-consumer-app-with-long-name-0123456-6f3a6"
 )
-STREAMS_APP_RELEASE_NAME = create_helm_release_name(STREAMS_APP_FULL_NAME)
-STREAMS_APP_CLEAN_FULL_NAME = STREAMS_APP_FULL_NAME + "-clean"
-STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE = (
-    PREFIX + "test-streams-app-with-long-name-01-c98c5-clean"
+CONSUMER_APP_RELEASE_NAME = create_helm_release_name(CONSUMER_APP_FULL_NAME)
+CONSUMER_APP_CLEAN_FULL_NAME = CONSUMER_APP_FULL_NAME + "-clean"
+CONSUMER_APP_CLEAN_HELM_NAME_OVERRIDE = (
+    PREFIX + "test-consumer-app-with-long-name-0-7034d-clean"
 )
-STREAMS_APP_CLEAN_RELEASE_NAME = create_helm_release_name(
-    STREAMS_APP_CLEAN_FULL_NAME, "-clean"
+CONSUMER_APP_CLEAN_RELEASE_NAME = create_helm_release_name(
+    CONSUMER_APP_CLEAN_FULL_NAME, "-clean"
 )
 
-log = logging.getLogger("TestStreamsApp")
+log = logging.getLogger("TestConsumerApp")
 
 
 @pytest.mark.usefixtures("mock_env")
-class TestStreamsApp:
+class TestConsumerApp:
     def test_release_name(self):
-        assert STREAMS_APP_CLEAN_RELEASE_NAME.endswith("-clean")
+        assert CONSUMER_APP_CLEAN_RELEASE_NAME.endswith("-clean")
 
     @pytest.fixture()
-    def streams_app(self) -> StreamsApp:
-        return StreamsApp.model_validate(
+    def consumer_app(self) -> ConsumerApp:
+        return ConsumerApp.model_validate(
             {
-                "name": STREAMS_APP_NAME,
+                "name": CONSUMER_APP_NAME,
                 "namespace": NAMESPACE,
                 "values": {
-                    "image": "streamsApp",
+                    "image": "consumerApp",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
-                },
-                "to": {
-                    "topics": {
-                        "streams-app-output-topic": TopicConfig(
-                            type=OutputTopicTypes.OUTPUT, partitions_count=10
-                        ),
-                    }
                 },
             },
         )
 
     @pytest.fixture()
-    def stateful_streams_app(self) -> StreamsApp:
-        return StreamsApp.model_validate(
+    def stateful_consumer_app(self) -> ConsumerApp:
+        return ConsumerApp.model_validate(
             {
-                "name": STREAMS_APP_NAME,
+                "name": CONSUMER_APP_NAME,
                 "namespace": NAMESPACE,
                 "values": {
-                    "image": "streamsApp",
+                    "image": "consumerApp",
                     "statefulSet": True,
                     "persistence": {
                         "enabled": True,
@@ -102,13 +94,6 @@ class TestStreamsApp:
                     "kafka": {
                         "bootstrapServers": "fake-broker:9092",
                     },
-                },
-                "to": {
-                    "topics": {
-                        "streams-app-output-topic": TopicConfig(
-                            type=OutputTopicTypes.OUTPUT, partitions_count=10
-                        ),
-                    }
                 },
             },
         )
@@ -123,43 +108,43 @@ class TestStreamsApp:
     def empty_helm_get_values(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch.object(Helm, "get_values", return_value=None)
 
-    def test_cleaner(self, streams_app: StreamsApp):
-        cleaner = streams_app._cleaner
-        assert isinstance(cleaner, StreamsAppCleaner)
+    def test_cleaner(self, consumer_app: ConsumerApp):
+        cleaner = consumer_app._cleaner
+        assert isinstance(cleaner, ConsumerAppCleaner)
         assert not hasattr(cleaner, "_cleaner")
 
-    def test_cleaner_inheritance(self, streams_app: StreamsApp):
-        streams_app.values.kafka.application_id = "test-application-id"
-        streams_app.values.autoscaling = StreamsAppAutoScaling(
+    def test_cleaner_inheritance(self, consumer_app: ConsumerApp):
+        consumer_app.values.kafka.group_id = "test-group-id"
+        consumer_app.values.autoscaling = StreamsAppAutoScaling(
             enabled=True,
             lag_threshold=100,
             idle_replicas=1,
         )
-        assert streams_app._cleaner.values == streams_app.values
+        assert consumer_app._cleaner.values == consumer_app.values
 
-    def test_cleaner_helm_release_name(self, streams_app: StreamsApp):
+    def test_cleaner_helm_release_name(self, consumer_app: ConsumerApp):
         assert (
-            streams_app._cleaner.helm_release_name
-            == "${pipeline.name}-test-streams-app-with-lo-c98c5-clean"
+            consumer_app._cleaner.helm_release_name
+            == "${pipeline.name}-test-consumer-app-with-l-7034d-clean"
         )
 
-    def test_cleaner_helm_name_override(self, streams_app: StreamsApp):
+    def test_cleaner_helm_name_override(self, consumer_app: ConsumerApp):
         assert (
-            streams_app._cleaner.to_helm_values()["nameOverride"]
-            == STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE
+            consumer_app._cleaner.to_helm_values()["nameOverride"]
+            == CONSUMER_APP_CLEAN_HELM_NAME_OVERRIDE
         )
         assert (
-            streams_app._cleaner.to_helm_values()["fullnameOverride"]
-            == STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE
+            consumer_app._cleaner.to_helm_values()["fullnameOverride"]
+            == CONSUMER_APP_CLEAN_HELM_NAME_OVERRIDE
         )
 
     def test_set_topics(self):
-        streams_app = StreamsApp.model_validate(
+        consumer_app = ConsumerApp.model_validate(
             {
-                "name": STREAMS_APP_NAME,
+                "name": CONSUMER_APP_NAME,
                 "namespace": NAMESPACE,
                 "values": {
-                    "image": "streamsApp",
+                    "image": "consumerApp",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "from": {
@@ -179,21 +164,21 @@ class TestStreamsApp:
                 },
             },
         )
-        assert streams_app.values.kafka.input_topics == [
+        assert consumer_app.values.kafka.input_topics == [
             KafkaTopic(name="example-input"),
             KafkaTopic(name="b"),
             KafkaTopic(name="a"),
         ]
-        assert streams_app.values.kafka.labeled_input_topics == {
+        assert consumer_app.values.kafka.labeled_input_topics == {
             "role1": [KafkaTopic(name="topic-extra")],
             "role2": [KafkaTopic(name="topic-extra2"), KafkaTopic(name="topic-extra3")],
         }
-        assert streams_app.values.kafka.input_pattern == ".*"
-        assert streams_app.values.kafka.labeled_input_patterns == {
+        assert consumer_app.values.kafka.input_pattern == ".*"
+        assert consumer_app.values.kafka.labeled_input_patterns == {
             "another-pattern": "example.*"
         }
 
-        helm_values = streams_app.to_helm_values()
+        helm_values = consumer_app.to_helm_values()
         kafka_config = helm_values["kafka"]
         assert kafka_config["inputTopics"]
         assert "labeledInputTopics" in kafka_config
@@ -201,12 +186,12 @@ class TestStreamsApp:
         assert "labeledInputPatterns" in kafka_config
 
     def test_no_empty_input_topic(self):
-        streams_app = StreamsApp.model_validate(
+        consumer_app = ConsumerApp.model_validate(
             {
-                "name": STREAMS_APP_NAME,
+                "name": CONSUMER_APP_NAME,
                 "namespace": NAMESPACE,
                 "values": {
-                    "image": "streamsApp",
+                    "image": "consumerApp",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "from": {
@@ -216,12 +201,12 @@ class TestStreamsApp:
                 },
             },
         )
-        assert not streams_app.values.kafka.labeled_input_topics
-        assert not streams_app.values.kafka.input_topics
-        assert streams_app.values.kafka.input_pattern == ".*"
-        assert not streams_app.values.kafka.labeled_input_patterns
+        assert not consumer_app.values.kafka.labeled_input_topics
+        assert not consumer_app.values.kafka.input_topics
+        assert consumer_app.values.kafka.input_pattern == ".*"
+        assert not consumer_app.values.kafka.labeled_input_patterns
 
-        helm_values = streams_app.to_helm_values()
+        helm_values = consumer_app.to_helm_values()
         streams_config = helm_values["kafka"]
         assert "inputTopics" not in streams_config
         assert "extraInputTopics" not in streams_config
@@ -233,9 +218,9 @@ class TestStreamsApp:
         with pytest.raises(
             ValueError, match="Define label only if `type` is `pattern` or `None`"
         ):
-            assert StreamsApp.model_validate(
+            assert ConsumerApp.model_validate(
                 {
-                    "name": STREAMS_APP_NAME,
+                    "name": CONSUMER_APP_NAME,
                     "namespace": NAMESPACE,
                     "values": {
                         "kafka": {"bootstrapServers": "fake-broker:9092"},
@@ -251,81 +236,19 @@ class TestStreamsApp:
                 },
             )
 
-        # An exception should be raised when both label and type are defined and type is error
-        with pytest.raises(
-            ValueError, match="Define `label` only if `type` is undefined"
-        ):
-            assert StreamsApp.model_validate(
-                {
-                    "name": STREAMS_APP_NAME,
-                    "namespace": NAMESPACE,
-                    "values": {
-                        "kafka": {"bootstrapServers": "fake-broker:9092"},
-                    },
-                    "to": {
-                        "topics": {
-                            "topic-input": {
-                                "type": "error",
-                                "label": "role",
-                            }
-                        }
-                    },
-                },
-            )
-
-    def test_set_streams_output_from_to(self):
-        streams_app = StreamsApp.model_validate(
-            {
-                "name": STREAMS_APP_NAME,
-                "namespace": NAMESPACE,
-                "values": {
-                    "image": "streamsApp",
-                    "kafka": {"bootstrapServers": "fake-broker:9092"},
-                },
-                "to": {
-                    "topics": {
-                        "streams-app-output-topic": TopicConfig(
-                            type=OutputTopicTypes.OUTPUT, partitions_count=10
-                        ),
-                        "streams-app-error-topic": TopicConfig(
-                            type=OutputTopicTypes.ERROR, partitions_count=10
-                        ),
-                        "extra-topic-1": TopicConfig(
-                            label="first-extra-role",
-                            partitions_count=10,
-                        ),
-                        "extra-topic-2": TopicConfig(
-                            label="second-extra-role",
-                            partitions_count=10,
-                        ),
-                    }
-                },
-            },
-        )
-        assert streams_app.values.kafka.labeled_output_topics == {
-            "first-extra-role": KafkaTopic(name="extra-topic-1"),
-            "second-extra-role": KafkaTopic(name="extra-topic-2"),
-        }
-        assert streams_app.values.kafka.output_topic == KafkaTopic(
-            name="streams-app-output-topic"
-        )
-        assert streams_app.values.kafka.error_topic == KafkaTopic(
-            name="streams-app-error-topic"
-        )
-
     def test_weave_inputs_from_prev_component(self):
-        streams_app = StreamsApp.model_validate(
+        consumer_app = ConsumerApp.model_validate(
             {
-                "name": STREAMS_APP_NAME,
+                "name": CONSUMER_APP_NAME,
                 "namespace": NAMESPACE,
                 "values": {
-                    "image": "streamsApp",
+                    "image": "consumerApp",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
             },
         )
 
-        streams_app.weave_from_topics(
+        consumer_app.weave_from_topics(
             ToSection(
                 topics={
                     TopicName("prev-output-topic"): TopicConfig(
@@ -344,108 +267,48 @@ class TestStreamsApp:
             )
         )
 
-        assert streams_app.values.kafka.input_topics == [
+        assert consumer_app.values.kafka.input_topics == [
             KafkaTopic(name="prev-output-topic"),
             KafkaTopic(name="b"),
             KafkaTopic(name="a"),
         ]
 
     async def test_deploy_order_when_dry_run_is_false(self, mocker: MockerFixture):
-        streams_app = StreamsApp.model_validate(
+        consumer_app = ConsumerApp.model_validate(
             {
-                "name": STREAMS_APP_NAME,
+                "name": CONSUMER_APP_NAME,
                 "namespace": NAMESPACE,
                 "values": {
-                    "image": "streamsApp",
+                    "image": "consumerApp",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
-                },
-                "to": {
-                    "topics": {
-                        "streams-app-output-topic": TopicConfig(
-                            type=OutputTopicTypes.OUTPUT, partitions_count=10
-                        ),
-                        "streams-app-error-topic": TopicConfig(
-                            type=OutputTopicTypes.ERROR, partitions_count=10
-                        ),
-                        "extra-topic-1": TopicConfig(
-                            label="first-extra-topic",
-                            partitions_count=10,
-                        ),
-                        "extra-topic-2": TopicConfig(
-                            label="second-extra-topic",
-                            partitions_count=10,
-                        ),
-                    }
                 },
             },
         )
-        mock_create_topic = mocker.patch.object(
-            get_handlers().topic_handler, "create_topic"
-        )
         mock_helm_upgrade_install = mocker.patch.object(
-            streams_app._helm, "upgrade_install"
+            consumer_app._helm, "upgrade_install"
         )
 
         mock = mocker.AsyncMock()
-        mock.attach_mock(mock_create_topic, "mock_create_topic")
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
 
         dry_run = False
-        await streams_app.deploy(dry_run=dry_run)
+        await consumer_app.deploy(dry_run=dry_run)
 
-        assert streams_app.to
-        assert streams_app.to.kafka_topics == [
-            KafkaTopic(
-                name="streams-app-output-topic",
-                config=TopicConfig(
-                    type=OutputTopicTypes.OUTPUT,
-                    partitions_count=10,
-                ),
-            ),
-            KafkaTopic(
-                name="streams-app-error-topic",
-                config=TopicConfig(
-                    type=OutputTopicTypes.ERROR,
-                    partitions_count=10,
-                ),
-            ),
-            KafkaTopic(
-                name="extra-topic-1",
-                config=TopicConfig(
-                    partitions_count=10,
-                    label="first-extra-topic",
-                ),
-            ),
-            KafkaTopic(
-                name="extra-topic-2",
-                config=TopicConfig(
-                    partitions_count=10,
-                    label="second-extra-topic",
-                ),
-            ),
-        ]
+        # Ensure no outputs are attached to a ConsumerApp deployment
+        assert consumer_app.to is None
+
         assert mock.mock_calls == [
-            *(
-                mocker.call.mock_create_topic(topic, dry_run=dry_run)
-                for topic in streams_app.to.kafka_topics
-            ),
             mocker.call.helm_upgrade_install(
-                STREAMS_APP_RELEASE_NAME,
-                "bakdata-streams-bootstrap/streams-app",
+                CONSUMER_APP_RELEASE_NAME,
+                "bakdata-streams-bootstrap/consumer-app",
                 dry_run,
                 NAMESPACE,
                 {
-                    "nameOverride": STREAMS_APP_HELM_NAME_OVERRIDE,
-                    "fullnameOverride": STREAMS_APP_HELM_NAME_OVERRIDE,
-                    "image": "streamsApp",
+                    "nameOverride": CONSUMER_APP_HELM_NAME_OVERRIDE,
+                    "fullnameOverride": CONSUMER_APP_HELM_NAME_OVERRIDE,
+                    "image": "consumerApp",
                     "kafka": {
                         "bootstrapServers": "fake-broker:9092",
-                        "labeledOutputTopics": {
-                            "first-extra-topic": "extra-topic-1",
-                            "second-extra-topic": "extra-topic-2",
-                        },
-                        "outputTopic": "streams-app-output-topic",
-                        "errorTopic": "streams-app-error-topic",
                     },
                 },
                 HelmUpgradeInstallFlags(
@@ -465,20 +328,20 @@ class TestStreamsApp:
 
     async def test_destroy(
         self,
-        streams_app: StreamsApp,
+        consumer_app: ConsumerApp,
         mocker: MockerFixture,
     ):
-        mock_helm_uninstall = mocker.patch.object(streams_app._helm, "uninstall")
+        mock_helm_uninstall = mocker.patch.object(consumer_app._helm, "uninstall")
 
-        await streams_app.destroy(dry_run=True)
+        await consumer_app.destroy(dry_run=True)
 
         mock_helm_uninstall.assert_called_once_with(
-            NAMESPACE, STREAMS_APP_RELEASE_NAME, True
+            NAMESPACE, CONSUMER_APP_RELEASE_NAME, True
         )
 
     async def test_reset_when_dry_run_is_false(
         self,
-        streams_app: StreamsApp,
+        consumer_app: ConsumerApp,
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
     ):
@@ -489,48 +352,46 @@ class TestStreamsApp:
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
 
         dry_run = False
-        await streams_app.reset(dry_run=dry_run)
+        await consumer_app.reset(dry_run=dry_run)
 
         assert mock.mock_calls == [
-            mocker.call.helm_uninstall(NAMESPACE, STREAMS_APP_RELEASE_NAME, dry_run),
+            mocker.call.helm_uninstall(NAMESPACE, CONSUMER_APP_RELEASE_NAME, dry_run),
             ANY,  # __bool__
             ANY,  # __str__
             mocker.call.helm_uninstall(
                 NAMESPACE,
-                STREAMS_APP_CLEAN_RELEASE_NAME,
+                CONSUMER_APP_CLEAN_RELEASE_NAME,
                 dry_run,
             ),
-            ANY,  # __bool__  # FIXME: why is this in the call stack?
+            ANY,  # __bool__
             ANY,  # __str__
             mocker.call.helm_upgrade_install(
-                STREAMS_APP_CLEAN_RELEASE_NAME,
-                "bakdata-streams-bootstrap/streams-app-cleanup-job",
+                CONSUMER_APP_CLEAN_RELEASE_NAME,
+                "bakdata-streams-bootstrap/consumer-app-cleanup-job",
                 dry_run,
                 NAMESPACE,
                 {
-                    "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
-                    "fullnameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
-                    "image": "streamsApp",
+                    "nameOverride": CONSUMER_APP_CLEAN_HELM_NAME_OVERRIDE,
+                    "fullnameOverride": CONSUMER_APP_CLEAN_HELM_NAME_OVERRIDE,
+                    "image": "consumerApp",
                     "kafka": {
                         "bootstrapServers": "fake-broker:9092",
-                        "outputTopic": "streams-app-output-topic",
-                        "deleteOutput": False,
                     },
                 },
                 HelmUpgradeInstallFlags(version="3.6.1", wait=True, wait_for_jobs=True),
             ),
             mocker.call.helm_uninstall(
                 NAMESPACE,
-                STREAMS_APP_CLEAN_RELEASE_NAME,
+                CONSUMER_APP_CLEAN_RELEASE_NAME,
                 dry_run,
             ),
             ANY,  # __bool__
             ANY,  # __str__
         ]
 
-    async def test_should_clean_streams_app_and_deploy_clean_up_job_and_delete_clean_up(
+    async def test_should_clean_consumer_app_and_deploy_clean_up_job_and_delete_clean_up(
         self,
-        streams_app: StreamsApp,
+        consumer_app: ConsumerApp,
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
     ):
@@ -541,39 +402,37 @@ class TestStreamsApp:
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
 
         dry_run = False
-        await streams_app.clean(dry_run=dry_run)
+        await consumer_app.clean(dry_run=dry_run)
 
         assert mock.mock_calls == [
-            mocker.call.helm_uninstall(NAMESPACE, STREAMS_APP_RELEASE_NAME, dry_run),
+            mocker.call.helm_uninstall(NAMESPACE, CONSUMER_APP_RELEASE_NAME, dry_run),
             ANY,  # __bool__
             ANY,  # __str__
             mocker.call.helm_uninstall(
                 NAMESPACE,
-                STREAMS_APP_CLEAN_RELEASE_NAME,
+                CONSUMER_APP_CLEAN_RELEASE_NAME,
                 dry_run,
             ),
             ANY,  # __bool__
             ANY,  # __str__
             mocker.call.helm_upgrade_install(
-                STREAMS_APP_CLEAN_RELEASE_NAME,
-                "bakdata-streams-bootstrap/streams-app-cleanup-job",
+                CONSUMER_APP_CLEAN_RELEASE_NAME,
+                "bakdata-streams-bootstrap/consumer-app-cleanup-job",
                 dry_run,
                 NAMESPACE,
                 {
-                    "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
-                    "fullnameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
-                    "image": "streamsApp",
+                    "nameOverride": CONSUMER_APP_CLEAN_HELM_NAME_OVERRIDE,
+                    "fullnameOverride": CONSUMER_APP_CLEAN_HELM_NAME_OVERRIDE,
+                    "image": "consumerApp",
                     "kafka": {
                         "bootstrapServers": "fake-broker:9092",
-                        "outputTopic": "streams-app-output-topic",
-                        "deleteOutput": True,
                     },
                 },
                 HelmUpgradeInstallFlags(version="3.6.1", wait=True, wait_for_jobs=True),
             ),
             mocker.call.helm_uninstall(
                 NAMESPACE,
-                STREAMS_APP_CLEAN_RELEASE_NAME,
+                CONSUMER_APP_CLEAN_RELEASE_NAME,
                 dry_run,
             ),
             ANY,  # __bool__
@@ -588,27 +447,26 @@ class TestStreamsApp:
             Helm,
             "get_values",
             return_value={
-                "image": "registry/streams-app",
+                "image": "registry/consumer-app",
                 "imageTag": image_tag_in_cluster,
-                "nameOverride": STREAMS_APP_NAME,
-                "fullnameOverride": STREAMS_APP_NAME,
+                "nameOverride": CONSUMER_APP_NAME,
+                "fullnameOverride": CONSUMER_APP_NAME,
                 "replicaCount": 1,
                 "persistence": {"enabled": False, "size": "1Gi"},
                 "statefulSet": False,
                 "kafka": {
                     "bootstrapServers": "fake-broker:9092",
                     "inputTopics": ["test-input-topic"],
-                    "outputTopic": "streams-app-output-topic",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
         )
-        streams_app = StreamsApp.model_validate(
+        consumer_app = ConsumerApp.model_validate(
             {
-                "name": STREAMS_APP_NAME,
+                "name": CONSUMER_APP_NAME,
                 "namespace": NAMESPACE,
                 "values": {
-                    "image": "registry/streams-app",
+                    "image": "registry/consumer-app",
                     "imageTag": "2.2.2",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
@@ -617,44 +475,34 @@ class TestStreamsApp:
                         "test-input-topic": {"type": "input"},
                     }
                 },
-                "to": {
-                    "topics": {
-                        "streams-app-output-topic": {"type": "output"},
-                    }
-                },
             },
         )
 
-        mocker.patch.object(streams_app._helm, "uninstall")
+        mocker.patch.object(consumer_app._helm, "uninstall")
 
         mock_helm_upgrade_install = mocker.patch.object(
-            streams_app._cleaner._helm, "upgrade_install"
+            consumer_app._cleaner._helm, "upgrade_install"
         )
-        mocker.patch.object(streams_app._cleaner._helm, "uninstall")
-
-        mock = mocker.MagicMock()
-        mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
+        mocker.patch.object(consumer_app._cleaner._helm, "uninstall")
 
         dry_run = False
-        await streams_app.reset(dry_run=dry_run)
+        await consumer_app.reset(dry_run=dry_run)
 
         mock_helm_upgrade_install.assert_called_once_with(
-            STREAMS_APP_CLEAN_RELEASE_NAME,
-            "bakdata-streams-bootstrap/streams-app-cleanup-job",
+            CONSUMER_APP_CLEAN_RELEASE_NAME,
+            "bakdata-streams-bootstrap/consumer-app-cleanup-job",
             dry_run,
             NAMESPACE,
             {
-                "image": "registry/streams-app",
-                "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
-                "fullnameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                "image": "registry/consumer-app",
+                "nameOverride": CONSUMER_APP_CLEAN_HELM_NAME_OVERRIDE,
+                "fullnameOverride": CONSUMER_APP_CLEAN_HELM_NAME_OVERRIDE,
                 "imageTag": image_tag_in_cluster,
                 "persistence": {"size": "1Gi"},
                 "replicaCount": 1,
                 "kafka": {
                     "bootstrapServers": "fake-broker:9092",
                     "inputTopics": ["test-input-topic"],
-                    "outputTopic": "streams-app-output-topic",
-                    "deleteOutput": False,
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
@@ -669,27 +517,26 @@ class TestStreamsApp:
             Helm,
             "get_values",
             return_value={
-                "image": "registry/streams-app",
+                "image": "registry/consumer-app",
                 "imageTag": image_tag_in_cluster,
-                "nameOverride": STREAMS_APP_NAME,
-                "fullnameOverride": STREAMS_APP_NAME,
+                "nameOverride": CONSUMER_APP_NAME,
+                "fullnameOverride": CONSUMER_APP_NAME,
                 "replicaCount": 1,
                 "persistence": {"enabled": False, "size": "1Gi"},
                 "statefulSet": False,
                 "kafka": {
                     "bootstrapServers": "fake-broker:9092",
                     "inputTopics": ["test-input-topic"],
-                    "outputTopic": "streams-app-output-topic",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
         )
-        streams_app = StreamsApp.model_validate(
+        consumer_app = ConsumerApp.model_validate(
             {
-                "name": STREAMS_APP_NAME,
+                "name": CONSUMER_APP_NAME,
                 "namespace": NAMESPACE,
                 "values": {
-                    "image": "registry/streams-app",
+                    "image": "registry/consumer-app",
                     "imageTag": "2.2.2",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
@@ -698,57 +545,47 @@ class TestStreamsApp:
                         "test-input-topic": {"type": "input"},
                     }
                 },
-                "to": {
-                    "topics": {
-                        "streams-app-output-topic": {"type": "output"},
-                    }
-                },
             },
         )
 
-        mocker.patch.object(streams_app._helm, "uninstall")
+        mocker.patch.object(consumer_app._helm, "uninstall")
 
         mock_helm_upgrade_install = mocker.patch.object(
-            streams_app._cleaner._helm, "upgrade_install"
+            consumer_app._cleaner._helm, "upgrade_install"
         )
-        mocker.patch.object(streams_app._cleaner._helm, "uninstall")
-
-        mock = mocker.MagicMock()
-        mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
+        mocker.patch.object(consumer_app._cleaner._helm, "uninstall")
 
         dry_run = False
-        await streams_app.clean(dry_run=dry_run)
+        await consumer_app.clean(dry_run=dry_run)
 
         mock_helm_upgrade_install.assert_called_once_with(
-            STREAMS_APP_CLEAN_RELEASE_NAME,
-            "bakdata-streams-bootstrap/streams-app-cleanup-job",
+            CONSUMER_APP_CLEAN_RELEASE_NAME,
+            "bakdata-streams-bootstrap/consumer-app-cleanup-job",
             dry_run,
             NAMESPACE,
             {
-                "image": "registry/streams-app",
-                "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
-                "fullnameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                "image": "registry/consumer-app",
+                "nameOverride": CONSUMER_APP_CLEAN_HELM_NAME_OVERRIDE,
+                "fullnameOverride": CONSUMER_APP_CLEAN_HELM_NAME_OVERRIDE,
                 "imageTag": image_tag_in_cluster,
                 "persistence": {"size": "1Gi"},
                 "replicaCount": 1,
                 "kafka": {
                     "bootstrapServers": "fake-broker:9092",
                     "inputTopics": ["test-input-topic"],
-                    "outputTopic": "streams-app-output-topic",
-                    "deleteOutput": True,
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
             HelmUpgradeInstallFlags(version="3.6.1", wait=True, wait_for_jobs=True),
         )
 
-    async def test_get_input_output_topics(self):
-        streams_app = StreamsApp.model_validate(
+    async def test_get_input_topics(self):
+        consumer_app = ConsumerApp.model_validate(
             {
                 "name": "my-app",
                 "namespace": NAMESPACE,
                 "values": {
-                    "image": "registry/streams-app",
+                    "image": "registry/consumer-app",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "from": {
@@ -766,33 +603,26 @@ class TestStreamsApp:
                         },
                     }
                 },
-                "to": {
-                    "topics": {
-                        "example-output": {"type": "output"},
-                        "extra-topic": {"label": "fake-role"},
-                    }
-                },
             },
         )
 
-        assert streams_app.values.kafka.input_topics == [
+        assert consumer_app.values.kafka.input_topics == [
             KafkaTopic(name="example-input"),
             KafkaTopic(name="b"),
             KafkaTopic(name="a"),
         ]
-        assert streams_app.values.kafka.labeled_input_topics == {
+        assert consumer_app.values.kafka.labeled_input_topics == {
             "role1": [KafkaTopic(name="topic-extra")],
             "role2": [KafkaTopic(name="topic-extra2"), KafkaTopic(name="topic-extra3")],
         }
-        assert streams_app.output_topic == KafkaTopic(name="example-output")
-        assert streams_app.extra_output_topics == {
-            "fake-role": KafkaTopic(name="extra-topic")
-        }
-        assert list(streams_app.outputs) == [
-            KafkaTopic(name="example-output"),
-            KafkaTopic(name="extra-topic"),
-        ]
-        assert list(streams_app.inputs) == [
+
+        # Verify no outputs are registered
+        assert consumer_app.to is None
+        assert not getattr(consumer_app, "outputs", None) or not list(
+            consumer_app.outputs
+        )
+
+        assert list(consumer_app.inputs) == [
             KafkaTopic(name="example-input"),
             KafkaTopic(name="b"),
             KafkaTopic(name="a"),
@@ -802,7 +632,7 @@ class TestStreamsApp:
         ]
 
     def test_raise_validation_error_when_persistence_enabled_and_size_not_set(
-        self, stateful_streams_app: StreamsApp
+        self, stateful_consumer_app: ConsumerApp
     ):
         with pytest.raises(
             ValidationError,
@@ -810,32 +640,21 @@ class TestStreamsApp:
                 "If app.persistence.enabled is set to true, the field app.persistence.size needs to be set."
             ),
         ):
-            stateful_streams_app.values.persistence = PersistenceConfig(enabled=True)
+            stateful_consumer_app.values.persistence = PersistenceConfig(enabled=True)
 
-    def test_generate(self, stateful_streams_app: StreamsApp):
-        assert stateful_streams_app.generate() == {
-            "helm_name_override": STREAMS_APP_HELM_NAME_OVERRIDE,
-            "helm_release_name": STREAMS_APP_RELEASE_NAME,
-            "name": STREAMS_APP_NAME,
+    def test_generate(self, stateful_consumer_app: ConsumerApp):
+        assert stateful_consumer_app.generate() == {
+            "helm_name_override": CONSUMER_APP_HELM_NAME_OVERRIDE,
+            "helm_release_name": CONSUMER_APP_RELEASE_NAME,
+            "name": CONSUMER_APP_NAME,
             "enabled": True,
             "namespace": NAMESPACE,
             "prefix": PREFIX,
-            "to": {
-                "models": {},
-                "topics": {
-                    "streams-app-output-topic": {
-                        "configs": {},
-                        "partitions_count": 10,
-                        "type": "output",
-                    }
-                },
-            },
-            "type": "streams-app",
+            "type": "consumer-app",
             "values": {
-                "image": "streamsApp",
+                "image": "consumerApp",
                 "kafka": {
                     "bootstrapServers": "fake-broker:9092",
-                    "outputTopic": "streams-app-output-topic",
                 },
                 "persistence": {"enabled": True, "size": "5Gi", "storageClass": "foo"},
                 "statefulSet": True,
@@ -893,7 +712,7 @@ class TestStreamsApp:
     @pytest.mark.usefixtures("kubeconfig")
     async def test_stateful_clean_with_dry_run_false(
         self,
-        stateful_streams_app: StreamsApp,
+        stateful_consumer_app: ConsumerApp,
         empty_helm_get_values: MockerFixture,
         mock_list_pvcs: MagicMock,
         mocker: MockerFixture,
@@ -907,32 +726,30 @@ class TestStreamsApp:
         mock.attach_mock(mock_delete_pvcs, "delete_pvcs")
 
         dry_run = False
-        await stateful_streams_app.clean(dry_run=dry_run)
+        await stateful_consumer_app.clean(dry_run=dry_run)
 
         assert mock.mock_calls == [
-            mocker.call.helm_uninstall(NAMESPACE, STREAMS_APP_RELEASE_NAME, dry_run),
+            mocker.call.helm_uninstall(NAMESPACE, CONSUMER_APP_RELEASE_NAME, dry_run),
             ANY,  # __bool__
             ANY,  # __str__
             mocker.call.helm_uninstall(
                 NAMESPACE,
-                STREAMS_APP_CLEAN_RELEASE_NAME,
+                CONSUMER_APP_CLEAN_RELEASE_NAME,
                 dry_run,
             ),
             ANY,  # __bool__
             ANY,  # __str__
             mocker.call.helm_upgrade_install(
-                STREAMS_APP_CLEAN_RELEASE_NAME,
-                "bakdata-streams-bootstrap/streams-app-cleanup-job",
+                CONSUMER_APP_CLEAN_RELEASE_NAME,
+                "bakdata-streams-bootstrap/consumer-app-cleanup-job",
                 dry_run,
                 NAMESPACE,
                 {
-                    "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
-                    "fullnameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
-                    "image": "streamsApp",
+                    "nameOverride": CONSUMER_APP_CLEAN_HELM_NAME_OVERRIDE,
+                    "fullnameOverride": CONSUMER_APP_CLEAN_HELM_NAME_OVERRIDE,
+                    "image": "consumerApp",
                     "kafka": {
                         "bootstrapServers": "fake-broker:9092",
-                        "outputTopic": "streams-app-output-topic",
-                        "deleteOutput": True,
                     },
                     "statefulSet": True,
                     "persistence": {
@@ -945,7 +762,7 @@ class TestStreamsApp:
             ),
             mocker.call.helm_uninstall(
                 NAMESPACE,
-                STREAMS_APP_CLEAN_RELEASE_NAME,
+                CONSUMER_APP_CLEAN_RELEASE_NAME,
                 dry_run,
             ),
             ANY,  # __bool__
@@ -956,7 +773,7 @@ class TestStreamsApp:
     @pytest.mark.usefixtures("kubeconfig")
     async def test_stateful_clean_with_dry_run_true(
         self,
-        stateful_streams_app: StreamsApp,
+        stateful_consumer_app: ConsumerApp,
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
         mock_list_pvcs: MagicMock,
@@ -964,20 +781,20 @@ class TestStreamsApp:
     ):
         caplog.set_level(logging.DEBUG)
         # actual component
-        mocker.patch.object(stateful_streams_app, "destroy")
+        mocker.patch.object(stateful_consumer_app, "destroy")
 
-        cleaner = stateful_streams_app._cleaner
-        assert isinstance(cleaner, StreamsAppCleaner)
+        cleaner = stateful_consumer_app._cleaner
+        assert isinstance(cleaner, ConsumerAppCleaner)
 
         mocker.patch.object(cleaner, "destroy")
         mocker.patch.object(cleaner, "deploy")
 
         dry_run = True
-        await stateful_streams_app.clean(dry_run=dry_run)
+        await stateful_consumer_app.clean(dry_run=dry_run)
 
         mock_list_pvcs.assert_called_once()
         assert (
-            f"Deleting in namespace 'test-namespace' StatefulSet '{STREAMS_APP_FULL_NAME}' PVCs ['test-pvc1', 'test-pvc2', 'test-pvc3']"
+            f"Deleting in namespace 'test-namespace' StatefulSet '{CONSUMER_APP_FULL_NAME}' PVCs ['test-pvc1', 'test-pvc2', 'test-pvc3']"
             in caplog.text
         )
 
@@ -993,25 +810,24 @@ class TestStreamsApp:
             Helm,
             "get_values",
             return_value={
-                "image": "registry/producer-app",
+                "image": "registry/consumer-app",
                 "imageTag": "1.1.1",
-                "nameOverride": STREAMS_APP_NAME,
-                "fullnameOverride": STREAMS_APP_NAME,
+                "nameOverride": CONSUMER_APP_NAME,
+                "fullnameOverride": CONSUMER_APP_NAME,
                 "streams": {
                     "brokers": "fake-broker:9092",
                     "inputTopics": ["test-input-topic"],
-                    "outputTopic": "streams-app-output-topic",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
         )
 
-        streams_app = StreamsApp.model_validate(
+        consumer_app = ConsumerApp.model_validate(
             {
-                "name": STREAMS_APP_NAME,
+                "name": CONSUMER_APP_NAME,
                 "namespace": NAMESPACE,
                 "values": {
-                    "image": "registry/streams-app",
+                    "image": "registry/consumer-app",
                     "imageTag": "2.2.2",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
@@ -1020,26 +836,18 @@ class TestStreamsApp:
                         "test-input-topic": {"type": "input"},
                     }
                 },
-                "to": {
-                    "topics": {
-                        "streams-app-output-topic": {"type": "output"},
-                    }
-                },
             },
         )
 
-        mocker.patch.object(streams_app._helm, "uninstall")
+        mocker.patch.object(consumer_app._helm, "uninstall")
 
         mock_helm_upgrade_install = mocker.patch.object(
-            streams_app._cleaner._helm, "upgrade_install"
+            consumer_app._cleaner._helm, "upgrade_install"
         )
-        mocker.patch.object(streams_app._cleaner._helm, "uninstall")
-
-        mock = mocker.MagicMock()
-        mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
+        mocker.patch.object(consumer_app._cleaner._helm, "uninstall")
 
         dry_run = False
-        await streams_app.clean(dry_run=dry_run)
+        await consumer_app.clean(dry_run=dry_run)
 
         assert (
             "The values in the cluster are invalid with the current model. Falling back to the enriched values of pipeline.yaml and defaults.yaml"
@@ -1047,20 +855,18 @@ class TestStreamsApp:
         )
 
         mock_helm_upgrade_install.assert_called_once_with(
-            STREAMS_APP_CLEAN_RELEASE_NAME,
-            "bakdata-streams-bootstrap/streams-app-cleanup-job",
+            CONSUMER_APP_CLEAN_RELEASE_NAME,
+            "bakdata-streams-bootstrap/consumer-app-cleanup-job",
             dry_run,
             NAMESPACE,
             {
-                "image": "registry/streams-app",
-                "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
-                "fullnameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                "image": "registry/consumer-app",
+                "nameOverride": CONSUMER_APP_CLEAN_HELM_NAME_OVERRIDE,
+                "fullnameOverride": CONSUMER_APP_CLEAN_HELM_NAME_OVERRIDE,
                 "imageTag": "2.2.2",
                 "kafka": {
                     "bootstrapServers": "fake-broker:9092",
                     "inputTopics": ["test-input-topic"],
-                    "outputTopic": "streams-app-output-topic",
-                    "deleteOutput": True,
                 },
             },
             HelmUpgradeInstallFlags(version="3.6.1", wait=True, wait_for_jobs=True),

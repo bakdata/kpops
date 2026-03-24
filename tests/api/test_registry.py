@@ -17,6 +17,7 @@ from kpops.components.base_components.kafka_connector import (
 from kpops.components.base_components.kubernetes_app import KubernetesApp
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.components.streams_bootstrap import (
+    ConsumerApp,
     ProducerApp,
     StreamsApp,
     StreamsBootstrap,
@@ -107,6 +108,7 @@ def test_registry():
         "pipeline-component": PipelineComponent,
         "producer-app-v2": ProducerAppV2,
         "producer-app": ProducerApp,
+        "consumer-app": ConsumerApp,
         "streams-app-v2": StreamsAppV2,
         "streams-app": StreamsApp,
         "streams-bootstrap-v2": StreamsBootstrapV2,

@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import Annotated, Any, ClassVar
 
 import pydantic
@@ -14,29 +12,24 @@ from kpops.components.streams_bootstrap.common.model import (
     serialize_labeled_input_topics,
     serialize_topics,
 )
-from kpops.components.streams_bootstrap.model import (
-    KafkaConfig,
-    StreamsBootstrapValues,
-)
+from kpops.components.streams_bootstrap.model import KafkaConfig, StreamsBootstrapValues
 from kpops.utils.pydantic import (
     SerializeAsOptional,
 )
 
 
-class StreamsConfig(KafkaConfig):
-    """streams-bootstrap kafka section.
+class ConsumerConfig(KafkaConfig):
+    """consumer app kafka section.
 
-    :param application_id: Unique application ID for Kafka Streams. Required for auto-scaling
+    :param group_id: Unique consumer group ID for Kafka Streams. Required for auto-scaling.
     :param input_topics: Input topics, defaults to []
     :param input_pattern: Input pattern, defaults to None
     :param labeled_input_topics: Extra input topics, defaults to {}
     :param labeled_input_patterns: Extra input patterns, defaults to {}
-    :param error_topic: Error topic, defaults to None
     :param config: Configuration, defaults to {}
-    :param delete_output: Whether the output topics with their associated schemas and the consumer group should be deleted during the cleanup, defaults to None
     """
 
-    application_id: str | None = Field(default=None, title="Unique application ID")
+    group_id: str | None = Field(default=None, title="Unique consumer group ID")
     input_topics: SerializeAsOptional[
         Annotated[
             list[KafkaTopicStr],
@@ -51,9 +44,7 @@ class StreamsConfig(KafkaConfig):
         ]
     ] = {}
     labeled_input_patterns: SerializeAsOptional[dict[str, str]] = {}
-    error_topic: KafkaTopicStr | None = None
     config: SerializeAsOptional[dict[str, Any]] = {}
-    delete_output: bool | None = None
 
     @pydantic.field_validator("input_topics", mode="before")
     @classmethod
@@ -98,21 +89,21 @@ class StreamsConfig(KafkaConfig):
         )
 
 
-class StreamsAppValues(StreamsBootstrapValues):
-    """streams-bootstrap app configurations.
+class ConsumerAppValues(StreamsBootstrapValues):
+    """consumer-app configurations.
 
     The attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.
 
-    :param kafka: streams-bootstrap kafka section
+    :param kafka: consumer-app kafka section
     :param autoscaling: Kubernetes event-driven autoscaling config, defaults to None
-    :param stateful_set: Whether to use a StatefulSet instead of a Deployment to deploy the streams app.
-    :param persistence: Configuration for persistent volume to store the state of the streams app.
+    :param stateful_set: Whether to use a StatefulSet instead of a Deployment to deploy the consumer app.
+    :param persistence: Configuration for persistent volume to store the state of the consumer app.
     :param prometheus: Configuration for Prometheus JMX Exporter.
     :param jmx: Configuration for JMX Exporter.
     :param termination_grace_period_seconds: Delay for graceful application shutdown in seconds: https://pracucci.com/graceful-shutdown-of-kubernetes-pods.html
     """
 
-    kafka: StreamsConfig = StreamsConfig()  # pyright: ignore[reportIncompatibleVariableOverride]
+    kafka: ConsumerConfig = ConsumerConfig()  # pyright: ignore[reportIncompatibleVariableOverride]
     autoscaling: StreamsAppAutoScaling | None = None
     stateful_set: bool = False
     persistence: PersistenceConfig | None = None

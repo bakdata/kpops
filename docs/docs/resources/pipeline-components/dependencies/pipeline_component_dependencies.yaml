@@ -1,3 +1,11 @@
+consumer-app.yaml:
+- prefix.yaml
+- from_.yaml
+- to-consumer-app.yaml
+- namespace.yaml
+- values-consumer-app.yaml
+- repo_config-helm-app.yaml
+- version-kafka-app.yaml
 helm-app.yaml:
 - prefix.yaml
 - from_.yaml
