@@ -213,7 +213,7 @@ jobs:
       # Checks to see if any files in the PR match one of the listed file types.
       # This will return true if there's a file in docs folder that was added, deleted, or modified in the PR.
       - name: Check if files in docs folder have changed
-        uses: dorny/paths-filter@v3
+        uses: dorny/paths-filter@v4
         id: docs-changes
         with:
           filters: |
