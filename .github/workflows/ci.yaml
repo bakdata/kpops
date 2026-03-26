@@ -31,10 +31,10 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ matrix.python-version }}
           version: ${{ env.UV_VERSION }}
@@ -58,10 +58,10 @@ jobs:
     name: Format
     runs-on: [ubuntu-24.04]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v7
         with:
           python-version: "3.11"
           version: ${{ env.UV_VERSION }}
@@ -90,12 +90,12 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ matrix.python-version }}
           version: ${{ env.UV_VERSION }}
@@ -108,10 +108,10 @@ jobs:
     runs-on: [ubuntu-24.04]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v7
         with:
           python-version: "3.12"
           version: ${{ env.UV_VERSION }}
@@ -145,10 +145,10 @@ jobs:
     permissions:
       id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v7
         with:
           python-version: "3.11"
           version: ${{ env.UV_VERSION }}
@@ -190,7 +190,7 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs: [lint, format, test, docs]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Publish docs from main branch
         uses: ./.github/actions/update-docs
@@ -206,14 +206,14 @@ jobs:
     if: ${{ github.event_name == 'pull_request' }}
     needs: [lint, format, test, docs]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.head_ref }}
 
       # Checks to see if any files in the PR match one of the listed file types.
       # This will return true if there's a file in docs folder that was added, deleted, or modified in the PR.
       - name: Check if files in docs folder have changed
-        uses: dorny/paths-filter@v3
+        uses: dorny/paths-filter@v4
         id: docs-changes
         with:
           filters: |
