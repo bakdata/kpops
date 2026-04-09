@@ -87,6 +87,24 @@ class KafkaConnectHandler:
                     f"Connector Destruction: the connector {connector_name} does not exist. Skipping."
                 )
 
+    async def reset_connector(self, connector_name: str, *, dry_run: bool) -> None:
+        """Reset connector offsets.
+
+        :param connector_name: The connector name.
+        :param dry_run: Whether the connector reset should be run in dry run mode.
+        """
+        if dry_run:
+            pass  # TODO
+        else:
+            try:
+                await self._connect_wrapper.stop_connector(connector_name)
+                await self._connect_wrapper.reset_offset(connector_name)
+
+            except ConnectorNotFoundException:
+                log.warning(
+                    f"Connector reset: the connector {connector_name} does not exist. Skipping."
+                )
+
     async def __dry_run_connector_creation(
         self,
         connector_config: KafkaConnectorConfig,

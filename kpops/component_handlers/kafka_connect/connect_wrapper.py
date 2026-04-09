@@ -232,3 +232,19 @@ class ConnectWrapper:
             await asyncio.sleep(1)
             return await self.delete_connector(connector_name)
         raise KafkaConnectError(response)
+
+    async def reset_offset(self, connector_name: str) -> None:
+        """Reset the offsets for a connector; the connector must exist, and must be in the STOPPED state.
+
+        API Reference:
+            https://docs.confluent.io/platform/current/connect/references/restapi.html#delete--connectors-connector-offsets
+        :param connector_name: Configuration parameters for the connector.
+        :raises ConnectorNotFoundException: Connector not found
+        """
+        response = await self._client.delete(f"/connectors/{connector_name}/offsets")
+        if response.status_code == httpx.codes.OK:
+            log.info(f"Connector {connector_name} offsets reset.")
+            return
+        if response.status_code == httpx.codes.NOT_FOUND:
+            raise ConnectorNotFoundException
+        raise KafkaConnectError(response)
