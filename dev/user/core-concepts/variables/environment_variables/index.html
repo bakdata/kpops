@@ -2053,8 +2053,15 @@
 <td>KPOPS_HELM_CONFIG__TIMEOUT</td>
 <td></td>
 <td>False</td>
-<td>Timeout for Helm operations, e.g. <code>5m0s</code> for 5 minutes</td>
+<td>Helm flag --timeout. Duration to wait for any individual Kubernetes operation</td>
 <td>helm_config.timeout</td>
+</tr>
+<tr>
+<td>KPOPS_HELM_CONFIG__FORCE_REPLACE</td>
+<td>False</td>
+<td>False</td>
+<td>Helm flag --force. Forces resource updates by replacement</td>
+<td>helm_config.force_replace</td>
 </tr>
 <tr>
 <td>KPOPS_RETAIN_CLEAN_JOBS</td>
@@ -2148,7 +2155,11 @@
 <span class="normal"><a href="#__codelineno-0-63">63</a></span>
 <span class="normal"><a href="#__codelineno-0-64">64</a></span>
 <span class="normal"><a href="#__codelineno-0-65">65</a></span>
-<span class="normal"><a href="#__codelineno-0-66">66</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="c1"># Global config environment variables</span>
+<span class="normal"><a href="#__codelineno-0-66">66</a></span>
+<span class="normal"><a href="#__codelineno-0-67">67</a></span>
+<span class="normal"><a href="#__codelineno-0-68">68</a></span>
+<span class="normal"><a href="#__codelineno-0-69">69</a></span>
+<span class="normal"><a href="#__codelineno-0-70">70</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="c1"># Global config environment variables</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="c1">#</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="c1"># The default setup is shown. These variables take precedence over the</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="c1"># settings in `config.yaml`. Variables marked as required can instead</span>
@@ -2202,18 +2213,22 @@
 </span><span id="__span-0-52"><a id="__codelineno-0-52" name="__codelineno-0-52"></a><span class="c1"># Kubernetes API version used for `Capabilities.APIVersions`</span>
 </span><span id="__span-0-53"><a id="__codelineno-0-53" name="__codelineno-0-53"></a><span class="n">KPOPS_HELM_CONFIG__API_VERSION</span> <span class="c1"># No default value, not required</span>
 </span><span id="__span-0-54"><a id="__codelineno-0-54" name="__codelineno-0-54"></a><span class="c1"># helm_config.timeout</span>
-</span><span id="__span-0-55"><a id="__codelineno-0-55" name="__codelineno-0-55"></a><span class="c1"># Timeout for Helm operations, e.g. `5m0s` for 5 minutes</span>
-</span><span id="__span-0-56"><a id="__codelineno-0-56" name="__codelineno-0-56"></a><span class="n">KPOPS_HELM_CONFIG__TIMEOUT</span> <span class="c1"># No default value, not required</span>
-</span><span id="__span-0-57"><a id="__codelineno-0-57" name="__codelineno-0-57"></a><span class="c1"># retain_clean_jobs</span>
-</span><span id="__span-0-58"><a id="__codelineno-0-58" name="__codelineno-0-58"></a><span class="c1"># Whether to retain clean up jobs in the cluster or uninstall the,</span>
-</span><span id="__span-0-59"><a id="__codelineno-0-59" name="__codelineno-0-59"></a><span class="c1"># after completion.</span>
-</span><span id="__span-0-60"><a id="__codelineno-0-60" name="__codelineno-0-60"></a><span class="n">KPOPS_RETAIN_CLEAN_JOBS</span><span class="o">=</span><span class="kc">False</span>
-</span><span id="__span-0-61"><a id="__codelineno-0-61" name="__codelineno-0-61"></a><span class="c1"># strimzi_topic</span>
-</span><span id="__span-0-62"><a id="__codelineno-0-62" name="__codelineno-0-62"></a><span class="c1"># Configuration for Strimzi Kafka Topics.</span>
-</span><span id="__span-0-63"><a id="__codelineno-0-63" name="__codelineno-0-63"></a><span class="n">KPOPS_STRIMZI_TOPIC</span> <span class="c1"># No default value, not required</span>
-</span><span id="__span-0-64"><a id="__codelineno-0-64" name="__codelineno-0-64"></a><span class="c1"># operation_mode</span>
-</span><span id="__span-0-65"><a id="__codelineno-0-65" name="__codelineno-0-65"></a><span class="c1"># The operation mode of KPOps (managed, manifest, argo).</span>
-</span><span id="__span-0-66"><a id="__codelineno-0-66" name="__codelineno-0-66"></a><span class="n">KPOPS_OPERATION_MODE</span><span class="o">=</span><span class="n">managed</span>
+</span><span id="__span-0-55"><a id="__codelineno-0-55" name="__codelineno-0-55"></a><span class="c1"># Helm flag --timeout. Duration to wait for any individual Kubernetes</span>
+</span><span id="__span-0-56"><a id="__codelineno-0-56" name="__codelineno-0-56"></a><span class="c1"># operation</span>
+</span><span id="__span-0-57"><a id="__codelineno-0-57" name="__codelineno-0-57"></a><span class="n">KPOPS_HELM_CONFIG__TIMEOUT</span> <span class="c1"># No default value, not required</span>
+</span><span id="__span-0-58"><a id="__codelineno-0-58" name="__codelineno-0-58"></a><span class="c1"># helm_config.force_replace</span>
+</span><span id="__span-0-59"><a id="__codelineno-0-59" name="__codelineno-0-59"></a><span class="c1"># Helm flag --force. Forces resource updates by replacement</span>
+</span><span id="__span-0-60"><a id="__codelineno-0-60" name="__codelineno-0-60"></a><span class="n">KPOPS_HELM_CONFIG__FORCE_REPLACE</span><span class="o">=</span><span class="kc">False</span>
+</span><span id="__span-0-61"><a id="__codelineno-0-61" name="__codelineno-0-61"></a><span class="c1"># retain_clean_jobs</span>
+</span><span id="__span-0-62"><a id="__codelineno-0-62" name="__codelineno-0-62"></a><span class="c1"># Whether to retain clean up jobs in the cluster or uninstall the,</span>
+</span><span id="__span-0-63"><a id="__codelineno-0-63" name="__codelineno-0-63"></a><span class="c1"># after completion.</span>
+</span><span id="__span-0-64"><a id="__codelineno-0-64" name="__codelineno-0-64"></a><span class="n">KPOPS_RETAIN_CLEAN_JOBS</span><span class="o">=</span><span class="kc">False</span>
+</span><span id="__span-0-65"><a id="__codelineno-0-65" name="__codelineno-0-65"></a><span class="c1"># strimzi_topic</span>
+</span><span id="__span-0-66"><a id="__codelineno-0-66" name="__codelineno-0-66"></a><span class="c1"># Configuration for Strimzi Kafka Topics.</span>
+</span><span id="__span-0-67"><a id="__codelineno-0-67" name="__codelineno-0-67"></a><span class="n">KPOPS_STRIMZI_TOPIC</span> <span class="c1"># No default value, not required</span>
+</span><span id="__span-0-68"><a id="__codelineno-0-68" name="__codelineno-0-68"></a><span class="c1"># operation_mode</span>
+</span><span id="__span-0-69"><a id="__codelineno-0-69" name="__codelineno-0-69"></a><span class="c1"># The operation mode of KPOps (managed, manifest, argo).</span>
+</span><span id="__span-0-70"><a id="__codelineno-0-70" name="__codelineno-0-70"></a><span class="n">KPOPS_OPERATION_MODE</span><span class="o">=</span><span class="n">managed</span>
 </span></code></pre></div></td></tr></table></div>
 </details>
 <!-- dprint-ignore-end -->
