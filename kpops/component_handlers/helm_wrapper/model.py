@@ -115,7 +115,7 @@ class HelmFlags(RepoAuthFlags):
         if self.version:
             command.extend(["--version", self.version])
         if self.force:
-            # TODO: --force was renamed to --force_replace in Helm v4, we should switch when dropping helm v3 support
+            # TODO: --force was renamed to --force-replace in Helm v4, we should switch when dropping helm v3 support
             command.append("--force")
         if self.timeout:
             command.extend(["--timeout", self.timeout])
