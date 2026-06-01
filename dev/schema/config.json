@@ -37,6 +37,19 @@
                     "description": "Run Helm in Debug mode",
                     "title": "Debug",
                     "type": "boolean"
+                },
+                "timeout": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Timeout for Helm operations, e.g. `5m0s` for 5 minutes",
+                    "title": "Wait Timeout"
                 }
             },
             "title": "HelmConfig",
@@ -202,7 +215,8 @@
             "default": {
                 "api_version": null,
                 "context": null,
-                "debug": false
+                "debug": false,
+                "timeout": null
             },
             "description": "Global flags for Helm."
         },
