@@ -175,18 +175,18 @@ class TestHelmApp:
         )
 
     @pytest.mark.parametrize(
-        ids=[
-            "prioritize local over global timeout",
-            "prioritize global over default timeout",
-            "prioritize local over default timeout",
-            "fallback to default timeout",
-        ],
-        argnames="local_timeout, global_timeout, expected_timeout",
-        argvalues=[
-            ("30m", "10m", "30m"),
-            (None, "10m", "10m"),
-            ("30m", None, "30m"),
-            (None, None, "5m0s"),
+        "local_timeout, global_timeout, expected_timeout",
+        [
+            pytest.param(
+                "30m", "10m", "30m", id="prioritize local over global timeout"
+            ),
+            pytest.param(
+                None, "10m", "10m", id="prioritize global over default timeout"
+            ),
+            pytest.param(
+                "30m", None, "30m", id="prioritize local over default timeout"
+            ),
+            pytest.param(None, None, "5m0s", id="fallback to default timeout"),
         ],
     )
     def test_should_apply_timeout_precedence(
