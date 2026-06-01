@@ -76,17 +76,13 @@ class HelmConfig(DescConfigModel):
     :param context: Name of kubeconfig context (`--kube-context`)
     :param debug: Run Helm in Debug mode
     :param api_version: Kubernetes API version used for `Capabilities.APIVersions`
+    :param timeout: Timeout for Helm operations, e.g. `5m0s` for 5 minutes
     """
 
-    context: str | None = Field(
-        default=None,
-        examples=["dev-storage"],
-    )
+    context: str | None = Field(default=None, examples=["dev-storage"])
     debug: bool = False
-    api_version: str | None = Field(
-        default=None,
-        title="API version",
-    )
+    api_version: str | None = Field(default=None, title="API version")
+    timeout: str | None = Field(default="5m0s", title="Wait Timeout")
 
 
 class HelmFlags(RepoAuthFlags):
@@ -94,7 +90,7 @@ class HelmFlags(RepoAuthFlags):
     create_namespace: bool = False
     version: str | None = None
     force: bool = False
-    timeout: str = "5m0s"
+    timeout: str | None = None
     wait: bool = True
     wait_for_jobs: bool = False
 
