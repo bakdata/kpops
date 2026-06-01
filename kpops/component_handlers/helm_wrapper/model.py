@@ -76,8 +76,8 @@ class HelmConfig(DescConfigModel):
     :param context: Name of kubeconfig context (`--kube-context`)
     :param debug: Run Helm in Debug mode
     :param api_version: Kubernetes API version used for `Capabilities.APIVersions`
-    :param timeout: Helm flag --timeout. time to wait for any individual Kubernetes operation
-    :param force_replace: Helm flag --force-replace. Forces resource updates by replacement
+    :param timeout: Helm flag --timeout. Duration to wait for any individual Kubernetes operation
+    :param force_replace: Helm flag --force. Forces resource updates by replacement
     """
 
     context: str | None = Field(default=None, examples=["dev-storage"])
@@ -115,7 +115,7 @@ class HelmFlags(RepoAuthFlags):
         if self.version:
             command.extend(["--version", self.version])
         if self.force:
-            # TODO: --force was renamed to --force_replace in Helm 4.X. we should switch when dropping helm v3 support
+            # TODO: --force was renamed to --force_replace in Helm v4, we should switch when dropping helm v3 support
             command.append("--force")
         if self.timeout:
             command.extend(["--timeout", self.timeout])

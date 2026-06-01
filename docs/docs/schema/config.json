@@ -40,7 +40,7 @@
                 },
                 "force_replace": {
                     "default": false,
-                    "description": "Helm flag --force-replace. Forces resource updates by replacement",
+                    "description": "Helm flag --force. Forces resource updates by replacement",
                     "title": "Force Upgrade",
                     "type": "boolean"
                 },
@@ -54,7 +54,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Helm flag --timeout. time to wait for any individual Kubernetes operation",
+                    "description": "Helm flag --timeout. Duration to wait for any individual Kubernetes operation",
                     "title": "Helm flag --timeout"
                 }
             },
