@@ -40,6 +40,7 @@ class Cleaner(HelmApp, ABC):
         return HelmFlags(
             create_namespace=get_config().create_namespace,
             version=self.version,
+            force=get_config().helm_config.force_replace,
             wait=True,
             wait_for_jobs=True,
             timeout=effective_timeout,
