@@ -131,7 +131,9 @@ class HelmApp(KubernetesApp):
         auth_flags = (
             self.repo_config.repo_auth_flags.model_dump() if self.repo_config else {}
         )
-        effective_timeout = self.timeout or get_config().helm_config.timeout
+        effective_timeout = (
+            self.timeout or get_config().helm_config.timeout or HelmFlags().timeout
+        )
         return HelmFlags(
             **auth_flags,
             version=self.version,

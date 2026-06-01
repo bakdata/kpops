@@ -47,7 +47,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": "5m0s",
+                    "default": null,
                     "description": "Timeout for Helm operations, e.g. `5m0s` for 5 minutes",
                     "title": "Wait Timeout"
                 }
@@ -216,7 +216,7 @@
                 "api_version": null,
                 "context": null,
                 "debug": false,
-                "timeout": "5m0s"
+                "timeout": null
             },
             "description": "Global flags for Helm."
         },

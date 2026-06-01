@@ -82,7 +82,7 @@ class HelmConfig(DescConfigModel):
     context: str | None = Field(default=None, examples=["dev-storage"])
     debug: bool = False
     api_version: str | None = Field(default=None, title="API version")
-    timeout: str | None = Field(default="5m0s", title="Wait Timeout")
+    timeout: str | None = Field(default=None, title="Wait Timeout")
 
 
 class HelmFlags(RepoAuthFlags):
@@ -90,7 +90,7 @@ class HelmFlags(RepoAuthFlags):
     create_namespace: bool = False
     version: str | None = None
     force: bool = False
-    timeout: str | None = None
+    timeout: str | None = "5m0s"
     wait: bool = True
     wait_for_jobs: bool = False
 
