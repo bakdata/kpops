@@ -138,6 +138,7 @@ class HelmApp(KubernetesApp):
             **auth_flags,
             version=self.version,
             create_namespace=get_config().create_namespace,
+            force=get_config().helm_config.force_replace,
             timeout=effective_timeout,
         )
 

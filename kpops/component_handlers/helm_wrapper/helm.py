@@ -108,7 +108,6 @@ class Helm:
     ) -> str:
         """Prepare and execute the `helm upgrade --install` command."""
         if flags is None:
-            # TODO: with change this will have default timeout None, not "5m", check if this is ok
             flags = HelmUpgradeInstallFlags()
         with tempfile.NamedTemporaryFile("w", delete=False) as values_file:
             yaml.safe_dump(values, values_file)

@@ -38,6 +38,12 @@
                     "title": "Debug",
                     "type": "boolean"
                 },
+                "force_replace": {
+                    "default": false,
+                    "description": "Helm flag --force-replace. Forces resource updates by replacement",
+                    "title": "Force Upgrade",
+                    "type": "boolean"
+                },
                 "timeout": {
                     "anyOf": [
                         {
@@ -48,8 +54,8 @@
                         }
                     ],
                     "default": null,
-                    "description": "Timeout for Helm operations, e.g. `5m0s` for 5 minutes",
-                    "title": "Wait Timeout"
+                    "description": "Helm flag --timeout. time to wait for any individual Kubernetes operation",
+                    "title": "Helm flag --timeout"
                 }
             },
             "title": "HelmConfig",
@@ -216,6 +222,7 @@
                 "api_version": null,
                 "context": null,
                 "debug": false,
+                "force_replace": false,
                 "timeout": null
             },
             "description": "Global flags for Helm."

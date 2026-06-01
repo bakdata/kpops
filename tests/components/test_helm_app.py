@@ -214,6 +214,27 @@ class TestHelmApp:
         finally:
             set_config(original_config)
 
+    def test_should_set_force_from_global_config(
+        self,
+        app_values: HelmAppValues,
+    ):
+        original_config = get_config()
+        set_config(
+            KpopsConfig(
+                kafka_brokers="broker:9092",
+                helm_config=HelmConfig(force_replace=True),
+            )
+        )
+        try:
+            helm_app = HelmApp(
+                name="test-helm-app",
+                values=app_values,
+                namespace="test-namespace",
+            )
+            assert helm_app.deploy_flags.force is True
+        finally:
+            set_config(original_config)
+
     async def test_should_call_helm_uninstall_when_destroying_helm_app(
         self,
         helm_app: HelmApp,
