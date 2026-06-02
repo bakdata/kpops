@@ -286,6 +286,44 @@ class TestHelmWrapper:
             ],
         )
 
+    async def test_should_use_force_replace_for_helm_v4(
+        self, mocker: MockerFixture, run_command_async: AsyncMock
+    ):
+        mocker.patch.object(
+            Helm,
+            "version",
+            return_value=Version(major=4, minor=2, patch=0),
+            new_callable=mocker.PropertyMock,
+        )
+        helm = Helm(helm_config=HelmConfig())
+
+        await helm.upgrade_install(
+            release_name="test-release",
+            chart="test-repository/streams-app",
+            namespace="test-namespace",
+            dry_run=False,
+            values={"commandLine": "test"},
+            flags=HelmUpgradeInstallFlags(force=True),
+        )
+
+        run_command_async.assert_called_once_with(
+            [
+                "helm",
+                "upgrade",
+                "test-release",
+                "test-repository/streams-app",
+                "--install",
+                "--namespace",
+                "test-namespace",
+                "--values",
+                "values.yaml",
+                "--force-replace",
+                "--timeout",
+                "5m0s",
+                "--wait",
+            ],
+        )
+
     async def test_should_call_run_command_method_when_uninstalling_streams_app(
         self, helm: Helm, run_command_async: AsyncMock
     ):
