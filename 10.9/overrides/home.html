@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block outdated %}
+  You're not viewing the latest version.
+  <a href="{{ '../' ~ base_url }}">
+    <strong>Click here to go to latest.</strong>
+  </a>
+{% endblock %}
+
+<!-- Render hero under tabs -->
+{% block tabs %}
+
+<!-- Additional styles for landing page -->
+<style>
+
+    body {
+        background: #a599ff;
+    }
+
+    /* Remove spacing, as we cannot hide it completely */
+    .md-main__inner {
+        margin: 0;
+    }
+
+    /* Hide main content for now */
+    .md-content {
+        display: none;
+    }
+
+    .mdx-container {
+        position: relative;
+        min-height: 100vh;
+        min-width: 100vw;
+    }
+
+    .mdx-hero__content {
+        margin-top: 50px;
+        position: relative;
+        z-index: 5;
+    }
+
+    /* Moves the search results to the front */
+    /* Application header should be static for the landing page */
+    .md-header {
+        background: #0000;
+        z-index: 10;
+        position: initial;
+    }
+
+    .mdx-hero__content h1 {
+        margin-bottom: 20px;
+        color: black;
+        font-weight: 700;
+        font-size: 40px;
+    }
+
+    .mdx-hero__content p {
+        color: black;
+        font-size: 20px;
+    }
+
+    .md-hero__image {
+        position: absolute;
+        bottom: 140px;
+        width: 100vw;
+    }
+
+    /* Hide table of contents */
+    @media screen and (min-width: 60em) {
+        .md-sidebar--secondary {
+            display: none;
+        }
+    }
+
+    /* Hide navigation */
+    @media screen and (min-width: 76.25em) {
+        .md-sidebar--primary {
+            display: none;
+        }
+    }
+
+</style>
+
+<!-- Hero for landing page -->
+<section class="mdx-container">
+    <div class="md-typeset">
+        <div class="mdx-hero">
+
+            <img class="md-hero__image" src="assets/images/kpops-background.svg"
+                 alt="KPOps background image"/>
+            <div class="md-grid mdx-hero__content">
+                <h1>KPOps Documentation</h1>
+
+                {% for nav_item in nav %}
+                {% if not nav_item.active%}
+
+                {% if nav_item.children %}
+                    {% set url = (nav_item.children | first).url | url %}
+                {% else %}
+                    {% set url = nav_item.url | url %}
+                {% endif %}
+
+                <a
+                    href="{{ url }}"
+                    title="{{ nav_item.title }}"
+                    class="md-button md-button--primary"
+                >
+                    {{ nav_item.title }}
+                </a>
+
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+<!-- Content -->
+{% block content %}{% endblock %}
+
+<!-- Application footer -->
+{% block footer %}{% endblock %}

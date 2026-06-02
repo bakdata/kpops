@@ -1,0 +1,3 @@
+# Base Kubernetes App
+- type: kubernetes-app
+  name: kubernetes-app # required
