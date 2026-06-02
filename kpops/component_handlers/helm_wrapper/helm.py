@@ -123,7 +123,7 @@ class Helm:
                 "--values",
                 values_file.name,
             ]
-            command.extend(flags.to_command())
+            command.extend(flags.to_command(self.version))
             if dry_run:
                 command.append("--dry-run")
             return await self.__async_execute(command)
@@ -210,7 +210,7 @@ class Helm:
                 "--values",
                 values_file.name,
             ]
-            command.extend(flags.to_command())
+            command.extend(flags.to_command(self.version))
             output = self.__execute(command)
             manifests = KubernetesManifest.from_yaml(output)
             return tuple(manifests)

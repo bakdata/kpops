@@ -17,6 +17,13 @@ from kpops.utils.pydantic import (
 KeyPath = tuple[str, ...]
 
 
+@dataclass(frozen=True)
+class Version:
+    major: int
+    minor: int = 0
+    patch: int = 0
+
+
 class HelmDiffConfig(SerializeAsOptionalModel):
     ignore: SerializeAsOptional[list[KeyPath]] = Field(
         default=[],
@@ -100,8 +107,7 @@ class HelmFlags(RepoAuthFlags):
         extra="allow",
     )
 
-    @override
-    def to_command(self) -> list[str]:
+    def to_command(self, helm_version: Version | None = None) -> list[str]:
         command = super().to_command()
         if self.set_file:
             command.extend(
@@ -115,8 +121,10 @@ class HelmFlags(RepoAuthFlags):
         if self.version:
             command.extend(["--version", self.version])
         if self.force:
-            # TODO: --force was renamed to --force-replace in Helm v4, we should switch when dropping helm v3 support
-            command.append("--force")
+            if helm_version and helm_version.major >= 4:
+                command.extend(["--force-replace"])
+            else:
+                command.append("--force")
         if self.timeout:
             command.extend(["--timeout", self.timeout])
         if self.wait:
@@ -133,8 +141,8 @@ class HelmTemplateFlags(HelmFlags):
     api_version: str | None = None
 
     @override
-    def to_command(self) -> list[str]:
-        command = super().to_command()
+    def to_command(self, helm_version: Version | None = None) -> list[str]:
+        command = super().to_command(helm_version)
         if self.api_version:
             command.extend(["--api-versions", self.api_version])
         return command
@@ -205,10 +213,3 @@ class HelmChart:
         )
 
         return self.content[manifest_start:manifest_end]
-
-
-@dataclass(frozen=True)
-class Version:
-    major: int
-    minor: int = 0
-    patch: int = 0
