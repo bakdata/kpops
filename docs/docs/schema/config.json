@@ -40,7 +40,7 @@
                 },
                 "force_replace": {
                     "default": false,
-                    "description": "Helm flag --force. Forces resource updates by replacement",
+                    "description": "Helm flag --force-replace. Forces resource updates by replacement",
                     "title": "Force Upgrade",
                     "type": "boolean"
                 },
