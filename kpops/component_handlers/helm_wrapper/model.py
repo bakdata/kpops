@@ -84,7 +84,7 @@ class HelmConfig(DescConfigModel):
     :param debug: Run Helm in Debug mode
     :param api_version: Kubernetes API version used for `Capabilities.APIVersions`
     :param timeout: Helm flag --timeout. Duration to wait for any individual Kubernetes operation
-    :param force_replace: Helm flag --force. Forces resource updates by replacement
+    :param force_replace: Helm flag --force-replace. Forces resource updates by replacement
     """
 
     context: str | None = Field(default=None, examples=["dev-storage"])
