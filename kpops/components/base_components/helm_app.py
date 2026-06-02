@@ -75,11 +75,13 @@ class HelmApp(KubernetesApp):
     :param diff_config: Helm diff config
     :param version: Helm chart version, defaults to None
     :param values: Helm app values
+    :param timeout: Timeout for Helm operations to finish
     """
 
     repo_config: SkipGenerate[HelmRepoConfig | None] = None
     diff_config: SkipGenerate[HelmDiffConfig] = HelmDiffConfig()
     version: str | None = None
+    timeout: str | None = None
     values: HelmAppValues  # pyright: ignore[reportIncompatibleVariableOverride]
 
     @cached_property
@@ -129,10 +131,15 @@ class HelmApp(KubernetesApp):
         auth_flags = (
             self.repo_config.repo_auth_flags.model_dump() if self.repo_config else {}
         )
+        effective_timeout = (
+            self.timeout or get_config().helm_config.timeout or HelmFlags().timeout
+        )
         return HelmFlags(
             **auth_flags,
             version=self.version,
             create_namespace=get_config().create_namespace,
+            force=get_config().helm_config.force_replace,
+            timeout=effective_timeout,
         )
 
     @property

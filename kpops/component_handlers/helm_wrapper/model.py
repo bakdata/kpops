@@ -17,6 +17,13 @@ from kpops.utils.pydantic import (
 KeyPath = tuple[str, ...]
 
 
+@dataclass(frozen=True)
+class Version:
+    major: int
+    minor: int = 0
+    patch: int = 0
+
+
 class HelmDiffConfig(SerializeAsOptionalModel):
     ignore: SerializeAsOptional[list[KeyPath]] = Field(
         default=[],
@@ -42,7 +49,7 @@ class RepoAuthFlags(DescConfigModel):
     cert_file: Path | None = None
     insecure_skip_tls_verify: bool = False
 
-    def to_command(self) -> list[str]:
+    def to_command(self, helm_version: Version) -> list[str]:
         command: list[str] = []
         if self.username:
             command.extend(["--username", self.username])
@@ -76,17 +83,15 @@ class HelmConfig(DescConfigModel):
     :param context: Name of kubeconfig context (`--kube-context`)
     :param debug: Run Helm in Debug mode
     :param api_version: Kubernetes API version used for `Capabilities.APIVersions`
+    :param timeout: Helm flag --timeout. Duration to wait for any individual Kubernetes operation
+    :param force_replace: Helm flag --force-replace. Forces resource updates by replacement
     """
 
-    context: str | None = Field(
-        default=None,
-        examples=["dev-storage"],
-    )
+    context: str | None = Field(default=None, examples=["dev-storage"])
     debug: bool = False
-    api_version: str | None = Field(
-        default=None,
-        title="API version",
-    )
+    api_version: str | None = Field(default=None, title="API version")
+    timeout: str | None = Field(default=None, title="Helm flag --timeout")
+    force_replace: bool = Field(default=False, title="Force Upgrade")
 
 
 class HelmFlags(RepoAuthFlags):
@@ -94,7 +99,7 @@ class HelmFlags(RepoAuthFlags):
     create_namespace: bool = False
     version: str | None = None
     force: bool = False
-    timeout: str = "5m0s"
+    timeout: str | None = "5m0s"
     wait: bool = True
     wait_for_jobs: bool = False
 
@@ -103,8 +108,8 @@ class HelmFlags(RepoAuthFlags):
     )
 
     @override
-    def to_command(self) -> list[str]:
-        command = super().to_command()
+    def to_command(self, helm_version: Version) -> list[str]:
+        command = super().to_command(helm_version)
         if self.set_file:
             command.extend(
                 [
@@ -117,7 +122,10 @@ class HelmFlags(RepoAuthFlags):
         if self.version:
             command.extend(["--version", self.version])
         if self.force:
-            command.append("--force")
+            if helm_version.major >= 4:
+                command.append("--force-replace")
+            else:
+                command.append("--force")
         if self.timeout:
             command.extend(["--timeout", self.timeout])
         if self.wait:
@@ -134,8 +142,8 @@ class HelmTemplateFlags(HelmFlags):
     api_version: str | None = None
 
     @override
-    def to_command(self) -> list[str]:
-        command = super().to_command()
+    def to_command(self, helm_version: Version) -> list[str]:
+        command = super().to_command(helm_version)
         if self.api_version:
             command.extend(["--api-versions", self.api_version])
         return command
@@ -206,10 +214,3 @@ class HelmChart:
         )
 
         return self.content[manifest_start:manifest_end]
-
-
-@dataclass(frozen=True)
-class Version:
-    major: int
-    minor: int = 0
-    patch: int = 0

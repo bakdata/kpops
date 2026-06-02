@@ -9,6 +9,8 @@ helm_config:
   api_version: null
   context: null
   debug: false
+  force_replace: false
+  timeout: null
 kafka_connect:
   timeout: 30
   url: http://localhost:8083/

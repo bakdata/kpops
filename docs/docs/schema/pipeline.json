@@ -112,6 +112,19 @@
                     },
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
                 },
+                "timeout": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Timeout for Helm operations to finish",
+                    "title": "Timeout"
+                },
                 "to": {
                     "default": null,
                     "title": "To",
@@ -836,6 +849,19 @@
                     ],
                     "default": null,
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
+                },
+                "timeout": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Timeout for Helm operations to finish",
+                    "title": "Timeout"
                 },
                 "to": {
                     "anyOf": [
@@ -2002,6 +2028,19 @@
                     },
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
                 },
+                "timeout": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Timeout for Helm operations to finish",
+                    "title": "Timeout"
+                },
                 "to": {
                     "anyOf": [
                         {
@@ -2094,6 +2133,19 @@
                         "url": "https://bakdata.github.io/streams-bootstrap/"
                     },
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
+                },
+                "timeout": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Timeout for Helm operations to finish",
+                    "title": "Timeout"
                 },
                 "to": {
                     "anyOf": [
@@ -3177,6 +3229,19 @@
                     },
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
                 },
+                "timeout": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Timeout for Helm operations to finish",
+                    "title": "Timeout"
+                },
                 "to": {
                     "anyOf": [
                         {
@@ -3276,6 +3341,19 @@
                         "url": "https://bakdata.github.io/streams-bootstrap/"
                     },
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
+                },
+                "timeout": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Timeout for Helm operations to finish",
+                    "title": "Timeout"
                 },
                 "to": {
                     "anyOf": [
