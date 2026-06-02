@@ -286,13 +286,22 @@ class TestHelmWrapper:
             ],
         )
 
-    async def test_should_use_force_replace_for_helm_v4(
-        self, mocker: MockerFixture, run_command_async: AsyncMock
+    @pytest.mark.parametrize(
+        "helm_major_version, expected_force_flag",
+        ((3, "--force"), (4, "--force-replace")),
+    )
+    async def test_should_switch_helm_version_force_flag(
+        self,
+        helm,
+        mocker: MockerFixture,
+        run_command_async: AsyncMock,
+        helm_major_version: int,
+        expected_force_flag: str,
     ):
         mocker.patch.object(
             Helm,
             "version",
-            return_value=Version(major=4, minor=2, patch=0),
+            return_value=Version(major=helm_major_version, minor=2, patch=0),
             new_callable=mocker.PropertyMock,
         )
         helm = Helm(helm_config=HelmConfig())
@@ -305,7 +314,6 @@ class TestHelmWrapper:
             values={"commandLine": "test"},
             flags=HelmUpgradeInstallFlags(force=True),
         )
-
         run_command_async.assert_called_once_with(
             [
                 "helm",
@@ -317,7 +325,7 @@ class TestHelmWrapper:
                 "test-namespace",
                 "--values",
                 "values.yaml",
-                "--force-replace",
+                expected_force_flag,
                 "--timeout",
                 "5m0s",
                 "--wait",
