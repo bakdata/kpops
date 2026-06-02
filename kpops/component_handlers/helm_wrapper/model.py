@@ -49,7 +49,7 @@ class RepoAuthFlags(DescConfigModel):
     cert_file: Path | None = None
     insecure_skip_tls_verify: bool = False
 
-    def to_command(self) -> list[str]:
+    def to_command(self, helm_version: Version) -> list[str]:
         command: list[str] = []
         if self.username:
             command.extend(["--username", self.username])
@@ -107,8 +107,9 @@ class HelmFlags(RepoAuthFlags):
         extra="allow",
     )
 
-    def to_command(self, helm_version: Version | None = None) -> list[str]:
-        command = super().to_command()
+    @override
+    def to_command(self, helm_version: Version) -> list[str]:
+        command = super().to_command(helm_version)
         if self.set_file:
             command.extend(
                 [
@@ -121,8 +122,8 @@ class HelmFlags(RepoAuthFlags):
         if self.version:
             command.extend(["--version", self.version])
         if self.force:
-            if helm_version and helm_version.major >= 4:
-                command.extend(["--force-replace"])
+            if helm_version.major >= 4:
+                command.append("--force-replace")
             else:
                 command.append("--force")
         if self.timeout:
@@ -141,7 +142,7 @@ class HelmTemplateFlags(HelmFlags):
     api_version: str | None = None
 
     @override
-    def to_command(self, helm_version: Version | None = None) -> list[str]:
+    def to_command(self, helm_version: Version) -> list[str]:
         command = super().to_command(helm_version)
         if self.api_version:
             command.extend(["--api-versions", self.api_version])

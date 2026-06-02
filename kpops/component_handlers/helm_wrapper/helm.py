@@ -75,7 +75,7 @@ class Helm:
             repository_name,
             repository_url,
         ]
-        command.extend(repo_auth_flags.to_command())
+        command.extend(repo_auth_flags.to_command(self.version))
 
         try:
             self.__execute(command)
