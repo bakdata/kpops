@@ -1,3 +1,4 @@
+import json
 import logging
 
 import httpx
@@ -7,14 +8,15 @@ log = logging.getLogger("HttpxException")
 
 class HttpxException(Exception):
     def __init__(self, response: httpx.Response) -> None:
-        self.error_code = response.status_code
-        self.error_msg = "Something went wrong!"
+        self.error_code: int = response.status_code
+        self.error_msg: str = "Something went wrong!"
+        log_lines = [f"The request responded with the code {self.error_code}."]
+        if response.headers.get("Content-Type") == "application/json":
+            log_lines.append("Error body:")
+            log_lines.append(json.dumps(response.json(), indent=2))
         try:
-            log.exception(
-                f"The request responded with the code {self.error_code}. Error body: {response.json()}",
-            )
             response.raise_for_status()
         except httpx.HTTPError as e:
-            self.error_msg = str(e)
-            log.exception(f"More information: {self.error_msg}")
+            log_lines.append(str(e))
+        log.exception(" ".join(log_lines))
         super().__init__()

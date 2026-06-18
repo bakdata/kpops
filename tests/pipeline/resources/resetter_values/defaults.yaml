@@ -3,8 +3,8 @@ helm-app:
   namespace: "namespace"
   values:
     label: ${component.name}
-    streams:
-      brokers: ${config.kafka_brokers}
+    kafka:
+      bootstrapServers: ${config.kafka_brokers}
 
 kafka-sink-connector:
   config:

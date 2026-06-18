@@ -1,5 +1,5 @@
 from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock
 
 import pytest
 from pytest_mock import MockerFixture
@@ -8,7 +8,9 @@ from typer.testing import CliRunner
 from kpops.cli.main import app
 from kpops.components.base_components import HelmApp
 from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
-from kpops.components.streams_bootstrap.producer.producer_app import ProducerAppCleaner
+from kpops.components.streams_bootstrap.producer.producer_app import (
+    ProducerAppCleaner,
+)
 from kpops.components.streams_bootstrap.streams.streams_app import StreamsAppCleaner
 
 runner = CliRunner()
@@ -16,10 +18,10 @@ runner = CliRunner()
 RESOURCE_PATH = Path(__file__).parent / "resources"
 
 
-@pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache")
+@pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache", "clear_kpops_config")
 class TestReset:
     @pytest.fixture(autouse=True)
-    def helm_mock(self, mocker: MockerFixture) -> MagicMock:
+    def helm_mock(self, mocker: MockerFixture) -> AsyncMock:
         return mocker.patch(
             "kpops.component_handlers.helm_wrapper.helm.Helm",
             return_value=AsyncMock(),

@@ -2,6 +2,7 @@ from unittest.mock import ANY, MagicMock, call
 
 import pytest
 from pytest_mock import MockerFixture
+from typing_extensions import override
 
 from kpops.component_handlers import get_handlers
 from kpops.component_handlers.helm_wrapper.model import (
@@ -9,6 +10,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     RepoAuthFlags,
 )
 from kpops.component_handlers.kafka_connect.model import (
+    ConnectorNewState,
     KafkaConnectorConfig,
     KafkaConnectorType,
 )
@@ -16,11 +18,11 @@ from kpops.components.base_components.kafka_connector import (
     KafkaConnectorResetter,
     KafkaSinkConnector,
 )
+from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.models.from_section import (
     FromSection,
     FromTopic,
     InputTopicTypes,
-    TopicName,
 )
 from kpops.components.base_components.models.to_section import (
     ToSection,
@@ -49,6 +51,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
     def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch("kpops.components.base_components.kafka_connector.log.info")
 
+    @override
     @pytest.fixture()
     def connector(self, connector_config: KafkaConnectorConfig) -> KafkaSinkConnector:
         return KafkaSinkConnector(
@@ -78,6 +81,10 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             connector._resetter.to_helm_values()["nameOverride"]
             == CONNECTOR_CLEAN_HELM_NAMEOVERRIDE
         )
+        assert (
+            connector._resetter.to_helm_values()["fullnameOverride"]
+            == CONNECTOR_CLEAN_HELM_NAMEOVERRIDE
+        )
 
     def test_resetter_inheritance(self, connector: KafkaSinkConnector):
         setattr(connector.resetter_values, "testKey", "foo")
@@ -99,8 +106,11 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         topic_pattern = ".*"
         connector = KafkaSinkConnector(
             name=CONNECTOR_NAME,
-            config=KafkaConnectorConfig(
-                **{**connector_config.model_dump(), "topics.regex": topic_pattern}
+            config=KafkaConnectorConfig.model_validate(
+                {
+                    **connector_config.model_dump(),
+                    "topics.regex": topic_pattern,
+                }
             ),
             resetter_namespace=RESETTER_NAMESPACE,
         )
@@ -151,13 +161,12 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             name=CONNECTOR_NAME,
             config=connector_config,
             resetter_namespace=RESETTER_NAMESPACE,
-            from_=FromSection(  # pyright: ignore[reportGeneralTypeIssues] wrong diagnostic when using TopicName as topics key type
+            from_=FromSection(
                 topics={topic_pattern: FromTopic(type=InputTopicTypes.PATTERN)}
             ),
         )
         assert connector.config.topics_regex == topic_pattern
 
-    @pytest.mark.asyncio()
     async def test_deploy_order(
         self,
         connector: KafkaSinkConnector,
@@ -182,10 +191,32 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                 mocker.call.mock_create_topic(topic, dry_run=dry_run)
                 for topic in connector.to.kafka_topics
             ),
-            mocker.call.mock_create_connector(connector.config, dry_run=dry_run),
+            mocker.call.mock_create_connector(
+                connector.config, state=None, dry_run=dry_run
+            ),
         ]
 
-    @pytest.mark.asyncio()
+    @pytest.mark.parametrize(
+        "initial_state",
+        [None, ConnectorNewState.RUNNING, ConnectorNewState.PAUSED],
+    )
+    async def test_deploy_initial_state(
+        self,
+        connector: KafkaSinkConnector,
+        initial_state: ConnectorNewState | None,
+        mocker: MockerFixture,
+    ):
+        mock_create_connector = mocker.patch.object(
+            get_handlers().connector_handler, "create_connector"
+        )
+
+        connector.state = initial_state
+        dry_run = True
+        await connector.deploy(dry_run=dry_run)
+        assert mock_create_connector.mock_calls == [
+            mocker.call(connector.config, state=initial_state, dry_run=dry_run)
+        ]
+
     async def test_destroy(
         self,
         connector: KafkaSinkConnector,
@@ -201,18 +232,21 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             CONNECTOR_FULL_NAME, dry_run=True
         )
 
-    @pytest.mark.asyncio()
     async def test_reset_when_dry_run_is_true(
         self,
         connector: KafkaSinkConnector,
         dry_run_handler_mock: MagicMock,
+        mocker: MockerFixture,
     ):
+        mock_destroy = mocker.patch.object(connector, "destroy")
+        mock_resetter_reset = mocker.spy(connector._resetter, "reset")
         dry_run = True
         await connector.reset(dry_run=dry_run)
 
+        mock_destroy.assert_called_once_with(dry_run)
+        mock_resetter_reset.assert_called_once_with(dry_run)
         dry_run_handler_mock.print_helm_diff.assert_called_once()
 
-    @pytest.mark.asyncio()
     async def test_reset_when_dry_run_is_false(
         self,
         connector: KafkaSinkConnector,
@@ -237,11 +271,11 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         dry_run = False
 
         await connector.reset(dry_run=dry_run)
-        mock_destroy.assert_not_called()
         mock_resetter_reset.assert_called_once_with(dry_run)
 
         mock.assert_has_calls(
             [
+                mocker.call.destroy_connector(dry_run),
                 mocker.call.helm.add_repo(
                     "bakdata-kafka-connect-resetter",
                     "https://bakdata.github.io/kafka-connect-resetter/",
@@ -261,6 +295,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                     RESETTER_NAMESPACE,
                     {
                         "nameOverride": CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
+                        "fullnameOverride": CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
                         "connectorType": CONNECTOR_TYPE,
                         "config": {
                             "brokers": "broker:9092",
@@ -287,7 +322,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         dry_run_handler_mock.print_helm_diff.assert_not_called()
         mock_delete_topic.assert_not_called()
 
-    @pytest.mark.asyncio()
     async def test_clean_when_dry_run_is_true(
         self,
         connector: KafkaSinkConnector,
@@ -298,7 +332,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         await connector.clean(dry_run=dry_run)
         dry_run_handler_mock.print_helm_diff.assert_called_once()
 
-    @pytest.mark.asyncio()
     async def test_clean_when_dry_run_is_false(
         self,
         connector: KafkaSinkConnector,
@@ -365,6 +398,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                 RESETTER_NAMESPACE,
                 {
                     "nameOverride": CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
+                    "fullnameOverride": CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
                     "connectorType": CONNECTOR_TYPE,
                     "config": {
                         "brokers": "broker:9092",
@@ -388,7 +422,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         ]
         dry_run_handler_mock.print_helm_diff.assert_not_called()
 
-    @pytest.mark.asyncio()
     async def test_clean_without_to_when_dry_run_is_true(
         self,
         dry_run_handler_mock: MagicMock,
@@ -405,7 +438,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         await connector.clean(dry_run)
         dry_run_handler_mock.print_helm_diff.assert_called_once()
 
-    @pytest.mark.asyncio()
     async def test_clean_without_to_when_dry_run_is_false(
         self,
         helm_mock: MagicMock,
@@ -462,6 +494,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                 RESETTER_NAMESPACE,
                 {
                     "nameOverride": CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
+                    "fullnameOverride": CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
                     "connectorType": CONNECTOR_TYPE,
                     "config": {
                         "brokers": "broker:9092",

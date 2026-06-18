@@ -1,0 +1,106 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app: resources-manifest-pipeline-my-producer-app-clean
+    chart: producer-app-cleanup-job-3.6.1
+    release: resources-manifest-pipeline-my-producer-app-clean
+  name: resources-manifest-pipeline-my-producer-app-clean
+spec:
+  backoffLimit: 6
+  template:
+    metadata:
+      labels:
+        app: resources-manifest-pipeline-my-producer-app-clean
+        release: resources-manifest-pipeline-my-producer-app-clean
+    spec:
+      containers:
+        - args:
+            - clean
+          env:
+            - name: ENV_PREFIX
+              value: APP_
+            - name: APP_BOOTSTRAP_SERVERS
+              value: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+            - name: APP_SCHEMA_REGISTRY_URL
+              value: http://localhost:8081/
+            - name: APP_OUTPUT_TOPIC
+              value: my-producer-app-output-topic
+            - name: APP_LABELED_OUTPUT_TOPICS
+              value: my-producer-app-output-topic-label=my-labeled-producer-app-topic-output,
+            - name: JAVA_TOOL_OPTIONS
+              value: '-XX:MaxRAMPercentage=75.0 '
+          image: my-registry/my-producer-image:1.0.0
+          imagePullPolicy: Always
+          name: resources-manifest-pipeline-my-producer-app-clean
+          resources:
+            limits:
+              cpu: 500m
+              memory: 2G
+            requests:
+              cpu: 200m
+              memory: 300Mi
+      restartPolicy: OnFailure
+  ttlSecondsAfterFinished: 30
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app: resources-manifest-pipeline-my-streams-app-clean
+    chart: streams-app-cleanup-job-3.6.1
+    release: resources-manifest-pipeline-my-streams-app-clean
+  name: resources-manifest-pipeline-my-streams-app-clean
+spec:
+  backoffLimit: 6
+  template:
+    metadata:
+      labels:
+        app: resources-manifest-pipeline-my-streams-app-clean
+        release: resources-manifest-pipeline-my-streams-app-clean
+    spec:
+      containers:
+        - args:
+            - reset
+          env:
+            - name: ENV_PREFIX
+              value: APP_
+            - name: KAFKA_LARGE_MESSAGE_ID_GENERATOR
+              value: com.bakdata.kafka.MurmurHashIdGenerator
+            - name: APP_BOOTSTRAP_SERVERS
+              value: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+            - name: APP_SCHEMA_REGISTRY_URL
+              value: http://localhost:8081/
+            - name: APP_INPUT_TOPICS
+              value: my-input-topic
+            - name: APP_INPUT_PATTERN
+              value: my-input-pattern
+            - name: APP_OUTPUT_TOPIC
+              value: my-output-topic
+            - name: APP_ERROR_TOPIC
+              value: resources-manifest-pipeline-my-streams-app-error
+            - name: APP_LABELED_OUTPUT_TOPICS
+              value: my-output-topic-label=my-labeled-topic-output,
+            - name: APP_LABELED_INPUT_TOPICS
+              value: my-input-topic-label=my-labeled-input-topic,
+            - name: APP_LABELED_INPUT_PATTERNS
+              value: my-input-topic-labeled-pattern=my-labeled-input-pattern,
+            - name: APP_APPLICATION_ID
+              value: my-streams-app-id
+            - name: JAVA_TOOL_OPTIONS
+              value: '-XX:MaxRAMPercentage=75.0 '
+          image: my-registry/my-streams-app-image:1.0.0
+          imagePullPolicy: Always
+          name: resources-manifest-pipeline-my-streams-app-clean
+          resources:
+            limits:
+              cpu: 500m
+              memory: 2G
+            requests:
+              cpu: 200m
+              memory: 300Mi
+      restartPolicy: OnFailure
+  ttlSecondsAfterFinished: 30
+

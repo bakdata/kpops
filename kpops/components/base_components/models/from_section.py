@@ -1,14 +1,13 @@
-from enum import Enum
-from typing import Any, NewType
+from enum import StrEnum
+from typing import Any, ClassVar, NewType
 
-from pydantic import ConfigDict, Field, model_validator
+from pydantic import ConfigDict, model_validator
 
 from kpops.components.base_components.models import TopicName
-from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import DescConfigModel
 
 
-class InputTopicTypes(str, Enum):
+class InputTopicTypes(StrEnum):
     """Input topic types.
 
     - INPUT: input topic
@@ -23,25 +22,23 @@ class FromTopic(DescConfigModel):
     """Input topic.
 
     :param type: Topic type, defaults to None
-    :param role: Custom identifier belonging to a topic;
+    :param label: Custom identifier belonging to a topic;
         define only if `type` is `pattern` or `None`, defaults to None
     """
 
-    type: InputTopicTypes | None = Field(
-        default=None, description=describe_attr("type", __doc__)
-    )
-    role: str | None = Field(default=None, description=describe_attr("role", __doc__))
+    type: InputTopicTypes | None = None
+    label: str | None = None
 
-    model_config = ConfigDict(
+    model_config: ClassVar[ConfigDict] = ConfigDict(
         extra="forbid",
         use_enum_values=True,
     )
 
     @model_validator(mode="after")
-    def extra_topic_role(self) -> Any:
-        """Ensure that `cls.role` is used correctly, assign type if needed."""
-        if self.type == InputTopicTypes.INPUT and self.role:
-            msg = "Define role only if `type` is `pattern` or `None`"
+    def extra_topic_label(self) -> Any:
+        """Ensure that `cls.label` is used correctly, assign type if needed."""
+        if self.type == InputTopicTypes.INPUT and self.label:
+            msg = "Define label only if `type` is `pattern` or `None`"
             raise ValueError(msg)
         return self
 
@@ -56,15 +53,7 @@ class FromSection(DescConfigModel):
     :param components: Components to read from
     """
 
-    topics: dict[TopicName, FromTopic] = Field(
-        default={},
-        description=describe_attr("topics", __doc__),
-    )
-    components: dict[ComponentName, FromTopic] = Field(
-        default={},
-        description=describe_attr("components", __doc__),
-    )
+    topics: dict[TopicName, FromTopic] = {}
+    components: dict[ComponentName, FromTopic] = {}
 
-    model_config = ConfigDict(
-        extra="forbid",
-    )
+    model_config: ClassVar[ConfigDict] = ConfigDict(extra="forbid")

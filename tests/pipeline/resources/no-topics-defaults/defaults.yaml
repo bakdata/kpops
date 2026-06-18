@@ -1,7 +1,7 @@
-kafka-app:
+streams-bootstrap:
   values:
-    streams:
-      brokers: "${config.kafka_brokers}"
+    kafka:
+      bootstrapServers: "${config.kafka_brokers}"
       schemaRegistryUrl: "${config.schema_registry.url}"
 
 producer-app:

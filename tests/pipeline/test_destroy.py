@@ -1,36 +1,32 @@
 from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock
 
 import pytest
 from pytest_mock import MockerFixture
 from typer.testing import CliRunner
 
 from kpops.cli.main import app
+from kpops.components.base_components import HelmApp
+from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
 
 runner = CliRunner()
 
 RESOURCE_PATH = Path(__file__).parent / "resources"
 
 
-@pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache")
+@pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache", "clear_kpops_config")
 class TestDestroy:
     @pytest.fixture(autouse=True)
-    def mock_helm(self, mocker: MockerFixture) -> MagicMock:
+    def mock_helm(self, mocker: MockerFixture) -> AsyncMock:
         return mocker.patch(
             "kpops.components.base_components.helm_app.Helm",
             return_value=AsyncMock(),
         ).return_value
 
     def test_order(self, mocker: MockerFixture):
-        producer_app_mock_destroy = mocker.patch(
-            "kpops.components.streams_bootstrap.producer.producer_app.ProducerApp.destroy",
-        )
-        streams_app_mock_destroy = mocker.patch(
-            "kpops.components.streams_bootstrap.streams.streams_app.StreamsApp.destroy",
-        )
-        helm_app_mock_destroy = mocker.patch(
-            "kpops.components.base_components.helm_app.HelmApp.destroy",
-        )
+        producer_app_mock_destroy = mocker.patch.object(ProducerApp, "destroy")
+        streams_app_mock_destroy = mocker.patch.object(StreamsApp, "destroy")
+        helm_app_mock_destroy = mocker.patch.object(HelmApp, "destroy")
         mock_destroy = mocker.AsyncMock()
         mock_destroy.attach_mock(producer_app_mock_destroy, "producer_app_mock_destroy")
         mock_destroy.attach_mock(streams_app_mock_destroy, "streams_app_mock_destroy")

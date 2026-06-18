@@ -14,6 +14,13 @@ logger = logging.getLogger("faker")
 logger.setLevel(logging.INFO)  # quiet faker locale messages
 
 
+@pytest.fixture(autouse=True, scope="session")
+def setup_logging() -> None:
+    from kpops.api.logs import log
+
+    assert log
+
+
 @pytest.fixture()
 def mock_os_env() -> Iterator[os._Environ[str]]:
     """Clear ``os.environ``.
@@ -43,7 +50,7 @@ def load_yaml_file_clear_cache() -> Iterator[None]:
 
 
 @pytest.fixture()
-def custom_components():
+def custom_components() -> Iterator[None]:
     src = Path("tests/pipeline/test_components")
     dst = Path("kpops/components/test_components")
     try:
@@ -51,3 +58,36 @@ def custom_components():
         yield
     finally:
         shutil.rmtree(dst)
+
+
+@pytest.fixture(scope="module")
+def clear_kpops_config() -> Iterator[None]:
+    from kpops.config import KpopsConfig
+
+    KpopsConfig._instance = None
+    yield
+
+
+KUBECONFIG = """
+apiVersion: v1
+clusters:
+- cluster: {server: 'https://localhost:9443'}
+  name: test
+contexts:
+- context: {cluster: test, user: test}
+  name: test
+current-context: test
+kind: Config
+preferences: {}
+users:
+- name: test
+  user: {token: testtoken}
+"""
+
+
+@pytest.fixture(scope="session")
+def kubeconfig(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    kubeconfig = tmp_path_factory.mktemp("kpops") / "kubeconfig"
+    kubeconfig.write_text(KUBECONFIG)
+    os.environ["KUBECONFIG"] = str(kubeconfig)
+    return kubeconfig

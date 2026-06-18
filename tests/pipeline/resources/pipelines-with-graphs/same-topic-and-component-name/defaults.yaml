@@ -7,10 +7,10 @@ kubernetes-app:
 kafka-connector:
   namespace: example-namespace
 
-kafka-app:
+streams-bootstrap:
   values:
-    streams:
-      brokers: 127.0.0.1:9092
+    kafka:
+      bootstrapServers: 127.0.0.1:9092
       schemaRegistryUrl: 127.0.0.1:8081
 
 streams-app:

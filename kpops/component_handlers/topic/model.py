@@ -1,5 +1,5 @@
-from enum import Enum
-from typing import Any
+from enum import StrEnum
+from typing import Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict
 
@@ -28,7 +28,7 @@ class TopicResponse(BaseModel):
     )
 
 
-class KafkaTopicConfigSource(str, Enum):
+class KafkaTopicConfigSource(StrEnum):
     DYNAMIC_TOPIC_CONFIG = "DYNAMIC_TOPIC_CONFIG"
     DEFAULT_CONFIG = "DEFAULT_CONFIG"
     STATIC_BROKER_CONFIG = "STATIC_BROKER_CONFIG"
@@ -44,7 +44,7 @@ class KafkaTopicConfigSynonyms(BaseModel):
     value: str
     source: KafkaTopicConfigSource
 
-    model_config = ConfigDict(
+    model_config: ClassVar[ConfigDict] = ConfigDict(
         extra="allow",
     )
 
@@ -55,7 +55,7 @@ class KafkaTopicConfig(BaseModel):
     value: str
     name: str
 
-    model_config = ConfigDict(
+    model_config: ClassVar[ConfigDict] = ConfigDict(
         extra="allow",
     )
 
@@ -63,12 +63,12 @@ class KafkaTopicConfig(BaseModel):
 class TopicConfigResponse(BaseModel):
     data: list[KafkaTopicConfig]
 
-    model_config = ConfigDict(
+    model_config: ClassVar[ConfigDict] = ConfigDict(
         extra="allow",
     )
 
 
-class KafkaBrokerConfigSource(str, Enum):
+class KafkaBrokerConfigSource(StrEnum):
     STATIC_BROKER_CONFIG = "STATIC_BROKER_CONFIG"
     DYNAMIC_BROKER_CONFIG = "DYNAMIC_BROKER_CONFIG"
     DEFAULT_CONFIG = "DEFAULT_CONFIG"
@@ -79,7 +79,7 @@ class KafkaBrokerConfigSynonyms(BaseModel):
     value: str | None
     source: KafkaBrokerConfigSource
 
-    model_config = ConfigDict(
+    model_config: ClassVar[ConfigDict] = ConfigDict(
         extra="allow",
     )
 
@@ -90,7 +90,7 @@ class KafkaBrokerConfig(BaseModel):
     value: str | None
     name: str
 
-    model_config = ConfigDict(
+    model_config: ClassVar[ConfigDict] = ConfigDict(
         extra="allow",
     )
 
@@ -98,6 +98,6 @@ class KafkaBrokerConfig(BaseModel):
 class BrokerConfigResponse(BaseModel):
     data: list[KafkaBrokerConfig]
 
-    model_config = ConfigDict(
+    model_config: ClassVar[ConfigDict] = ConfigDict(
         extra="allow",
     )

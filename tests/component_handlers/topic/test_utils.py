@@ -118,7 +118,9 @@ kafka_rest_proxy_response = {
 
 
 def test_parse_and_compare_topic_configs():
-    topic_config_response = TopicConfigResponse(**kafka_rest_proxy_response)
+    topic_config_response = TopicConfigResponse.model_validate(
+        kafka_rest_proxy_response
+    )
 
     in_cluster, new_config = parse_and_compare_topic_configs(
         topic_config_response,
@@ -137,7 +139,9 @@ def test_parse_and_compare_topic_configs():
 
 
 def test_compare_single_config_correctly():
-    topic_config_response = TopicConfigResponse(**kafka_rest_proxy_response)
+    topic_config_response = TopicConfigResponse.model_validate(
+        kafka_rest_proxy_response
+    )
 
     in_cluster, new_config = parse_and_compare_topic_configs(
         topic_config_response,
@@ -151,8 +155,8 @@ def test_compare_single_config_correctly():
 
 
 def test_get_effective_config():
-    topic_config_response = BrokerConfigResponse(
-        **{
+    topic_config_response = BrokerConfigResponse.model_validate(
+        {
             "kind": "KafkaBrokerConfigList",
             "metadata": {
                 "self": "https://pkc-00000.region.provider.confluent.cloud/kafka/v3/clusters/cluster-1/brokers/-/configs",

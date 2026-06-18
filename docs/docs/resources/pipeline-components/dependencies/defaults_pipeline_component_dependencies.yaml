@@ -1,3 +1,6 @@
+consumer-app.yaml:
+- to-consumer-app.yaml
+- values-consumer-app.yaml
 helm-app.yaml:
 - values-helm-app.yaml
 - repo_config-helm-app.yaml
@@ -5,7 +8,6 @@ kafka-app.yaml:
 - prefix.yaml
 - from_.yaml
 - to.yaml
-- values-kafka-app.yaml
 kafka-connector.yaml:
 - prefix.yaml
 - from_.yaml

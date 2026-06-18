@@ -1,0 +1,62 @@
+- type: my-producer-app
+  values:
+    image: "my-registry/my-producer-image"
+    imageTag: "1.0.0"
+    commandLine:
+      STR: "fake-arg-value"
+      BOOL: true
+      INT: 1
+      FLOAT: 0.1
+    schedule: "30 3/8 * * *"
+
+  to:
+    topics:
+      my-producer-app-output-topic:
+        type: output
+      my-labeled-producer-app-topic-output:
+        label: my-producer-app-output-topic-label
+
+- type: my-streams-app
+  values:
+    image: "my-registry/my-streams-app-image"
+    imageTag: "1.0.0"
+    kafka:
+      applicationId: "my-streams-app-id"
+    affinity:
+      nodeAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+                - key: foo
+                  operator: Exists
+            weight: 2
+          - preference:
+              matchExpressions:
+                - key: bar
+                  operator: DoesNotExist
+            weight: 1
+    commandLine:
+      CONVERT_XML: true
+    javaOptions:
+      maxRAMPercentage: 85
+
+  from:
+    topics:
+      my-input-topic:
+        type: input
+      my-labeled-input-topic:
+        label: my-input-topic-label
+      my-input-pattern:
+        type: pattern
+      my-labeled-input-pattern:
+        type: pattern
+        label: my-input-topic-labeled-pattern
+
+  to:
+    topics:
+      my-output-topic:
+        type: output
+      my-error-topic:
+        type: error
+      my-labeled-topic-output:
+        label: my-output-topic-label

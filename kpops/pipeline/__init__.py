@@ -9,19 +9,17 @@ from typing import TYPE_CHECKING, Any, TypeAlias
 import rustworkx as rx
 import yaml
 from pydantic import (
-    BaseModel,
-    ConfigDict,
     SerializeAsAny,
     computed_field,
 )
 
-from kpops.api.exception import ParsingException, ValidationError
-from kpops.api.registry import Registry
 from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.core.exception import ParsingException, ValidationError
+from kpops.core.registry import Registry
 from kpops.utils.dict_ops import update_nested_pair
 from kpops.utils.environment import ENV, PIPELINE_PATH
-from kpops.utils.yaml import load_yaml_file
+from kpops.utils.yaml import CustomSafeDumper, load_yaml_file
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Coroutine, Iterator
@@ -34,13 +32,12 @@ log = logging.getLogger("PipelineGenerator")
 ComponentFilterPredicate: TypeAlias = Callable[[PipelineComponent], bool]
 
 
-class Pipeline(BaseModel):
+@dataclass
+class Pipeline:
     """Pipeline representation."""
 
-    _component_index: dict[str, PipelineComponent] = {}
-    _graph: rx.PyDiGraph[str, None] = rx.PyDiGraph()
-
-    model_config = ConfigDict(arbitrary_types_allowed=True)
+    _component_index: dict[str, PipelineComponent] = field(default_factory=dict)
+    _graph: rx.PyDiGraph[str, None] = field(default_factory=rx.PyDiGraph)
 
     @property
     def step_names(self) -> list[str]:
@@ -92,13 +89,14 @@ class Pipeline(BaseModel):
             if not predicate(component):
                 self.remove(component.id)
 
-    def validate(self) -> None:  # pyright: ignore [reportIncompatibleMethodOverride]
+    def validate(self) -> None:
         self.__validate_graph()
 
+    def generate(self) -> list[dict[str, Any]]:
+        return [component.generate() for component in self.components]
+
     def to_yaml(self) -> str:
-        return yaml.dump(
-            self.model_dump(mode="json", by_alias=True, exclude_none=True)["components"]
-        )
+        return yaml.dump(self.generate(), sort_keys=False, Dumper=CustomSafeDumper)
 
     def build_execution_graph(
         self,
@@ -106,17 +104,19 @@ class Pipeline(BaseModel):
         /,
         reverse: bool = False,
     ) -> Awaitable[None]:
-        async def run_parallel_tasks(
-            coroutines: list[Coroutine[Any, Any, None]],
+        async def run_layer_parallel(
+            components: list[PipelineComponent],
         ) -> None:
             tasks: list[asyncio.Task[None]] = []
-            for coro in coroutines:
-                tasks.append(asyncio.create_task(coro))
+            for component in components:
+                tasks.append(asyncio.create_task(runner(component)))
             await asyncio.gather(*tasks)
 
-        async def run_graph_tasks(pending_tasks: list[Awaitable[None]]) -> None:
-            for pending_task in pending_tasks:
-                await pending_task
+        async def run_graph_layers(
+            pending_layers: list[list[PipelineComponent]],
+        ) -> None:
+            for layer_components in pending_layers:
+                await run_layer_parallel(layer_components)
 
         graph = self._graph.copy()
 
@@ -129,18 +129,19 @@ class Pipeline(BaseModel):
             if not predecessors:
                 graph.add_edge(root_node, node, None)
 
-        # TODO: blocker, not implemented in rustworkx
-        layers_graph: list[list[str]] = list(rx.bfs_layers(graph, root_node))
+        layers_graph = list(rx.bfs_layers(graph, [root_node]))
 
-        sorted_tasks: list[Awaitable[None]] = []
+        sorted_layers: list[list[PipelineComponent]] = []
         for layer in layers_graph[1:]:
-            if parallel_tasks := self.__get_parallel_tasks_from(layer, runner):
-                sorted_tasks.append(run_parallel_tasks(parallel_tasks))
+            if parallel_components := self.__get_parallel_components_from(
+                [graph[idx] for idx in layer]
+            ):
+                sorted_layers.append(parallel_components)
 
         if reverse:
-            sorted_tasks.reverse()
+            sorted_layers.reverse()
 
-        return run_graph_tasks(sorted_tasks)
+        return run_graph_layers(sorted_layers)
 
     def __getitem__(self, component_id: str) -> PipelineComponent:
         try:
@@ -152,7 +153,7 @@ class Pipeline(BaseModel):
     def __bool__(self) -> bool:
         return bool(self._component_index)
 
-    def __iter__(self) -> Iterator[PipelineComponent]:  # pyright: ignore [reportIncompatibleMethodOverride]
+    def __iter__(self) -> Iterator[PipelineComponent]:
         yield from self._component_index.values()
 
     def __len__(self) -> int:
@@ -175,18 +176,16 @@ class Pipeline(BaseModel):
         topic = self._graph.add_node(topic_id)
         self._graph.add_edge(topic, target, None)
 
-    def __get_parallel_tasks_from(
-        self,
-        layer: list[str],
-        runner: Callable[[PipelineComponent], Coroutine[Any, Any, None]],
-    ) -> list[Coroutine[Any, Any, None]]:
-        def gen_parallel_tasks():
+    def __get_parallel_components_from(
+        self, layer: list[str]
+    ) -> list[PipelineComponent]:
+        def gen_parallel_components() -> Iterator[PipelineComponent]:
             for node_in_layer in layer:
                 # check if component, skip topics
                 if (component := self._component_index.get(node_in_layer)) is not None:
-                    yield runner(component)
+                    yield component
 
-        return list(gen_parallel_tasks())
+        return list(gen_parallel_components())
 
     def __validate_graph(self) -> None:
         if not rx.is_directed_acyclic_graph(self._graph):
@@ -217,6 +216,9 @@ class PipelineGenerator:
     registry: Registry
     handlers: ComponentHandlers
     pipeline: Pipeline = field(init=False, default_factory=Pipeline)
+    env_components_index: dict[str, dict[str, Any]] = field(
+        init=False, default_factory=dict
+    )
 
     def parse(
         self,
@@ -245,6 +247,7 @@ class PipelineGenerator:
         :raises TypeError: The env-specific pipeline definition should contain a list of components
         :returns: Initialized pipeline object
         """
+        ENV.clear()
         PipelineGenerator.set_pipeline_name_env_vars(
             self.config.pipeline_base_dir, path
         )
@@ -269,7 +272,7 @@ class PipelineGenerator:
                 msg = f"The pipeline definition {env_file} should contain a list of components"
                 raise TypeError(msg)
 
-        return self.parse(main_content, env_content)
+        return self.parse(main_content, env_content)  # pyright: ignore[reportUnknownArgumentType]
 
     def parse_components(self, components: list[dict[str, Any]]) -> None:
         """Instantiate, enrich and inflate a list of components.
@@ -307,6 +310,9 @@ class PipelineGenerator:
         """
         component = component_class(**component_data)
         component = self.enrich_component_with_env(component)
+        # if component is disabled then we skip it
+        if not component.enabled:
+            return
         # inflate & enrich components
         for inflated_component in component.inflate():  # TODO: recursively
             if inflated_component.from_:
@@ -382,7 +388,9 @@ class PipelineGenerator:
             msg = "The pipeline-base-dir should not equal the pipeline-path"
             raise ValueError(msg)
         pipeline_name = "-".join(path_without_file)
+        parent_pipeline_name = "-".join(path_without_file[:-1])
         ENV["pipeline.name"] = pipeline_name
+        ENV["pipeline.parent.name"] = parent_pipeline_name
         for level, parent in enumerate(path_without_file):
             ENV[f"pipeline.name_{level}"] = parent
 

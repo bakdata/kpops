@@ -7,18 +7,21 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.component_handlers.helm_wrapper.exception import ReleaseNotFoundException
-from kpops.component_handlers.helm_wrapper.helm import Helm, HelmTemplate
+from kpops.component_handlers.helm_wrapper.exception import (
+    ParseError,
+    ReleaseNotFoundException,
+)
+from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.model import (
     HelmConfig,
+    HelmTemplate,
     HelmTemplateFlags,
     HelmUpgradeInstallFlags,
-    KubernetesManifest,
-    ParseError,
     RepoAuthFlags,
     Version,
 )
-from kpops.components.streams_bootstrap.app_type import AppType
+from kpops.components.common.app_type import AppType
+from kpops.manifests.kubernetes import KubernetesManifest
 
 
 class TestHelmWrapper:
@@ -43,16 +46,78 @@ class TestHelmWrapper:
         return mocker.patch("kpops.component_handlers.helm_wrapper.helm.log.warning")
 
     @pytest.fixture()
-    def mock_get_version(self, mocker: MockerFixture) -> MagicMock:
-        mock_get_version = mocker.patch.object(Helm, "get_version")
-        mock_get_version.return_value = Version(major=3, minor=12, patch=0)
-        return mock_get_version
+    def mock_version(self, mocker: MockerFixture) -> MagicMock:
+        return mocker.patch.object(
+            Helm,
+            "version",
+            return_value=Version(major=3, minor=12, patch=0),
+            new_callable=mocker.PropertyMock,
+        )
 
     @pytest.fixture()
-    def helm(self, mock_get_version: MagicMock) -> Helm:
+    def helm(self, mock_version: MagicMock) -> Helm:
         return Helm(helm_config=HelmConfig())
 
-    @pytest.mark.asyncio()
+    @pytest.fixture(autouse=True)
+    def cache_clear(self) -> None:
+        helm = Helm._instance
+        if not helm:
+            return
+        helm.add_repo.cache_clear()  # pyright: ignore[reportAttributeAccessIssue,reportUnknownMemberType]
+        if hasattr(helm, "version"):
+            del helm.version
+
+    def test_singleton(self, helm: Helm) -> None:
+        assert Helm(helm_config=HelmConfig()) is helm
+
+    def test_version_cached(self, helm: Helm, mock_execute: MagicMock):
+        assert helm.version
+        mock_execute.assert_not_called()
+
+    def test_add_repo_cached(self, helm: Helm, mock_execute: MagicMock):
+        helm.add_repo("test-foo", "fake")
+        helm.add_repo("test-bar", "fake")
+        helm.add_repo("test-foo", "fake")
+        helm.add_repo("test-bar", "fake2")
+        assert mock_execute.mock_calls == [
+            mock.call(
+                [
+                    "helm",
+                    "repo",
+                    "add",
+                    "test-foo",
+                    "fake",
+                ],
+            ),
+            mock.call(
+                ["helm", "repo", "update", "test-foo"],
+            ),
+            mock.call(
+                [
+                    "helm",
+                    "repo",
+                    "add",
+                    "test-bar",
+                    "fake",
+                ],
+            ),
+            mock.call(
+                ["helm", "repo", "update", "test-bar"],
+            ),
+            mock.call(
+                [
+                    "helm",
+                    "repo",
+                    "add",
+                    "test-bar",
+                    "fake2",
+                ],
+            ),
+            mock.call(
+                ["helm", "repo", "update", "test-bar"],
+            ),
+        ]
+
     async def test_should_call_run_command_method_when_helm_install_with_defaults(
         self, helm: Helm, run_command_async: AsyncMock
     ):
@@ -85,8 +150,12 @@ class TestHelmWrapper:
     def test_should_include_configured_tls_parameters_on_add_when_version_is_old(
         self, mock_execute: MagicMock, mocker: MockerFixture
     ):
-        mock_get_version = mocker.patch.object(Helm, "get_version")
-        mock_get_version.return_value = Version(major=3, minor=6, patch=0)
+        mocker.patch.object(
+            Helm,
+            "version",
+            return_value=Version(major=3, minor=6, patch=0),
+            new_callable=mocker.PropertyMock,
+        )
         helm = Helm(HelmConfig())
 
         helm.add_repo(
@@ -138,7 +207,6 @@ class TestHelmWrapper:
             ),
         ]
 
-    @pytest.mark.asyncio()
     async def test_should_include_configured_tls_parameters_on_update(
         self, helm: Helm, run_command_async: AsyncMock
     ):
@@ -174,7 +242,6 @@ class TestHelmWrapper:
             ],
         )
 
-    @pytest.mark.asyncio()
     async def test_should_call_run_command_method_when_helm_install_with_non_defaults(
         self, helm: Helm, run_command_async: AsyncMock
     ):
@@ -219,7 +286,52 @@ class TestHelmWrapper:
             ],
         )
 
-    @pytest.mark.asyncio()
+    @pytest.mark.parametrize(
+        "helm_major_version, expected_force_flag",
+        ((3, "--force"), (4, "--force-replace")),
+    )
+    async def test_should_switch_helm_version_force_flag(
+        self,
+        helm,
+        mocker: MockerFixture,
+        run_command_async: AsyncMock,
+        helm_major_version: int,
+        expected_force_flag: str,
+    ):
+        mocker.patch.object(
+            Helm,
+            "version",
+            return_value=Version(major=helm_major_version, minor=2, patch=0),
+            new_callable=mocker.PropertyMock,
+        )
+        helm = Helm(helm_config=HelmConfig())
+
+        await helm.upgrade_install(
+            release_name="test-release",
+            chart="test-repository/streams-app",
+            namespace="test-namespace",
+            dry_run=False,
+            values={"commandLine": "test"},
+            flags=HelmUpgradeInstallFlags(force=True),
+        )
+        run_command_async.assert_called_once_with(
+            [
+                "helm",
+                "upgrade",
+                "test-release",
+                "test-repository/streams-app",
+                "--install",
+                "--namespace",
+                "test-namespace",
+                "--values",
+                "values.yaml",
+                expected_force_flag,
+                "--timeout",
+                "5m0s",
+                "--wait",
+            ],
+        )
+
     async def test_should_call_run_command_method_when_uninstalling_streams_app(
         self, helm: Helm, run_command_async: AsyncMock
     ):
@@ -232,7 +344,6 @@ class TestHelmWrapper:
             ["helm", "uninstall", "test-release", "--namespace", "test-namespace"],
         )
 
-    @pytest.mark.asyncio()
     async def test_should_log_warning_when_release_not_found(
         self,
         run_command_async: AsyncMock,
@@ -250,7 +361,6 @@ class TestHelmWrapper:
             "Release with name test-release not found. Could not uninstall app."
         )
 
-    @pytest.mark.asyncio()
     async def test_should_call_run_command_method_when_installing_streams_app__with_dry_run(
         self, helm: Helm, run_command_async: AsyncMock
     ):
@@ -292,7 +402,7 @@ class TestHelmWrapper:
 
     def test_helm_template(self):
         path = Path("test2.yaml")
-        manifest = KubernetesManifest(
+        manifest = KubernetesManifest.model_validate(
             {
                 "apiVersion": "v1",
                 "kind": "ServiceAccount",
@@ -309,12 +419,16 @@ class TestHelmWrapper:
             MANIFEST:
             ---
             # Source: chart/templates/test3a.yaml
-            data:
-                - a: 1
-                - b: 2
+            apiVersion: v1
+            kind: Pod
+            metadata:
+              name: test-3a
             ---
             # Source: chart/templates/test3b.yaml
-            foo: bar
+            apiVersion: v1
+            kind: Pod
+            metadata:
+              name: test-3b
             """
         )
         helm_templates = list(Helm.load_manifest(stdout))
@@ -323,11 +437,21 @@ class TestHelmWrapper:
             isinstance(helm_template, HelmTemplate) for helm_template in helm_templates
         )
         assert helm_templates[0].filepath == Path("chart/templates/test3a.yaml")
-        assert helm_templates[0].manifest == KubernetesManifest(
-            {"data": [{"a": 1}, {"b": 2}]}
+        assert helm_templates[0].manifest == KubernetesManifest.model_validate(
+            {
+                "apiVersion": "v1",
+                "kind": "Pod",
+                "metadata": {"name": "test-3a"},
+            }
         )
         assert helm_templates[1].filepath == Path("chart/templates/test3b.yaml")
-        assert helm_templates[1].manifest == KubernetesManifest({"foo": "bar"})
+        assert helm_templates[1].manifest == KubernetesManifest.model_validate(
+            {
+                "apiVersion": "v1",
+                "kind": "Pod",
+                "metadata": {"name": "test-3b"},
+            }
+        )
 
     def test_raise_parse_error_when_helm_content_is_invalid(self):
         stdout = dedent(
@@ -372,12 +496,16 @@ class TestHelmWrapper:
             MANIFEST:
             ---
             # Source: chart/templates/test3a.yaml
-            data:
-                - a: 1
-                - b: 2
+            apiVersion: v1
+            kind: Pod
+            metadata:
+              name: test-3a
             ---
             # Source: chart/templates/test3b.yaml
-            foo: bar
+            apiVersion: v1
+            kind: Pod
+            metadata:
+              name: test-3b
 
             NOTES:
             1. Get the application URL by running these commands:
@@ -393,20 +521,31 @@ class TestHelmWrapper:
             isinstance(helm_template, HelmTemplate) for helm_template in helm_templates
         )
         assert helm_templates[0].filepath == Path("chart/templates/test3a.yaml")
-        assert helm_templates[0].manifest == KubernetesManifest(
-            {"data": [{"a": 1}, {"b": 2}]}
+        assert helm_templates[0].manifest == KubernetesManifest.model_validate(
+            {
+                "apiVersion": "v1",
+                "kind": "Pod",
+                "metadata": {"name": "test-3a"},
+            }
         )
         assert helm_templates[1].filepath == Path("chart/templates/test3b.yaml")
-        assert helm_templates[1].manifest == KubernetesManifest({"foo": "bar"})
+        assert helm_templates[1].manifest == KubernetesManifest.model_validate(
+            {
+                "apiVersion": "v1",
+                "kind": "Pod",
+                "metadata": {"name": "test-3b"},
+            }
+        )
 
     def test_helm_get_manifest(self, helm: Helm, mock_execute: MagicMock):
         mock_execute.return_value = dedent(
             """
             ---
             # Source: chart/templates/test.yaml
-            data:
-                - a: 1
-                - b: 2
+            apiVersion: v1
+            kind: Pod
+            metadata:
+              name: my-pod
             """
         )
         helm_templates = list(helm.get_manifest("test-release", "test-namespace"))
@@ -422,8 +561,12 @@ class TestHelmWrapper:
         )
         assert len(helm_templates) == 1
         assert helm_templates[0].filepath == Path("chart/templates/test.yaml")
-        assert helm_templates[0].manifest == KubernetesManifest(
-            {"data": [{"a": 1}, {"b": 2}]}
+        assert helm_templates[0].manifest == KubernetesManifest.model_validate(
+            {
+                "apiVersion": "v1",
+                "kind": "Pod",
+                "metadata": {"name": "my-pod"},
+            }
         )
 
         mock_execute.side_effect = ReleaseNotFoundException()
@@ -497,9 +640,13 @@ class TestHelmWrapper:
             ("v3.12.0", Version(3, 12, 0)),
             ("v3.12", Version(3, 12, 0)),
             ("v3", Version(3, 0, 0)),
+            ("v4.1.0+4553a0a", Version(4, 1, 0)),
+            ("v4.1.0", Version(4, 1, 0)),
+            ("v4.1", Version(4, 1, 0)),
+            ("v4", Version(4, 0, 0)),
         ],
     )
-    def test_should_call_helm_version(
+    def test_parse_version(
         self,
         mock_execute: MagicMock,
         raw_version: str,
@@ -515,8 +662,7 @@ class TestHelmWrapper:
                 "--short",
             ],
         )
-
-        assert helm._version == expected_version
+        assert helm.version == expected_version
 
     def test_should_raise_exception_if_helm_version_is_old(
         self, mock_execute: MagicMock
@@ -524,7 +670,7 @@ class TestHelmWrapper:
         mock_execute.return_value = "v2.9.0+gc9f554d"
         with pytest.raises(
             RuntimeError,
-            match="The supported Helm version is 3.x.x. The current Helm version is 2.9.0",
+            match="The supported Helm version is 3.x.x|4.x.x. The current Helm version is 2.9.0",
         ):
             Helm(helm_config=HelmConfig())
 

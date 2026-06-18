@@ -29,9 +29,9 @@ In case that doesn't work, the pipeline can always be taken down manually with `
     ```shell
     # Uncomment 1 line to either destroy, reset or clean.
 
-    # poetry run kpops destroy <name-of-the-example-directory>/pipeline.yaml \
-    # poetry run kpops reset <name-of-the-example-directory>/pipeline.yaml \
-    # poetry run kpops clean <name-of-the-example-directory>/pipeline.yaml \
+    # kpops destroy <name-of-the-example-directory>/pipeline.yaml \
+    # kpops reset <name-of-the-example-directory>/pipeline.yaml \
+    # kpops clean <name-of-the-example-directory>/pipeline.yaml \
     --config <name-of-the-example-directory>/config.yaml \
     --execute
     ```

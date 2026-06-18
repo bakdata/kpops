@@ -1,3 +1,6 @@
+# FIXME: pyright breaks here. Investigate why this is happening.
+# type: ignore[reportGeneralTypeIssues]
+
 import inspect
 import json
 import logging
@@ -20,11 +23,11 @@ from pydantic_core.core_schema import (
     ModelFieldsSchema,
 )
 
-from kpops.api.registry import Registry
 from kpops.components.base_components.pipeline_component import (
     PipelineComponent,
 )
 from kpops.config import KpopsConfig
+from kpops.core.registry import Registry
 
 
 class MultiComponentGenerateJsonSchema(GenerateJsonSchema): ...
@@ -68,7 +71,7 @@ def gen_pipeline_schema() -> None:
     # re-assign component type as Literal to work as discriminator
     for component in components:
         component.model_fields["type"] = FieldInfo(
-            annotation=Literal[component.type],  # type: ignore[valid-type]
+            annotation=Literal[component.type],  # pyright: ignore[reportArgumentType]
             default=component.type,
         )
         core_schema: DefinitionsSchema = component.__pydantic_core_schema__  # pyright: ignore[reportAssignmentType]
@@ -84,12 +87,12 @@ def gen_pipeline_schema() -> None:
             ),
         )
 
-    PipelineComponents = Union[tuple(components)]  # pyright: ignore[reportInvalidTypeArguments,reportGeneralTypeIssues]
+    PipelineComponents = Union[tuple(components)]
     AnnotatedPipelineComponents = Annotated[
         PipelineComponents, Field(discriminator="type")
     ]
 
-    class PipelineSchema(RootModel):
+    class PipelineSchema(RootModel[Sequence[AnnotatedPipelineComponents]]):
         root: Sequence[
             AnnotatedPipelineComponents  # pyright: ignore[reportInvalidTypeForm]
         ]

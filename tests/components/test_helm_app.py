@@ -5,22 +5,23 @@ from pytest_mock import MockerFixture
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.model import (
+    HelmConfig,
     HelmRepoConfig,
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
-from kpops.component_handlers.kubernetes.model import K8S_LABEL_MAX_LEN
 from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
+from kpops.config import KpopsConfig, get_config, set_config
+from kpops.manifests.kubernetes import K8S_LABEL_MAX_LEN
 from kpops.utils.colorify import magentaify
 
 
 @pytest.mark.usefixtures("mock_env")
 class TestHelmApp:
     @pytest.fixture()
-    def helm_mock(self, mocker: MockerFixture) -> MagicMock:
-        async_mock = AsyncMock()
+    def helm_mock(self, mocker: MockerFixture) -> AsyncMock:
         return mocker.patch(
-            "kpops.components.base_components.helm_app.Helm", return_value=async_mock
+            "kpops.components.base_components.helm_app.Helm", return_value=AsyncMock()
         ).return_value
 
     @pytest.fixture()
@@ -29,7 +30,7 @@ class TestHelmApp:
 
     @pytest.fixture()
     def app_values(self) -> HelmAppValues:
-        return HelmAppValues(**{"foo": "test-value"})
+        return HelmAppValues.model_validate({"foo": "test-value"})
 
     @pytest.fixture()
     def repo_config(self) -> HelmRepoConfig:
@@ -48,7 +49,6 @@ class TestHelmApp:
             repo_config=repo_config,
         )
 
-    @pytest.mark.asyncio()
     async def test_should_lazy_load_helm_wrapper_and_not_repo_add(
         self,
         helm_app: HelmApp,
@@ -73,12 +73,12 @@ class TestHelmApp:
             "test-namespace",
             {
                 "nameOverride": "${pipeline.name}-test-helm-app",
+                "fullnameOverride": "${pipeline.name}-test-helm-app",
                 "foo": "test-value",
             },
             HelmUpgradeInstallFlags(),
         )
 
-    @pytest.mark.asyncio()
     async def test_should_lazy_load_helm_wrapper_and_call_repo_add_when_implemented(
         self,
         helm_mock: MagicMock,
@@ -118,13 +118,13 @@ class TestHelmApp:
                 "test-namespace",
                 {
                     "nameOverride": "${pipeline.name}-test-helm-app",
+                    "fullnameOverride": "${pipeline.name}-test-helm-app",
                     "foo": "test-value",
                 },
                 HelmUpgradeInstallFlags(version="3.4.5"),
             ),
         ]
 
-    @pytest.mark.asyncio()
     async def test_should_deploy_app_with_local_helm_chart(
         self,
         helm_mock: MagicMock,
@@ -155,12 +155,12 @@ class TestHelmApp:
             "test-namespace",
             {
                 "nameOverride": "${pipeline.name}-test-app-with-local-chart",
+                "fullnameOverride": "${pipeline.name}-test-app-with-local-chart",
                 "foo": "test-value",
             },
             HelmUpgradeInstallFlags(),
         )
 
-    @pytest.mark.asyncio()
     async def test_should_raise_not_implemented_error_when_helm_chart_is_not_set(
         self,
         helm_app: HelmApp,
@@ -174,7 +174,67 @@ class TestHelmApp:
             == "Please implement the helm_chart property of the kpops.components.base_components.helm_app module."
         )
 
-    @pytest.mark.asyncio()
+    @pytest.mark.parametrize(
+        "local_timeout, global_timeout, expected_timeout",
+        [
+            pytest.param(
+                "30m", "10m", "30m", id="prioritize local over global timeout"
+            ),
+            pytest.param(
+                None, "10m", "10m", id="prioritize global over default timeout"
+            ),
+            pytest.param(
+                "30m", None, "30m", id="prioritize local over default timeout"
+            ),
+            pytest.param(None, None, "5m0s", id="fallback to default timeout"),
+        ],
+    )
+    def test_should_apply_timeout_precedence(
+        self,
+        local_timeout: str | None,
+        global_timeout: str | None,
+        expected_timeout: str,
+        app_values: HelmAppValues,
+    ):
+        original_config = get_config()
+        set_config(
+            KpopsConfig(
+                kafka_brokers="broker:9092",
+                helm_config=HelmConfig(timeout=global_timeout),
+            )
+        )
+        try:
+            helm_app = HelmApp(
+                name="test-helm-app",
+                values=app_values,
+                namespace="test-namespace",
+                timeout=local_timeout,
+            )
+            assert helm_app.deploy_flags.timeout == expected_timeout
+        finally:
+            set_config(original_config)
+
+    def test_should_set_force_from_global_config(
+        self,
+        app_values: HelmAppValues,
+    ):
+        original_config = get_config()
+        set_config(
+            KpopsConfig(
+                kafka_brokers="broker:9092",
+                helm_config=HelmConfig(force_replace=True),
+            )
+        )
+        try:
+            helm_app = HelmApp(
+                name="test-helm-app",
+                values=app_values,
+                namespace="test-namespace",
+            )
+            assert helm_app.deploy_flags.force is True
+        finally:
+            set_config(original_config)
+
     async def test_should_call_helm_uninstall_when_destroying_helm_app(
         self,
         helm_app: HelmApp,
@@ -192,7 +252,6 @@ class TestHelmApp:
 
         log_info_mock.assert_called_once_with(magentaify(stdout))
 
-    @pytest.mark.asyncio()
     async def test_should_call_helm_uninstall_when_resetting_helm_app(
         self,
         helm_app: HelmApp,
@@ -210,7 +269,6 @@ class TestHelmApp:
 
         log_info_mock.assert_called_once_with(magentaify(stdout))
 
-    @pytest.mark.asyncio()
     async def test_should_call_helm_uninstall_when_cleaning_helm_app(
         self,
         helm_app: HelmApp,
@@ -243,4 +301,9 @@ class TestHelmApp:
             helm_app.to_helm_values()["nameOverride"]
             == "test-pipeline-prefix-with-a-long-name-helm-app-name-is-ve-3fbb7"
         )
+        assert (
+            helm_app.to_helm_values()["fullnameOverride"]
+            == "test-pipeline-prefix-with-a-long-name-helm-app-name-is-ve-3fbb7"
+        )
         assert len(helm_app.to_helm_values()["nameOverride"]) == K8S_LABEL_MAX_LEN
+        assert len(helm_app.to_helm_values()["fullnameOverride"]) == K8S_LABEL_MAX_LEN

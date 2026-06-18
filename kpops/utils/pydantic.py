@@ -1,15 +1,27 @@
+import json
 import logging
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any, ClassVar, TypeAlias, final
 
 import humps
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import (
+    BaseModel,
+    BeforeValidator,
+    ConfigDict,
+    GetCoreSchemaHandler,
+    SerializationInfo,
+    SerializerFunctionWrapHandler,
+    WrapSerializer,
+    model_serializer,
+)
 from pydantic.fields import FieldInfo
-from pydantic_settings import PydanticBaseSettingsSource
+from pydantic.json_schema import SkipJsonSchema
+from pydantic_core import PydanticUseDefault, core_schema
+from pydantic_settings import BaseSettings, PydanticBaseSettingsSource
 from typing_extensions import TypeVar, override
 
 from kpops.utils.dict_ops import update_nested_pair
-from kpops.utils.docstring import describe_object
+from kpops.utils.docstring import describe_attr, describe_object
 from kpops.utils.yaml import load_yaml_file
 
 
@@ -33,13 +45,22 @@ def to_dot(s: str) -> str:
     return s.replace("_", ".")
 
 
-def by_alias(model: BaseModel, field_name: str) -> str:
+def by_alias(model: BaseModel | type[BaseModel], field_name: str) -> str:
     """Return field alias if exists else field name.
 
     :param field_name: Name of the field to get alias of
     :param model: Model that owns the field
     """
-    return model.model_fields.get(field_name, Field()).alias or field_name
+    field_info = model.model_fields.get(field_name)
+    if not field_info:
+        return field_name
+    return field_info.alias or field_info.serialization_alias or field_name
+
+
+def to_str(value: Any) -> str:
+    if isinstance(value, str):
+        return value
+    return json.dumps(value)
 
 
 _V = TypeVar("_V")
@@ -99,18 +120,21 @@ def exclude_defaults(model: BaseModel, dumped_model: dict[str, _V]) -> dict[str,
     }
 
 
-def collect_fields(model: type[BaseModel]) -> dict[str, Any]:
+ModelFields: TypeAlias = dict[str, "FieldInfo | ModelFields"]
+
+
+def collect_fields(model: type[BaseModel]) -> ModelFields:
     """Collect and return a ``dict`` of all fields in a settings class.
 
     :param model: settings class
     :return: ``dict`` of all fields in a settings class
     """
-    seen_fields = {}
-    for field_name, field_value in model.model_fields.items():
-        if field_value.annotation and issubclass_patched(field_value.annotation):
-            seen_fields[field_name] = collect_fields(field_value.annotation)
+    seen_fields: ModelFields = {}
+    for field_name, field_info in model.model_fields.items():
+        if field_info.annotation and issubclass_patched(field_info.annotation):
+            seen_fields[field_name] = collect_fields(field_info.annotation)
         else:
-            seen_fields[field_name] = field_value
+            seen_fields[field_name] = field_info
     return seen_fields
 
 
@@ -137,30 +161,60 @@ def issubclass_patched(
 
 
 class CamelCaseConfigModel(BaseModel):
-    model_config = ConfigDict(
+    model_config: ClassVar[ConfigDict] = ConfigDict(
         alias_generator=to_camel,
         populate_by_name=True,
     )
+
+
+def find_defining_class(
+    class_: type[BaseModel], field_name: str
+) -> type[BaseModel] | None:
+    for base in class_.mro():
+        if not issubclass(base, BaseModel):
+            continue
+        if field_name in base.__annotations__:
+            return base
+    return None
 
 
 class DescConfigModel(BaseModel):
     @staticmethod
     def json_schema_extra(schema: dict[str, Any], model: type[BaseModel]) -> None:
         schema["description"] = describe_object(model.__doc__)
+        for field_name, field_info in model.model_fields.items():
+            if field_info.description:
+                continue  # skip, manually assigned description takes precedence
+            if any(isinstance(m, SkipJsonSchema) for m in field_info.metadata):  # pyright: ignore[reportArgumentType]
+                continue
+            field_alias = by_alias(model, field_name)
+            defining_class = find_defining_class(model, field_name)
+            if not defining_class:
+                continue
+            description = describe_attr(
+                field_name, defining_class.__doc__
+            ) or describe_attr(field_alias, defining_class.__doc__)
+            if description:
+                if field_alias not in schema["properties"]:
+                    schema["properties"][field_alias] = {}
+                schema["properties"][field_alias]["description"] = description
 
-    model_config = ConfigDict(json_schema_extra=json_schema_extra)
+    model_config: ClassVar[ConfigDict] = ConfigDict(
+        json_schema_extra=json_schema_extra, use_enum_values=True
+    )
 
 
+@final
 class YamlConfigSettingsSource(PydanticBaseSettingsSource):
     """Loads variables from a YAML file at the project's root."""
 
-    log = logging.getLogger()
+    log: logging.Logger = logging.getLogger()
 
-    config_dir = Path()
-    config_file_base_name = "config"
+    config_dir: Path = Path()
+    config_file_base_name: str = "config"
     environment: str | None = None
 
-    def __init__(self, settings_cls) -> None:
+    def __init__(self, settings_cls: type[BaseSettings]) -> None:
         super().__init__(settings_cls)
         default_config = self.load_config(
             self.config_dir / f"{self.config_file_base_name}.yaml"
@@ -176,14 +230,14 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
         self.config = update_nested_pair(env_config, default_config)
 
     @staticmethod
-    def load_config(file: Path) -> dict:
+    def load_config(file: Path) -> dict[str, Any]:
         """Load YAML file if it exists.
 
         :param file: Path to a ``config*.yaml``
         :return: Dict containing the config or empty dict if file doesn't exist
         """
-        if file.exists() and isinstance((loaded_file := load_yaml_file(file)), dict):
-            return loaded_file
+        if file.exists():
+            return load_yaml_file(file)
         return {}
 
     @override
@@ -217,3 +271,84 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
             if field_value is not None:
                 d[field_key] = field_value
         return d
+
+
+_T = TypeVar("_T")
+
+
+def validate_optional_to_default(value: Any | None) -> Any:
+    if value is None:
+        raise PydanticUseDefault
+    return value
+
+
+def serialize_to_optional(
+    value: _T,
+    default_serialize_handler: SerializerFunctionWrapHandler,
+    # info: SerializationInfo,
+) -> _T | None:
+    return default_serialize_handler(value) or None
+    # TODO: another potential solution, depends on https://github.com/pydantic/pydantic/issues/6969
+    # if not result and info.exclude_none:
+    #     raise PydanticOmit
+
+
+class WrapNullableSchema:
+    def __get_pydantic_core_schema__(
+        self,
+        source: type[Any],
+        handler: GetCoreSchemaHandler,
+    ) -> core_schema.CoreSchema:
+        schema = handler(source)
+        # wrap generated schema in nullable
+        return core_schema.NullableSchema(
+            type="nullable",
+            schema=schema,
+            serialization=core_schema.wrap_serializer_function_ser_schema(
+                serialize_to_optional,
+                schema=core_schema.nullable_schema(schema),
+            ),
+        )
+
+
+SerializeAsOptional = Annotated[
+    _T,
+    WrapNullableSchema(),
+    BeforeValidator(validate_optional_to_default),
+    "Optional that is serialized to `None` if falsy",
+    "similarly an input of `None` is translated to its default during validation",
+    "requires inheriting from SerializeAsOptionalModel for `model_dump(exclude_none=True)` to work",
+]
+
+
+class SerializeAsOptionalModel(BaseModel):
+    # HACK: workaround for exclude_none, which is otherwise evaluated too early
+    @model_serializer(mode="wrap", when_used="always")
+    def serialize_model(
+        self,
+        default_serialize_handler: SerializerFunctionWrapHandler,
+        info: SerializationInfo,
+    ) -> dict[str, Any]:
+        result = default_serialize_handler(self)
+        if info.exclude_none:
+            return exclude_by_value(result, None)
+        return result
+
+
+def serialize_skip_context_generate(
+    value: _T,
+    default_serialize_handler: SerializerFunctionWrapHandler,
+    info: SerializationInfo,
+) -> _T | None:
+    if info.context == "generate":
+        return None  # HACK: serialize to None, then exclude_by_value
+        # instead use PydanticOmit once supported, custom model_serializer can be removed afterwards
+        # raise PydanticOmit  # depends on https://github.com/pydantic/pydantic/issues/6969
+    return default_serialize_handler(value)
+
+
+SkipGenerate = Annotated[
+    _T,
+    WrapSerializer(serialize_skip_context_generate),
+    "Exclude field from generate output",
+]

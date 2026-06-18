@@ -18,7 +18,7 @@ from kpops.components.base_components.models.to_section import (
 from kpops.components.common.topic import OutputTopicTypes, TopicConfig
 from kpops.config import KpopsConfig, SchemaRegistryConfig
 from kpops.utils.colorify import greenify, magentaify, yellowify
-from tests.pipeline.test_components import TestSchemaProvider
+from tests.pipeline.test_components.components import TestSchemaProvider
 
 log = logging.getLogger("SchemaHandler")
 
@@ -58,8 +58,8 @@ def topic_config() -> TopicConfig:
     return TopicConfig(
         type=OutputTopicTypes.OUTPUT,
         # pyright has no way of validating these aliased Pydantic fields because we're also using the allow_population_by_field_name setting
-        key_schema=None,  # pyright: ignore[reportGeneralTypeIssues]
-        value_schema="com.bakdata.kpops.test.SchemaHandlerTest",  # pyright: ignore[reportGeneralTypeIssues]
+        key_schema=None,
+        value_schema="com.bakdata.kpops.test.SchemaHandlerTest",
     )
 
 
@@ -74,7 +74,7 @@ def kpops_config() -> KpopsConfig:
         kafka_brokers="broker:9092",
         schema_registry=SchemaRegistryConfig(
             enabled=True,
-            url=TypeAdapter(AnyHttpUrl).validate_python("http://mock:8081"),  # pyright: ignore[reportCallIssue,reportArgumentType]
+            url=TypeAdapter(AnyHttpUrl).validate_python("http://mock:8081"),
         ),
     )
 
@@ -120,7 +120,6 @@ def test_should_raise_value_error_if_schema_provider_class_not_found(
         )
 
 
-@pytest.mark.asyncio()
 @pytest.mark.usefixtures("custom_components")
 async def test_should_log_info_when_submit_schemas_that_not_exists_and_dry_run_true(
     to_section: ToSection,
@@ -140,7 +139,6 @@ async def test_should_log_info_when_submit_schemas_that_not_exists_and_dry_run_t
     schema_registry_mock.register.assert_not_called()
 
 
-@pytest.mark.asyncio()
 @pytest.mark.usefixtures("custom_components")
 async def test_should_log_info_when_submit_schemas_that_exists_and_dry_run_true(
     topic_config: TopicConfig,
@@ -163,7 +161,6 @@ async def test_should_log_info_when_submit_schemas_that_exists_and_dry_run_true(
     schema_registry_mock.register.assert_not_called()
 
 
-@pytest.mark.asyncio()
 @pytest.mark.usefixtures("custom_components")
 async def test_should_raise_exception_when_submit_schema_that_exists_and_not_compatible_and_dry_run_true(
     topic_config: TopicConfig,
@@ -201,7 +198,6 @@ async def test_should_raise_exception_when_submit_schema_that_exists_and_not_com
     schema_registry_mock.register.assert_not_called()
 
 
-@pytest.mark.asyncio()
 @pytest.mark.usefixtures("custom_components")
 async def test_should_log_debug_when_submit_schema_that_exists_and_registered_under_version_and_dry_run_true(
     topic_config: TopicConfig,
@@ -237,7 +233,6 @@ async def test_should_log_debug_when_submit_schema_that_exists_and_registered_un
     schema_registry_mock.register.assert_not_called()
 
 
-@pytest.mark.asyncio()
 @pytest.mark.usefixtures("custom_components")
 async def test_should_submit_non_existing_schema_when_not_dry(
     topic_config: TopicConfig,
@@ -266,7 +261,6 @@ async def test_should_submit_non_existing_schema_when_not_dry(
     )
 
 
-@pytest.mark.asyncio()
 async def test_should_log_correct_message_when_delete_schemas_and_in_dry_run(
     to_section: ToSection,
     log_info_mock: MagicMock,
@@ -286,7 +280,6 @@ async def test_should_log_correct_message_when_delete_schemas_and_in_dry_run(
     schema_registry_mock.delete_subject.assert_not_called()
 
 
-@pytest.mark.asyncio()
 async def test_should_delete_schemas_when_not_in_dry_run(
     to_section: ToSection,
     schema_registry_mock: AsyncMock,

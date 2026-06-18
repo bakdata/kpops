@@ -1,0 +1,22 @@
+streams-bootstrap:
+  version: "3.6.1"
+  values:
+    kafka:
+      bootstrapServers: ${config.kafka_brokers}
+      schemaRegistryUrl: ${config.schema_registry.url}
+
+producer-app: {} # inherits from streams-bootstrap
+
+streams-app: # inherits from streams-bootstrap
+  values:
+    prometheus:
+      jmx:
+        enabled: false
+  to:
+    topics:
+      ${error_topic_name}:
+        type: error
+        value_schema: com.bakdata.kafka.DeadLetter
+        partitions_count: 1
+        configs:
+          cleanup.policy: compact,delete

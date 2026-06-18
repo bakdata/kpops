@@ -23,8 +23,8 @@ class ShouldInflate(StreamsApp):
                 if topic_config.type == OutputTopicTypes.OUTPUT:
                     kafka_connector = KafkaSinkConnector(
                         name="sink-connector",
-                        config=KafkaConnectorConfig(
-                            **{
+                        config=KafkaConnectorConfig.model_validate(
+                            {
                                 "topics": topic_name,
                                 "transforms.changeTopic.replacement": f"{topic_name}-index-v1",
                             }

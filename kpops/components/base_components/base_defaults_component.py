@@ -7,7 +7,7 @@ from collections.abc import Hashable, Sequence
 from dataclasses import asdict
 from functools import cached_property
 from pathlib import Path
-from typing import Any, TypeVar
+from typing import Any, ClassVar, Self, TypeVar, cast
 
 import pydantic
 import typer
@@ -28,16 +28,10 @@ from kpops.utils.dict_ops import (
     update_nested,
     update_nested_pair,
 )
-from kpops.utils.docstring import describe_attr
 from kpops.utils.environment import ENV, PIPELINE_PATH
 from kpops.utils.pydantic import DescConfigModel, issubclass_patched, to_dash
 from kpops.utils.types import JsonType
 from kpops.utils.yaml import load_yaml_file, substitute_nested
-
-try:
-    from typing import Self  # pyright: ignore[reportAttributeAccessIssue]
-except ImportError:
-    from typing_extensions import Self
 
 log = logging.getLogger("BaseDefaultsComponent")
 
@@ -53,19 +47,17 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
     :param validate: Whether to run custom validation on the component, defaults to True
     """
 
-    model_config = ConfigDict(
+    model_config: ClassVar[ConfigDict] = ConfigDict(
         arbitrary_types_allowed=True,
         ignored_types=(cached_property, cached_classproperty),  # pyright: ignore[reportArgumentType]
     )
     enrich: SkipJsonSchema[bool] = Field(
         default=True,
-        description=describe_attr("enrich", __doc__),
         exclude=True,
     )
     validate_: SkipJsonSchema[bool] = Field(
         validation_alias=AliasChoices("validate", "validate_"),
         default=False,
-        description=describe_attr("validate", __doc__),
         exclude=True,
     )
 
@@ -221,6 +213,7 @@ def defaults_from_yaml(path: Path, key: str) -> dict[str, Any]:
             "Default files should be structured as map ([app type] -> [default config]"
         )
         raise TypeError(msg)
+    content = cast(dict[str, dict[str, Any]], content)
     value = content.get(key)
     if value is None:
         return {}

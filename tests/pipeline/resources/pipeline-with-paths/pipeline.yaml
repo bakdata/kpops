@@ -2,8 +2,8 @@
   name: account-producer
   namespace: test
   values:
-    streams:
-      brokers: test
+    kafka:
+      bootstrapServers: test
       output_topic: out
   repo_config:
     repository_name: masked

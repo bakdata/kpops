@@ -2,8 +2,16 @@ from __future__ import annotations
 
 from abc import ABC
 from collections.abc import Iterator
+from typing import Any, ClassVar
 
-from pydantic import AliasChoices, ConfigDict, Field
+import pydantic
+from pydantic import (
+    AliasChoices,
+    ConfigDict,
+    Field,
+    SerializationInfo,
+    SerializerFunctionWrapHandler,
+)
 
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
@@ -13,7 +21,6 @@ from kpops.components.base_components.models.from_section import (
     FromTopic,
     InputTopicTypes,
 )
-from kpops.components.base_components.models.resource import Resource
 from kpops.components.base_components.models.to_section import (
     ToSection,
 )
@@ -22,7 +29,8 @@ from kpops.components.common.topic import (
     OutputTopicTypes,
     TopicConfig,
 )
-from kpops.utils.docstring import describe_attr
+from kpops.manifests.kubernetes import KubernetesManifest
+from kpops.utils.pydantic import exclude_by_name, exclude_by_value
 
 
 class PipelineComponent(BaseDefaultsComponent, ABC):
@@ -38,26 +46,42 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         defaults to None
     """
 
-    name: str = Field(default=..., description=describe_attr("name", __doc__))
-    prefix: str = Field(
-        default="${pipeline.name}-",
-        description=describe_attr("prefix", __doc__),
+    name: str
+    enabled: bool = Field(
+        default=True,
+        title="Enabled",
+        description="Whether the component is enabled and should be included in the pipeline",
     )
+    prefix: str = "${pipeline.name}-"
     from_: FromSection | None = Field(
         default=None,
         serialization_alias="from",
         validation_alias=AliasChoices("from", "from_"),
         title="From",
-        description=describe_attr("from_", __doc__),
     )
-    to: ToSection | None = Field(
-        default=None,
-        description=describe_attr("to", __doc__),
+    to: ToSection | None = None
+
+    model_config: ClassVar[ConfigDict] = ConfigDict(
+        extra="allow", use_enum_values=False
     )
 
-    model_config = ConfigDict(extra="allow")
+    @pydantic.model_serializer(mode="wrap", when_used="always")
+    def sort_model(
+        self,
+        default_serialize_handler: SerializerFunctionWrapHandler,
+        info: SerializationInfo,
+    ) -> dict[str, Any]:
+        result = default_serialize_handler(self)
+        if info.context != "generate":
+            return result
+        ordered_fields = {"type": self.type, "name": self.name}
+        result = exclude_by_name(result, *ordered_fields.keys())
+        # NOTE: from SerializeAsOptionalModel
+        if info.exclude_none:
+            result = exclude_by_value(result, None)
+        return {**ordered_fields, **result}
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.set_input_topics()
         self.set_output_topics()
@@ -74,8 +98,8 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
     @property
     def inputs(self) -> Iterator[KafkaTopic]:
         yield from self.input_topics
-        for role_topics in self.extra_input_topics.values():
-            yield from role_topics
+        for labeled_topics in self.extra_input_topics.values():
+            yield from labeled_topics
 
     @property
     def outputs(self) -> Iterator[KafkaTopic]:
@@ -109,11 +133,11 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         :param topics: Input topics
         """
 
-    def add_extra_input_topics(self, role: str, topics: list[KafkaTopic]) -> None:
-        """Add given extra topics that share a role to the list of extra input topics.
+    def add_extra_input_topics(self, label: str, topics: list[KafkaTopic]) -> None:
+        """Add given extra topics that share a label to the list of extra input topics.
 
         :param topics: Extra input topics
-        :param role: Topic role
+        :param label: Topic label
         """
 
     def set_input_pattern(self, name: str) -> None:
@@ -122,10 +146,10 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         :param name: Input pattern name
         """
 
-    def add_extra_input_pattern(self, role: str, topic: str) -> None:
+    def add_extra_input_pattern(self, label: str, topic: str) -> None:
         """Add an input pattern of type extra.
 
-        :param role: Custom identifier belonging to one or multiple topics
+        :param label: Custom identifier belonging to one or multiple topics
         :param topic: Topic name
         """
 
@@ -141,17 +165,17 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         :param topic: Error topic
         """
 
-    def add_extra_output_topic(self, topic: KafkaTopic, role: str) -> None:
+    def add_extra_output_topic(self, topic: KafkaTopic, label: str) -> None:
         """Add an output topic of type extra.
 
         :param topic: Output topic
-        :param role: Role that is unique to the extra output topic
+        :param label: Label that is unique to the extra output topic
         """
 
     def set_input_topics(self) -> None:
         """Put values of config.from into the streams config section of streams bootstrap.
 
-        Supports extra_input_topics (topics by role) or input_topics.
+        Supports extra_input_topics (topics by label) or input_topics.
         """
         if self.from_:
             for name, topic in self.from_.topics.items():
@@ -165,10 +189,10 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         """
         kafka_topic = KafkaTopic(name=name)
         match topic.type:
-            case None if topic.role:
-                self.add_extra_input_topics(topic.role, [kafka_topic])
-            case InputTopicTypes.PATTERN if topic.role:
-                self.add_extra_input_pattern(topic.role, name)
+            case None if topic.label:
+                self.add_extra_input_topics(topic.label, [kafka_topic])
+            case InputTopicTypes.PATTERN if topic.label:
+                self.add_extra_input_pattern(topic.label, name)
             case InputTopicTypes.PATTERN:
                 self.set_input_pattern(name)
             case _:
@@ -177,7 +201,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
     def set_output_topics(self) -> None:
         """Put values of `to` section into the producer config section of streams bootstrap.
 
-        Supports extra_output_topics (topics by role) or output_topics.
+        Supports extra_output_topics (topics by label) or output_topics.
         """
         if self.to:
             for name, topic in self.to.topics.items():
@@ -191,8 +215,8 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         """
         kafka_topic = KafkaTopic(name=name)
         match topic.type:
-            case None if topic.role:
-                self.add_extra_output_topic(kafka_topic, topic.role)
+            case None if topic.label:
+                self.add_extra_output_topic(kafka_topic, topic.label)
             case OutputTopicTypes.ERROR:
                 self.set_error_topic(kafka_topic)
             case _:
@@ -214,7 +238,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         input_topics = [
             topic_name
             for topic_name, topic_config in to.topics.items()
-            if topic_config.type != OutputTopicTypes.ERROR and not topic_config.role
+            if topic_config.type != OutputTopicTypes.ERROR and not topic_config.label
         ]
         for input_topic in input_topics:
             self.apply_from_inputs(input_topic, from_topic)
@@ -229,9 +253,26 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         """
         return [self]
 
-    def manifest(self) -> Resource:
-        """Render final component resources, e.g. Kubernetes manifests."""
-        return []
+    def manifest_deploy(self) -> tuple[KubernetesManifest, ...]:
+        """Render Kubernetes manifests for deploy."""
+        return ()
+
+    def manifest_destroy(self) -> tuple[KubernetesManifest, ...]:
+        """Render Kubernetes manifests resources for destroy."""
+        return ()
+
+    def manifest_reset(self) -> tuple[KubernetesManifest, ...]:
+        """Render Kubernetes manifests resources for reset."""
+        return ()
+
+    def manifest_clean(self) -> tuple[KubernetesManifest, ...]:
+        """Render Kubernetes manifests resources for clean."""
+        return ()
+
+    def generate(self) -> dict[str, Any]:
+        return self.model_dump(
+            context="generate", mode="json", by_alias=True, exclude_none=True
+        )
 
     async def deploy(self, dry_run: bool) -> None:
         """Deploy component, e.g. to Kubernetes cluster.

@@ -1,21 +1,34 @@
 from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
+from typing import ClassVar
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import ConfigDict, Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.exception import ParseError
-from kpops.component_handlers.kubernetes.model import KubernetesManifest
-from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import DescConfigModel
+from kpops.manifests.kubernetes import KubernetesManifest
+from kpops.utils.pydantic import (
+    DescConfigModel,
+    SerializeAsOptional,
+    SerializeAsOptionalModel,
+)
+
+KeyPath = tuple[str, ...]
 
 
-class HelmDiffConfig(BaseModel):
-    ignore: set[str] = Field(
-        default_factory=set,
-        description="Set of keys that should not be checked.",
-        examples=["- name\n- imageTag"],
+@dataclass(frozen=True)
+class Version:
+    major: int
+    minor: int = 0
+    patch: int = 0
+
+
+class HelmDiffConfig(SerializeAsOptionalModel):
+    ignore: SerializeAsOptional[list[KeyPath]] = Field(
+        default=[],
+        description="List of keypaths that should be excluded from the diff.",
+        examples=[("name",), ("imageTag",), ("metadata", "labels", "helm.sh/chart")],
     )
 
 
@@ -30,23 +43,13 @@ class RepoAuthFlags(DescConfigModel):
         , defaults to False
     """
 
-    username: str | None = Field(
-        default=None, description=describe_attr("username", __doc__)
-    )
-    password: str | None = Field(
-        default=None, description=describe_attr("password", __doc__)
-    )
-    ca_file: Path | None = Field(
-        default=None, description=describe_attr("ca_file", __doc__)
-    )
-    cert_file: Path | None = Field(
-        default=None, description=describe_attr("cert_file", __doc__)
-    )
-    insecure_skip_tls_verify: bool = Field(
-        default=False, description=describe_attr("insecure_skip_tls_verify", __doc__)
-    )
+    username: str | None = None
+    password: str | None = None
+    ca_file: Path | None = None
+    cert_file: Path | None = None
+    insecure_skip_tls_verify: bool = False
 
-    def to_command(self) -> list[str]:
+    def to_command(self, helm_version: Version) -> list[str]:
         command: list[str] = []
         if self.username:
             command.extend(["--username", self.username])
@@ -69,13 +72,9 @@ class HelmRepoConfig(DescConfigModel):
     :param repo_auth_flags: Authorisation-related flags
     """
 
-    repository_name: str = Field(
-        default=..., description=describe_attr("repository_name", __doc__)
-    )
-    url: str = Field(default=..., description=describe_attr("url", __doc__))
-    repo_auth_flags: RepoAuthFlags = Field(
-        default=RepoAuthFlags(), description=describe_attr("repo_auth_flags", __doc__)
-    )
+    repository_name: str
+    url: str
+    repo_auth_flags: RepoAuthFlags = RepoAuthFlags()
 
 
 class HelmConfig(DescConfigModel):
@@ -84,22 +83,15 @@ class HelmConfig(DescConfigModel):
     :param context: Name of kubeconfig context (`--kube-context`)
     :param debug: Run Helm in Debug mode
     :param api_version: Kubernetes API version used for `Capabilities.APIVersions`
+    :param timeout: Helm flag --timeout. Duration to wait for any individual Kubernetes operation
+    :param force_replace: Helm flag --force-replace. Forces resource updates by replacement
     """
 
-    context: str | None = Field(
-        default=None,
-        description=describe_attr("context", __doc__),
-        examples=["dev-storage"],
-    )
-    debug: bool = Field(
-        default=False,
-        description=describe_attr("debug", __doc__),
-    )
-    api_version: str | None = Field(
-        default=None,
-        title="API version",
-        description=describe_attr("api_version", __doc__),
-    )
+    context: str | None = Field(default=None, examples=["dev-storage"])
+    debug: bool = False
+    api_version: str | None = Field(default=None, title="API version")
+    timeout: str | None = Field(default=None, title="Helm flag --timeout")
+    force_replace: bool = Field(default=False, title="Force Upgrade")
 
 
 class HelmFlags(RepoAuthFlags):
@@ -107,17 +99,17 @@ class HelmFlags(RepoAuthFlags):
     create_namespace: bool = False
     version: str | None = None
     force: bool = False
-    timeout: str = "5m0s"
+    timeout: str | None = "5m0s"
     wait: bool = True
     wait_for_jobs: bool = False
 
-    model_config = ConfigDict(
+    model_config: ClassVar[ConfigDict] = ConfigDict(
         extra="allow",
     )
 
     @override
-    def to_command(self) -> list[str]:
-        command = super().to_command()
+    def to_command(self, helm_version: Version) -> list[str]:
+        command = super().to_command(helm_version)
         if self.set_file:
             command.extend(
                 [
@@ -130,7 +122,10 @@ class HelmFlags(RepoAuthFlags):
         if self.version:
             command.extend(["--version", self.version])
         if self.force:
-            command.append("--force")
+            if helm_version.major >= 4:
+                command.append("--force-replace")
+            else:
+                command.append("--force")
         if self.timeout:
             command.extend(["--timeout", self.timeout])
         if self.wait:
@@ -147,8 +142,8 @@ class HelmTemplateFlags(HelmFlags):
     api_version: str | None = None
 
     @override
-    def to_command(self) -> list[str]:
-        command = super().to_command()
+    def to_command(self, helm_version: Version) -> list[str]:
+        command = super().to_command(helm_version)
         if self.api_version:
             command.extend(["--api-versions", self.api_version])
         return command
@@ -219,10 +214,3 @@ class HelmChart:
         )
 
         return self.content[manifest_start:manifest_end]
-
-
-@dataclass(frozen=True)
-class Version:
-    major: int
-    minor: int = 0
-    patch: int = 0

@@ -35,7 +35,7 @@ Remove the source connector from the Kafka Connect cluster.
 #### reset
 
 Delete state associated with the connector using
-[bakdata's sink resetter](https://github.com/bakdata/kafka-connect-resetter/#source-resetter){target=_blank}.
+[bakdata's source resetter](https://github.com/bakdata/kafka-connect-resetter/#source-resetter){target=_blank}.
 
 #### clean
 

@@ -1,0 +1,29 @@
+# Global configuration for KPOps project.
+
+# Required fields
+kafka_brokers: null
+
+# Non-required fields
+create_namespace: false
+helm_config:
+  api_version: null
+  context: null
+  debug: false
+  force_replace: false
+  timeout: null
+kafka_connect:
+  timeout: 30
+  url: http://localhost:8083/
+kafka_rest:
+  timeout: 30
+  url: http://localhost:8082/
+pipeline_base_dir: .
+retain_clean_jobs: false
+schema_registry:
+  enabled: false
+  timeout: 30
+  url: http://localhost:8081/
+strimzi_topic: null
+topic_name_config:
+  default_error_topic_name: ${pipeline.name}-${component.name}-error
+  default_output_topic_name: ${pipeline.name}-${component.name}

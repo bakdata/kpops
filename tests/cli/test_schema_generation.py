@@ -3,14 +3,14 @@ from __future__ import annotations
 import json
 from abc import ABC, abstractmethod
 from pathlib import Path
+from typing import ClassVar
 
 import pytest
-from pydantic import ConfigDict, Field
+from pydantic import ConfigDict
 from typer.testing import CliRunner
 
 from kpops.cli.main import app
 from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.utils.docstring import describe_attr
 from kpops.utils.gen_schema import COMPONENTS
 
 RESOURCE_PATH = Path(__file__).parent / "resources"
@@ -21,7 +21,7 @@ runner = CliRunner()
 
 # type is inherited from PipelineComponent
 class EmptyPipelineComponent(PipelineComponent):
-    model_config = ConfigDict(str_strip_whitespace=True)
+    model_config: ClassVar[ConfigDict] = ConfigDict(str_strip_whitespace=True)
 
 
 # abstract component inheriting from ABC should be excluded
@@ -29,7 +29,7 @@ class AbstractBaseComponent(PipelineComponent, ABC): ...
 
 
 # abstract component with abstractmethods should be excluded
-class AbstractPipelineComponent(AbstractBaseComponent):
+class AbstractPipelineComponent(AbstractBaseComponent, ABC):
     @abstractmethod
     def not_implemented(self) -> None: ...
 
@@ -67,9 +67,7 @@ class SubPipelineComponentCorrectDocstr(SubPipelineComponent):
     :param error_marker: error_marker
     """
 
-    example_attr: str = Field(
-        default=..., description=describe_attr("example_attr", __doc__)
-    )
+    example_attr: str
 
 
 @pytest.mark.filterwarnings(

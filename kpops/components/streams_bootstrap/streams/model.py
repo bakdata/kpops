@@ -1,57 +1,59 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Annotated, Any, ClassVar
 
 import pydantic
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import ConfigDict, Field
 
-from kpops.api.exception import ValidationError
-from kpops.components.base_components.kafka_app import (
-    KafkaAppValues,
-    KafkaStreamsConfig,
-)
-from kpops.components.common.streams_bootstrap import StreamsBootstrapValues
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
-from kpops.utils.docstring import describe_attr
+from kpops.components.streams_bootstrap.common.model import (
+    JMXConfig,
+    PersistenceConfig,
+    PrometheusExporterConfig,
+    StreamsAppAutoScaling,
+    serialize_labeled_input_topics,
+    serialize_topics,
+)
+from kpops.components.streams_bootstrap.model import (
+    KafkaConfig,
+    StreamsBootstrapValues,
+)
 from kpops.utils.pydantic import (
-    CamelCaseConfigModel,
-    DescConfigModel,
+    SerializeAsOptional,
 )
 
 
-class StreamsConfig(KafkaStreamsConfig):
-    """Streams Bootstrap streams section.
+class StreamsConfig(KafkaConfig):
+    """streams-bootstrap kafka section.
 
+    :param application_id: Unique application ID for Kafka Streams. Required for auto-scaling
     :param input_topics: Input topics, defaults to []
     :param input_pattern: Input pattern, defaults to None
-    :param extra_input_topics: Extra input topics, defaults to {}
-    :param extra_input_patterns: Extra input patterns, defaults to {}
+    :param labeled_input_topics: Extra input topics, defaults to {}
+    :param labeled_input_patterns: Extra input patterns, defaults to {}
     :param error_topic: Error topic, defaults to None
     :param config: Configuration, defaults to {}
     :param delete_output: Whether the output topics with their associated schemas and the consumer group should be deleted during the cleanup, defaults to None
     """
 
-    input_topics: list[KafkaTopicStr] = Field(
-        default=[], description=describe_attr("input_topics", __doc__)
-    )
-    input_pattern: str | None = Field(
-        default=None, description=describe_attr("input_pattern", __doc__)
-    )
-    extra_input_topics: dict[str, list[KafkaTopicStr]] = Field(
-        default={}, description=describe_attr("extra_input_topics", __doc__)
-    )
-    extra_input_patterns: dict[str, str] = Field(
-        default={}, description=describe_attr("extra_input_patterns", __doc__)
-    )
-    error_topic: KafkaTopicStr | None = Field(
-        default=None, description=describe_attr("error_topic", __doc__)
-    )
-    config: dict[str, Any] = Field(
-        default={}, description=describe_attr("config", __doc__)
-    )
-    delete_output: bool | None = Field(
-        default=None, description=describe_attr("delete_output", __doc__)
-    )
+    application_id: str | None = Field(default=None, title="Unique application ID")
+    input_topics: SerializeAsOptional[
+        Annotated[
+            list[KafkaTopicStr],
+            pydantic.PlainSerializer(serialize_topics),
+        ]
+    ] = []
+    input_pattern: str | None = None
+    labeled_input_topics: SerializeAsOptional[
+        Annotated[
+            dict[str, list[KafkaTopicStr]],
+            pydantic.PlainSerializer(serialize_labeled_input_topics),
+        ]
+    ] = {}
+    labeled_input_patterns: SerializeAsOptional[dict[str, str]] = {}
+    error_topic: KafkaTopicStr | None = None
+    config: SerializeAsOptional[dict[str, Any]] = {}
+    delete_output: bool | None = None
 
     @pydantic.field_validator("input_topics", mode="before")
     @classmethod
@@ -62,29 +64,17 @@ class StreamsConfig(KafkaStreamsConfig):
             return [KafkaTopic(name=topic_name) for topic_name in input_topics]
         return input_topics
 
-    @pydantic.field_validator("extra_input_topics", mode="before")
+    @pydantic.field_validator("labeled_input_topics", mode="before")
     @classmethod
-    def deserialize_extra_input_topics(
-        cls, extra_input_topics: dict[str, str] | Any
+    def deserialize_labeled_input_topics(
+        cls, labeled_input_topics: dict[str, list[str]] | Any
     ) -> dict[str, list[KafkaTopic]] | Any:
-        if isinstance(extra_input_topics, dict):
+        if isinstance(labeled_input_topics, dict):
             return {
-                role: [KafkaTopic(name=topic_name) for topic_name in topics]
-                for role, topics in extra_input_topics.items()
+                label: [KafkaTopic(name=topic_name) for topic_name in topics]
+                for label, topics in labeled_input_topics.items()
             }
-        return extra_input_topics
-
-    @pydantic.field_serializer("input_topics")
-    def serialize_topics(self, topics: list[KafkaTopic]) -> list[str]:
-        return [topic.name for topic in topics]
-
-    @pydantic.field_serializer("extra_input_topics")
-    def serialize_extra_input_topics(
-        self, extra_topics: dict[str, list[KafkaTopic]]
-    ) -> dict[str, list[str]]:
-        return {
-            role: self.serialize_topics(topics) for role, topics in extra_topics.items()
-        }
+        return labeled_input_topics
 
     def add_input_topics(self, topics: list[KafkaTopic]) -> None:
         """Add given topics to the list of input topics.
@@ -95,174 +85,39 @@ class StreamsConfig(KafkaStreamsConfig):
         """
         self.input_topics = KafkaTopic.deduplicate(self.input_topics + topics)
 
-    def add_extra_input_topics(self, role: str, topics: list[KafkaTopic]) -> None:
-        """Add given extra topics that share a role to the list of extra input topics.
+    def add_labeled_input_topics(self, label: str, topics: list[KafkaTopic]) -> None:
+        """Add given labeled topics that share a label to the list of extra input topics.
 
         Ensures no duplicate topics in the list.
 
         :param topics: Extra input topics
-        :param role: Topic role
+        :param label: Topic label
         """
-        self.extra_input_topics[role] = KafkaTopic.deduplicate(
-            self.extra_input_topics.get(role, []) + topics
+        self.labeled_input_topics[label] = KafkaTopic.deduplicate(
+            self.labeled_input_topics.get(label, []) + topics
         )
 
 
-class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
-    """Kubernetes Event-driven Autoscaling config.
-
-    :param enabled: Whether to enable auto-scaling using KEDA., defaults to False
-    :param consumer_group: Name of the consumer group used for checking the
-        offset on the topic and processing the related lag.
-        Mandatory to set when auto-scaling is enabled.
-    :param lag_threshold: Average target value to trigger scaling actions.
-        Mandatory to set when auto-scaling is enabled.
-    :param polling_interval: This is the interval to check each trigger on.
-        https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval,
-        defaults to 30
-    :param cooldown_period: The period to wait after the last trigger reported
-        active before scaling the resource back to 0.
-        https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod,
-        defaults to 300
-    :param offset_reset_policy: The offset reset policy for the consumer if the
-        consumer group is not yet subscribed to a partition.,
-        defaults to "earliest"
-    :param min_replicas: Minimum number of replicas KEDA will scale the resource down to.
-        "https://keda.sh/docs/2.9/concepts/scaling-deployments/#minreplicacount",
-        defaults to 0
-    :param max_replicas: This setting is passed to the HPA definition that KEDA
-        will create for a given resource and holds the maximum number of replicas
-        of the target resouce.
-        https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount,
-        defaults to 1
-    :param idle_replicas: If this property is set, KEDA will scale the resource
-        down to this number of replicas.
-        https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount,
-        defaults to None
-    :param topics: List of auto-generated Kafka Streams topics used by the streams app.,
-        defaults to []
-    """
-
-    enabled: bool = Field(
-        default=False,
-        description=describe_attr("streams", __doc__),
-    )
-    consumer_group: str | None = Field(
-        default=None,
-        title="Consumer group",
-        description=describe_attr("consumer_group", __doc__),
-    )
-    lag_threshold: int | None = Field(
-        default=None,
-        title="Lag threshold",
-        description=describe_attr("lag_threshold", __doc__),
-    )
-    polling_interval: int = Field(
-        default=30,
-        title="Polling interval",
-        description=describe_attr("polling_interval", __doc__),
-    )
-    cooldown_period: int = Field(
-        default=300,
-        title="Cooldown period",
-        description=describe_attr("cooldown_period", __doc__),
-    )
-    offset_reset_policy: str = Field(
-        default="earliest",
-        title="Offset reset policy",
-        description=describe_attr("offset_reset_policy", __doc__),
-    )
-    min_replicas: int = Field(
-        default=0,
-        title="Min replica count",
-        description=describe_attr("min_replicas", __doc__),
-    )
-    max_replicas: int = Field(
-        default=1,
-        title="Max replica count",
-        description=describe_attr("max_replicas", __doc__),
-    )
-    idle_replicas: int | None = Field(
-        default=None,
-        title="Idle replica count",
-        description=describe_attr("idle_replicas", __doc__),
-    )
-    topics: list[str] = Field(
-        default=[],
-        description=describe_attr("topics", __doc__),
-    )
-    model_config = ConfigDict(extra="allow")
-
-    @model_validator(mode="after")
-    def validate_mandatory_fields_are_set(
-        self: StreamsAppAutoScaling,
-    ) -> StreamsAppAutoScaling:  # TODO: typing.Self for Python 3.11+
-        if self.enabled and (self.consumer_group is None or self.lag_threshold is None):
-            msg = (
-                "If app.autoscaling.enabled is set to true, "
-                "the fields app.autoscaling.consumer_group and app.autoscaling.lag_threshold should be set."
-            )
-            raise ValidationError(msg)
-        return self
-
-
-class PersistenceConfig(BaseModel):
-    """streams-bootstrap persistence configurations.
-
-    :param enabled: Whether to use a persistent volume to store the state of the streams app.
-    :param size: The size of the PersistentVolume to allocate to each streams pod in the StatefulSet.
-    :param storage_class: Storage class to use for the persistent volume.
-    """
-
-    enabled: bool = Field(
-        default=False,
-        description="Whether to use a persistent volume to store the state of the streams app.	",
-    )
-    size: str | None = Field(
-        default=None,
-        description="The size of the PersistentVolume to allocate to each streams pod in the StatefulSet.",
-    )
-    storage_class: str | None = Field(
-        default=None,
-        description="Storage class to use for the persistent volume.",
-    )
-
-    @model_validator(mode="after")
-    def validate_mandatory_fields_are_set(
-        self: PersistenceConfig,
-    ) -> PersistenceConfig:  # TODO: typing.Self for Python 3.11+
-        if self.enabled and self.size is None:
-            msg = (
-                "If app.persistence.enabled is set to true, "
-                "the field app.persistence.size needs to be set."
-            )
-            raise ValidationError(msg)
-        return self
-
-
-class StreamsAppValues(StreamsBootstrapValues, KafkaAppValues):
+class StreamsAppValues(StreamsBootstrapValues):
     """streams-bootstrap app configurations.
 
     The attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.
 
-    :param streams: streams-bootstrap streams section
+    :param kafka: streams-bootstrap kafka section
     :param autoscaling: Kubernetes event-driven autoscaling config, defaults to None
+    :param stateful_set: Whether to use a StatefulSet instead of a Deployment to deploy the streams app.
+    :param persistence: Configuration for persistent volume to store the state of the streams app.
+    :param prometheus: Configuration for Prometheus JMX Exporter.
+    :param jmx: Configuration for JMX Exporter.
+    :param termination_grace_period_seconds: Delay for graceful application shutdown in seconds: https://pracucci.com/graceful-shutdown-of-kubernetes-pods.html
     """
 
-    streams: StreamsConfig = Field(
-        default=...,
-        description=describe_attr("streams", __doc__),
-    )
-    autoscaling: StreamsAppAutoScaling | None = Field(
-        default=None,
-        description=describe_attr("autoscaling", __doc__),
-    )
-    stateful_set: bool = Field(
-        default=False,
-        description="Whether to use a Statefulset instead of a Deployment to deploy the streams app.",
-    )
-    persistence: PersistenceConfig = Field(
-        default=PersistenceConfig(),
-        description=describe_attr("persistence", __doc__),
-    )
-    model_config = ConfigDict(extra="allow")
+    kafka: StreamsConfig = StreamsConfig()  # pyright: ignore[reportIncompatibleVariableOverride]
+    autoscaling: StreamsAppAutoScaling | None = None
+    stateful_set: bool = False
+    persistence: PersistenceConfig | None = None
+    prometheus: PrometheusExporterConfig | None = None
+    jmx: JMXConfig | None = None
+    termination_grace_period_seconds: int | None = None
+
+    model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")

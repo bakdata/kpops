@@ -2,15 +2,16 @@ from typing import Any
 
 import pytest
 
+from kpops.component_handlers.helm_wrapper.model import KeyPath
 from kpops.utils.dict_differ import Change, Diff, DiffType, render_diff
 
 
 @pytest.mark.parametrize(
     ("d1", "d2", "ignore", "output"),
     [
-        ({}, {}, None, None),
-        ({}, {}, "a.b", None),
-        (
+        pytest.param({}, {}, None, None),
+        pytest.param({}, {}, [("a", "b")], None),
+        pytest.param(
             {"a": 1, "b": 2, "c": 3},
             {"a": 2, "d": 1},
             None,
@@ -23,19 +24,31 @@ from kpops.utils.dict_differ import Change, Diff, DiffType, render_diff
             "\x1b[0m\x1b[31m- c: 3\n"
             "\x1b[0m",
         ),
-        (
+        pytest.param(
             {"a": 1, "b": 2, "c": 3},
             {"a": 2, "d": 1},
-            {"a"},
-            "\x1b[32m+ d: 1\n"
+            [("a")],
+            "\x1b[32m+ d: 1\n\x1b[0m\x1b[31m- b: 2\n\x1b[0m\x1b[31m- c: 3\n\x1b[0m",
+        ),
+        pytest.param(
+            {"a": {"a": 1, "b": 2, "c": 3}, "b": 2, "c": 3},
+            {"a": {"a": 9, "b": 8}, "d": 1},
+            [("a", "a")],
+            "  a:\n"
+            "\x1b[31m-   b: 2\n"
+            "\x1b[0m\x1b[33m?      ^\n"
+            "\x1b[0m\x1b[32m+   b: 8\n"
+            "\x1b[0m\x1b[33m?      ^\n"
+            "\x1b[0m\x1b[32m+ d: 1\n"
+            "\x1b[0m\x1b[31m-   c: 3\n"
             "\x1b[0m\x1b[31m- b: 2\n"
             "\x1b[0m\x1b[31m- c: 3\n"
             "\x1b[0m",
         ),
-        (
-            {"a": {"a": 1, "b": 2, "c": 3}, "b": 2, "c": 3},
-            {"a": {"a": 9, "b": 8}, "d": 1},
-            {"a.a"},
+        pytest.param(
+            {"a": {"a.foo/bar": 1, "b": 2, "c": 3}, "b": 2, "c": 3},
+            {"a": {"a.foo/bar": 9, "b": 8}, "d": 1},
+            [("a", "a.foo/bar")],
             "  a:\n"
             "\x1b[31m-   b: 2\n"
             "\x1b[0m\x1b[33m?      ^\n"
@@ -50,7 +63,10 @@ from kpops.utils.dict_differ import Change, Diff, DiffType, render_diff
     ],
 )
 def test_render_diff(
-    d1: dict[str, Any], d2: dict[str, Any], ignore: set[str] | None, output: str | None
+    d1: dict[str, Any],
+    d2: dict[str, Any],
+    ignore: list[KeyPath] | None,
+    output: str | None,
 ):
     assert render_diff(d1, d2, ignore) == output
 

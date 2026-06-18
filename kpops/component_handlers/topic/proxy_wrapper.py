@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from functools import cached_property
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, final
 
 import httpx
 
@@ -27,6 +27,7 @@ log = logging.getLogger("KafkaRestProxy")
 HEADERS = {"Content-Type": "application/json"}
 
 
+@final
 class ProxyWrapper:
     """Wraps Kafka REST Proxy APIs."""
 
@@ -120,7 +121,7 @@ class ProxyWrapper:
         if response.status_code == httpx.codes.OK:
             log.debug(f"Topic {topic_name} found.")
             log.debug(response.json())
-            return TopicResponse(**response.json())
+            return TopicResponse.model_validate(response.json())
 
         elif (
             response.status_code == httpx.codes.NOT_FOUND
@@ -150,7 +151,7 @@ class ProxyWrapper:
         if response.status_code == httpx.codes.OK:
             log.debug(f"Configs for {topic_name} found.")
             log.debug(response.json())
-            return TopicConfigResponse(**response.json())
+            return TopicConfigResponse.model_validate(response.json())
 
         elif (
             response.status_code == httpx.codes.NOT_FOUND
@@ -203,6 +204,6 @@ class ProxyWrapper:
         if response.status_code == httpx.codes.OK:
             log.debug("Broker configs found.")
             log.debug(response.json())
-            return BrokerConfigResponse(**response.json())
+            return BrokerConfigResponse.model_validate(response.json())
 
         raise KafkaRestProxyError(response)

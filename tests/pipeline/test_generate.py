@@ -1,5 +1,6 @@
 import asyncio
 from pathlib import Path
+from typing import Any
 from unittest import mock
 from unittest.mock import AsyncMock, MagicMock
 
@@ -10,18 +11,25 @@ from pytest_snapshot.plugin import Snapshot
 from typer.testing import CliRunner
 
 import kpops.api as kpops
-from kpops.api.exception import ParsingException, ValidationError
-from kpops.cli.main import FilterType, app
+from kpops.api.options import FilterType
+from kpops.cli.main import app
+from kpops.component_handlers.kafka_connect.model import ConnectorNewState
 from kpops.components.base_components.kafka_connector import KafkaSinkConnector
 from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.components.streams_bootstrap.producer.producer_app import ProducerApp
+from kpops.components.streams_bootstrap.streams.streams_app import StreamsApp
 from kpops.const.file_type import PIPELINE_YAML, KpopsFileType
+from kpops.core.exception import ParsingException, ValidationError
+from kpops.utils.environment import ENV
 
 runner = CliRunner()
 
 RESOURCE_PATH = Path(__file__).parent / "resources"
 
 
-@pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache", "custom_components")
+@pytest.mark.usefixtures(
+    "mock_env", "load_yaml_file_clear_cache", "custom_components", "clear_kpops_config"
+)
 class TestGenerate:
     @pytest.fixture(autouse=True)
     def log_info(self, mocker: MockerFixture) -> MagicMock:
@@ -78,6 +86,12 @@ class TestGenerate:
 
         snapshot.assert_match(result.stdout, PIPELINE_YAML)
 
+    def test_load_yaml_clear_env(self) -> None:
+        kpops.generate(RESOURCE_PATH / "pipeline-folders/pipeline-1/pipeline.yaml")
+        assert ENV["pipeline.name_2"] == "pipeline-1"
+        kpops.generate(RESOURCE_PATH / "first-pipeline" / PIPELINE_YAML)
+        assert "pipeline.name_2" not in ENV
+
     def test_load_pipeline_with_folder_path(self, snapshot: Snapshot):
         result = runner.invoke(
             app,
@@ -118,7 +132,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
 
         assert enriched_pipeline[0]["prefix"] == "my-fake-prefix-"
         assert enriched_pipeline[0]["name"] == "my-streams-app"
@@ -165,7 +179,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
         assert (
             enriched_pipeline[0]["prefix"] == "resources-component-type-substitution-"
         )
@@ -211,18 +225,16 @@ class TestGenerate:
             )
 
     def test_kafka_connector_config_parsing(self):
-        result = runner.invoke(
-            app,
-            [
-                "generate",
-                str(RESOURCE_PATH / "kafka-connect-sink-config" / PIPELINE_YAML),
-                "--config",
-                str(RESOURCE_PATH / "kafka-connect-sink-config"),
-            ],
-            catch_exceptions=False,
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "kafka-connect-sink-config" / PIPELINE_YAML,
+            config=RESOURCE_PATH / "kafka-connect-sink-config",
         )
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
-        sink_connector = enriched_pipeline[0]
+        assert len(pipeline) == 1
+        sink_connector = pipeline.components[0]
+        assert isinstance(sink_connector, KafkaSinkConnector)
+        assert sink_connector.state is ConnectorNewState.PAUSED
+        sink_connector = sink_connector.generate()
+        assert sink_connector["state"] == "paused"
         assert (
             sink_connector["config"]["errors.deadletterqueue.topic.name"]
             == "kafka-sink-connector-error-topic"
@@ -338,15 +350,15 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
         producer_details = enriched_pipeline[0]
-        output_topic = producer_details["values"]["streams"]["outputTopic"]
+        output_topic = producer_details["values"]["kafka"]["outputTopic"]
         assert output_topic == "app1-test-topic"
 
         streams_app_details = enriched_pipeline[1]
-        output_topic = streams_app_details["values"]["streams"]["outputTopic"]
+        output_topic = streams_app_details["values"]["kafka"]["outputTopic"]
         assert output_topic == "app2-test-topic"
-        error_topic = streams_app_details["values"]["streams"]["errorTopic"]
+        error_topic = streams_app_details["values"]["kafka"]["errorTopic"]
         assert error_topic == "app2-dead-letter-topic"
 
         snapshot.assert_match(result.stdout, PIPELINE_YAML)
@@ -358,14 +370,14 @@ class TestGenerate:
         with Path(RESOURCE_PATH / "custom-config/config.yaml").open(
             "r",
         ) as rel_config_yaml:
-            config_dict: dict = yaml.safe_load(rel_config_yaml)
+            config_dict: dict[str, Any] = yaml.safe_load(rel_config_yaml)
         config_dict["defaults_path"] = str(
             (RESOURCE_PATH / "no-topics-defaults").absolute(),
         )
         temp_config_path = RESOURCE_PATH / "custom-config/config_custom.yaml"
         try:
             with temp_config_path.open("w") as abs_config_yaml:
-                yaml.dump(config_dict, abs_config_yaml)
+                yaml.safe_dump(config_dict, abs_config_yaml)
             result = runner.invoke(
                 app,
                 [
@@ -381,15 +393,15 @@ class TestGenerate:
 
             assert result.exit_code == 0, result.stdout
 
-            enriched_pipeline: list = yaml.safe_load(result.stdout)
+            enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
             producer_details = enriched_pipeline[0]
-            output_topic = producer_details["values"]["streams"]["outputTopic"]
+            output_topic = producer_details["values"]["kafka"]["outputTopic"]
             assert output_topic == "app1-test-topic"
 
             streams_app_details = enriched_pipeline[1]
-            output_topic = streams_app_details["values"]["streams"]["outputTopic"]
+            output_topic = streams_app_details["values"]["kafka"]["outputTopic"]
             assert output_topic == "app2-test-topic"
-            error_topic = streams_app_details["values"]["streams"]["errorTopic"]
+            error_topic = streams_app_details["values"]["kafka"]["errorTopic"]
             assert error_topic == "app2-dead-letter-topic"
 
             snapshot.assert_match(result.stdout, PIPELINE_YAML)
@@ -410,15 +422,15 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
         producer_details = enriched_pipeline[0]
-        output_topic = producer_details["values"]["streams"]["outputTopic"]
+        output_topic = producer_details["values"]["kafka"]["outputTopic"]
         assert output_topic == "resources-custom-config-app1"
 
         streams_app_details = enriched_pipeline[1]
-        output_topic = streams_app_details["values"]["streams"]["outputTopic"]
+        output_topic = streams_app_details["values"]["kafka"]["outputTopic"]
         assert output_topic == "resources-custom-config-app2"
-        error_topic = streams_app_details["values"]["streams"]["errorTopic"]
+        error_topic = streams_app_details["values"]["kafka"]["errorTopic"]
         assert error_topic == "resources-custom-config-app2-error"
 
         snapshot.assert_match(result.stdout, PIPELINE_YAML)
@@ -439,8 +451,10 @@ class TestGenerate:
             catch_exceptions=False,
         )
         assert result.exit_code == 0, result.stdout
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
-        assert enriched_pipeline[0]["values"]["streams"]["brokers"] == "env_broker"
+        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
+        assert (
+            enriched_pipeline[0]["values"]["kafka"]["bootstrapServers"] == "env_broker"
+        )
 
     def test_nested_config_env_vars(self, monkeypatch: pytest.MonkeyPatch):
         monkeypatch.setenv(
@@ -460,9 +474,9 @@ class TestGenerate:
             catch_exceptions=False,
         )
         assert result.exit_code == 0, result.stdout
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
         assert (
-            enriched_pipeline[0]["values"]["streams"]["schemaRegistryUrl"]
+            enriched_pipeline[0]["values"]["kafka"]["schemaRegistryUrl"]
             == "http://somename:1234/"
         )
 
@@ -482,9 +496,9 @@ class TestGenerate:
             catch_exceptions=False,
         )
         assert result.exit_code == 0, result.stdout
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
         assert (
-            enriched_pipeline[0]["values"]["streams"]["schemaRegistryUrl"]
+            enriched_pipeline[0]["values"]["kafka"]["schemaRegistryUrl"]
             == "http://production:8081/"
         )
 
@@ -516,10 +530,9 @@ class TestGenerate:
             catch_exceptions=False,
         )
         assert result.exit_code == 0, result.stdout
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
         assert (
-            enriched_pipeline[0]["values"]["streams"]["schemaRegistryUrl"]
-            == expected_url
+            enriched_pipeline[0]["values"]["kafka"]["schemaRegistryUrl"] == expected_url
         )
 
     def test_config_dir_doesnt_exist(self):
@@ -569,9 +582,9 @@ class TestGenerate:
         )
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
         assert (
-            enriched_pipeline[1]["values"]["streams"]["schemaRegistryUrl"]
+            enriched_pipeline[1]["values"]["kafka"]["schemaRegistryUrl"]
             == "http://notlocalhost:8081/"
         )
 
@@ -587,7 +600,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
 
         output_topics = enriched_pipeline[4]["to"]["topics"]
         input_topics = enriched_pipeline[4]["from"]["topics"]
@@ -595,27 +608,27 @@ class TestGenerate:
         assert "type" not in output_topics["output-topic"]
         assert output_topics["error-topic"]["type"] == "error"
         assert "type" not in output_topics["extra-topic-output"]
-        assert "role" not in output_topics["output-topic"]
-        assert "role" not in output_topics["error-topic"]
-        assert output_topics["extra-topic-output"]["role"] == "role"
+        assert "label" not in output_topics["output-topic"]
+        assert "label" not in output_topics["error-topic"]
+        assert output_topics["extra-topic-output"]["label"] == "role"
 
         assert "type" not in ["input-topic"]
         assert "type" not in input_topics["extra-topic"]
         assert input_topics["input-pattern"]["type"] == "pattern"
         assert input_topics["extra-pattern"]["type"] == "pattern"
-        assert "role" not in input_topics["input-topic"]
-        assert "role" not in input_topics["input-pattern"]
-        assert input_topics["extra-topic"]["role"] == "role"
-        assert input_topics["extra-pattern"]["role"] == "role"
+        assert "label" not in input_topics["input-topic"]
+        assert "label" not in input_topics["input-pattern"]
+        assert input_topics["extra-topic"]["label"] == "role"
+        assert input_topics["extra-pattern"]["label"] == "role"
 
         assert "type" not in input_components["component-input"]
         assert "type" not in input_components["component-extra"]
         assert input_components["component-input-pattern"]["type"] == "pattern"
         assert input_components["component-extra-pattern"]["type"] == "pattern"
-        assert "role" not in input_components["component-input"]
-        assert "role" not in input_components["component-input-pattern"]
-        assert input_components["component-extra"]["role"] == "role"
-        assert input_components["component-extra-pattern"]["role"] == "role"
+        assert "label" not in input_components["component-input"]
+        assert "label" not in input_components["component-input-pattern"]
+        assert input_components["component-extra"]["label"] == "role"
+        assert input_components["component-extra-pattern"]["label"] == "role"
 
     def test_kubernetes_app_name_validation(self):
         with (
@@ -679,13 +692,57 @@ class TestGenerate:
             RESOURCE_PATH / "pipelines-with-graphs" / "simple-pipeline" / PIPELINE_YAML,
         )
         assert len(pipeline.components) == 2
-        assert len(pipeline._graph.nodes) == 3
-        assert len(pipeline._graph.edges) == 2
+        assert len(pipeline._graph.nodes()) == 3
+        assert len(pipeline._graph.edges()) == 2
         topic_nodes = [
-            node for node in pipeline._graph.nodes if node.startswith("topic-")
+            node for node in pipeline._graph.nodes() if node.startswith("topic-")
         ]
         assert len(topic_nodes) == 1
-        assert len(pipeline.components) == len(pipeline._graph.nodes) - len(topic_nodes)
+        assert len(pipeline.components) == len(pipeline._graph.nodes()) - len(
+            topic_nodes
+        )
+
+    def test_validate_components_are_disabled_in_production_but_enabled_on_development(
+        self,
+    ):
+        pipeline_production = kpops.generate(
+            pipeline_path=RESOURCE_PATH
+            / "pipelines-with-graphs"
+            / "simple-pipeline"
+            / PIPELINE_YAML,
+            environment="production",
+        )
+        pipeline_development = kpops.generate(
+            pipeline_path=RESOURCE_PATH
+            / "pipelines-with-graphs"
+            / "simple-pipeline"
+            / PIPELINE_YAML,
+            environment="development",
+        )
+
+        assert len(pipeline_production.components) == 1
+        assert len(pipeline_production._graph.edges()) == 0
+        topic_nodes_production = [
+            node
+            for node in pipeline_production._graph.nodes()
+            if node.startswith("topic-")
+        ]
+        assert len(topic_nodes_production) == 0
+        assert len(pipeline_production.components) == len(
+            pipeline_production._graph.nodes()
+        ) - len(topic_nodes_production)
+
+        assert len(pipeline_development._graph.nodes()) == 3
+        assert len(pipeline_development._graph.edges()) == 2
+        topic_nodes_development = [
+            node
+            for node in pipeline_development._graph.nodes()
+            if node.startswith("topic-")
+        ]
+        assert len(topic_nodes_development) == 1
+        assert len(pipeline_development.components) == len(
+            pipeline_development._graph.nodes()
+        ) - len(topic_nodes_development)
 
     def test_validate_topic_and_component_same_name(self):
         pipeline = kpops.generate(
@@ -694,12 +751,11 @@ class TestGenerate:
             / "same-topic-and-component-name"
             / PIPELINE_YAML,
         )
-        component, topic = list(pipeline._graph.nodes)
-        edges = list(pipeline._graph.edges)
+        component, topic = list(pipeline._graph.nodes())
+        edges = list(pipeline._graph.edges())
         assert component == topic.removeprefix("topic-")
         assert (component, topic) in edges
 
-    @pytest.mark.asyncio()
     async def test_parallel_execution_graph(self):
         pipeline = kpops.generate(
             RESOURCE_PATH / "parallel-pipeline" / PIPELINE_YAML,
@@ -740,7 +796,6 @@ class TestGenerate:
             mock.call("s3-connector-1"),
         ]
 
-    @pytest.mark.asyncio()
     async def test_subgraph_execution(self):
         pipeline = kpops.generate(
             RESOURCE_PATH / "parallel-pipeline" / PIPELINE_YAML,
@@ -768,7 +823,6 @@ class TestGenerate:
             mock.call("s3-connector-1"),
         ]
 
-    @pytest.mark.asyncio()
     async def test_parallel_execution_graph_reverse(self):
         pipeline = kpops.generate(
             RESOURCE_PATH / "parallel-pipeline" / PIPELINE_YAML,
@@ -819,29 +873,20 @@ class TestGenerate:
             catch_exceptions=False,
         )
         assert result.exit_code == 0, result.stdout
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        enriched_pipeline: list[dict[str, Any]] = yaml.safe_load(result.stdout)
         assert (
             enriched_pipeline[0]["name"]
             == "in-order-to-have-len-fifty-two-name-should-end--here"
         )
 
     def test_substitution_in_inflated_component(self):
-        result = runner.invoke(
-            app,
-            [
-                "generate",
-                str(RESOURCE_PATH / "resetter_values" / PIPELINE_YAML),
-            ],
-            catch_exceptions=False,
-        )
-        assert result.exit_code == 0, result.stdout
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        pipeline = kpops.generate(RESOURCE_PATH / "resetter_values" / PIPELINE_YAML)
+        assert isinstance(pipeline.components[1], KafkaSinkConnector)
         assert (
-            enriched_pipeline[1]["_resetter"]["values"]["label"]
-            == "inflated-connector-name"
+            pipeline.components[1]._resetter.values.label == "inflated-connector-name"  # pyright: ignore[reportAttributeAccessIssue,reportUnknownMemberType]
         )
         assert (
-            enriched_pipeline[1]["_resetter"]["values"]["imageTag"]
+            pipeline.components[1]._resetter.values.imageTag  # pyright: ignore[reportAttributeAccessIssue,reportUnknownMemberType]
             == "override-default-image-tag"
         )
 
@@ -854,16 +899,68 @@ class TestGenerate:
         assert isinstance(pipeline.components[0], KafkaSinkConnector)
         assert pipeline.components[0].name == "es-sink-connector"
         assert pipeline.components[0]._resetter.name == "es-sink-connector"
-        assert hasattr(pipeline.components[0]._resetter.values, "label")
-        assert pipeline.components[0]._resetter.values.label == "es-sink-connector"  # type: ignore[reportGeneralTypeIssues]
-
-        enriched_pipeline: list = yaml.safe_load(pipeline.to_yaml())
-        assert enriched_pipeline[0]["name"] == "es-sink-connector"
-        assert enriched_pipeline[0]["_resetter"]["name"] == "es-sink-connector"
+        assert pipeline.components[0]._resetter.values.label == "es-sink-connector"  # pyright: ignore[reportAttributeAccessIssue,reportUnknownMemberType]
         assert (
-            enriched_pipeline[0]["_resetter"]["values"]["label"] == "es-sink-connector"
-        )
-        assert (
-            enriched_pipeline[0]["_resetter"]["values"]["imageTag"]
+            pipeline.components[0]._resetter.values.imageTag  # pyright: ignore[reportAttributeAccessIssue,reportUnknownMemberType]
             == "override-default-image-tag"
         )
+
+    def test_streams_bootstrap(self, snapshot: Snapshot):
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "streams-bootstrap" / PIPELINE_YAML,
+        )
+
+        cleaner_diff_config = [("cleaner",)]
+        producer_app = pipeline.components[0]
+        assert isinstance(producer_app, ProducerApp)
+        assert not producer_app.diff_config.ignore
+        assert producer_app._cleaner.diff_config.ignore == cleaner_diff_config
+
+        streams_app = pipeline.components[1]
+        assert isinstance(streams_app, StreamsApp)
+        assert streams_app.diff_config.ignore == [("foo", "bar")]
+        assert streams_app._cleaner.diff_config.ignore == cleaner_diff_config
+
+        snapshot.assert_match(pipeline.to_yaml(), PIPELINE_YAML)
+
+    def test_symlinked_pipeline_as_original_pipeline(
+        self,
+    ):
+        pipeline_original = kpops.generate(
+            RESOURCE_PATH / "first-pipeline" / PIPELINE_YAML,
+        )
+        pipeline_symlinked = kpops.generate(
+            RESOURCE_PATH / "pipeline-symlinked" / PIPELINE_YAML,
+        )
+
+        assert pipeline_original.to_yaml() == pipeline_symlinked.to_yaml()
+
+    @pytest.mark.skip(  # FIXME
+        reason="pipeline folder is currently CLI-only feature, cannot test this using current API method"
+    )
+    def test_symlinked_folder_renders_as_original_folder_pipeline(
+        self,
+    ):
+        pipeline_original = kpops.generate(
+            RESOURCE_PATH / "first-pipeline",
+        )
+        pipeline_symlinked = kpops.generate(
+            RESOURCE_PATH / "symlinked-folder",
+        )
+
+        assert pipeline_original == pipeline_symlinked
+
+    @pytest.mark.skip(  # FIXME
+        reason="pipeline folder is currently CLI-only feature, cannot test this using current API method"
+    )
+    def test_symlinked_folder_and_pipelines_with_normal_pipeline_render_as_original(
+        self,
+    ):
+        pipeline_original = kpops.generate(
+            RESOURCE_PATH / "pipeline-folders",
+        )
+        pipeline_symlinked = kpops.generate(
+            RESOURCE_PATH / "pipeline-folders-with-symlinks",
+        )
+
+        assert pipeline_original == pipeline_symlinked

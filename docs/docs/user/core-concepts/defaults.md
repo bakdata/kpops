@@ -64,20 +64,6 @@ The `defaults` codeblocks in this section contain the full set of settings that 
 
 <!-- dprint-ignore-end -->
 
-### [KafkaApp](./components/kafka-app.md)
-
-<!-- dprint-ignore-start -->
-
-??? example "`defaults.yaml`"
-
-    ```yaml
-    --8<--
-    ./docs/resources/pipeline-defaults/defaults-kafka-app.yaml
-    --8<--
-    ```
-
-<!-- dprint-ignore-end -->
-
 ### [StreamsApp](./components/streams-app.md)
 
 <!-- dprint-ignore-start -->

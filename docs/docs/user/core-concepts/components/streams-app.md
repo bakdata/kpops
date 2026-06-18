@@ -1,6 +1,6 @@
 # StreamsApp
 
-Subclass of [_KafkaApp_](kafka-app.md) and [_StreamsBootstrap_](streams-bootstrap.md).
+Subclass of and [_StreamsBootstrap_](streams-bootstrap.md).
 
 ### Usage
 
@@ -26,7 +26,7 @@ Configures a
 
 #### deploy
 
-In addition to [KubernetesApp's `deploy`](kubernetes-app.md#deploy):
+In addition to [StreamsBootstrap's `deploy`](streams-bootstrap.md#deploy):
 
 - Create topics if provided (optional)
 - Submit Avro schemas to the registry if provided (optional)

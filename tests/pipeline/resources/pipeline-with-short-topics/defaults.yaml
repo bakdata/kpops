@@ -2,12 +2,12 @@ kubernetes-app:
   name: "${component_type}"
   namespace: example-namespace
 
-kafka-app:
+streams-bootstrap:
   values:
-    streams:
-      brokers: "${config.kafka_brokers}"
+    kafka:
+      bootstrapServers: "${config.kafka_brokers}"
       schema_registry_url: "${config.schema_registry.url}"
-  version: "2.4.2"
+  version: "3.6.1"
 
 producer-app:
   to:
@@ -15,11 +15,10 @@ producer-app:
       ${output_topic_name}:
         partitions_count: 3
 
-
-streams-app: # inherits from kafka-app
+streams-app: # inherits from streams-bootstrap
   values:
-    streams:
-      brokers: test
+    kafka:
+      bootstrapServers: test
   to:
     topics:
       output-topic:
@@ -27,15 +26,15 @@ streams-app: # inherits from kafka-app
       error-topic:
         type: error
       extra-topic-output:
-        role: role
+        label: role
   from:
     topics:
       input-topic:
         type: input
       extra-topic:
-        role: role
+        label: role
       input-pattern:
         type: pattern
       extra-pattern:
         type: pattern
-        role: role
+        label: role

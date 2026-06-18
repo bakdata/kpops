@@ -21,6 +21,6 @@
   to:
     topics:
       example-output-extra:
-        role: extra
+        label: extra
       test-output-extra:
-        role: test-output
+        label: test-output

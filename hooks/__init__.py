@@ -1,4 +1,4 @@
-"""KPOps pre-commit hooks."""
+"""KPOps Git hooks."""
 
 from pathlib import Path
 

@@ -1,0 +1,39 @@
+- type: my-producer-app
+  values:
+    image: "my-registry/my-producer-image"
+    imageTag: "1.0.0"
+
+  to:
+    topics:
+      my-producer-app-output-topic:
+        type: output
+      my-labeled-producer-app-topic-output:
+        label: my-producer-app-output-topic-label
+
+- type: my-streams-app
+  values:
+    image: "my-registry/my-streams-app-image"
+    imageTag: "1.0.0"
+    kafka:
+      applicationId: "my-streams-app-id"
+
+  from:
+    topics:
+      my-input-topic:
+        type: input
+      my-labeled-input-topic:
+        label: my-input-topic-label
+      my-input-pattern:
+        type: pattern
+      my-labeled-input-pattern:
+        type: pattern
+        label: my-input-topic-labeled-pattern
+
+  to:
+    topics:
+      my-output-topic:
+        type: output
+      my-error-topic:
+        type: error
+      my-labeled-topic-output:
+        label: my-output-topic-label

@@ -12,8 +12,13 @@ from kpops.components.base_components.models.to_section import (
 )
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.components.common.topic import OutputTopicTypes, TopicConfig
-from kpops.components.streams_bootstrap.producer.producer_app import ProducerApp
-from kpops.components.streams_bootstrap.streams.streams_app import StreamsApp
+from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
+
+
+class MyProducerApp(ProducerApp): ...
+
+
+class MyStreamsApp(StreamsApp): ...
 
 
 class ScheduledProducer(ProducerApp): ...
@@ -39,7 +44,7 @@ class ShouldInflate(StreamsApp):
                 if topic_config.type == OutputTopicTypes.OUTPUT:
                     kafka_connector = KafkaSinkConnector(
                         name=f"{self.name}-inflated-sink-connector",
-                        config={  # type: ignore[reportGeneralTypeIssues], required `connector.class` comes from defaults during enrichment
+                        config={  # pyright: ignore[reportArgumentType], required `connector.class` comes from defaults during enrichment
                             "topics": topic_name,
                             "transforms.changeTopic.replacement": f"{topic_name}-index-v1",
                         },
@@ -49,15 +54,15 @@ class ShouldInflate(StreamsApp):
                                     type=OutputTopicTypes.OUTPUT
                                 ),
                                 TopicName("${component.name}"): TopicConfig(
-                                    type=None, role="test"
+                                    type=None, label="test"
                                 ),
                             }
                         ),
                     )
                     inflate_steps.append(kafka_connector)
-                    streams_app = StreamsApp(
+                    streams_app = StreamsApp(  # pyright: ignore[reportCallIssue]
                         name=f"{self.name}-inflated-streams-app",
-                        to=ToSection(  # type: ignore[reportGeneralTypeIssues]
+                        to=ToSection(
                             topics={
                                 TopicName(
                                     f"{self.full_name}-" + "${component.name}"
@@ -90,6 +95,6 @@ class SimpleInflateConnectors(StreamsApp):
     def inflate(self) -> list[PipelineComponent]:
         connector = KafkaSinkConnector(
             name="inflated-connector-name",
-            config={},  # type: ignore[reportArgumentType]
+            config={},  # pyright: ignore[reportArgumentType]
         )
         return [self, connector]

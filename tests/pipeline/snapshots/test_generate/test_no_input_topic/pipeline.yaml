@@ -1,149 +1,81 @@
-- _cleaner:
-    name: app1
-    namespace: example-namespace
-    prefix: resources-no-input-topic-pipeline-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
-    suffix: -clean
-    type: streams-app-cleaner
-    values:
-      commandLine:
-        CONVERT_XML: true
-      imageTag: latest
-      persistence:
-        enabled: false
-      resources:
-        limits:
-          memory: 2G
-        requests:
-          memory: 2G
-      statefulSet: false
-      streams:
-        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-        config:
-          large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-        errorTopic: resources-no-input-topic-pipeline-app1-error
-        inputPattern: .*
-        outputTopic: example-output
-        schemaRegistryUrl: http://localhost:8081/
-    version: 2.4.2
+- type: streams-app
+  name: app1
+  enabled: true
+  prefix: resources-no-input-topic-pipeline-
   from:
-    components: {}
     topics:
       .*:
         type: pattern
-  name: app1
-  namespace: example-namespace
-  prefix: resources-no-input-topic-pipeline-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
+    components: {}
   to:
-    models: {}
     topics:
       example-output:
-        configs: {}
         type: output
+        configs: {}
       resources-no-input-topic-pipeline-app1-error:
-        configs:
-          cleanup.policy: compact,delete
-        partitions_count: 1
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
-  type: streams-app
+        partitions_count: 1
+        configs:
+          cleanup.policy: compact,delete
+    models: {}
+  namespace: example-namespace
   values:
-    commandLine:
-      CONVERT_XML: true
-    imageTag: latest
-    persistence:
-      enabled: false
-    resources:
-      limits:
-        memory: 2G
-      requests:
-        memory: 2G
-    statefulSet: false
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+    image: bakdata-demo-streams-app
+    kafka:
+      bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      schemaRegistryUrl: http://localhost:8081/
+      outputTopic: example-output
+      inputPattern: .*
+      errorTopic: resources-no-input-topic-pipeline-app1-error
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-      errorTopic: resources-no-input-topic-pipeline-app1-error
-      inputPattern: .*
-      outputTopic: example-output
-      schemaRegistryUrl: http://localhost:8081/
-  version: 2.4.2
-- _cleaner:
-    name: app2
-    namespace: example-namespace
-    prefix: resources-no-input-topic-pipeline-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
-    suffix: -clean
-    type: streams-app-cleaner
-    values:
-      imageTag: latest
-      persistence:
-        enabled: false
-      statefulSet: false
-      streams:
-        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-        config:
-          large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-        errorTopic: resources-no-input-topic-pipeline-app2-error
-        extraOutputTopics:
-          extra: example-output-extra
-          test-output: test-output-extra
-        inputTopics:
-        - example-output
-        schemaRegistryUrl: http://localhost:8081/
-    version: 2.4.2
+    resources:
+      requests:
+        memory: 2G
+      limits:
+        memory: 2G
+    commandLine:
+      CONVERT_XML: true
+    statefulSet: false
+  version: 3.6.1
+  helm_release_name: resources-no-input-topic-pipeline-app1
+  helm_name_override: resources-no-input-topic-pipeline-app1
+- type: streams-app
   name: app2
-  namespace: example-namespace
+  enabled: true
   prefix: resources-no-input-topic-pipeline-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
   to:
-    models: {}
     topics:
       example-output-extra:
         configs: {}
-        role: extra
-      resources-no-input-topic-pipeline-app2-error:
-        configs:
-          cleanup.policy: compact,delete
-        partitions_count: 1
-        type: error
-        value_schema: com.bakdata.kafka.DeadLetter
+        label: extra
       test-output-extra:
         configs: {}
-        role: test-output
-  type: streams-app
+        label: test-output
+      resources-no-input-topic-pipeline-app2-error:
+        type: error
+        value_schema: com.bakdata.kafka.DeadLetter
+        partitions_count: 1
+        configs:
+          cleanup.policy: compact,delete
+    models: {}
+  namespace: example-namespace
   values:
-    imageTag: latest
-    persistence:
-      enabled: false
-    statefulSet: false
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      config:
-        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-      errorTopic: resources-no-input-topic-pipeline-app2-error
-      extraOutputTopics:
+    image: bakdata-demo-streams-app
+    kafka:
+      bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      schemaRegistryUrl: http://localhost:8081/
+      labeledOutputTopics:
         extra: example-output-extra
         test-output: test-output-extra
       inputTopics:
-      - example-output
-      schemaRegistryUrl: http://localhost:8081/
-  version: 2.4.2
+        - example-output
+      errorTopic: resources-no-input-topic-pipeline-app2-error
+      config:
+        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+    statefulSet: false
+  version: 3.6.1
+  helm_release_name: resources-no-input-topic-pipeline-app2
+  helm_name_override: resources-no-input-topic-pipeline-app2
 

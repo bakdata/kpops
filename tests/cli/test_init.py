@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import pytest
 from pytest_snapshot.plugin import Snapshot
 from typer.testing import CliRunner
 
@@ -22,22 +23,23 @@ def test_create_config(tmp_path: Path):
     assert len(opt_conf.read_text()) > len(req_conf.read_text())
 
 
-def test_init_project(tmp_path: Path, snapshot: Snapshot):
-    opt_path = tmp_path / "opt"
-    opt_path.mkdir()
-    kpops.init(opt_path, config_include_opt=False)
-    snapshot.assert_match(
-        Path(opt_path / "config.yaml").read_text(), "config_exclude_opt.yaml"
-    )
-    snapshot.assert_match(Path(opt_path / "pipeline.yaml").read_text(), "pipeline.yaml")
-    snapshot.assert_match(Path(opt_path / "defaults.yaml").read_text(), "defaults.yaml")
-
+@pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache", "clear_kpops_config")
+def test_init_project_exclude_optional(tmp_path: Path, snapshot: Snapshot):
     req_path = tmp_path / "req"
     req_path.mkdir()
-    kpops.init(req_path, config_include_opt=True)
-    snapshot.assert_match(
-        Path(req_path / "config.yaml").read_text(), "config_include_opt.yaml"
-    )
+    kpops.init(req_path, config_include_optional=False)
+    snapshot.assert_match(Path(req_path / "config.yaml").read_text(), "config.yaml")
+    snapshot.assert_match(Path(req_path / "pipeline.yaml").read_text(), "pipeline.yaml")
+    snapshot.assert_match(Path(req_path / "defaults.yaml").read_text(), "defaults.yaml")
+
+
+def test_init_project_include_optional(tmp_path: Path, snapshot: Snapshot):
+    opt_path = tmp_path / "opt"
+    opt_path.mkdir()
+    kpops.init(opt_path, config_include_optional=True)
+    snapshot.assert_match(Path(opt_path / "config.yaml").read_text(), "config.yaml")
+    snapshot.assert_match(Path(opt_path / "pipeline.yaml").read_text(), "pipeline.yaml")
+    snapshot.assert_match(Path(opt_path / "defaults.yaml").read_text(), "defaults.yaml")
 
 
 def test_init_project_from_cli_with_bad_path(tmp_path: Path):

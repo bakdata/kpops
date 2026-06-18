@@ -1,88 +1,119 @@
-[tool.poetry]
+[project]
 name = "kpops"
-version = "7.0.0"
+version = "10.9.0"
 description = "KPOps is a tool to deploy Kafka pipelines to Kubernetes"
-authors = ["bakdata <opensource@bakdata.com>"]
-license = "MIT"
 readme = "README.md"
-repository = "https://github.com/bakdata/kpops"
-documentation = "https://bakdata.github.io/kpops/latest"
-keywords = ["kafka", "kubernetes", "stream-processing", "pipelines"]
+requires-python = ">=3.11"
+authors = [
+  { name = "bakdata", email = "opensource@bakdata.com" },
+]
+keywords = ["kafka", "kubernetes", "pipelines", "stream-processing"]
 classifiers = [
   "Environment :: Console",
-  "Operating System :: OS Independent",
-  "Topic :: Software Development :: Libraries :: Python Modules",
-  "Topic :: Software Development :: Libraries",
-  "Topic :: Software Development",
   "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Topic :: Software Development",
+  "Topic :: Software Development :: Libraries",
+  "Topic :: Software Development :: Libraries :: Python Modules",
   "Typing :: Typed",
 ]
+dependencies = [
+  "anyio>=4.3.0",
+  "cachetools>=5.2.0",
+  "croniter>=3.0.3",
+  "dictdiffer>=0.9.0",
+  "httpx>=0.24.1",
+  "lightkube>=0.15.3",
+  "pydantic>=2.10.6",
+  "pydantic-settings>=2.0.3",
+  "pyhumps>=3.7.3",
+  "python-schema-registry-client>=2.4.1",
+  "pyyaml>=6.0",
+  "rich>=12.4.4",
+  "rustworkx>=0.18.0",
+  "typer>=0.12.5",
+]
 
-[tool.poetry.scripts]
+[project.scripts]
 kpops = "kpops.cli.main:app"
 
-[tool.poetry.dependencies]
-python = ">=3.10, <3.13"
-anyio = "^4.3.0"
-pydantic = "^2.5.3"
-pydantic-settings = "^2.0.3"
-rich = "^12.4.4"
-PyYAML = "^6.0"
-typer = { extras = ["all"], version = "^0.6.1" }
-pyhumps = "^3.7.3"
-cachetools = "^5.2.0"
-dictdiffer = "^0.9.0"
-python-schema-registry-client = "^2.4.1"
-httpx = "^0 >=0.24.1"
-rustworkx = "^0.15.1"
-kubernetes-asyncio = "^29.0.0"
+[dependency-groups]
+dev = [
+  "basedpyright>=1.31.5",
+  "lefthook>=1.10.4",
+  "polyfactory>=2.13.0",
+  "pytablewriter[from]>=1.0.0",
+  "pytest>=8.3.2",
+  "pytest-asyncio>=0.23.8",
+  "pytest-httpx>=0.30.0",
+  "pytest-mock>=3.14.0",
+  "pytest-rerunfailures>=14.0",
+  "pytest-snapshot>=0.9.0",
+  "pytest-timeout>=2.3.1",
+  "ruff>=0.9.9",
+]
+docs = [
+  "mdx-truly-sane-lists>=1.3",
+  "mike>=1.1.2",
+  "mkdocs>=1.4.2",
+  "mkdocs-exclude-search>=0.6.5",
+  "mkdocs-glightbox>=0.3.1",
+  "mkdocs-macros-plugin>=1.0.5",
+  "mkdocs-material>=9.0.0",
+  "mkdocstrings[python]>=0.25.1",
+]
 
-[tool.poetry.group.dev.dependencies]
-pytest = "^7.1.2"
-pytest-mock = "^3.10.0"
-pytest-timeout = "^2.1.0"
-pytest-snapshot = "^0.9.0"
-pre-commit = "^2.19.0"
-ruff = "^0.5.5"
-typer-cli = "^0.0.13"
-pyright = "^1.1.352"
-pytest-rerunfailures = "^11.1.2"
-pytest-asyncio = "^0.21.1"
-pytest-httpx = "^0.30.0"
-pytablewriter = { extras = ["from"], version = "^1.0.0" }
-polyfactory = "^2.13.0"
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-[tool.poetry.group.docs]
-optional = true
+[tool.basedpyright]
+include = ["kpops", "tests", "hooks"]
+allowedUntypedLibraries = ["pytablewriter"]
 
-[tool.poetry.group.docs.dependencies]
-mkdocs = "^1.4.2"
-mkdocs-macros-plugin = "^1.0.5"
-mkdocs-material = "^9.0.0"
-mkdocs-glightbox = "^0.3.1"
-mkdocs-exclude-search = "^0.6.5"
-mike = "^1.1.2"
-mkdocstrings = { extras = ["python"], version = "^0.25.1" }
+failOnWarnings = false # CLI usage
 
-[tool.poetry_bumpversion.file."kpops/const/__init__.py"]
+reportImportCycles = true
 
-[tool.pyright]
 reportUnknownParameterType = "warning"
 reportUnknownArgumentType = "warning"
 reportUnknownLambdaType = "warning"
 reportUnknownVariableType = "warning"
 reportUnknownMemberType = "warning"
 
-reportIncompatibleVariableOverride = false
-reportIncompatibleMethodOverride = false
-# FIXME: causes issues on Python 3.10
-# reportIncompatibleVariableOverride = "warning"
-# reportIncompatibleMethodOverride = "warning"
+reportIncompatibleVariableOverride = "warning"
+reportIncompatibleMethodOverride = "warning"
+
+reportUnusedParameter = "hint"
+reportDeprecated = "hint"
+
+reportAny = false
+reportExplicitAny = false
+reportImplicitStringConcatenation = false
+reportUnusedCallResult = false
+# false positive for Pydantic https://github.com/DetachHead/basedpyright/issues/868
+reportUnsafeMultipleInheritance = false
+
+# we can't do much about it if a library doesn't provide types
+reportMissingTypeStubs = false
+# TODO: apply only to 3rd party libs such as lightkube
+strictParameterNoneValue = false
+
+# TODO: apply only to tests https://github.com/DetachHead/basedpyright/issues/668
+reportPrivateUsage = false
+
+[tool.hatch.build.targets.wheel]
+packages = ["kpops"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
 
 [tool.ruff]
 output-format = "grouped"
 show-fixes = true
-target-version = "py310"
+target-version = "py311"
 extend-exclude = ["tests/*snapshots/*"]
 
 [tool.ruff.lint]
@@ -185,6 +216,6 @@ extend-immutable-calls = ["typer.Argument"]
 [tool.ruff.lint.flake8-type-checking]
 runtime-evaluated-base-classes = ["pydantic.BaseModel"]
 
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+[tool.uv]
+package = true
+trusted-publishing = "always"

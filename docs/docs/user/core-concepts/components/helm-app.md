@@ -22,11 +22,11 @@ Can be used to deploy any app in Kubernetes using Helm, for example, a REST serv
 
 #### deploy
 
-Deploy using Helm.
+Identical to [HelmApp's `deploy`](helm-app.md#deploy).
 
 #### destroy
 
-Uninstall Helm release.
+Identical to [HelmApp's `destroy`](helm-app.md#deploy).
 
 #### reset
 

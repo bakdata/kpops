@@ -17,9 +17,9 @@
       component-input:
         type: null
       component-extra:
-        role: role
+        label: role
       component-input-pattern:
         type: pattern
       component-extra-pattern:
         type: pattern
-        role: role
+        label: role

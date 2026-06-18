@@ -6,8 +6,6 @@ from types import ModuleType
 
 import pytest
 
-from kpops.api.exception import ClassNotFoundError
-from kpops.api.registry import Registry, _find_classes, _iter_namespace, find_class
 from kpops.component_handlers.schema_handler.schema_provider import SchemaProvider
 from kpops.components.base_components.helm_app import HelmApp
 from kpops.components.base_components.kafka_app import KafkaApp
@@ -18,9 +16,17 @@ from kpops.components.base_components.kafka_connector import (
 )
 from kpops.components.base_components.kubernetes_app import KubernetesApp
 from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.components.common.streams_bootstrap import StreamsBootstrap
-from kpops.components.streams_bootstrap.producer.producer_app import ProducerApp
-from kpops.components.streams_bootstrap.streams.streams_app import StreamsApp
+from kpops.components.streams_bootstrap import (
+    ConsumerApp,
+    ProducerApp,
+    StreamsApp,
+    StreamsBootstrap,
+)
+from kpops.components.streams_bootstrap_v2 import StreamsBootstrapV2
+from kpops.components.streams_bootstrap_v2.producer.producer_app import ProducerAppV2
+from kpops.components.streams_bootstrap_v2.streams.streams_app import StreamsAppV2
+from kpops.core.exception import ClassNotFoundError
+from kpops.core.registry import Registry, _find_classes, _iter_namespace, find_class
 from tests.cli.resources.custom_module import CustomSchemaProvider
 
 
@@ -50,6 +56,7 @@ def test_iter_namespace():
         "kpops.components.base_components",
         "kpops.components.common",
         "kpops.components.streams_bootstrap",
+        "kpops.components.streams_bootstrap_v2",
         "kpops.components.test_components",
     ]
 
@@ -61,6 +68,7 @@ def test_iter_component_modules():
         "kpops.components.base_components",
         "kpops.components.common",
         "kpops.components.streams_bootstrap",
+        "kpops.components.streams_bootstrap_v2",
         "kpops.components.test_components",
     ]
 
@@ -98,8 +106,12 @@ def test_registry():
         "kafka-source-connector": KafkaSourceConnector,
         "kubernetes-app": KubernetesApp,
         "pipeline-component": PipelineComponent,
+        "producer-app-v2": ProducerAppV2,
         "producer-app": ProducerApp,
+        "consumer-app": ConsumerApp,
+        "streams-app-v2": StreamsAppV2,
         "streams-app": StreamsApp,
+        "streams-bootstrap-v2": StreamsBootstrapV2,
         "streams-bootstrap": StreamsBootstrap,
     }
     for _type, _class in registry._classes.items():

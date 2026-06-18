@@ -3,10 +3,10 @@ from __future__ import annotations
 import logging
 from abc import ABC
 from functools import cached_property
-from typing import Any, Literal, NoReturn
+from typing import Any, Literal, NoReturn, Self
 
 import pydantic
-from pydantic import Field, PrivateAttr, ValidationInfo, computed_field, field_validator
+from pydantic import Field, PrivateAttr, ValidationInfo, field_validator
 from typing_extensions import override
 
 from kpops.component_handlers import get_handlers
@@ -14,6 +14,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmRepoConfig,
 )
 from kpops.component_handlers.kafka_connect.model import (
+    ConnectorNewState,
     KafkaConnectorConfig,
     KafkaConnectorType,
 )
@@ -24,13 +25,7 @@ from kpops.components.base_components.pipeline_component import PipelineComponen
 from kpops.components.common.topic import KafkaTopic
 from kpops.config import get_config
 from kpops.utils.colorify import magentaify
-from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import CamelCaseConfigModel
-
-try:
-    from typing import Self  # pyright: ignore[reportAttributeAccessIssue]
-except ImportError:
-    from typing_extensions import Self
+from kpops.utils.pydantic import CamelCaseConfigModel, SkipGenerate
 
 log = logging.getLogger("KafkaConnector")
 
@@ -55,18 +50,14 @@ class KafkaConnectorResetter(Cleaner, ABC):
     :param version: Helm chart version, defaults to "1.0.4"
     """
 
-    from_: None = None
-    to: None = None
-    values: KafkaConnectorResetterValues
-    repo_config: HelmRepoConfig = Field(
-        default=HelmRepoConfig(
-            repository_name="bakdata-kafka-connect-resetter",
-            url="https://bakdata.github.io/kafka-connect-resetter/",
-        )
+    from_: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
+    to: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
+    values: KafkaConnectorResetterValues  # pyright: ignore[reportIncompatibleVariableOverride]
+    repo_config: SkipGenerate[HelmRepoConfig] = HelmRepoConfig(  # pyright: ignore[reportIncompatibleVariableOverride]
+        repository_name="bakdata-kafka-connect-resetter",
+        url="https://bakdata.github.io/kafka-connect-resetter/",
     )
-    version: str | None = Field(
-        default="1.0.4", description=describe_attr("version", __doc__)
-    )
+    version: str | None = "1.0.4"
 
     @property
     @override
@@ -112,22 +103,16 @@ class KafkaConnector(PipelineComponent, ABC):
     Should only be used to set defaults
 
     :param config: Connector config
+    :param state: Connector state
     :param resetter_namespace: Kubernetes namespace in which the Kafka Connect resetter shall be deployed
     :param resetter_values: Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc.,
         defaults to empty HelmAppValues
     """
 
-    config: KafkaConnectorConfig = Field(
-        default=...,
-        description=describe_attr("config", __doc__),
-    )
-    resetter_namespace: str | None = Field(
-        default=None, description=describe_attr("resetter_namespace", __doc__)
-    )
-    resetter_values: HelmAppValues = Field(
-        default_factory=HelmAppValues,
-        description=describe_attr("resetter_values", __doc__),
-    )
+    config: KafkaConnectorConfig
+    state: ConnectorNewState | None = None
+    resetter_namespace: str | None = None
+    resetter_values: HelmAppValues = Field(default_factory=HelmAppValues)
     _connector_type: KafkaConnectorType = PrivateAttr()
 
     @field_validator("config", mode="before")
@@ -145,7 +130,7 @@ class KafkaConnector(PipelineComponent, ABC):
             msg = f"Connector name '{connector_name}' should be the same as component name '{component_name}'"
             raise ValueError(msg)
         config["name"] = component_name
-        return KafkaConnectorConfig(**config)
+        return KafkaConnectorConfig.model_validate(config)
 
     @cached_property
     def _resetter(self) -> KafkaConnectorResetter:
@@ -187,7 +172,7 @@ class KafkaConnector(PipelineComponent, ABC):
                 await schema_handler.submit_schemas(to_section=self.to, dry_run=dry_run)
 
         await get_handlers().connector_handler.create_connector(
-            self.config, dry_run=dry_run
+            self.config, state=self.state, dry_run=dry_run
         )
 
     @override
@@ -216,10 +201,7 @@ class KafkaSourceConnector(KafkaConnector):
         defaults to None
     """
 
-    offset_topic: str | None = Field(
-        default=None,
-        description=describe_attr("offset_topic", __doc__),
-    )
+    offset_topic: str | None = None
 
     _connector_type: KafkaConnectorType = PrivateAttr(KafkaConnectorType.SOURCE)
 
@@ -229,11 +211,6 @@ class KafkaSourceConnector(KafkaConnector):
             self._resetter.values.config.offset_topic = self.offset_topic
         return self
 
-    @computed_field
-    @cached_property
-    def _resetter(self) -> KafkaConnectorResetter:
-        return super()._resetter
-
     @override
     def apply_from_inputs(self, name: str, topic: FromTopic) -> NoReturn:
         msg = "Kafka source connector doesn't support FromSection"
@@ -242,6 +219,7 @@ class KafkaSourceConnector(KafkaConnector):
     @override
     async def reset(self, dry_run: bool) -> None:
         """Reset state. Keep connector."""
+        await super().reset(dry_run)
         await self._resetter.reset(dry_run)
 
     @override
@@ -255,11 +233,6 @@ class KafkaSinkConnector(KafkaConnector):
     """Kafka sink connector model."""
 
     _connector_type: KafkaConnectorType = PrivateAttr(KafkaConnectorType.SINK)
-
-    @computed_field
-    @cached_property
-    def _resetter(self) -> KafkaConnectorResetter:
-        return super()._resetter
 
     @property
     @override
@@ -281,6 +254,7 @@ class KafkaSinkConnector(KafkaConnector):
     @override
     async def reset(self, dry_run: bool) -> None:
         """Reset state. Keep consumer group and connector."""
+        await super().reset(dry_run)
         self._resetter.values.config.delete_consumer_group = False
         await self._resetter.reset(dry_run)
 

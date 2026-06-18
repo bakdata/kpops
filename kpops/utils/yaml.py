@@ -26,10 +26,9 @@ def generate_hashkey(
 @cached(cache={}, key=generate_hashkey)
 def load_yaml_file(
     file_path: Path, *, substitution: Mapping[str, Any] | None = None
-) -> dict[str, Any] | list[dict[str, Any]]:
-    with file_path.open() as yaml_file:
-        log.debug(f"Picked up: {file_path.resolve().relative_to(Path.cwd())}")
-        return yaml.load(substitute(yaml_file.read(), substitution), Loader=yaml.Loader)
+) -> Any:
+    log.debug(f"Picked up: {file_path.resolve().relative_to(Path.cwd())}")
+    return yaml.safe_load(substitute(file_path.read_text(), substitution))
 
 
 def substitute(input: str, substitution: Mapping[str, Any] | None = None) -> str:
@@ -113,6 +112,22 @@ def substitute_in_self(input: dict[str, Any]) -> dict[str, Any]:
     return json.loads(old_str)
 
 
+def multiline_str_representer(
+    representer: yaml.representer.SafeRepresenter, data: Any
+) -> yaml.ScalarNode:
+    if "\n" in data:  # represent multiline strings using block style
+        return representer.represent_scalar("tag:yaml.org,2002:str", data, style="|")
+    return representer.represent_str(data)
+
+
+yaml.representer.SafeRepresenter.add_representer(str, multiline_str_representer)
+
+
+class CustomSafeDumper(yaml.SafeDumper):
+    def increase_indent(self, flow: bool = False, indentless: bool = False):
+        return super().increase_indent(flow, False)
+
+
 def print_yaml(
     data: Mapping[str, Any] | str, *, substitution: dict[str, Any] | None = None
 ) -> None:
@@ -122,7 +137,7 @@ def print_yaml(
     :param substitution: Substitution dictionary, defaults to None
     """
     if not isinstance(data, str):
-        data = yaml.safe_dump(dict(data))
+        data = yaml.dump(dict(data), Dumper=CustomSafeDumper)
         data = f"---\n{data}"
     syntax = Syntax(
         substitute(data, substitution),

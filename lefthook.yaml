@@ -1,0 +1,53 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/evilmartians/lefthook/master/schema.json
+
+pre-commit:
+  parallel: true
+  commands:
+    uv-lock:
+      glob: "{pyproject.toml,uv.lock}"
+      run: uv lock --check
+    ruff-check:
+      glob: "*.py"
+      run: uv run ruff check --force-exclude --config pyproject.toml --fix --show-fixes {staged_files}
+      stage_fixed: true
+    ruff-format:
+      glob: "*.py"
+      run: uv run ruff format --force-exclude --config pyproject.toml {staged_files}
+      stage_fixed: true
+    basedpyright:
+      glob: "*.py"
+      run: uv run basedpyright
+    dprint:
+      glob: "*.{json,jsonc,yaml,yml,md,toml,css}"
+      run: dprint fmt
+    kpops-schema:
+      glob: "{uv.lock,kpops/**/*.py,hooks/gen_schema.py}"
+      run: python -m hooks.gen_schema && git add -u docs/docs/schema
+    kpops-docs-cli:
+      glob: "{uv.lock,kpops/cli/main.py,hooks/gen_docs/gen_docs_cli_usage.py}"
+      run: python -m hooks.gen_docs.gen_docs_cli_usage
+    kpops-docs-env-vars:
+      glob: "{uv.lock,kpops/**/*.py,hooks/gen_docs/gen_docs_env_vars.py}"
+      run: python -m hooks.gen_docs.gen_docs_env_vars
+    kpops-docs-components:
+      glob: "{\
+        .gitignore,\
+        uv.lock,\
+        hooks/gen_docs/gen_docs_components.py,\
+        docs/docs/resources/pipeline-defaults/headers/*.yaml,\
+        docs/docs/resources/pipeline-components/headers/*.yaml,\
+        docs/docs/resources/pipeline-components/sections/*.yaml,\
+        docs/docs/resources/pipeline-components/dependencies/*.yaml,\
+        kpops/components/*.py\
+        }"
+      # .gitignore -- indicates whether the script is ran with `--all-files`
+      # hooks/gen_docs/gen_docs_components.py -- hook's behavior is possibly changed
+      # docs/.../.yaml -- examples changed or dependencies edited
+      # kpops/components/... -- KPOps components possibly changed
+      run: python -m hooks.gen_docs.gen_docs_components {staged_files}
+
+post-checkout:
+  commands:
+    dependencies:
+      glob: "uv.lock"
+      run: uv sync
