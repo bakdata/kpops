@@ -692,13 +692,15 @@ class TestGenerate:
             RESOURCE_PATH / "pipelines-with-graphs" / "simple-pipeline" / PIPELINE_YAML,
         )
         assert len(pipeline.components) == 2
-        assert len(pipeline._graph.nodes) == 3
-        assert len(pipeline._graph.edges) == 2
+        assert len(pipeline._graph.nodes()) == 3
+        assert len(pipeline._graph.edges()) == 2
         topic_nodes = [
-            node for node in pipeline._graph.nodes if node.startswith("topic-")
+            node for node in pipeline._graph.nodes() if node.startswith("topic-")
         ]
         assert len(topic_nodes) == 1
-        assert len(pipeline.components) == len(pipeline._graph.nodes) - len(topic_nodes)
+        assert len(pipeline.components) == len(pipeline._graph.nodes()) - len(
+            topic_nodes
+        )
 
     def test_validate_components_are_disabled_in_production_but_enabled_on_development(
         self,
@@ -719,27 +721,27 @@ class TestGenerate:
         )
 
         assert len(pipeline_production.components) == 1
-        assert len(pipeline_production._graph.edges) == 0
+        assert len(pipeline_production._graph.edges()) == 0
         topic_nodes_production = [
             node
-            for node in pipeline_production._graph.nodes
+            for node in pipeline_production._graph.nodes()
             if node.startswith("topic-")
         ]
         assert len(topic_nodes_production) == 0
         assert len(pipeline_production.components) == len(
-            pipeline_production._graph.nodes
+            pipeline_production._graph.nodes()
         ) - len(topic_nodes_production)
 
-        assert len(pipeline_development._graph.nodes) == 3
-        assert len(pipeline_development._graph.edges) == 2
+        assert len(pipeline_development._graph.nodes()) == 3
+        assert len(pipeline_development._graph.edges()) == 2
         topic_nodes_development = [
             node
-            for node in pipeline_development._graph.nodes
+            for node in pipeline_development._graph.nodes()
             if node.startswith("topic-")
         ]
         assert len(topic_nodes_development) == 1
         assert len(pipeline_development.components) == len(
-            pipeline_development._graph.nodes
+            pipeline_development._graph.nodes()
         ) - len(topic_nodes_development)
 
     def test_validate_topic_and_component_same_name(self):
@@ -749,8 +751,11 @@ class TestGenerate:
             / "same-topic-and-component-name"
             / PIPELINE_YAML,
         )
-        component, topic = list(pipeline._graph.nodes)
-        edges = list(pipeline._graph.edges)
+        component, topic = list(pipeline._graph.nodes())
+        edges = [
+            (pipeline._graph[s], pipeline._graph[t])
+            for s, t in pipeline._graph.edge_list()
+        ]
         assert component == topic.removeprefix("topic-")
         assert (component, topic) in edges
 
