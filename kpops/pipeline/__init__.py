@@ -38,6 +38,7 @@ class Pipeline:
 
     _component_index: dict[str, PipelineComponent] = field(default_factory=dict)
     _graph: rx.PyDiGraph[str, None] = field(default_factory=rx.PyDiGraph)
+    _node_index: dict[str, int] = field(default_factory=dict)
 
     @property
     def step_names(self) -> list[str]:
@@ -125,8 +126,7 @@ class Pipeline:
         root_node = graph.add_node("root_node_bfs")
 
         for node in graph.node_indices():
-            predecessors = list(graph.predecessors(node))
-            if not predecessors:
+            if node != root_node and not list(graph.predecessors(node)):
                 graph.add_edge(root_node, node, None)
 
         layers_graph = list(rx.bfs_layers(graph, [root_node]))
@@ -159,8 +159,13 @@ class Pipeline:
     def __len__(self) -> int:
         return len(self.components)
 
+    def __get_or_add_node(self, node_id: str) -> int:
+        if node_id not in self._node_index:
+            self._node_index[node_id] = self._graph.add_node(node_id)
+        return self._node_index[node_id]
+
     def __add_to_graph(self, component: PipelineComponent):
-        node = self._graph.add_node(component.id)
+        node = self.__get_or_add_node(component.id)
 
         for input_topic in component.inputs:
             self.__add_input(input_topic.id, node)
@@ -169,11 +174,11 @@ class Pipeline:
             self.__add_output(output_topic.id, node)
 
     def __add_output(self, topic_id: str, source: int) -> None:
-        topic = self._graph.add_node(topic_id)
+        topic = self.__get_or_add_node(topic_id)
         self._graph.add_edge(source, topic, None)
 
     def __add_input(self, topic_id: str, target: int) -> None:
-        topic = self._graph.add_node(topic_id)
+        topic = self.__get_or_add_node(topic_id)
         self._graph.add_edge(topic, target, None)
 
     def __get_parallel_components_from(

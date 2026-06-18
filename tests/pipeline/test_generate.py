@@ -752,7 +752,10 @@ class TestGenerate:
             / PIPELINE_YAML,
         )
         component, topic = list(pipeline._graph.nodes())
-        edges = list(pipeline._graph.edges())
+        edges = [
+            (pipeline._graph[s], pipeline._graph[t])
+            for s, t in pipeline._graph.edge_list()
+        ]
         assert component == topic.removeprefix("topic-")
         assert (component, topic) in edges
 
