@@ -460,3 +460,35 @@ class TestConnectorHandler:
         log_warning_mock.assert_called_once_with(
             f"Connector Destruction: the connector {CONNECTOR_NAME} does not exist. Skipping."
         )
+
+    async def test_reset_connector_dry_run(
+        self,
+        connect_wrapper: AsyncMock,
+        handler: KafkaConnectHandler,
+    ):
+        await handler.reset_connector(CONNECTOR_NAME, dry_run=True)
+        connect_wrapper.stop_connector.assert_not_called()
+        connect_wrapper.reset_offset.assert_not_called()
+
+    async def test_reset_connector(
+        self,
+        connect_wrapper: AsyncMock,
+        handler: KafkaConnectHandler,
+    ):
+        await handler.reset_connector(CONNECTOR_NAME, dry_run=False)
+        assert connect_wrapper.mock_calls == [
+            mock.call.stop_connector(CONNECTOR_NAME),
+            mock.call.reset_offset(CONNECTOR_NAME),
+        ]
+
+    async def test_reset_connector_not_found(
+        self,
+        connect_wrapper: AsyncMock,
+        handler: KafkaConnectHandler,
+        log_warning_mock: MagicMock,
+    ):
+        connect_wrapper.stop_connector.side_effect = ConnectorNotFoundException()
+        await handler.reset_connector(CONNECTOR_NAME, dry_run=False)
+        log_warning_mock.assert_called_once_with(
+            f"Connector reset: the connector {CONNECTOR_NAME} does not exist. Skipping."
+        )

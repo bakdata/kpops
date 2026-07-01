@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, call
+from unittest.mock import MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
@@ -27,7 +27,6 @@ from kpops.components.common.topic import (
     OutputTopicTypes,
     TopicConfig,
 )
-from kpops.utils.colorify import magentaify
 from tests.components.test_kafka_connector import (
     CONNECTOR_FULL_NAME,
     CONNECTOR_NAME,
@@ -191,40 +190,41 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         mocker: MockerFixture,
     ):
         mock_destroy = mocker.patch.object(connector, "destroy")
+        mock_reset_connector = mocker.patch.object(
+            get_handlers().connector_handler, "reset_connector"
+        )
         dry_run = True
         await connector.reset(dry_run=dry_run)
 
         mock_destroy.assert_not_called()
         dry_run_handler_mock.print_helm_diff.assert_not_called()
+        mock_reset_connector.assert_called_once_with(
+            CONNECTOR_FULL_NAME, dry_run=dry_run
+        )
 
     async def test_reset_when_dry_run_is_false(
         self,
         connector: KafkaSinkConnector,
         dry_run_handler_mock: MagicMock,
-        helm_mock: MagicMock,
         mocker: MockerFixture,
     ):
         mock_destroy = mocker.patch.object(connector, "destroy")
         mock_delete_topic = mocker.patch.object(
             get_handlers().topic_handler, "delete_topic"
         )
-        mock_clean_connector = mocker.patch.object(
-            get_handlers().connector_handler, "clean_connector"
+        mock_reset_connector = mocker.patch.object(
+            get_handlers().connector_handler, "reset_connector"
         )
 
-        mock = mocker.MagicMock()
-        mock.attach_mock(mock_destroy, "destroy_connector")
-        mock.attach_mock(mock_clean_connector, "mock_clean_connector")
-        mock.attach_mock(helm_mock, "helm")
-
         dry_run = False
-
         await connector.reset(dry_run=dry_run)
 
-        mock.assert_has_calls([])
-
-        dry_run_handler_mock.print_helm_diff.assert_not_called()
+        mock_reset_connector.assert_called_once_with(
+            CONNECTOR_FULL_NAME, dry_run=dry_run
+        )
+        mock_destroy.assert_not_called()
         mock_delete_topic.assert_not_called()
+        dry_run_handler_mock.print_helm_diff.assert_not_called()
 
     async def test_clean_when_dry_run_is_true(
         self,
@@ -234,50 +234,33 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         dry_run = True
 
         await connector.clean(dry_run=dry_run)
-        dry_run_handler_mock.print_helm_diff.assert_called_once()
+        dry_run_handler_mock.print_helm_diff.assert_not_called()
 
     async def test_clean_when_dry_run_is_false(
         self,
         connector: KafkaSinkConnector,
-        helm_mock: MagicMock,
-        log_info_mock: MagicMock,
         dry_run_handler_mock: MagicMock,
         mocker: MockerFixture,
     ):
         mock_destroy = mocker.patch.object(connector, "destroy")
-
         mock_delete_topic = mocker.patch.object(
             get_handlers().topic_handler, "delete_topic"
         )
-        mock_clean_connector = mocker.patch.object(
-            get_handlers().connector_handler, "clean_connector"
+        mock_reset_connector = mocker.patch.object(
+            get_handlers().connector_handler, "reset_connector"
         )
 
         mock = mocker.MagicMock()
+        mock.attach_mock(mock_reset_connector, "mock_reset_connector")
         mock.attach_mock(mock_destroy, "destroy_connector")
         mock.attach_mock(mock_delete_topic, "mock_delete_topic")
-        mock.attach_mock(mock_clean_connector, "mock_clean_connector")
-        mock.attach_mock(helm_mock, "helm")
 
         dry_run = False
         await connector.clean(dry_run=dry_run)
 
-        assert log_info_mock.mock_calls == [
-            call.log_info(
-                magentaify(
-                    f"Connector Cleanup: uninstalling cleanup job Helm release from previous runs for {CONNECTOR_FULL_NAME}"
-                )
-            ),
-            call.log_info(
-                magentaify(
-                    f"Connector Cleanup: deploy Connect {KafkaConnectorType.SINK.value} resetter for {CONNECTOR_FULL_NAME}"
-                )
-            ),
-            call.log_info(magentaify("Connector Cleanup: uninstall Kafka Resetter.")),
-        ]
-
         assert connector.to
         assert mock.mock_calls == [
+            mocker.call.mock_reset_connector(CONNECTOR_FULL_NAME, dry_run=dry_run),
             mocker.call.destroy_connector(dry_run),
             *(
                 mocker.call.mock_delete_topic(topic, dry_run=dry_run)
@@ -299,7 +282,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         dry_run = True
 
         await connector.clean(dry_run)
-        dry_run_handler_mock.print_helm_diff.assert_called_once()
+        dry_run_handler_mock.print_helm_diff.assert_not_called()
 
     async def test_clean_without_to_when_dry_run_is_false(
         self,

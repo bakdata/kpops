@@ -146,37 +146,39 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         mocker: MockerFixture,
     ):
         mock_destroy = mocker.patch.object(connector, "destroy")
+        mock_reset_connector = mocker.patch.object(
+            get_handlers().connector_handler, "reset_connector"
+        )
         dry_run = True
         await connector.reset(dry_run=dry_run)
 
         mock_destroy.assert_not_called()
         dry_run_handler_mock.print_helm_diff.assert_not_called()
+        mock_reset_connector.assert_called_once_with(
+            CONNECTOR_FULL_NAME, dry_run=dry_run
+        )
 
     async def test_reset_when_dry_run_is_false(
         self,
         connector: KafkaSourceConnector,
         dry_run_handler_mock: MagicMock,
-        helm_mock: MagicMock,
         mocker: MockerFixture,
     ):
         mock_destroy = mocker.patch.object(connector, "destroy")
-
         mock_delete_topic = mocker.patch.object(
             get_handlers().topic_handler, "delete_topic"
         )
-        mock_clean_connector = mocker.spy(
-            get_handlers().connector_handler, "clean_connector"
+        mock_reset_connector = mocker.patch.object(
+            get_handlers().connector_handler, "reset_connector"
         )
-
-        mock = mocker.MagicMock()
-        mock.attach_mock(mock_destroy, "destroy_connector")
-        mock.attach_mock(mock_clean_connector, "mock_clean_connector")
-        mock.attach_mock(helm_mock, "helm")
 
         dry_run = False
         await connector.reset(dry_run)
 
-        assert mock.mock_calls == []
+        mock_reset_connector.assert_called_once_with(
+            CONNECTOR_FULL_NAME, dry_run=dry_run
+        )
+        mock_destroy.assert_not_called()
         mock_delete_topic.assert_not_called()
         dry_run_handler_mock.print_helm_diff.assert_not_called()
 
@@ -192,42 +194,38 @@ class TestKafkaSourceConnector(TestKafkaConnector):
     async def test_clean_when_dry_run_is_false(
         self,
         connector: KafkaSourceConnector,
-        helm_mock: MagicMock,
         dry_run_handler_mock: MagicMock,
         mocker: MockerFixture,
     ):
         mock_destroy = mocker.patch.object(connector, "destroy")
-
         mock_delete_topic = mocker.patch.object(
             get_handlers().topic_handler, "delete_topic"
         )
-        mock_clean_connector = mocker.spy(
-            get_handlers().connector_handler, "clean_connector"
+        mock_reset_connector = mocker.patch.object(
+            get_handlers().connector_handler, "reset_connector"
         )
 
         mock = mocker.MagicMock()
+        mock.attach_mock(mock_reset_connector, "mock_reset_connector")
         mock.attach_mock(mock_destroy, "destroy_connector")
         mock.attach_mock(mock_delete_topic, "mock_delete_topic")
-        mock.attach_mock(mock_clean_connector, "mock_clean_connector")
-        mock.attach_mock(helm_mock, "helm")
 
         dry_run = False
         await connector.clean(dry_run)
 
         assert connector.to
         assert mock.mock_calls == [
+            mocker.call.mock_reset_connector(CONNECTOR_FULL_NAME, dry_run=dry_run),
             mocker.call.destroy_connector(dry_run),
             *(
                 mocker.call.mock_delete_topic(topic, dry_run=dry_run)
                 for topic in connector.to.kafka_topics
             ),
         ]
-
         dry_run_handler_mock.print_helm_diff.assert_not_called()
 
     async def test_clean_without_to_when_dry_run_is_false(
         self,
-        helm_mock: MagicMock,
         dry_run_handler_mock: MagicMock,
         mocker: MockerFixture,
         connector_config: KafkaConnectorConfig,
@@ -239,30 +237,26 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         )
         assert connector.to is None
 
-        assert get_handlers().connector_handler
-
         mock_destroy = mocker.patch.object(connector, "destroy")
-
         mock_delete_topic = mocker.patch.object(
             get_handlers().topic_handler, "delete_topic"
         )
-        mock_clean_connector = mocker.spy(
-            get_handlers().connector_handler, "clean_connector"
+        mock_reset_connector = mocker.patch.object(
+            get_handlers().connector_handler, "reset_connector"
         )
 
         mock = mocker.MagicMock()
+        mock.attach_mock(mock_reset_connector, "mock_reset_connector")
         mock.attach_mock(mock_destroy, "destroy_connector")
         mock.attach_mock(mock_delete_topic, "mock_delete_topic")
-        mock.attach_mock(mock_clean_connector, "mock_clean_connector")
-        mock.attach_mock(helm_mock, "helm")
 
         dry_run = False
         await connector.clean(dry_run)
 
         assert mock.mock_calls == [
+            mocker.call.mock_reset_connector(CONNECTOR_FULL_NAME, dry_run=dry_run),
             mocker.call.destroy_connector(dry_run),
         ]
-
         mock_delete_topic.assert_not_called()
         dry_run_handler_mock.print_helm_diff.assert_not_called()
 
