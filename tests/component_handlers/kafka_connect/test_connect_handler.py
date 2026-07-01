@@ -465,10 +465,31 @@ class TestConnectorHandler:
         self,
         connect_wrapper: AsyncMock,
         handler: KafkaConnectHandler,
+        log_info_mock: MagicMock,
     ):
+        await handler.reset_connector(CONNECTOR_NAME, dry_run=True)
+        connect_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
+        connect_wrapper.stop_connector.assert_not_called()
+        connect_wrapper.reset_offset.assert_not_called()
+        log_info_mock.assert_called_once_with(
+            magentaify(
+                f"Connector reset: connector {CONNECTOR_NAME} exists. Resetting offsets."
+            )
+        )
+
+    async def test_reset_connector_dry_run_connector_not_found(
+        self,
+        connect_wrapper: AsyncMock,
+        handler: KafkaConnectHandler,
+        log_warning_mock: MagicMock,
+    ):
+        connect_wrapper.get_connector.side_effect = ConnectorNotFoundException()
         await handler.reset_connector(CONNECTOR_NAME, dry_run=True)
         connect_wrapper.stop_connector.assert_not_called()
         connect_wrapper.reset_offset.assert_not_called()
+        log_warning_mock.assert_called_once_with(
+            f"Connector reset: the connector {CONNECTOR_NAME} does not exist. Skipping."
+        )
 
     async def test_reset_connector(
         self,
