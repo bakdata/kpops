@@ -12,6 +12,7 @@
     ".mypy_cache/**",
     "**/.venv/**",
     "CHANGELOG.md",
+    "docs/docs/user/changelog.md",
     "**/cli-commands.md",
     "**/cli_env_vars.md",
     "**/config_env_vars.md",
