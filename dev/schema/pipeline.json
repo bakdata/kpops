@@ -1353,23 +1353,6 @@
                     "title": "Prefix",
                     "type": "string"
                 },
-                "resetter_namespace": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Kubernetes namespace in which the Kafka Connect resetter shall be deployed",
-                    "title": "Resetter Namespace"
-                },
-                "resetter_values": {
-                    "$ref": "#/$defs/HelmAppValues",
-                    "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
-                },
                 "state": {
                     "anyOf": [
                         {
@@ -1458,23 +1441,6 @@
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "title": "Prefix",
                     "type": "string"
-                },
-                "resetter_namespace": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Kubernetes namespace in which the Kafka Connect resetter shall be deployed",
-                    "title": "Resetter Namespace"
-                },
-                "resetter_values": {
-                    "$ref": "#/$defs/HelmAppValues",
-                    "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
                 },
                 "state": {
                     "anyOf": [
