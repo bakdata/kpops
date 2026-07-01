@@ -169,27 +169,28 @@ class TestHelmDiff:
         ]
 
     def test_log_helm_diff(self, helm_diff: HelmDiff, caplog: LogCaptureFixture):
-        helm_diff.log_helm_diff(
-            logger,
-            (),
-            [
-                HelmTemplate(
-                    Path("a.yaml"),
-                    KubernetesManifest.model_validate(
-                        {
-                            "apiVersion": "v1",
-                            "kind": "Deployment",
-                            "metadata": ObjectMeta.model_validate({"a": "1"}),
-                        }
-                    ),
-                )
-            ],
-        )
-        assert caplog.messages == [
-            "\n"
-            "\x1b[32m+ apiVersion: v1\n"
-            "\x1b[0m\x1b[32m+ kind: Deployment\n"
-            "\x1b[0m\x1b[32m+ metadata:\n"
-            "\x1b[0m\x1b[32m+   a: '1'\n"
-            "\x1b[0m"
-        ]
+        with caplog.at_level(logging.INFO, logger=logger.name):
+            helm_diff.log_helm_diff(
+                logger,
+                (),
+                [
+                    HelmTemplate(
+                        Path("a.yaml"),
+                        KubernetesManifest.model_validate(
+                            {
+                                "apiVersion": "v1",
+                                "kind": "Deployment",
+                                "metadata": ObjectMeta.model_validate({"a": "1"}),
+                            }
+                        ),
+                    )
+                ],
+            )
+            assert caplog.messages == [
+                "\n"
+                "\x1b[32m+ apiVersion: v1\n"
+                "\x1b[0m\x1b[32m+ kind: Deployment\n"
+                "\x1b[0m\x1b[32m+ metadata:\n"
+                "\x1b[0m\x1b[32m+   a: '1'\n"
+                "\x1b[0m"
+            ]

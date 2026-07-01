@@ -10,6 +10,7 @@ kpops_components_fields:
   - repo_config
   - diff_config
   - version
+  - timeout
   helm-app:
   - name
   - enabled
@@ -21,6 +22,7 @@ kpops_components_fields:
   - repo_config
   - diff_config
   - version
+  - timeout
   kafka-app:
   - name
   - enabled
@@ -77,6 +79,7 @@ kpops_components_fields:
   - repo_config
   - diff_config
   - version
+  - timeout
   producer-app-v2:
   - name
   - enabled
@@ -88,6 +91,7 @@ kpops_components_fields:
   - repo_config
   - diff_config
   - version
+  - timeout
   streams-app:
   - name
   - enabled
@@ -99,6 +103,7 @@ kpops_components_fields:
   - repo_config
   - diff_config
   - version
+  - timeout
   streams-app-v2:
   - name
   - enabled
@@ -110,6 +115,7 @@ kpops_components_fields:
   - repo_config
   - diff_config
   - version
+  - timeout
   streams-bootstrap:
   - name
   - enabled
@@ -121,6 +127,7 @@ kpops_components_fields:
   - repo_config
   - diff_config
   - version
+  - timeout
   streams-bootstrap-v2:
   - name
   - enabled
@@ -132,6 +139,7 @@ kpops_components_fields:
   - repo_config
   - diff_config
   - version
+  - timeout
 kpops_components_inheritance_ref:
   consumer-app:
     bases:

@@ -34,9 +34,14 @@ class Cleaner(HelmApp, ABC):
     @property
     @override
     def helm_flags(self) -> HelmFlags:
+        effective_timeout = (
+            self.timeout or get_config().helm_config.timeout or HelmFlags().timeout
+        )
         return HelmFlags(
             create_namespace=get_config().create_namespace,
             version=self.version,
+            force=get_config().helm_config.force_replace,
             wait=True,
             wait_for_jobs=True,
+            timeout=effective_timeout,
         )

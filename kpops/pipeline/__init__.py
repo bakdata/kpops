@@ -6,7 +6,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, TypeAlias
 
-import networkx as nx
+import rustworkx as rx
 import yaml
 from pydantic import (
     SerializeAsAny,
@@ -37,7 +37,8 @@ class Pipeline:
     """Pipeline representation."""
 
     _component_index: dict[str, PipelineComponent] = field(default_factory=dict)
-    _graph: nx.DiGraph[str] = field(default_factory=nx.DiGraph)
+    _graph: rx.PyDiGraph[str, None] = field(default_factory=rx.PyDiGraph)
+    _node_index: dict[str, int] = field(default_factory=dict)
 
     @property
     def step_names(self) -> list[str]:
@@ -118,23 +119,23 @@ class Pipeline:
             for layer_components in pending_layers:
                 await run_layer_parallel(layer_components)
 
-        graph: nx.DiGraph[str] = self._graph.copy()
+        graph = self._graph.copy()
 
         # We add an extra node to the graph, connecting all the leaf nodes to it
         # in that way we make this node the root of the graph, avoiding backtracking
-        root_node = "root_node_bfs"
-        graph.add_node(root_node)
+        root_node = graph.add_node("root_node_bfs")
 
-        for node in graph:
-            predecessors = list(graph.predecessors(node))
-            if not predecessors:
-                graph.add_edge(root_node, node)
+        for node in graph.node_indices():
+            if node != root_node and not list(graph.predecessors(node)):
+                graph.add_edge(root_node, node, None)
 
-        layers_graph: list[list[str]] = list(nx.bfs_layers(graph, root_node))
+        layers_graph = list(rx.bfs_layers(graph, [root_node]))
 
         sorted_layers: list[list[PipelineComponent]] = []
         for layer in layers_graph[1:]:
-            if parallel_components := self.__get_parallel_components_from(layer):
+            if parallel_components := self.__get_parallel_components_from(
+                [graph[idx] for idx in layer]
+            ):
                 sorted_layers.append(parallel_components)
 
         if reverse:
@@ -158,22 +159,27 @@ class Pipeline:
     def __len__(self) -> int:
         return len(self.components)
 
+    def __get_or_add_node(self, node_id: str) -> int:
+        if node_id not in self._node_index:
+            self._node_index[node_id] = self._graph.add_node(node_id)
+        return self._node_index[node_id]
+
     def __add_to_graph(self, component: PipelineComponent):
-        self._graph.add_node(component.id)
+        node = self.__get_or_add_node(component.id)
 
         for input_topic in component.inputs:
-            self.__add_input(input_topic.id, component.id)
+            self.__add_input(input_topic.id, node)
 
         for output_topic in component.outputs:
-            self.__add_output(output_topic.id, component.id)
+            self.__add_output(output_topic.id, node)
 
-    def __add_output(self, topic_id: str, source: str) -> None:
-        self._graph.add_node(topic_id)
-        self._graph.add_edge(source, topic_id)
+    def __add_output(self, topic_id: str, source: int) -> None:
+        topic = self.__get_or_add_node(topic_id)
+        self._graph.add_edge(source, topic, None)
 
-    def __add_input(self, topic_id: str, target: str) -> None:
-        self._graph.add_node(topic_id)
-        self._graph.add_edge(topic_id, target)
+    def __add_input(self, topic_id: str, target: int) -> None:
+        topic = self.__get_or_add_node(topic_id)
+        self._graph.add_edge(topic, target, None)
 
     def __get_parallel_components_from(
         self, layer: list[str]
@@ -187,7 +193,7 @@ class Pipeline:
         return list(gen_parallel_components())
 
     def __validate_graph(self) -> None:
-        if not nx.is_directed_acyclic_graph(self._graph):
+        if not rx.is_directed_acyclic_graph(self._graph):
             msg = "Pipeline is not a valid DAG."
             raise ValueError(msg)
 

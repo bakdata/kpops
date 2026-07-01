@@ -1,23 +1,23 @@
 [project]
 name = "kpops"
-version = "10.8.0"
+version = "10.9.0"
 description = "KPOps is a tool to deploy Kafka pipelines to Kubernetes"
+readme = "README.md"
+requires-python = ">=3.11"
 authors = [
   { name = "bakdata", email = "opensource@bakdata.com" },
 ]
-readme = "README.md"
-keywords = ["kafka", "kubernetes", "stream-processing", "pipelines"]
+keywords = ["kafka", "kubernetes", "pipelines", "stream-processing"]
 classifiers = [
   "Environment :: Console",
-  "Operating System :: OS Independent",
-  "Topic :: Software Development :: Libraries :: Python Modules",
-  "Topic :: Software Development :: Libraries",
-  "Topic :: Software Development",
   "Intended Audience :: Developers",
-  "Typing :: Typed",
   "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Topic :: Software Development",
+  "Topic :: Software Development :: Libraries",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Typing :: Typed",
 ]
-requires-python = ">=3.11"
 dependencies = [
   "anyio>=4.3.0",
   "cachetools>=5.2.0",
@@ -25,13 +25,13 @@ dependencies = [
   "dictdiffer>=0.9.0",
   "httpx>=0.24.1",
   "lightkube>=0.15.3",
-  "networkx>=3.1",
   "pydantic>=2.10.6",
   "pydantic-settings>=2.0.3",
   "pyhumps>=3.7.3",
   "python-schema-registry-client>=2.4.1",
   "pyyaml>=6.0",
   "rich>=12.4.4",
+  "rustworkx>=0.18.0",
   "typer>=0.12.5",
 ]
 
@@ -40,9 +40,9 @@ kpops = "kpops.cli.main:app"
 
 [dependency-groups]
 dev = [
+  "basedpyright>=1.31.5",
   "lefthook>=1.10.4",
   "polyfactory>=2.13.0",
-  "basedpyright>=1.31.5",
   "pytablewriter[from]>=1.0.0",
   "pytest>=8.3.2",
   "pytest-asyncio>=0.23.8",
@@ -54,6 +54,7 @@ dev = [
   "ruff>=0.9.9",
 ]
 docs = [
+  "mdx-truly-sane-lists>=1.3",
   "mike>=1.1.2",
   "mkdocs>=1.4.2",
   "mkdocs-exclude-search>=0.6.5",
@@ -61,23 +62,11 @@ docs = [
   "mkdocs-macros-plugin>=1.0.5",
   "mkdocs-material>=9.0.0",
   "mkdocstrings[python]>=0.25.1",
-  "mdx-truly-sane-lists>=1.3",
 ]
-
-[tool.uv]
-package = true
-trusted-publishing = "always"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
-
-[tool.hatch.build.targets.wheel]
-packages = ["kpops"]
-
-[tool.pytest.ini_options]
-asyncio_mode = "auto"
-asyncio_default_fixture_loop_scope = "function"
 
 [tool.basedpyright]
 include = ["kpops", "tests", "hooks"]
@@ -113,6 +102,13 @@ strictParameterNoneValue = false
 
 # TODO: apply only to tests https://github.com/DetachHead/basedpyright/issues/668
 reportPrivateUsage = false
+
+[tool.hatch.build.targets.wheel]
+packages = ["kpops"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
 
 [tool.ruff]
 output-format = "grouped"
@@ -219,3 +215,7 @@ extend-immutable-calls = ["typer.Argument"]
 
 [tool.ruff.lint.flake8-type-checking]
 runtime-evaluated-base-classes = ["pydantic.BaseModel"]
+
+[tool.uv]
+package = true
+trusted-publishing = "always"

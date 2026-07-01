@@ -5,11 +5,13 @@ from pytest_mock import MockerFixture
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.model import (
+    HelmConfig,
     HelmRepoConfig,
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
 from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
+from kpops.config import KpopsConfig, get_config, set_config
 from kpops.manifests.kubernetes import K8S_LABEL_MAX_LEN
 from kpops.utils.colorify import magentaify
 
@@ -171,6 +173,67 @@ class TestHelmApp:
             str(error.value)
             == "Please implement the helm_chart property of the kpops.components.base_components.helm_app module."
         )
+
+    @pytest.mark.parametrize(
+        "local_timeout, global_timeout, expected_timeout",
+        [
+            pytest.param(
+                "30m", "10m", "30m", id="prioritize local over global timeout"
+            ),
+            pytest.param(
+                None, "10m", "10m", id="prioritize global over default timeout"
+            ),
+            pytest.param(
+                "30m", None, "30m", id="prioritize local over default timeout"
+            ),
+            pytest.param(None, None, "5m0s", id="fallback to default timeout"),
+        ],
+    )
+    def test_should_apply_timeout_precedence(
+        self,
+        local_timeout: str | None,
+        global_timeout: str | None,
+        expected_timeout: str,
+        app_values: HelmAppValues,
+    ):
+        original_config = get_config()
+        set_config(
+            KpopsConfig(
+                kafka_brokers="broker:9092",
+                helm_config=HelmConfig(timeout=global_timeout),
+            )
+        )
+        try:
+            helm_app = HelmApp(
+                name="test-helm-app",
+                values=app_values,
+                namespace="test-namespace",
+                timeout=local_timeout,
+            )
+            assert helm_app.deploy_flags.timeout == expected_timeout
+        finally:
+            set_config(original_config)
+
+    def test_should_set_force_from_global_config(
+        self,
+        app_values: HelmAppValues,
+    ):
+        original_config = get_config()
+        set_config(
+            KpopsConfig(
+                kafka_brokers="broker:9092",
+                helm_config=HelmConfig(force_replace=True),
+            )
+        )
+        try:
+            helm_app = HelmApp(
+                name="test-helm-app",
+                values=app_values,
+                namespace="test-namespace",
+            )
+            assert helm_app.deploy_flags.force is True
+        finally:
+            set_config(original_config)
 
     async def test_should_call_helm_uninstall_when_destroying_helm_app(
         self,

@@ -286,6 +286,52 @@ class TestHelmWrapper:
             ],
         )
 
+    @pytest.mark.parametrize(
+        "helm_major_version, expected_force_flag",
+        ((3, "--force"), (4, "--force-replace")),
+    )
+    async def test_should_switch_helm_version_force_flag(
+        self,
+        helm,
+        mocker: MockerFixture,
+        run_command_async: AsyncMock,
+        helm_major_version: int,
+        expected_force_flag: str,
+    ):
+        mocker.patch.object(
+            Helm,
+            "version",
+            return_value=Version(major=helm_major_version, minor=2, patch=0),
+            new_callable=mocker.PropertyMock,
+        )
+        helm = Helm(helm_config=HelmConfig())
+
+        await helm.upgrade_install(
+            release_name="test-release",
+            chart="test-repository/streams-app",
+            namespace="test-namespace",
+            dry_run=False,
+            values={"commandLine": "test"},
+            flags=HelmUpgradeInstallFlags(force=True),
+        )
+        run_command_async.assert_called_once_with(
+            [
+                "helm",
+                "upgrade",
+                "test-release",
+                "test-repository/streams-app",
+                "--install",
+                "--namespace",
+                "test-namespace",
+                "--values",
+                "values.yaml",
+                expected_force_flag,
+                "--timeout",
+                "5m0s",
+                "--wait",
+            ],
+        )
+
     async def test_should_call_run_command_method_when_uninstalling_streams_app(
         self, helm: Helm, run_command_async: AsyncMock
     ):
