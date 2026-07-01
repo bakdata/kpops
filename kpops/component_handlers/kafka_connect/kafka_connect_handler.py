@@ -94,7 +94,7 @@ class KafkaConnectHandler:
         :param dry_run: Whether the connector reset should be run in dry run mode.
         """
         if dry_run:
-            pass  # TODO
+            await self.__dry_run_connector_reset(connector_name)
         else:
             try:
                 await self._connect_wrapper.stop_connector(connector_name)
@@ -158,6 +158,23 @@ class KafkaConnectHandler:
         else:
             log.info(
                 f"Connector Creation: connector config for {connector_name} is valid!"
+            )
+
+    async def __dry_run_connector_reset(self, connector_name: str) -> None:
+        try:
+            await self._connect_wrapper.get_connector(connector_name)
+            log.info(
+                magentaify(
+                    f"Connector reset: connector {connector_name} exists. Resetting offsets."
+                )
+            )
+            log.debug(f"PUT /connectors/{connector_name}/stop HTTP/1.1")
+            log.debug(f"HOST: {self._connect_wrapper.url}")
+            log.debug(f"DELETE /connectors/{connector_name}/offsets HTTP/1.1")
+            log.debug(f"HOST: {self._connect_wrapper.url}")
+        except ConnectorNotFoundException:
+            log.warning(
+                f"Connector reset: the connector {connector_name} does not exist. Skipping."
             )
 
     async def __dry_run_connector_deletion(self, connector_name: str) -> None:
