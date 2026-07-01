@@ -22,7 +22,6 @@
         enabled: false
     replicaCount: 1
   version: 3.1.0
-  timeout: 1
   helm_release_name: word-count-data-producer
   helm_name_override: word-count-data-producer
 - type: streams-app
@@ -59,7 +58,6 @@
     labels:
       pipeline: word-count
   version: 3.1.0
-  timeout: 1
   helm_release_name: word-count-word-count-app
   helm_name_override: word-count-word-count-app
 - type: kafka-sink-connector
