@@ -154,9 +154,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
 
         mock_destroy.assert_not_called()
         dry_run_handler_mock.print_helm_diff.assert_not_called()
-        mock_reset_connector.assert_called_once_with(
-            CONNECTOR_FULL_NAME, dry_run=dry_run
-        )
+        mock_reset_connector.assert_called_once_with(connector.config, dry_run=dry_run)
 
     async def test_reset_when_dry_run_is_false(
         self,
@@ -175,9 +173,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         dry_run = False
         await connector.reset(dry_run)
 
-        mock_reset_connector.assert_called_once_with(
-            CONNECTOR_FULL_NAME, dry_run=dry_run
-        )
+        mock_reset_connector.assert_called_once_with(connector.config, dry_run=dry_run)
         mock_destroy.assert_not_called()
         mock_delete_topic.assert_not_called()
         dry_run_handler_mock.print_helm_diff.assert_not_called()
@@ -215,7 +211,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
 
         assert connector.to
         assert mock.mock_calls == [
-            mocker.call.mock_reset_connector(CONNECTOR_FULL_NAME, dry_run=dry_run),
+            mocker.call.mock_reset_connector(connector.config, dry_run=dry_run),
             mocker.call.destroy_connector(dry_run),
             *(
                 mocker.call.mock_delete_topic(topic, dry_run=dry_run)
@@ -254,7 +250,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         await connector.clean(dry_run)
 
         assert mock.mock_calls == [
-            mocker.call.mock_reset_connector(CONNECTOR_FULL_NAME, dry_run=dry_run),
+            mocker.call.mock_reset_connector(connector.config, dry_run=dry_run),
             mocker.call.destroy_connector(dry_run),
         ]
         mock_delete_topic.assert_not_called()

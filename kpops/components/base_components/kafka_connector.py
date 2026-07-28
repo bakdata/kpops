@@ -75,7 +75,7 @@ class KafkaConnector(PipelineComponent, ABC):
     async def reset(self, dry_run: bool) -> None:
         """Reset connector offsets without deleting the connector."""
         await get_handlers().connector_handler.reset_connector(
-            self.full_name, dry_run=dry_run
+            self.config, dry_run=dry_run
         )
 
     @override
