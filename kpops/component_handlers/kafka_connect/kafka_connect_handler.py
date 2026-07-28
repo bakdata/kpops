@@ -97,6 +97,7 @@ class KafkaConnectHandler:
             await self.__dry_run_connector_reset(connector_name)
         else:
             try:
+                await self._connect_wrapper.get_connector(connector_name)
                 await self._connect_wrapper.stop_connector(connector_name)
                 await self._connect_wrapper.reset_offset(connector_name)
 

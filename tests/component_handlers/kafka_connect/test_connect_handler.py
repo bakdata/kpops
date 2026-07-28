@@ -498,6 +498,7 @@ class TestConnectorHandler:
     ):
         await handler.reset_connector(CONNECTOR_NAME, dry_run=False)
         assert connect_wrapper.mock_calls == [
+            mock.call.get_connector(CONNECTOR_NAME),
             mock.call.stop_connector(CONNECTOR_NAME),
             mock.call.reset_offset(CONNECTOR_NAME),
         ]
@@ -508,7 +509,7 @@ class TestConnectorHandler:
         handler: KafkaConnectHandler,
         log_warning_mock: MagicMock,
     ):
-        connect_wrapper.stop_connector.side_effect = ConnectorNotFoundException()
+        connect_wrapper.get_connector.side_effect = ConnectorNotFoundException()
         await handler.reset_connector(CONNECTOR_NAME, dry_run=False)
         log_warning_mock.assert_called_once_with(
             f"Connector reset: the connector {CONNECTOR_NAME} does not exist. Skipping."
