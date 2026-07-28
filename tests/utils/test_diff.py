@@ -67,7 +67,7 @@ def test_render_diff(
     d2: dict[str, Any],
     ignore: list[KeyPath] | None,
     output: str | None,
-):
+) -> None:
     assert render_diff(d1, d2, ignore) == output
 
 
@@ -209,5 +209,7 @@ def test_render_diff(
         ),
     ],
 )
-def test_get_diff(d1: dict[str, Any], d2: dict[str, Any], output: list[Diff[Any, Any]]):
+def test_get_diff(
+    d1: dict[str, Any], d2: dict[str, Any], output: list[Diff[Any, Any]]
+) -> None:
     assert list(Diff.from_dicts(d1, d2)) == output

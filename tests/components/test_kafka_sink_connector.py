@@ -67,16 +67,16 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             ),
         )
 
-    def test_resetter(self, connector: KafkaSinkConnector):
+    def test_resetter(self, connector: KafkaSinkConnector) -> None:
         resetter = connector._resetter
         assert isinstance(resetter, KafkaConnectorResetter)
         assert resetter.full_name == CONNECTOR_CLEAN_FULL_NAME
 
-    def test_resetter_release_name(self, connector: KafkaSinkConnector):
+    def test_resetter_release_name(self, connector: KafkaSinkConnector) -> None:
         assert connector.config.name == CONNECTOR_FULL_NAME
         assert connector._resetter.helm_release_name == CONNECTOR_CLEAN_RELEASE_NAME
 
-    def test_resetter_helm_name_override(self, connector: KafkaSinkConnector):
+    def test_resetter_helm_name_override(self, connector: KafkaSinkConnector) -> None:
         assert (
             connector._resetter.to_helm_values()["nameOverride"]
             == CONNECTOR_CLEAN_HELM_NAMEOVERRIDE
@@ -86,7 +86,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             == CONNECTOR_CLEAN_HELM_NAMEOVERRIDE
         )
 
-    def test_resetter_inheritance(self, connector: KafkaSinkConnector):
+    def test_resetter_inheritance(self, connector: KafkaSinkConnector) -> None:
         setattr(connector.resetter_values, "testKey", "foo")
         resetter = connector._resetter
         assert resetter
@@ -102,7 +102,9 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             <= resetter.values.model_dump().items()
         )
 
-    def test_connector_config_parsing(self, connector_config: KafkaConnectorConfig):
+    def test_connector_config_parsing(
+        self, connector_config: KafkaConnectorConfig
+    ) -> None:
         topic_pattern = ".*"
         connector = KafkaSinkConnector(
             name=CONNECTOR_NAME,
@@ -119,7 +121,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
 
     def test_from_section_parsing_input_topic(
         self, connector_config: KafkaConnectorConfig
-    ):
+    ) -> None:
         topic1 = TopicName("connector-topic1")
         topic2 = TopicName("connector-topic2")
         connector = KafkaSinkConnector(
@@ -155,7 +157,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
 
     def test_from_section_parsing_input_pattern(
         self, connector_config: KafkaConnectorConfig
-    ):
+    ) -> None:
         topic_pattern = TopicName(".*")
         connector = KafkaSinkConnector(
             name=CONNECTOR_NAME,
@@ -171,7 +173,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         self,
         connector: KafkaSinkConnector,
         mocker: MockerFixture,
-    ):
+    ) -> None:
         mock_create_topic = mocker.patch.object(
             get_handlers().topic_handler, "create_topic"
         )
@@ -205,7 +207,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         connector: KafkaSinkConnector,
         initial_state: ConnectorNewState | None,
         mocker: MockerFixture,
-    ):
+    ) -> None:
         mock_create_connector = mocker.patch.object(
             get_handlers().connector_handler, "create_connector"
         )
@@ -221,7 +223,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         self,
         connector: KafkaSinkConnector,
         mocker: MockerFixture,
-    ):
+    ) -> None:
         mock_destroy_connector = mocker.patch.object(
             get_handlers().connector_handler, "destroy_connector"
         )
@@ -237,7 +239,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         connector: KafkaSinkConnector,
         dry_run_handler_mock: MagicMock,
         mocker: MockerFixture,
-    ):
+    ) -> None:
         mock_destroy = mocker.patch.object(connector, "destroy")
         mock_resetter_reset = mocker.spy(connector._resetter, "reset")
         dry_run = True
@@ -253,7 +255,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         dry_run_handler_mock: MagicMock,
         helm_mock: MagicMock,
         mocker: MockerFixture,
-    ):
+    ) -> None:
         mock_destroy = mocker.patch.object(connector, "destroy")
         mock_delete_topic = mocker.patch.object(
             get_handlers().topic_handler, "delete_topic"
@@ -326,7 +328,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         self,
         connector: KafkaSinkConnector,
         dry_run_handler_mock: MagicMock,
-    ):
+    ) -> None:
         dry_run = True
 
         await connector.clean(dry_run=dry_run)
@@ -339,7 +341,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         log_info_mock: MagicMock,
         dry_run_handler_mock: MagicMock,
         mocker: MockerFixture,
-    ):
+    ) -> None:
         mock_destroy = mocker.patch.object(connector, "destroy")
 
         mock_delete_topic = mocker.patch.object(
@@ -426,7 +428,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         self,
         dry_run_handler_mock: MagicMock,
         connector_config: KafkaConnectorConfig,
-    ):
+    ) -> None:
         connector = KafkaSinkConnector(
             name=CONNECTOR_NAME,
             config=connector_config,
@@ -444,7 +446,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         dry_run_handler_mock: MagicMock,
         mocker: MockerFixture,
         connector_config: KafkaConnectorConfig,
-    ):
+    ) -> None:
         connector = KafkaSinkConnector(
             name=CONNECTOR_NAME,
             config=connector_config,

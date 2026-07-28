@@ -35,7 +35,7 @@ class TestGenerate:
     def log_info(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch("kpops.api.log.info")
 
-    def test_python_api(self):
+    def test_python_api(self) -> None:
         pipeline = kpops.generate(
             RESOURCE_PATH / "first-pipeline" / PIPELINE_YAML,
         )
@@ -46,7 +46,7 @@ class TestGenerate:
             "filter",
         ]
 
-    def test_python_api_filter_include(self, log_info: MagicMock):
+    def test_python_api_filter_include(self, log_info: MagicMock) -> None:
         pipeline = kpops.generate(
             RESOURCE_PATH / "first-pipeline" / PIPELINE_YAML,
             steps={"converter"},
@@ -58,7 +58,7 @@ class TestGenerate:
         log_info.assert_any_call("Picked up pipeline 'first-pipeline'")
         log_info.assert_any_call("Filtered pipeline:\n['converter']")
 
-    def test_python_api_filter_exclude(self, log_info: MagicMock):
+    def test_python_api_filter_exclude(self, log_info: MagicMock) -> None:
         pipeline = kpops.generate(
             RESOURCE_PATH / "first-pipeline" / PIPELINE_YAML,
             steps={"converter", "scheduled-producer"},
@@ -72,7 +72,7 @@ class TestGenerate:
             "Filtered pipeline:\n['a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name']"
         )
 
-    def test_load_pipeline(self, snapshot: Snapshot):
+    def test_load_pipeline(self, snapshot: Snapshot) -> None:
         result = runner.invoke(
             app,
             [
@@ -92,7 +92,7 @@ class TestGenerate:
         kpops.generate(RESOURCE_PATH / "first-pipeline" / PIPELINE_YAML)
         assert "pipeline.name_2" not in ENV
 
-    def test_load_pipeline_with_folder_path(self, snapshot: Snapshot):
+    def test_load_pipeline_with_folder_path(self, snapshot: Snapshot) -> None:
         result = runner.invoke(
             app,
             [
@@ -106,7 +106,9 @@ class TestGenerate:
 
         snapshot.assert_match(result.stdout, "pipeline.yaml")
 
-    def test_load_pipeline_with_multiple_pipeline_paths(self, snapshot: Snapshot):
+    def test_load_pipeline_with_multiple_pipeline_paths(
+        self, snapshot: Snapshot
+    ) -> None:
         path_1 = RESOURCE_PATH / "pipeline-folders/pipeline-1/pipeline.yaml"
         path_2 = RESOURCE_PATH / "pipeline-folders/pipeline-2/pipeline.yaml"
         path_3 = RESOURCE_PATH / "pipeline-folders/pipeline-3/pipeline.yaml"
@@ -120,7 +122,7 @@ class TestGenerate:
 
         snapshot.assert_match(result.stdout, "pipeline.yaml")
 
-    def test_name_equal_prefix_name_concatenation(self):
+    def test_name_equal_prefix_name_concatenation(self) -> None:
         result = runner.invoke(
             app,
             [
@@ -137,7 +139,7 @@ class TestGenerate:
         assert enriched_pipeline[0]["prefix"] == "my-fake-prefix-"
         assert enriched_pipeline[0]["name"] == "my-streams-app"
 
-    def test_pipelines_with_envs(self, snapshot: Snapshot):
+    def test_pipelines_with_envs(self, snapshot: Snapshot) -> None:
         result = runner.invoke(
             app,
             [
@@ -153,7 +155,7 @@ class TestGenerate:
 
         snapshot.assert_match(result.stdout, PIPELINE_YAML)
 
-    def test_inflate_pipeline(self, snapshot: Snapshot):
+    def test_inflate_pipeline(self, snapshot: Snapshot) -> None:
         result = runner.invoke(
             app,
             [
@@ -167,7 +169,7 @@ class TestGenerate:
 
         snapshot.assert_match(result.stdout, PIPELINE_YAML)
 
-    def test_substitute_in_component(self, snapshot: Snapshot):
+    def test_substitute_in_component(self, snapshot: Snapshot) -> None:
         result = runner.invoke(
             app,
             [
@@ -209,7 +211,7 @@ class TestGenerate:
         snapshot.assert_match(result.stdout, PIPELINE_YAML)
 
     @pytest.mark.timeout(2)
-    def test_substitute_in_component_infinite_loop(self):
+    def test_substitute_in_component_infinite_loop(self) -> None:
         with pytest.raises((ValueError, ParsingException)):
             runner.invoke(
                 app,
@@ -224,7 +226,7 @@ class TestGenerate:
                 catch_exceptions=False,
             )
 
-    def test_kafka_connector_config_parsing(self):
+    def test_kafka_connector_config_parsing(self) -> None:
         pipeline = kpops.generate(
             RESOURCE_PATH / "kafka-connect-sink-config" / PIPELINE_YAML,
             config=RESOURCE_PATH / "kafka-connect-sink-config",
@@ -240,7 +242,7 @@ class TestGenerate:
             == "kafka-sink-connector-error-topic"
         )
 
-    def test_no_input_topic(self, snapshot: Snapshot):
+    def test_no_input_topic(self, snapshot: Snapshot) -> None:
         result = runner.invoke(
             app,
             [
@@ -254,7 +256,7 @@ class TestGenerate:
 
         snapshot.assert_match(result.stdout, PIPELINE_YAML)
 
-    def test_no_user_defined_components(self, snapshot: Snapshot):
+    def test_no_user_defined_components(self, snapshot: Snapshot) -> None:
         result = runner.invoke(
             app,
             [
@@ -268,7 +270,7 @@ class TestGenerate:
 
         snapshot.assert_match(result.stdout, PIPELINE_YAML)
 
-    def test_kafka_connect_sink_weave_from_topics(self, snapshot: Snapshot):
+    def test_kafka_connect_sink_weave_from_topics(self, snapshot: Snapshot) -> None:
         """Parse Connector topics from previous component to section."""
         result = runner.invoke(
             app,
@@ -283,7 +285,7 @@ class TestGenerate:
 
         snapshot.assert_match(result.stdout, PIPELINE_YAML)
 
-    def test_read_from_component(self, snapshot: Snapshot):
+    def test_read_from_component(self, snapshot: Snapshot) -> None:
         result = runner.invoke(
             app,
             [
@@ -297,7 +299,7 @@ class TestGenerate:
 
         snapshot.assert_match(result.stdout, PIPELINE_YAML)
 
-    def test_with_env_defaults(self, snapshot: Snapshot):
+    def test_with_env_defaults(self, snapshot: Snapshot) -> None:
         result = runner.invoke(
             app,
             [
@@ -313,7 +315,7 @@ class TestGenerate:
 
         snapshot.assert_match(result.stdout, PIPELINE_YAML)
 
-    def test_prefix_pipeline_component(self, snapshot: Snapshot):
+    def test_prefix_pipeline_component(self, snapshot: Snapshot) -> None:
         result = runner.invoke(
             app,
             [
@@ -334,7 +336,7 @@ class TestGenerate:
     def test_with_custom_config_with_relative_defaults_path(
         self,
         snapshot: Snapshot,
-    ):
+    ) -> None:
         result = runner.invoke(
             app,
             [
@@ -366,7 +368,7 @@ class TestGenerate:
     def test_with_custom_config_with_absolute_defaults_path(
         self,
         snapshot: Snapshot,
-    ):
+    ) -> None:
         with Path(RESOURCE_PATH / "custom-config/config.yaml").open(
             "r",
         ) as rel_config_yaml:
@@ -408,7 +410,7 @@ class TestGenerate:
         finally:
             temp_config_path.unlink()
 
-    def test_default_config(self, snapshot: Snapshot):
+    def test_default_config(self, snapshot: Snapshot) -> None:
         result = runner.invoke(
             app,
             [
@@ -435,7 +437,9 @@ class TestGenerate:
 
         snapshot.assert_match(result.stdout, PIPELINE_YAML)
 
-    def test_env_vars_precedence_over_config(self, monkeypatch: pytest.MonkeyPatch):
+    def test_env_vars_precedence_over_config(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         monkeypatch.setenv(name="KPOPS_KAFKA_BROKERS", value="env_broker")
 
         result = runner.invoke(
@@ -456,7 +460,7 @@ class TestGenerate:
             enriched_pipeline[0]["values"]["kafka"]["bootstrapServers"] == "env_broker"
         )
 
-    def test_nested_config_env_vars(self, monkeypatch: pytest.MonkeyPatch):
+    def test_nested_config_env_vars(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setenv(
             name="KPOPS_SCHEMA_REGISTRY__URL", value="http://somename:1234"
         )
@@ -482,7 +486,7 @@ class TestGenerate:
 
     def test_env_specific_config_env_def_in_env_var(
         self, monkeypatch: pytest.MonkeyPatch
-    ):
+    ) -> None:
         monkeypatch.setenv(name="KPOPS_ENVIRONMENT", value="production")
         config_path = str(RESOURCE_PATH / "multi-config")
         result = runner.invoke(
@@ -515,7 +519,7 @@ class TestGenerate:
     )
     def test_env_specific_config_env_def_in_cli(
         self, config_dir: str, expected_url: str
-    ):
+    ) -> None:
         config_path = str(RESOURCE_PATH / config_dir)
         result = runner.invoke(
             app,
@@ -535,7 +539,7 @@ class TestGenerate:
             enriched_pipeline[0]["values"]["kafka"]["schemaRegistryUrl"] == expected_url
         )
 
-    def test_config_dir_doesnt_exist(self):
+    def test_config_dir_doesnt_exist(self) -> None:
         result = runner.invoke(
             app,
             [
@@ -550,7 +554,7 @@ class TestGenerate:
         )
         assert result.exit_code != 0
 
-    def test_model_serialization(self, snapshot: Snapshot):
+    def test_model_serialization(self, snapshot: Snapshot) -> None:
         """Test model serialization of component containing pathlib.Path attribute."""
         result = runner.invoke(
             app,
@@ -565,7 +569,7 @@ class TestGenerate:
 
         snapshot.assert_match(result.stdout, PIPELINE_YAML)
 
-    def test_dotenv_support(self):
+    def test_dotenv_support(self) -> None:
         result = runner.invoke(
             app,
             [
@@ -588,7 +592,7 @@ class TestGenerate:
             == "http://notlocalhost:8081/"
         )
 
-    def test_short_topic_definition(self):
+    def test_short_topic_definition(self) -> None:
         result = runner.invoke(
             app,
             [
@@ -630,7 +634,7 @@ class TestGenerate:
         assert input_components["component-extra"]["label"] == "role"
         assert input_components["component-extra-pattern"]["label"] == "role"
 
-    def test_kubernetes_app_name_validation(self):
+    def test_kubernetes_app_name_validation(self) -> None:
         with (
             pytest.raises(
                 ParsingException,
@@ -654,7 +658,7 @@ class TestGenerate:
                 catch_exceptions=False,
             )
 
-    def test_validate_unique_step_names(self):
+    def test_validate_unique_step_names(self) -> None:
         with (
             pytest.raises(
                 ParsingException,
@@ -676,7 +680,7 @@ class TestGenerate:
                 catch_exceptions=False,
             )
 
-    def test_validate_loops_on_pipeline(self):
+    def test_validate_loops_on_pipeline(self) -> None:
         with pytest.raises(ValueError, match="Pipeline is not a valid DAG."):
             runner.invoke(
                 app,
@@ -687,7 +691,7 @@ class TestGenerate:
                 catch_exceptions=False,
             )
 
-    def test_validate_simple_graph(self):
+    def test_validate_simple_graph(self) -> None:
         pipeline = kpops.generate(
             RESOURCE_PATH / "pipelines-with-graphs" / "simple-pipeline" / PIPELINE_YAML,
         )
@@ -704,7 +708,7 @@ class TestGenerate:
 
     def test_validate_components_are_disabled_in_production_but_enabled_on_development(
         self,
-    ):
+    ) -> None:
         pipeline_production = kpops.generate(
             pipeline_path=RESOURCE_PATH
             / "pipelines-with-graphs"
@@ -744,7 +748,7 @@ class TestGenerate:
             pipeline_development._graph.nodes()
         ) - len(topic_nodes_development)
 
-    def test_validate_topic_and_component_same_name(self):
+    def test_validate_topic_and_component_same_name(self) -> None:
         pipeline = kpops.generate(
             RESOURCE_PATH
             / "pipelines-with-graphs"
@@ -759,7 +763,7 @@ class TestGenerate:
         assert component == topic.removeprefix("topic-")
         assert (component, topic) in edges
 
-    async def test_parallel_execution_graph(self):
+    async def test_parallel_execution_graph(self) -> None:
         pipeline = kpops.generate(
             RESOURCE_PATH / "parallel-pipeline" / PIPELINE_YAML,
             config=RESOURCE_PATH / "parallel-pipeline",
@@ -779,7 +783,7 @@ class TestGenerate:
             "s3-connector-3": 0,
         }
 
-        async def name_runner(component: PipelineComponent):
+        async def name_runner(component: PipelineComponent) -> None:
             await asyncio.sleep(sleep_table_components[component.name])
             await called_component(component.name)
 
@@ -799,7 +803,7 @@ class TestGenerate:
             mock.call("s3-connector-1"),
         ]
 
-    async def test_subgraph_execution(self):
+    async def test_subgraph_execution(self) -> None:
         pipeline = kpops.generate(
             RESOURCE_PATH / "parallel-pipeline" / PIPELINE_YAML,
             config=RESOURCE_PATH / "parallel-pipeline",
@@ -807,7 +811,7 @@ class TestGenerate:
 
         called_component = AsyncMock()
 
-        async def name_runner(component: PipelineComponent):
+        async def name_runner(component: PipelineComponent) -> None:
             await called_component(component.name)
 
         pipeline.remove(pipeline.components[8].id)
@@ -826,7 +830,7 @@ class TestGenerate:
             mock.call("s3-connector-1"),
         ]
 
-    async def test_parallel_execution_graph_reverse(self):
+    async def test_parallel_execution_graph_reverse(self) -> None:
         pipeline = kpops.generate(
             RESOURCE_PATH / "parallel-pipeline" / PIPELINE_YAML,
             config=RESOURCE_PATH / "parallel-pipeline",
@@ -846,7 +850,7 @@ class TestGenerate:
             "s3-connector-3": 0,
         }
 
-        async def name_runner(component: PipelineComponent):
+        async def name_runner(component: PipelineComponent) -> None:
             await asyncio.sleep(sleep_table_components[component.name])
             await called_component(component.name)
 
@@ -866,7 +870,7 @@ class TestGenerate:
             mock.call("transaction-avro-producer-3"),
         ]
 
-    def test_temp_trim_release_name(self):
+    def test_temp_trim_release_name(self) -> None:
         result = runner.invoke(
             app,
             [
@@ -882,7 +886,7 @@ class TestGenerate:
             == "in-order-to-have-len-fifty-two-name-should-end--here"
         )
 
-    def test_substitution_in_inflated_component(self):
+    def test_substitution_in_inflated_component(self) -> None:
         pipeline = kpops.generate(RESOURCE_PATH / "resetter_values" / PIPELINE_YAML)
         assert isinstance(pipeline.components[1], KafkaSinkConnector)
         assert (
@@ -893,7 +897,7 @@ class TestGenerate:
             == "override-default-image-tag"
         )
 
-    def test_substitution_in_resetter(self):
+    def test_substitution_in_resetter(self) -> None:
         pipeline = kpops.generate(
             RESOURCE_PATH
             / "resetter_values"
@@ -908,7 +912,7 @@ class TestGenerate:
             == "override-default-image-tag"
         )
 
-    def test_streams_bootstrap(self, snapshot: Snapshot):
+    def test_streams_bootstrap(self, snapshot: Snapshot) -> None:
         pipeline = kpops.generate(
             RESOURCE_PATH / "streams-bootstrap" / PIPELINE_YAML,
         )
@@ -928,7 +932,7 @@ class TestGenerate:
 
     def test_symlinked_pipeline_as_original_pipeline(
         self,
-    ):
+    ) -> None:
         pipeline_original = kpops.generate(
             RESOURCE_PATH / "first-pipeline" / PIPELINE_YAML,
         )
@@ -943,7 +947,7 @@ class TestGenerate:
     )
     def test_symlinked_folder_renders_as_original_folder_pipeline(
         self,
-    ):
+    ) -> None:
         pipeline_original = kpops.generate(
             RESOURCE_PATH / "first-pipeline",
         )
@@ -958,7 +962,7 @@ class TestGenerate:
     )
     def test_symlinked_folder_and_pipelines_with_normal_pipeline_render_as_original(
         self,
-    ):
+    ) -> None:
         pipeline_original = kpops.generate(
             RESOURCE_PATH / "pipeline-folders",
         )

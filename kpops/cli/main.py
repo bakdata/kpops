@@ -126,7 +126,7 @@ def parse_steps(steps: str | None) -> set[str] | None:
 def init(
     path: Path = PROJECT_PATH,
     config_include_optional: bool = CONFIG_INCLUDE_OPTIONAL,
-):
+) -> None:
     kpops.init(path, config_include_optional=config_include_optional)
 
 
@@ -142,7 +142,7 @@ def generate(
     filter_type: FilterType = FILTER_TYPE,
     environment: str | None = ENVIRONMENT,
     verbose: bool = VERBOSE_OPTION,
-):
+) -> None:
     for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
         pipeline = kpops.generate(
             pipeline_path=pipeline_file_path,
@@ -168,7 +168,7 @@ def deploy(
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
     operation_mode: OperationMode = OPERATION_MODE_OPTION,
-):
+) -> None:
     match operation_mode:
         case OperationMode.MANAGED:
             for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
@@ -212,7 +212,7 @@ def destroy(
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
     operation_mode: OperationMode = OPERATION_MODE_OPTION,
-):
+) -> None:
     match operation_mode:
         case OperationMode.MANAGED:
             for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
@@ -256,7 +256,7 @@ def reset(
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
     operation_mode: OperationMode = OPERATION_MODE_OPTION,
-):
+) -> None:
     match operation_mode:
         case OperationMode.MANAGED:
             for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
@@ -300,7 +300,7 @@ def clean(
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
     operation_mode: OperationMode = OPERATION_MODE_OPTION,
-):
+) -> None:
     match operation_mode:
         case OperationMode.MANAGED:
             for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
@@ -387,7 +387,7 @@ def main(
             is_eager=True,
         ),
     ] = False,
-): ...
+) -> None: ...
 
 
 if __name__ == "__main__":

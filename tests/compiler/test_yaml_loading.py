@@ -1,5 +1,5 @@
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 import yaml
@@ -9,19 +9,19 @@ from kpops.utils.yaml import load_yaml_file
 RESOURCE_PATH = Path(__file__).parent / "resources"
 
 
-def test_load_yaml():
+def test_load_yaml() -> None:
     content = load_yaml_file(RESOURCE_PATH / "test.yaml")
     assert isinstance(content, dict)
     assert content["test"] == {"correct": "file"}
 
 
-def test_fail_load_yaml():
+def test_fail_load_yaml() -> None:
     with pytest.raises(yaml.YAMLError):
         load_yaml_file(RESOURCE_PATH / "erroneous-file.yaml")
 
 
 @patch("yaml.safe_load")
-def test_caching_load_yaml(mocked_func):
+def test_caching_load_yaml(mocked_func: MagicMock) -> None:
     load_yaml_file(
         RESOURCE_PATH / "test.yaml",
         substitution={"example": "test", "another": "field"},

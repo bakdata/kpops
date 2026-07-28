@@ -23,21 +23,21 @@ def kafka_topic() -> KafkaTopic:
     )
 
 
-def test_topic_spec_defaults():
+def test_topic_spec_defaults() -> None:
     spec = TopicSpec()
     assert spec.partitions == 1
     assert spec.replicas == 1
     assert spec.config is None
 
 
-def test_topic_spec_custom_values():
+def test_topic_spec_custom_values() -> None:
     spec = TopicSpec(partitions=3, replicas=2, config={"retention.ms": "60000"})
     assert spec.partitions == 3
     assert spec.replicas == 2
     assert spec.config == {"retention.ms": "60000"}
 
 
-def test_topic_spec_validation():
+def test_topic_spec_validation() -> None:
     with pytest.raises(PydanticValidationError):
         TopicSpec(partitions=0)  # Less than 1, should raise validation error
 
@@ -45,7 +45,9 @@ def test_topic_spec_validation():
         TopicSpec(replicas=40000)  # Exceeds max value, should raise validation error
 
 
-def test_strimzi_kafka_topic_from_topic(kafka_topic: KafkaTopic, mocker: MockerFixture):
+def test_strimzi_kafka_topic_from_topic(
+    kafka_topic: KafkaTopic, mocker: MockerFixture
+) -> None:
     mock_config = MagicMock()
     mock_config.strimzi_topic.cluster_labels = ("bakdata.com/cluster", "my-cluster")
     mock_config.strimzi_topic.namespace = None
@@ -68,7 +70,7 @@ def test_strimzi_kafka_topic_from_topic(kafka_topic: KafkaTopic, mocker: MockerF
 
 def test_strimzi_kafka_topic_from_topic_with_namespace(
     kafka_topic: KafkaTopic, mocker: MockerFixture
-):
+) -> None:
     mock_config = MagicMock()
     mock_config.strimzi_topic.cluster_labels = ("bakdata.com/cluster", "my-cluster")
     mock_config.strimzi_topic.namespace = "strimzi"
@@ -89,7 +91,9 @@ def test_strimzi_kafka_topic_from_topic_with_namespace(
     assert strimzi_topic.spec.config == kafka_topic.config.configs
 
 
-def test_strimzi_kafka_topic_missing_config(kafka_topic, mocker):
+def test_strimzi_kafka_topic_missing_config(
+    kafka_topic: KafkaTopic, mocker: MockerFixture
+) -> None:
     mock_config = MagicMock()
     mock_config.strimzi_topic = None
     mocker.patch(

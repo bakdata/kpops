@@ -33,6 +33,8 @@ class TestKubernetesManifest:
             )
         ],
     )
-    def test_from_yaml(self, helm_template: str, expected_manifest: KubernetesManifest):
+    def test_from_yaml(
+        self, helm_template: str, expected_manifest: KubernetesManifest
+    ) -> None:
         manifests = KubernetesManifest.from_yaml(helm_template)
         assert list(manifests) == expected_manifest

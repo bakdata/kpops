@@ -88,6 +88,10 @@ reportIncompatibleMethodOverride = "warning"
 reportUnusedParameter = "hint"
 reportDeprecated = "hint"
 
+reportMissingParameterType = "error"
+reportMissingTypeArgument = "error"
+reportUnannotatedClassAttribute = "error"
+
 reportAny = false
 reportExplicitAny = false
 reportImplicitStringConcatenation = false
@@ -169,6 +173,7 @@ ignore = [
   "PLW2901", # `for` loop variable `{var}` overwritten by assignment target -- Inconvenient to enforce
   "TRY002", # Create your own exception -- Inconvenient to enforce
   "TRY003", # Avoid specifying long messages outside the exception class -- Inconvenient to enforce
+  "ANN401", # Avoid function arguments with `Any` type -- Inconvenient to enforce
 ]
 select = [
   "F", # Pyflakes
@@ -202,6 +207,7 @@ select = [
   "PGH", # pygrep-hooks
   "PL", # Pylint
   "TRY", # tryceratops
+  "ANN", # flake8-annotations
   # "FURB", # refurb, add when out of nursery
   # "LOG", # flake8-logging, add when out of nursery
 ]

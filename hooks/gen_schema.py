@@ -15,7 +15,7 @@ from kpops.utils.gen_schema import (
 PATH_TO_SCHEMA = ROOT / "docs/docs/schema"
 
 
-def gen_schema(scope: KpopsFileType):
+def gen_schema(scope: KpopsFileType) -> None:
     """Generate the specified schema and save it to a file.
 
     The file is located in docs/docs/schema and is named ``<scope.value>.json``

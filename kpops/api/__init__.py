@@ -180,7 +180,7 @@ def deploy(
     dry_run: bool = True,
     verbose: bool = True,
     parallel: bool = False,
-):
+) -> None:
     """Deploy pipeline steps.
 
     :param pipeline_path: Path to pipeline definition yaml file.
@@ -203,11 +203,11 @@ def deploy(
         verbose=verbose,
     )
 
-    async def deploy_runner(component: PipelineComponent):
+    async def deploy_runner(component: PipelineComponent) -> None:
         log_action("Deploy", component)
         await component.deploy(dry_run)
 
-    async def async_deploy():
+    async def async_deploy() -> None:
         if parallel:
             pipeline_tasks = pipeline.build_execution_graph(deploy_runner)
             await pipeline_tasks
@@ -228,7 +228,7 @@ def destroy(
     dry_run: bool = True,
     verbose: bool = True,
     parallel: bool = False,
-):
+) -> None:
     """Destroy pipeline steps.
 
     :param pipeline_path: Path to pipeline definition yaml file.
@@ -251,11 +251,11 @@ def destroy(
         verbose=verbose,
     )
 
-    async def destroy_runner(component: PipelineComponent):
+    async def destroy_runner(component: PipelineComponent) -> None:
         log_action("Destroy", component)
         await component.destroy(dry_run)
 
-    async def async_destroy():
+    async def async_destroy() -> None:
         if parallel:
             pipeline_tasks = pipeline.build_execution_graph(
                 destroy_runner, reverse=True
@@ -278,7 +278,7 @@ def reset(
     dry_run: bool = True,
     verbose: bool = True,
     parallel: bool = False,
-):
+) -> None:
     """Reset pipeline steps.
 
     :param pipeline_path: Path to pipeline definition yaml file.
@@ -301,11 +301,11 @@ def reset(
         verbose=verbose,
     )
 
-    async def reset_runner(component: PipelineComponent):
+    async def reset_runner(component: PipelineComponent) -> None:
         log_action("Reset", component)
         await component.reset(dry_run)
 
-    async def async_reset():
+    async def async_reset() -> None:
         if parallel:
             pipeline_tasks = pipeline.build_execution_graph(reset_runner, reverse=True)
             await pipeline_tasks
@@ -326,7 +326,7 @@ def clean(
     dry_run: bool = True,
     verbose: bool = True,
     parallel: bool = False,
-):
+) -> None:
     """Clean pipeline steps.
 
     :param pipeline_path: Path to pipeline definition yaml file.
@@ -349,11 +349,11 @@ def clean(
         verbose=verbose,
     )
 
-    async def clean_runner(component: PipelineComponent):
+    async def clean_runner(component: PipelineComponent) -> None:
         log_action("Clean", component)
         await component.clean(dry_run)
 
-    async def async_clean():
+    async def async_clean() -> None:
         if parallel:
             pipeline_tasks = pipeline.build_execution_graph(clean_runner, reverse=True)
             await pipeline_tasks
@@ -367,7 +367,7 @@ def clean(
 def init(
     path: Path,
     config_include_optional: bool = False,
-):
+) -> None:
     """Initiate a default empty project.
 
     :param path: Directory in which the project should be initiated.

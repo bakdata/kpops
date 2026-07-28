@@ -19,7 +19,7 @@ from kpops.core.exception import ValidationError
 RESOURCES_PATH = Path(__file__).parent / "cli" / "resources"
 
 
-def test_kpops_config_with_default_values():
+def test_kpops_config_with_default_values() -> None:
     default_config = KpopsConfig(kafka_brokers="http://broker:9092")
 
     assert (
@@ -46,7 +46,7 @@ def test_kpops_config_with_default_values():
     assert default_config.retain_clean_jobs is False
 
 
-def test_kpops_config_with_different_invalid_urls():
+def test_kpops_config_with_different_invalid_urls() -> None:
     with pytest.raises(pydantic.ValidationError):
         KpopsConfig(
             kafka_brokers="http://broker:9092",
@@ -74,7 +74,7 @@ def test_kpops_config_with_different_invalid_urls():
 
 
 @pytest.mark.usefixtures("clear_kpops_config")
-def test_global_kpops_config_not_initialized_error():
+def test_global_kpops_config_not_initialized_error() -> None:
     with pytest.raises(
         RuntimeError,
         match=re.escape(
@@ -84,12 +84,12 @@ def test_global_kpops_config_not_initialized_error():
         get_config()
 
 
-def test_create_global_kpops_config():
+def test_create_global_kpops_config() -> None:
     config = KpopsConfig.create(RESOURCES_PATH)
     assert get_config() == config
 
 
-def test_set_global_kpops_config():
+def test_set_global_kpops_config() -> None:
     config = KpopsConfig(
         kafka_brokers="broker:9092",
     )
@@ -97,12 +97,12 @@ def test_set_global_kpops_config():
     assert get_config() == config
 
 
-def test_strimzi_topic_config_valid():
+def test_strimzi_topic_config_valid() -> None:
     config = StrimziTopicConfig.model_validate({"label": {"key": "value"}})
     assert config.cluster_labels == ("key", "value")
 
 
-def test_strimzi_topic_config_empty_label():
+def test_strimzi_topic_config_empty_label() -> None:
     with pytest.raises(
         ValidationError,
         match="'strimzi_topic.label' must contain a single key-value pair.",

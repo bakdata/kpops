@@ -42,7 +42,7 @@ class TestKubernetesApp:
 
     def test_should_raise_value_error_when_name_is_not_valid(
         self, app_values: KubernetesTestValues
-    ):
+    ) -> None:
         with pytest.raises(
             ValueError, match=r"The component name .* is invalid for Kubernetes."
         ):

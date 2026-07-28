@@ -95,7 +95,7 @@ class TestTopicHandler:
         )
         return wrapper
 
-    def test_convert_config_values_to_str(self):
+    def test_convert_config_values_to_str(self) -> None:
         assert TopicConfig(
             partitions_count=1,
             configs={
@@ -117,7 +117,7 @@ class TestTopicHandler:
             "value_schema": None,
         }
 
-    async def test_should_call_create_topic_with_dry_run_false(self):
+    async def test_should_call_create_topic_with_dry_run_false(self) -> None:
         wrapper = AsyncMock()
         wrapper.get_topic.side_effect = TopicNotFoundException()
         topic_handler = TopicHandler(proxy_wrapper=wrapper)
@@ -148,7 +148,7 @@ class TestTopicHandler:
 
     async def test_should_call_update_topic_config_when_topic_exists_and_with_dry_run_false(
         self, get_topic_response_mock: MagicMock
-    ):
+    ) -> None:
         wrapper = get_topic_response_mock
         topic_handler = TopicHandler(proxy_wrapper=wrapper)
 
@@ -173,7 +173,7 @@ class TestTopicHandler:
 
     async def test_should_update_topic_config_when_one_config_changed(
         self, log_info_mock: MagicMock, get_topic_response_mock: MagicMock
-    ):
+    ) -> None:
         wrapper = get_topic_response_mock
 
         topic_handler = TopicHandler(proxy_wrapper=wrapper)
@@ -194,7 +194,7 @@ class TestTopicHandler:
 
     async def test_should_not_update_topic_config_when_config_not_changed(
         self, log_info_mock: MagicMock, get_topic_response_mock: MagicMock
-    ):
+    ) -> None:
         wrapper = get_topic_response_mock
 
         topic_handler = TopicHandler(proxy_wrapper=wrapper)
@@ -215,7 +215,7 @@ class TestTopicHandler:
 
     async def test_should_not_update_topic_config_when_config_not_changed_and_not_ordered(
         self, log_info_mock: MagicMock, get_topic_response_mock: MagicMock
-    ):
+    ) -> None:
         wrapper = get_topic_response_mock
         topic_handler = TopicHandler(proxy_wrapper=wrapper)
 
@@ -235,7 +235,7 @@ class TestTopicHandler:
 
     async def test_should_call_reset_topic_config_when_topic_exists_dry_run_false_and_topic_configs_change(
         self, get_topic_response_mock: MagicMock
-    ):
+    ) -> None:
         wrapper = get_topic_response_mock
 
         topic_handler = TopicHandler(proxy_wrapper=wrapper)
@@ -257,7 +257,7 @@ class TestTopicHandler:
 
     async def test_should_not_call_create_topics_with_dry_run_true_and_topic_not_exists(
         self,
-    ):
+    ) -> None:
         wrapper = MagicMock()
         wrapper.get_topic.side_effect = TopicNotFoundException()
         topic_handler = TopicHandler(proxy_wrapper=wrapper)
@@ -275,7 +275,7 @@ class TestTopicHandler:
 
     async def test_should_print_message_with_dry_run_true_and_topic_not_exists(
         self, log_info_mock: MagicMock
-    ):
+    ) -> None:
         wrapper = MagicMock()
         wrapper.get_topic.side_effect = TopicNotFoundException()
         wrapper.host = "http://localhost:8082"
@@ -302,7 +302,7 @@ class TestTopicHandler:
         log_info_mock: MagicMock,
         log_debug_mock: MagicMock,
         get_topic_response_mock: MagicMock,
-    ):
+    ) -> None:
         wrapper = get_topic_response_mock
         topic_handler = TopicHandler(proxy_wrapper=wrapper)
 
@@ -338,7 +338,7 @@ class TestTopicHandler:
         log_info_mock: MagicMock,
         log_debug_mock: MagicMock,
         get_default_topic_response_mock: MagicMock,
-    ):
+    ) -> None:
         wrapper = get_default_topic_response_mock
         topic_handler = TopicHandler(proxy_wrapper=wrapper)
 
@@ -373,7 +373,7 @@ class TestTopicHandler:
 
     async def test_should_exit_if_dry_run_and_topic_exists_different_partition_count(
         self, get_topic_response_mock: MagicMock
-    ):
+    ) -> None:
         wrapper = get_topic_response_mock
 
         topic_handler = TopicHandler(proxy_wrapper=wrapper)
@@ -395,7 +395,7 @@ class TestTopicHandler:
 
     async def test_should_exit_if_dry_run_and_topic_exists_different_replication_factor(
         self, get_topic_response_mock: MagicMock
-    ):
+    ) -> None:
         wrapper = get_topic_response_mock
 
         topic_handler = TopicHandler(proxy_wrapper=wrapper)
@@ -417,7 +417,7 @@ class TestTopicHandler:
 
     async def test_should_log_correct_message_when_delete_existing_topic_dry_run(
         self, log_info_mock: MagicMock, get_topic_response_mock: MagicMock
-    ):
+    ) -> None:
         wrapper = get_topic_response_mock
 
         topic_handler = TopicHandler(proxy_wrapper=wrapper)
@@ -440,7 +440,7 @@ class TestTopicHandler:
 
     async def test_should_log_correct_message_when_delete_non_existing_topic_dry_run(
         self, log_warning_mock: MagicMock
-    ):
+    ) -> None:
         wrapper = MagicMock()
         wrapper.get_topic.side_effect = TopicNotFoundException
 
@@ -460,7 +460,7 @@ class TestTopicHandler:
             "Topic Deletion: topic topic-X does not exist in the cluster and cannot be deleted. Skipping."
         )
 
-    async def test_should_call_delete_topic_not_dry_run(self):
+    async def test_should_call_delete_topic_not_dry_run(self) -> None:
         wrapper = AsyncMock()
         topic_handler = TopicHandler(proxy_wrapper=wrapper)
 
@@ -480,7 +480,7 @@ class TestTopicHandler:
 
     async def test_should_print_correct_warning_when_deleting_topic_that_does_not_exists_not_dry_run(
         self, log_warning_mock: MagicMock
-    ):
+    ) -> None:
         wrapper = MagicMock()
         topic_handler = TopicHandler(proxy_wrapper=wrapper)
 

@@ -23,7 +23,7 @@ class TestDeploy:
             return_value=AsyncMock(),
         ).return_value
 
-    def test_order(self, mocker: MockerFixture):
+    def test_order(self, mocker: MockerFixture) -> None:
         producer_app_mock_deploy = mocker.patch.object(ProducerApp, "deploy")
         streams_app_mock_deploy = mocker.patch.object(StreamsApp, "deploy")
         helm_app_mock_deploy = mocker.patch.object(HelmApp, "deploy")

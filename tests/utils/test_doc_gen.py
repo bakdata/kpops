@@ -58,7 +58,7 @@ class TestEnvDocGen:
         description: str | list[str] | None,
         extra_args: tuple[str, ...],
         expected_outcome: str,
-    ):
+    ) -> None:
         target = tmp_path / "target.csv"
         csv_append_env_var(target, var_name, default_value, description, *extra_args)
         with target.open() as t:
@@ -67,7 +67,7 @@ class TestEnvDocGen:
                 == expected_outcome + "\n"
             )
 
-    def test_write_title_to_dotenv_file(self, tmp_path: Path):
+    def test_write_title_to_dotenv_file(self, tmp_path: Path) -> None:
         target = tmp_path / "target.ENV"
         write_title_to_dotenv_file(target, "title", "description of length 72" * 3)
         with target.open() as t:
@@ -141,7 +141,7 @@ class TestEnvDocGen:
         description: str,
         setting_name: str,
         expected: str,
-    ):
+    ) -> None:
         source = tmp_path / "source.csv"
         target = tmp_path / "target.env"
         csv_record = [var_name, default, required, description]
@@ -214,7 +214,7 @@ class TestEnvDocGen:
         description: str,
         heading: str,
         expected: str,
-    ):
+    ) -> None:
         source = tmp_path / "source.csv"
         target = tmp_path / "target.env"
         csv_record = ["NAME", "default", "True", "description", "setting_name"]
