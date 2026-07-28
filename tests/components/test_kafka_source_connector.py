@@ -6,6 +6,7 @@ from typing_extensions import override
 
 from kpops.component_handlers import get_handlers
 from kpops.component_handlers.kafka_connect.model import (
+    ConnectorNewState,
     KafkaConnectorConfig,
     KafkaConnectorType,
 )
@@ -13,6 +14,11 @@ from kpops.components.base_components.kafka_connector import (
     KafkaSourceConnector,
 )
 from kpops.components.base_components.models import TopicName
+from kpops.components.base_components.models.from_section import (
+    FromSection,
+    FromTopic,
+    InputTopicTypes,
+)
 from kpops.components.base_components.models.to_section import (
     ToSection,
 )
@@ -47,6 +53,74 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             ),
             offset_topic=OFFSETS_TOPIC,
         )
+
+    def test_from_section_raises_exception(
+        self,
+        connector_config: KafkaConnectorConfig,
+    ) -> None:
+        with pytest.raises(NotImplementedError):
+            KafkaSourceConnector(
+                name=CONNECTOR_NAME,
+                config=connector_config,
+                from_=FromSection(
+                    topics={
+                        TopicName("connector-topic"): FromTopic(
+                            type=InputTopicTypes.INPUT
+                        ),
+                    }
+                ),
+            )
+
+    async def test_deploy_order(
+        self,
+        connector: KafkaSourceConnector,
+        mocker: MockerFixture,
+    ) -> None:
+        mock_create_topic = mocker.patch.object(
+            get_handlers().topic_handler, "create_topic"
+        )
+
+        mock_create_connector = mocker.patch.object(
+            get_handlers().connector_handler, "create_connector"
+        )
+
+        mock = mocker.AsyncMock()
+        mock.attach_mock(mock_create_topic, "mock_create_topic")
+        mock.attach_mock(mock_create_connector, "mock_create_connector")
+        dry_run = True
+
+        await connector.deploy(dry_run=dry_run)
+        assert connector.to
+        assert mock.mock_calls == [
+            *(
+                mocker.call.mock_create_topic(topic, dry_run=dry_run)
+                for topic in connector.to.kafka_topics
+            ),
+            mocker.call.mock_create_connector(
+                connector.config, state=None, dry_run=dry_run
+            ),
+        ]
+
+    @pytest.mark.parametrize(
+        "initial_state",
+        [None, ConnectorNewState.RUNNING, ConnectorNewState.PAUSED],
+    )
+    async def test_deploy_initial_state(
+        self,
+        connector: KafkaSourceConnector,
+        initial_state: ConnectorNewState | None,
+        mocker: MockerFixture,
+    ) -> None:
+        mock_create_connector = mocker.patch.object(
+            get_handlers().connector_handler, "create_connector"
+        )
+
+        connector.state = initial_state
+        dry_run = True
+        await connector.deploy(dry_run=dry_run)
+        assert mock_create_connector.mock_calls == [
+            mocker.call(connector.config, state=initial_state, dry_run=dry_run)
+        ]
 
     async def test_destroy(
         self,
