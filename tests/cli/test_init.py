@@ -11,7 +11,7 @@ from kpops.utils.cli_commands import create_config
 runner = CliRunner()
 
 
-def test_create_config(tmp_path: Path):
+def test_create_config(tmp_path: Path) -> None:
     opt_conf_name = "config_with_non_required"
     req_conf_name = "config_with_only_required"
     create_config(opt_conf_name, tmp_path, True)
@@ -24,7 +24,7 @@ def test_create_config(tmp_path: Path):
 
 
 @pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache", "clear_kpops_config")
-def test_init_project_exclude_optional(tmp_path: Path, snapshot: Snapshot):
+def test_init_project_exclude_optional(tmp_path: Path, snapshot: Snapshot) -> None:
     req_path = tmp_path / "req"
     req_path.mkdir()
     kpops.init(req_path, config_include_optional=False)
@@ -33,7 +33,7 @@ def test_init_project_exclude_optional(tmp_path: Path, snapshot: Snapshot):
     snapshot.assert_match(Path(req_path / "defaults.yaml").read_text(), "defaults.yaml")
 
 
-def test_init_project_include_optional(tmp_path: Path, snapshot: Snapshot):
+def test_init_project_include_optional(tmp_path: Path, snapshot: Snapshot) -> None:
     opt_path = tmp_path / "opt"
     opt_path.mkdir()
     kpops.init(opt_path, config_include_optional=True)
@@ -42,7 +42,7 @@ def test_init_project_include_optional(tmp_path: Path, snapshot: Snapshot):
     snapshot.assert_match(Path(opt_path / "defaults.yaml").read_text(), "defaults.yaml")
 
 
-def test_init_project_from_cli_with_bad_path(tmp_path: Path):
+def test_init_project_from_cli_with_bad_path(tmp_path: Path) -> None:
     bad_path = Path(tmp_path / "random_file.yaml")
     bad_path.touch()
     result = runner.invoke(

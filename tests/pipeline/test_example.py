@@ -1,4 +1,5 @@
 import os
+from collections.abc import Generator
 from pathlib import Path
 
 import pytest
@@ -15,17 +16,17 @@ EXAMPLES_PATH = Path("examples").absolute()
 @pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache", "clear_kpops_config")
 class TestExample:
     @pytest.fixture(scope="class", autouse=True)
-    def cd(self):
+    def cd(self) -> Generator[None]:
         cwd = Path.cwd().absolute()
         os.chdir(EXAMPLES_PATH)
         yield
         os.chdir(cwd)
 
-    def test_cwd(self):
+    def test_cwd(self) -> None:
         assert Path.cwd() == EXAMPLES_PATH
 
     @pytest.fixture(scope="session")
-    def test_submodule(self):
+    def test_submodule(self) -> None:
         assert any(EXAMPLES_PATH.iterdir()), (
             "examples directory is empty, please initialize and update the git submodule (see contributing guide)"
         )
@@ -47,6 +48,6 @@ class TestExample:
             ),
         ],
     )
-    def test_generate(self, pipeline_name: str, snapshot: Snapshot):
+    def test_generate(self, pipeline_name: str, snapshot: Snapshot) -> None:
         pipeline = kpops.generate(Path(f"{pipeline_name}/pipeline.yaml"))
         snapshot.assert_match(pipeline.to_yaml(), "pipeline.yaml")

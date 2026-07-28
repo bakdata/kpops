@@ -44,7 +44,7 @@ class TestManifest:
     def helm(self, mock_version: MagicMock) -> Helm:
         return Helm(helm_config=HelmConfig())
 
-    def test_default_config(self, mock_execute: MagicMock):
+    def test_default_config(self, mock_execute: MagicMock) -> None:
         result = runner.invoke(
             app,
             [
@@ -76,7 +76,7 @@ class TestManifest:
         )
         assert result.exit_code == 0, result.stdout
 
-    def test_custom_config(self, mock_execute: MagicMock):
+    def test_custom_config(self, mock_execute: MagicMock) -> None:
         result = runner.invoke(
             app,
             [
@@ -112,7 +112,7 @@ class TestManifest:
         )
         assert result.exit_code == 0, result.stdout
 
-    def test_manifest_command(self, snapshot: Snapshot):
+    def test_manifest_command(self, snapshot: Snapshot) -> None:
         result = runner.invoke(
             app,
             [
@@ -130,7 +130,7 @@ class TestManifest:
 
     def test_manifest_deploy_python_api(
         self, capsys: CaptureFixture[str], snapshot: Snapshot
-    ):
+    ) -> None:
         generator = kpops.manifest_deploy(
             RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML,
             environment="development",
@@ -146,7 +146,7 @@ class TestManifest:
         captured = capsys.readouterr()
         snapshot.assert_match(captured.out, MANIFEST_YAML)
 
-    def test_streams_bootstrap(self, snapshot: Snapshot):
+    def test_streams_bootstrap(self, snapshot: Snapshot) -> None:
         result = runner.invoke(
             app,
             [
@@ -160,7 +160,7 @@ class TestManifest:
         assert result.exit_code == 0, result.stdout
         snapshot.assert_match(result.stdout, MANIFEST_YAML)
 
-    def test_deploy_manifest_mode(self, snapshot: Snapshot):
+    def test_deploy_manifest_mode(self, snapshot: Snapshot) -> None:
         result = runner.invoke(
             app,
             [
@@ -174,7 +174,7 @@ class TestManifest:
         assert result.exit_code == 0, result.stdout
         snapshot.assert_match(result.stdout, MANIFEST_YAML)
 
-    def test_deploy_argo_mode(self, snapshot: Snapshot):
+    def test_deploy_argo_mode(self, snapshot: Snapshot) -> None:
         result = runner.invoke(
             app,
             [
@@ -188,7 +188,7 @@ class TestManifest:
         assert result.exit_code == 0, result.stdout
         snapshot.assert_match(result.stdout, MANIFEST_YAML)
 
-    def test_manifest_destroy_manifest_mode(self, snapshot: Snapshot):
+    def test_manifest_destroy_manifest_mode(self, snapshot: Snapshot) -> None:
         result = runner.invoke(
             app,
             [
@@ -202,7 +202,7 @@ class TestManifest:
         assert result.exit_code == 0, result.stdout
         snapshot.assert_match(result.stdout, MANIFEST_YAML)
 
-    def test_manifest_destroy_argo_mode(self, snapshot: Snapshot):
+    def test_manifest_destroy_argo_mode(self, snapshot: Snapshot) -> None:
         result = runner.invoke(
             app,
             [
@@ -218,7 +218,7 @@ class TestManifest:
 
     def test_manifest_destroy_python_api(
         self, capsys: CaptureFixture[str], snapshot: Snapshot
-    ):
+    ) -> None:
         generator = kpops.manifest_destroy(
             RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML,
             environment="development",
@@ -234,7 +234,7 @@ class TestManifest:
         captured = capsys.readouterr()
         snapshot.assert_match(captured.out, MANIFEST_YAML)
 
-    def test_manifest_reset_manifest_mode(self, snapshot: Snapshot):
+    def test_manifest_reset_manifest_mode(self, snapshot: Snapshot) -> None:
         result = runner.invoke(
             app,
             [
@@ -248,7 +248,7 @@ class TestManifest:
         assert result.exit_code == 0, result.stdout
         snapshot.assert_match(result.stdout, MANIFEST_YAML)
 
-    def test_manifest_reset_argo_mode(self, snapshot: Snapshot):
+    def test_manifest_reset_argo_mode(self, snapshot: Snapshot) -> None:
         result = runner.invoke(
             app,
             [
@@ -264,7 +264,7 @@ class TestManifest:
 
     def test_manifest_reset_python_api(
         self, capsys: CaptureFixture[str], snapshot: Snapshot
-    ):
+    ) -> None:
         generator = kpops.manifest_reset(
             RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML,
             environment="development",
@@ -280,7 +280,7 @@ class TestManifest:
         captured = capsys.readouterr()
         snapshot.assert_match(captured.out, MANIFEST_YAML)
 
-    def test_manifest_clean_manifest_mode(self, snapshot: Snapshot):
+    def test_manifest_clean_manifest_mode(self, snapshot: Snapshot) -> None:
         result = runner.invoke(
             app,
             [
@@ -294,7 +294,7 @@ class TestManifest:
         assert result.exit_code == 0, result.stdout
         snapshot.assert_match(result.stdout, MANIFEST_YAML)
 
-    def test_manifest_clean_argo_mode(self, snapshot: Snapshot):
+    def test_manifest_clean_argo_mode(self, snapshot: Snapshot) -> None:
         result = runner.invoke(
             app,
             [
@@ -310,7 +310,7 @@ class TestManifest:
 
     def test_manifest_clean_python_api(
         self, capsys: CaptureFixture[str], snapshot: Snapshot
-    ):
+    ) -> None:
         generator = kpops.manifest_clean(
             RESOURCE_PATH / "manifest-pipeline" / PIPELINE_YAML,
             environment="development",

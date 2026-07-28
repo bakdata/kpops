@@ -45,7 +45,7 @@ class TestClean:
     #     )
     #     return pipeline
 
-    def test_order(self, mocker: MockerFixture):
+    def test_order(self, mocker: MockerFixture) -> None:
         # destroy
         producer_app_mock_destroy = mocker.patch.object(ProducerApp, "destroy")
         streams_app_mock_destroy = mocker.patch.object(StreamsApp, "destroy")

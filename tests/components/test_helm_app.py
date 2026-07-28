@@ -54,7 +54,7 @@ class TestHelmApp:
         helm_app: HelmApp,
         mocker: MockerFixture,
         helm_mock: MagicMock,
-    ):
+    ) -> None:
         helm_mock.add_repo.assert_not_called()
 
         mocker.patch.object(
@@ -84,7 +84,7 @@ class TestHelmApp:
         helm_mock: MagicMock,
         mocker: MockerFixture,
         app_values: HelmAppValues,
-    ):
+    ) -> None:
         repo_config = HelmRepoConfig(
             repository_name="test-repo", url="https://test.com/charts/"
         )
@@ -129,7 +129,7 @@ class TestHelmApp:
         self,
         helm_mock: MagicMock,
         app_values: HelmAppValues,
-    ):
+    ) -> None:
         class AppWithLocalChart(HelmApp):
             repo_config: None = None
 
@@ -165,7 +165,7 @@ class TestHelmApp:
         self,
         helm_app: HelmApp,
         helm_mock: MagicMock,
-    ):
+    ) -> None:
         with pytest.raises(NotImplementedError) as error:
             await helm_app.deploy(True)
         helm_mock.add_repo.assert_called()
@@ -195,7 +195,7 @@ class TestHelmApp:
         global_timeout: str | None,
         expected_timeout: str,
         app_values: HelmAppValues,
-    ):
+    ) -> None:
         original_config = get_config()
         set_config(
             KpopsConfig(
@@ -217,7 +217,7 @@ class TestHelmApp:
     def test_should_set_force_from_global_config(
         self,
         app_values: HelmAppValues,
-    ):
+    ) -> None:
         original_config = get_config()
         set_config(
             KpopsConfig(
@@ -240,7 +240,7 @@ class TestHelmApp:
         helm_app: HelmApp,
         helm_mock: MagicMock,
         log_info_mock: MagicMock,
-    ):
+    ) -> None:
         stdout = 'HelmApp - release "test-helm-app" uninstalled'
         helm_mock.uninstall.return_value = stdout
 
@@ -257,7 +257,7 @@ class TestHelmApp:
         helm_app: HelmApp,
         helm_mock: MagicMock,
         log_info_mock: MagicMock,
-    ):
+    ) -> None:
         stdout = 'HelmApp - release "test-helm-app" uninstalled'
         helm_mock.uninstall.return_value = stdout
 
@@ -274,7 +274,7 @@ class TestHelmApp:
         helm_app: HelmApp,
         helm_mock: MagicMock,
         log_info_mock: MagicMock,
-    ):
+    ) -> None:
         stdout = 'HelmApp - release "test-helm-app" uninstalled'
         helm_mock.uninstall.return_value = stdout
 
@@ -289,7 +289,7 @@ class TestHelmApp:
     def test_helm_name_override(
         self,
         repo_config: HelmRepoConfig,
-    ):
+    ) -> None:
         helm_app = HelmApp(
             prefix="test-pipeline-prefix-with-a-long-name-",
             name="helm-app-name-is-very-long-as-well",

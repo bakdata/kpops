@@ -24,7 +24,7 @@ log = logging.getLogger("KafkaConnectHandler")
 
 @final
 class KafkaConnectHandler:
-    def __init__(self, connect_wrapper: ConnectWrapper):
+    def __init__(self, connect_wrapper: ConnectWrapper) -> None:
         self._connect_wrapper = connect_wrapper
 
     async def create_connector(

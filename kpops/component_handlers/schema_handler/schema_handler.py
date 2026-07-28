@@ -118,7 +118,7 @@ class SchemaHandler:
         schema: Schema,
         schema_class: str,
         dry_run: bool,
-    ):
+    ) -> None:
         if dry_run:
             if await self.__subject_exists(subject):
                 await self.__check_compatibility(schema, schema_class, subject)

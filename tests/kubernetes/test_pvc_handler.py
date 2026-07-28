@@ -20,7 +20,7 @@ def pvc_handler(kubeconfig: Path) -> PVCHandler:
     return PVCHandler("test-app", "test-namespace")
 
 
-def test_init(pvc_handler: PVCHandler, mocker: MockerFixture):
+def test_init(pvc_handler: PVCHandler, mocker: MockerFixture) -> None:
     assert isinstance(pvc_handler, PVCHandler)
     assert pvc_handler.namespace == "test-namespace"
     assert pvc_handler.app_name == "test-app"
@@ -55,7 +55,7 @@ def mock_list_pvcs(
     mocker: MockerFixture,
     pvc1: PersistentVolumeClaim,
     pvc2: PersistentVolumeClaim,
-):
+) -> None:
     async def async_generator_side_effect() -> AsyncIterator[PersistentVolumeClaim]:
         yield pvc1
         yield pvc2
@@ -73,7 +73,7 @@ async def test_list_pvcs(
     mocker: MockerFixture,
     pvc1: PersistentVolumeClaim,
     pvc2: PersistentVolumeClaim,
-):
+) -> None:
     pvcs = await pvc_handler.list_pvcs()
     assert isinstance(pvcs, AsyncIterator)
     assert [pvc async for pvc in pvcs] == [pvc1, pvc2]
@@ -84,7 +84,7 @@ async def test_delete_pvcs_dry_run(
     pvc_handler: PVCHandler,
     mocker: MockerFixture,
     caplog: pytest.LogCaptureFixture,
-):
+) -> None:
     caplog.set_level(logging.DEBUG)
     mock_delete = mocker.patch.object(
         pvc_handler._client, "delete", return_value=AsyncMock()
@@ -101,7 +101,7 @@ async def test_delete_pvcs_dry_run_no_pvcs(
     pvc_handler: PVCHandler,
     mocker: MockerFixture,
     caplog: pytest.LogCaptureFixture,
-):
+) -> None:
     caplog.set_level(logging.DEBUG)
     mock_list = mocker.patch.object(
         pvc_handler._client, "list", return_value=AsyncMock()
@@ -122,7 +122,7 @@ async def test_delete_pvcs(
     pvc_handler: PVCHandler,
     mocker: MockerFixture,
     caplog: pytest.LogCaptureFixture,
-):
+) -> None:
     caplog.set_level(logging.DEBUG)
     mock_delete = mocker.patch.object(
         pvc_handler._client, "delete", return_value=AsyncMock()

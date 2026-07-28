@@ -43,7 +43,7 @@ log = logging.getLogger("")
 LOG_DIVIDER = "#" * 100
 
 
-def log_action(action: str, pipeline_component: PipelineComponent):
+def log_action(action: str, pipeline_component: PipelineComponent) -> None:
     log.info("\n")
     log.info(LOG_DIVIDER)
     log.info(f"{action} {pipeline_component.name}")

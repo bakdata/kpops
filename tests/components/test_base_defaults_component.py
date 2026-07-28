@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar
 
 import pydantic
 import pytest
@@ -17,30 +17,30 @@ from tests.components import PIPELINE_BASE_DIR, RESOURCES_PATH
 
 
 class Parent(BaseDefaultsComponent):
-    __test__ = False
+    __test__: ClassVar[bool] = False
     name: str | None = None
     value: float | None = None
     hard_coded: str = "hard_coded_value"
 
 
 class Nested(pydantic.BaseModel):
-    model_config = pydantic.ConfigDict(extra="allow")
+    model_config: ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow")
 
 
 class Child(Parent):
-    __test__ = False
+    __test__: ClassVar[bool] = False
     nice: dict[str, str] | None = None
     another_hard_coded: str = "another_hard_coded_value"
     nested: Nested | None = None
 
 
 class GrandChild(Child):
-    __test__ = False
+    __test__: ClassVar[bool] = False
     grand_child: str | None = None
 
 
 class EnvVarTest(BaseDefaultsComponent):
-    __test__ = False
+    __test__: ClassVar[bool] = False
     name: str | None = None
 
 
@@ -74,7 +74,7 @@ class TestBaseDefaultsComponent:
     )
     def test_load_defaults(
         self, component_class: type[BaseDefaultsComponent], defaults: dict[str, Any]
-    ):
+    ) -> None:
         assert component_class.load_defaults(RESOURCES_PATH / DEFAULTS_YAML) == defaults
 
     @pytest.mark.parametrize(
@@ -101,7 +101,7 @@ class TestBaseDefaultsComponent:
     )
     def test_load_defaults_with_environment(
         self, component_class: type[BaseDefaultsComponent], defaults: dict[str, Any]
-    ):
+    ) -> None:
         assert (
             component_class.load_defaults(
                 RESOURCES_PATH
@@ -111,7 +111,7 @@ class TestBaseDefaultsComponent:
             == defaults
         )
 
-    def test_inherit_defaults(self):
+    def test_inherit_defaults(self) -> None:
         ENV["environment"] = "development"
         component = Child()
 
@@ -131,7 +131,7 @@ class TestBaseDefaultsComponent:
             "Defaults in code should be kept for parents"
         )
 
-    def test_inherit(self):
+    def test_inherit(self) -> None:
         component = Child(
             name="name-defined-in-pipeline_parser",
         )
@@ -152,7 +152,7 @@ class TestBaseDefaultsComponent:
             "Defaults in code should be kept for parents"
         )
 
-    def test_multiple_generations(self):
+    def test_multiple_generations(self) -> None:
         component = GrandChild()
 
         assert component.name == "fake-child-name", (
@@ -172,7 +172,7 @@ class TestBaseDefaultsComponent:
         )
         assert component.grand_child == "grand-child-value"
 
-    def test_env_var_substitution(self):
+    def test_env_var_substitution(self) -> None:
         ENV["pipeline_name"] = RESOURCES_PATH.as_posix()
         component = EnvVarTest()
 
@@ -182,7 +182,7 @@ class TestBaseDefaultsComponent:
             "Environment variables should be substituted"
         )
 
-    def test_merge_defaults(self):
+    def test_merge_defaults(self) -> None:
         component = GrandChild(nested=Nested.model_validate({"bar": False}))
         assert isinstance(component.nested, Nested)
         assert component.nested == Nested.model_validate({"foo": "foo", "bar": False})
@@ -250,7 +250,7 @@ class TestBaseDefaultsComponent:
         pipeline_path: Path,
         environment: str | None,
         expected_default_paths: list[Path],
-    ):
+    ) -> None:
         config = KpopsConfig()  # pyright: ignore[reportCallIssue]
         config.pipeline_base_dir = PIPELINE_BASE_DIR
         actual_default_paths = get_defaults_file_paths(

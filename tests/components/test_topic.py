@@ -1,4 +1,5 @@
 from collections.abc import Iterable
+from typing import ClassVar
 
 import pydantic
 import pytest
@@ -12,16 +13,16 @@ from kpops.components.common.topic import (
 
 
 class Model(pydantic.BaseModel):
-    __test__ = False
+    __test__: ClassVar[bool] = False
     topic: KafkaTopicStr | None
 
 
 class TestKafkaTopic:
-    def test_id(self):
+    def test_id(self) -> None:
         topic = KafkaTopic(name="foo")
         assert topic.id == "topic-foo"
 
-    def test_kafka_topic_str(self):
+    def test_kafka_topic_str(self) -> None:
         model = Model(topic=None)
         assert model.topic is None
         assert model.model_dump()["topic"] is None
@@ -92,5 +93,7 @@ class TestKafkaTopic:
             ),
         ],
     )
-    def test_deduplicate(self, input: Iterable[KafkaTopic], expected: list[KafkaTopic]):
+    def test_deduplicate(
+        self, input: Iterable[KafkaTopic], expected: list[KafkaTopic]
+    ) -> None:
         assert KafkaTopic.deduplicate(input) == expected

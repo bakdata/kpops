@@ -190,7 +190,7 @@ class KpopsConfig(BaseSettings):
         return cls._instance
 
     @staticmethod
-    def setup_logging_level(verbose: bool):
+    def setup_logging_level(verbose: bool) -> None:
         logging.getLogger().setLevel(logging.DEBUG if verbose else logging.INFO)
 
     @override
@@ -202,7 +202,7 @@ class KpopsConfig(BaseSettings):
         env_settings: PydanticBaseSettingsSource,
         dotenv_settings: PydanticBaseSettingsSource,
         file_secret_settings: PydanticBaseSettingsSource,
-    ):
+    ) -> tuple[PydanticBaseSettingsSource, ...]:
         """Change the precedence of sources that the Pydantic settings are compiled from.
 
         Environment variables (`env_settings`) take precedence over command line flags (`init_settings`).

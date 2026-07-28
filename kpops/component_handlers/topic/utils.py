@@ -42,7 +42,7 @@ def populate_default_configs(
     default_configs: dict[str, str],
     config_to_populate: dict[str, str],
     description_text: str,
-):
+) -> None:
     for overwrite in config_overwrites:
         default_config_value = default_configs.get(overwrite)
         if default_config_value:

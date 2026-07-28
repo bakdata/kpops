@@ -13,7 +13,7 @@ PIPELINE_PATH = (
 PIPELINE_BASE_DIR = Path()
 
 
-def test_should_set_pipeline_name_with_default_base_dir():
+def test_should_set_pipeline_name_with_default_base_dir() -> None:
     PipelineGenerator.set_pipeline_name_env_vars(PIPELINE_BASE_DIR, PIPELINE_PATH)
 
     assert ENV["pipeline.name"] == "some-random-path-for-testing"
@@ -25,7 +25,7 @@ def test_should_set_pipeline_name_with_default_base_dir():
     assert ENV["pipeline.name_4"] == "testing"
 
 
-def test_should_set_pipeline_name_with_specific_relative_base_dir():
+def test_should_set_pipeline_name_with_specific_relative_base_dir() -> None:
     PipelineGenerator.set_pipeline_name_env_vars(
         Path("./some/random/path"), PIPELINE_PATH
     )
@@ -36,7 +36,7 @@ def test_should_set_pipeline_name_with_specific_relative_base_dir():
     assert ENV["pipeline.name_1"] == "testing"
 
 
-def test_should_set_pipeline_name_with_specific_absolute_base_dir():
+def test_should_set_pipeline_name_with_specific_absolute_base_dir() -> None:
     PipelineGenerator.set_pipeline_name_env_vars(
         Path("some/random/path"), PIPELINE_PATH
     )
@@ -47,7 +47,7 @@ def test_should_set_pipeline_name_with_specific_absolute_base_dir():
     assert ENV["pipeline.name_1"] == "testing"
 
 
-def test_should_set_pipeline_name_with_absolute_base_dir():
+def test_should_set_pipeline_name_with_absolute_base_dir() -> None:
     PipelineGenerator.set_pipeline_name_env_vars(Path.cwd(), PIPELINE_PATH)
 
     assert ENV["pipeline.name"] == "some-random-path-for-testing"
@@ -59,14 +59,14 @@ def test_should_set_pipeline_name_with_absolute_base_dir():
     assert ENV["pipeline.name_4"] == "testing"
 
 
-def test_should_not_set_pipeline_name_with_the_same_base_dir():
+def test_should_not_set_pipeline_name_with_the_same_base_dir() -> None:
     with pytest.raises(
         ValueError, match="The pipeline-base-dir should not equal the pipeline-path"
     ):
         PipelineGenerator.set_pipeline_name_env_vars(PIPELINE_PATH, PIPELINE_PATH)
 
 
-def test_pipeline_file_name_environment():
+def test_pipeline_file_name_environment() -> None:
     environment = PipelineGenerator.pipeline_filename_environment(
         PIPELINE_PATH, "some_environment"
     )

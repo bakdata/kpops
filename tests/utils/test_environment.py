@@ -16,12 +16,12 @@ def environment(monkeypatch: pytest.MonkeyPatch) -> Environment:
     return Environment()
 
 
-def test_get_item(environment: Environment):
+def test_get_item(environment: Environment) -> None:
     assert environment["MY"] == "fake"
     assert environment["ENVIRONMENT"] == "here"
 
 
-def test_set_item(environment: Environment):
+def test_set_item(environment: Environment) -> None:
     environment["extra"] = "key"
 
     keys = set(environment.keys())
@@ -31,7 +31,7 @@ def test_set_item(environment: Environment):
     assert environment["extra"] == "key"
 
 
-def test_update_os_environ(environment: Environment):
+def test_update_os_environ(environment: Environment) -> None:
     with pytest.raises(KeyError):
         environment["TEST"]
     os.environ["TEST"] = "test"
@@ -49,7 +49,7 @@ def test_update_os_environ(environment: Environment):
     assert d["TEST"] == "test"
 
 
-def test_mapping():
+def test_mapping() -> None:
     environment = Environment({"kwarg1": "value1", "kwarg2": "value2"})
     assert environment["MY"] == "fake"
     assert environment["ENVIRONMENT"] == "here"
@@ -57,7 +57,7 @@ def test_mapping():
     assert environment["kwarg2"] == "value2"
 
 
-def test_kwargs():
+def test_kwargs() -> None:
     environment = Environment(kwarg1="value1", kwarg2="value2")
     assert environment["MY"] == "fake"
     assert environment["ENVIRONMENT"] == "here"
@@ -65,7 +65,7 @@ def test_kwargs():
     assert environment["kwarg2"] == "value2"
 
 
-def test_dict(environment: Environment):
+def test_dict(environment: Environment) -> None:
     assert environment._dict == {
         "MY": "fake",
         "ENVIRONMENT": "here",
@@ -73,7 +73,7 @@ def test_dict(environment: Environment):
     }
 
 
-def test_dict_unpacking(environment: Environment):
+def test_dict_unpacking(environment: Environment) -> None:
     assert {**environment} == {
         "MY": "fake",
         "ENVIRONMENT": "here",
@@ -81,7 +81,7 @@ def test_dict_unpacking(environment: Environment):
     }
 
 
-def test_clear(environment: Environment):
+def test_clear(environment: Environment) -> None:
     environment["TEST"] = "test"
     environment.clear()
     assert not environment

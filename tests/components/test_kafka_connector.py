@@ -50,7 +50,7 @@ class TestKafkaConnector:
             config=connector_config,
         )
 
-    def test_connector_config_name_override(self, connector: KafkaConnector):
+    def test_connector_config_name_override(self, connector: KafkaConnector) -> None:
         assert connector.config.name == CONNECTOR_FULL_NAME
 
         connector = KafkaConnector(

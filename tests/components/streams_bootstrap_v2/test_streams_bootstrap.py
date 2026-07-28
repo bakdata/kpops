@@ -16,7 +16,7 @@ from kpops.components.streams_bootstrap_v2.base import StreamsBootstrapV2Values
 @pytest.mark.filterwarnings("ignore:.*StreamsBootstrapV2.*:DeprecationWarning")
 @pytest.mark.usefixtures("mock_env")
 class TestStreamsBootstrap:
-    def test_default_configs(self):
+    def test_default_configs(self) -> None:
         streams_bootstrap = StreamsBootstrapV2.model_validate(
             {
                 "name": "example-name",
@@ -36,7 +36,9 @@ class TestStreamsBootstrap:
         assert streams_bootstrap.namespace == "test-namespace"
         assert streams_bootstrap.values.image_tag == "latest"
 
-    async def test_should_deploy_streams_bootstrap_app(self, mocker: MockerFixture):
+    async def test_should_deploy_streams_bootstrap_app(
+        self, mocker: MockerFixture
+    ) -> None:
         streams_bootstrap = StreamsBootstrapV2.model_validate(
             {
                 "name": "example-name",
@@ -84,7 +86,7 @@ class TestStreamsBootstrap:
             HelmUpgradeInstallFlags(version="1.2.3"),
         )
 
-    async def test_should_raise_validation_error_for_invalid_image_tag(self):
+    async def test_should_raise_validation_error_for_invalid_image_tag(self) -> None:
         with pytest.raises(
             ValidationError,
             match=re.escape(

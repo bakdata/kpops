@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import logging
 from abc import ABC
-from collections.abc import Hashable, Sequence
+from collections.abc import Generator, Hashable, Sequence
 from dataclasses import asdict
 from functools import cached_property
 from pathlib import Path
@@ -98,7 +98,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         :return: All ancestor KPOps components
         """
 
-        def gen_parents():
+        def gen_parents() -> Generator[type[BaseDefaultsComponent]]:
             for base in cls.mro():
                 # skip class itself and non-component ancestors
                 if base is cls or not issubclass_patched(base, BaseDefaultsComponent):

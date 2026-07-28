@@ -70,11 +70,11 @@ class TestHelmWrapper:
     def test_singleton(self, helm: Helm) -> None:
         assert Helm(helm_config=HelmConfig()) is helm
 
-    def test_version_cached(self, helm: Helm, mock_execute: MagicMock):
+    def test_version_cached(self, helm: Helm, mock_execute: MagicMock) -> None:
         assert helm.version
         mock_execute.assert_not_called()
 
-    def test_add_repo_cached(self, helm: Helm, mock_execute: MagicMock):
+    def test_add_repo_cached(self, helm: Helm, mock_execute: MagicMock) -> None:
         helm.add_repo("test-foo", "fake")
         helm.add_repo("test-bar", "fake")
         helm.add_repo("test-foo", "fake")
@@ -120,7 +120,7 @@ class TestHelmWrapper:
 
     async def test_should_call_run_command_method_when_helm_install_with_defaults(
         self, helm: Helm, run_command_async: AsyncMock
-    ):
+    ) -> None:
         await helm.upgrade_install(
             release_name="test-release",
             chart=f"bakdata-streams-bootstrap/{AppType.STREAMS_APP.value}",
@@ -149,7 +149,7 @@ class TestHelmWrapper:
 
     def test_should_include_configured_tls_parameters_on_add_when_version_is_old(
         self, mock_execute: MagicMock, mocker: MockerFixture
-    ):
+    ) -> None:
         mocker.patch.object(
             Helm,
             "version",
@@ -183,7 +183,7 @@ class TestHelmWrapper:
 
     def test_should_include_configured_tls_parameters_on_add_when_version_is_new(
         self, helm: Helm, mock_execute: MagicMock
-    ):
+    ) -> None:
         helm.add_repo(
             "test-repository",
             "fake",
@@ -209,7 +209,7 @@ class TestHelmWrapper:
 
     async def test_should_include_configured_tls_parameters_on_update(
         self, helm: Helm, run_command_async: AsyncMock
-    ):
+    ) -> None:
         await helm.upgrade_install(
             release_name="test-release",
             chart="test-repository/test-chart",
@@ -244,7 +244,7 @@ class TestHelmWrapper:
 
     async def test_should_call_run_command_method_when_helm_install_with_non_defaults(
         self, helm: Helm, run_command_async: AsyncMock
-    ):
+    ) -> None:
         await helm.upgrade_install(
             release_name="test-release",
             chart="test-repository/streams-app",
@@ -292,12 +292,12 @@ class TestHelmWrapper:
     )
     async def test_should_switch_helm_version_force_flag(
         self,
-        helm,
+        helm: Helm,
         mocker: MockerFixture,
         run_command_async: AsyncMock,
         helm_major_version: int,
         expected_force_flag: str,
-    ):
+    ) -> None:
         mocker.patch.object(
             Helm,
             "version",
@@ -334,7 +334,7 @@ class TestHelmWrapper:
 
     async def test_should_call_run_command_method_when_uninstalling_streams_app(
         self, helm: Helm, run_command_async: AsyncMock
-    ):
+    ) -> None:
         await helm.uninstall(
             namespace="test-namespace",
             release_name="test-release",
@@ -349,7 +349,7 @@ class TestHelmWrapper:
         run_command_async: AsyncMock,
         helm: Helm,
         log_warning_mock: MagicMock,
-    ):
+    ) -> None:
         run_command_async.side_effect = ReleaseNotFoundException()
         await helm.uninstall(
             namespace="test-namespace",
@@ -363,7 +363,7 @@ class TestHelmWrapper:
 
     async def test_should_call_run_command_method_when_installing_streams_app__with_dry_run(
         self, helm: Helm, run_command_async: AsyncMock
-    ):
+    ) -> None:
         await helm.uninstall(
             namespace="test-namespace",
             release_name="test-release",
@@ -380,7 +380,7 @@ class TestHelmWrapper:
             ],
         )
 
-    def test_validate_console_output(self):
+    def test_validate_console_output(self) -> None:
         with pytest.raises(RuntimeError):
             Helm.parse_helm_command_stderr_output(
                 "A specific\n eRrOr was found in this line"
@@ -400,7 +400,7 @@ class TestHelmWrapper:
                 f"validate_console_output() raised ReleaseNotFoundException unexpectedly!\nError message: {ReleaseNotFoundException}"
             )
 
-    def test_helm_template(self):
+    def test_helm_template(self) -> None:
         path = Path("test2.yaml")
         manifest = KubernetesManifest.model_validate(
             {
@@ -413,7 +413,7 @@ class TestHelmWrapper:
         assert helm_template.filepath == path
         assert helm_template.manifest == manifest
 
-    def test_load_manifest_with_no_notes(self):
+    def test_load_manifest_with_no_notes(self) -> None:
         stdout = dedent(
             """
             MANIFEST:
@@ -453,7 +453,7 @@ class TestHelmWrapper:
             }
         )
 
-    def test_raise_parse_error_when_helm_content_is_invalid(self):
+    def test_raise_parse_error_when_helm_content_is_invalid(self) -> None:
         stdout = dedent(
             """
             ---
@@ -463,7 +463,7 @@ class TestHelmWrapper:
         with pytest.raises(ParseError, match="Not a valid Helm template source"):
             list(Helm.load_manifest(stdout))
 
-    def test_load_manifest(self):
+    def test_load_manifest(self) -> None:
         stdout = dedent(
             """
             Release "test" has been upgraded. Happy Helming!
@@ -537,7 +537,7 @@ class TestHelmWrapper:
             }
         )
 
-    def test_helm_get_manifest(self, helm: Helm, mock_execute: MagicMock):
+    def test_helm_get_manifest(self, helm: Helm, mock_execute: MagicMock) -> None:
         mock_execute.return_value = dedent(
             """
             ---
@@ -574,7 +574,7 @@ class TestHelmWrapper:
 
     def test_should_call_run_command_method_when_helm_template_with_optional_args(
         self, helm: Helm, mock_execute: MagicMock
-    ):
+    ) -> None:
         helm.template(
             release_name="test-release",
             chart="bakdata-streams-bootstrap/streams-app",
@@ -610,7 +610,7 @@ class TestHelmWrapper:
 
     def test_should_call_run_command_method_when_helm_template_without_optional_args(
         self, helm: Helm, mock_execute: MagicMock
-    ):
+    ) -> None:
         helm.template(
             release_name="test-release",
             chart="bakdata-streams-bootstrap/streams-app",
@@ -651,7 +651,7 @@ class TestHelmWrapper:
         mock_execute: MagicMock,
         raw_version: str,
         expected_version: Version,
-    ):
+    ) -> None:
         mock_execute.return_value = raw_version
         helm = Helm(helm_config=HelmConfig())
 
@@ -666,7 +666,7 @@ class TestHelmWrapper:
 
     def test_should_raise_exception_if_helm_version_is_old(
         self, mock_execute: MagicMock
-    ):
+    ) -> None:
         mock_execute.return_value = "v2.9.0+gc9f554d"
         with pytest.raises(
             RuntimeError,
@@ -676,7 +676,7 @@ class TestHelmWrapper:
 
     def test_should_raise_exception_if_helm_version_cannot_be_parsed(
         self, mock_execute: MagicMock
-    ):
+    ) -> None:
         mock_execute.return_value = "123"
         with pytest.raises(
             RuntimeError, match="Could not parse the Helm version.\n\nHelm output:\n123"

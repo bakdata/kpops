@@ -54,7 +54,7 @@ class TestProxyWrapper:
     @patch("httpx.AsyncClient.post")
     async def test_should_create_topic_with_all_topic_configuration(
         self, mock_post: AsyncMock, proxy_wrapper: ProxyWrapper
-    ):
+    ) -> None:
         topic_spec = {
             "topic_name": "topic-X",
             "partitions_count": 1,
@@ -79,7 +79,7 @@ class TestProxyWrapper:
     @patch("httpx.AsyncClient.post")
     async def test_should_create_topic_with_no_configuration(
         self, mock_post: AsyncMock, proxy_wrapper: ProxyWrapper
-    ):
+    ) -> None:
         topic_spec: dict[str, Any] = {"topic_name": "topic-X"}
 
         with pytest.raises(KafkaRestProxyError):
@@ -96,7 +96,7 @@ class TestProxyWrapper:
     @patch("httpx.AsyncClient.get")
     async def test_should_call_get_topic(
         self, mock_get: AsyncMock, proxy_wrapper: ProxyWrapper
-    ):
+    ) -> None:
         topic_name = "topic-X"
 
         with pytest.raises(KafkaRestProxyError):
@@ -110,7 +110,7 @@ class TestProxyWrapper:
     @patch("httpx.AsyncClient.post")
     async def test_should_call_batch_alter_topic_config(
         self, mock_put: AsyncMock, proxy_wrapper: ProxyWrapper
-    ):
+    ) -> None:
         topic_name = "topic-X"
 
         with pytest.raises(KafkaRestProxyError):
@@ -136,7 +136,7 @@ class TestProxyWrapper:
     @patch("httpx.AsyncClient.delete")
     async def test_should_call_delete_topic(
         self, mock_delete: AsyncMock, proxy_wrapper: ProxyWrapper
-    ):
+    ) -> None:
         topic_name = "topic-X"
 
         with pytest.raises(KafkaRestProxyError):
@@ -150,7 +150,7 @@ class TestProxyWrapper:
     @patch("httpx.AsyncClient.get")
     async def test_should_call_get_broker_config(
         self, mock_get: AsyncMock, proxy_wrapper: ProxyWrapper
-    ):
+    ) -> None:
         with pytest.raises(KafkaRestProxyError):
             await proxy_wrapper.get_broker_config()
 
@@ -164,7 +164,7 @@ class TestProxyWrapper:
         proxy_wrapper: ProxyWrapper,
         log_info_mock: MagicMock,
         httpx_mock: HTTPXMock,
-    ):
+    ) -> None:
         topic_spec = {
             "topic_name": "topic-X",
             "partitions_count": 1,
@@ -192,7 +192,7 @@ class TestProxyWrapper:
         proxy_wrapper: ProxyWrapper,
         log_info_mock: MagicMock,
         httpx_mock: HTTPXMock,
-    ):
+    ) -> None:
         topic_name = "topic-X"
 
         httpx_mock.add_response(
@@ -209,7 +209,7 @@ class TestProxyWrapper:
         proxy_wrapper: ProxyWrapper,
         log_debug_mock: MagicMock,
         httpx_mock: HTTPXMock,
-    ):
+    ) -> None:
         res = {
             "kind": "KafkaTopic",
             "metadata": {
@@ -247,7 +247,7 @@ class TestProxyWrapper:
         proxy_wrapper: ProxyWrapper,
         log_debug_mock: MagicMock,
         httpx_mock: HTTPXMock,
-    ):
+    ) -> None:
         topic_name = "topic-X"
 
         httpx_mock.add_response(
@@ -269,7 +269,7 @@ class TestProxyWrapper:
         proxy_wrapper: ProxyWrapper,
         log_info_mock: MagicMock,
         httpx_mock: HTTPXMock,
-    ):
+    ) -> None:
         topic_name = "topic-X"
         config_name = "cleanup.policy"
 

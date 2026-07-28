@@ -23,7 +23,7 @@ class TestDestroy:
             return_value=AsyncMock(),
         ).return_value
 
-    def test_order(self, mocker: MockerFixture):
+    def test_order(self, mocker: MockerFixture) -> None:
         producer_app_mock_destroy = mocker.patch.object(ProducerApp, "destroy")
         streams_app_mock_destroy = mocker.patch.object(StreamsApp, "destroy")
         helm_app_mock_destroy = mocker.patch.object(HelmApp, "destroy")

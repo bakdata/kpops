@@ -30,7 +30,7 @@ def example_manifest() -> KubernetesManifest:
     )
 
 
-def test_serialize_model_include_required_fields(crd_manifest: TestCRD):
+def test_serialize_model_include_required_fields(crd_manifest: TestCRD) -> None:
     """Test that the serialize_model method excludes unset fields."""
     serialized = crd_manifest.model_dump()
     expected_serialized = {
@@ -41,7 +41,7 @@ def test_serialize_model_include_required_fields(crd_manifest: TestCRD):
     assert serialized == expected_serialized
 
 
-def test_serialize_model_excludes_none(example_manifest: KubernetesManifest):
+def test_serialize_model_excludes_none(example_manifest: KubernetesManifest) -> None:
     """Test that the serialize_model method excludes unset fields."""
     serialized = example_manifest.model_dump()
     expected_serialized = {
@@ -56,7 +56,7 @@ def test_serialize_model_excludes_none(example_manifest: KubernetesManifest):
     assert serialized == expected_serialized
 
 
-def test_serialize_model_includes_required_fields():
+def test_serialize_model_includes_required_fields() -> None:
     """Test that required fields are always included in serialization."""
     metadata = ObjectMeta(name="example", namespace="default")
     manifest = KubernetesManifest(api_version="v1", kind="Pod", metadata=metadata)
@@ -66,7 +66,7 @@ def test_serialize_model_includes_required_fields():
     assert "metadata" in serialized
 
 
-def test_from_yaml_parsing():
+def test_from_yaml_parsing() -> None:
     """Test the from_yaml method parses YAML into KubernetesManifest objects."""
     yaml_content = dedent(
         """
@@ -94,7 +94,7 @@ def test_from_yaml_parsing():
     assert manifests[1].metadata.name == "test-pod"
 
 
-def test_model_dump_json_output(example_manifest: KubernetesManifest):
+def test_model_dump_json_output(example_manifest: KubernetesManifest) -> None:
     """Test the model_dump method for JSON output."""
     dumped = example_manifest.model_dump()
     expected_dumped = {
@@ -109,7 +109,7 @@ def test_model_dump_json_output(example_manifest: KubernetesManifest):
     assert dumped == expected_dumped
 
 
-def test_objectmeta_serialization():
+def test_objectmeta_serialization() -> None:
     """Test ObjectMeta serialization with optional fields."""
     metadata = ObjectMeta(
         name="example",

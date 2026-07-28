@@ -73,7 +73,7 @@ class TestConnectorHandler:
         handler: KafkaConnectHandler,
         log_info_mock: MagicMock,
         state: ConnectorNewState | None,
-    ):
+    ) -> None:
         connect_wrapper.get_connector.side_effect = ConnectorNotFoundException()
 
         configs = {
@@ -104,7 +104,7 @@ class TestConnectorHandler:
         connector_config: KafkaConnectorConfig,
         renderer_diff_mock: MagicMock,
         log_info_mock: MagicMock,
-    ):
+    ) -> None:
         renderer_diff_mock.return_value = None
 
         await handler.create_connector(connector_config, state=None, dry_run=True)
@@ -127,7 +127,7 @@ class TestConnectorHandler:
         connect_wrapper: AsyncMock,
         handler: KafkaConnectHandler,
         log_info_mock: MagicMock,
-    ):
+    ) -> None:
         connect_wrapper.get_connector.side_effect = ConnectorNotFoundException()
 
         configs = {
@@ -187,7 +187,7 @@ class TestConnectorHandler:
         log_info_mock: MagicMock,
         connector_config_update: KafkaConnectorConfig,
         current_state: ConnectorCurrentState,
-    ):
+    ) -> None:
         self.mock_connector_status(connect_wrapper, CONNECTOR_NAME, current_state)
         await handler.create_connector(
             connector_config_update, state=None, dry_run=True
@@ -218,7 +218,7 @@ class TestConnectorHandler:
         log_info_mock: MagicMock,
         connector_config_update: KafkaConnectorConfig,
         state: ConnectorNewState,
-    ):
+    ) -> None:
         self.mock_connector_status(connect_wrapper, CONNECTOR_NAME, state.api_enum)
         await handler.create_connector(
             connector_config_update, state=state, dry_run=True
@@ -244,7 +244,7 @@ class TestConnectorHandler:
         log_info_mock: MagicMock,
         connector_config_update: KafkaConnectorConfig,
         current_state: ConnectorCurrentState,
-    ):
+    ) -> None:
         self.mock_connector_status(connect_wrapper, CONNECTOR_NAME, current_state)
         await handler.create_connector(
             connector_config_update, state=ConnectorNewState.RUNNING, dry_run=True
@@ -273,7 +273,7 @@ class TestConnectorHandler:
         handler: KafkaConnectHandler,
         log_info_mock: MagicMock,
         connector_config_update: KafkaConnectorConfig,
-    ):
+    ) -> None:
         self.mock_connector_status(
             connect_wrapper, CONNECTOR_NAME, ConnectorCurrentState.RUNNING
         )
@@ -299,7 +299,7 @@ class TestConnectorHandler:
         connect_wrapper: AsyncMock,
         handler: KafkaConnectHandler,
         connector_config: KafkaConnectorConfig,
-    ):
+    ) -> None:
         errors = [
             "Missing required configuration file which has no default value.",
             "Missing connector name.",
@@ -337,7 +337,7 @@ class TestConnectorHandler:
         handler: KafkaConnectHandler,
         connector_config: KafkaConnectorConfig,
         current_state: ConnectorCurrentState,
-    ):
+    ) -> None:
         self.mock_connector_status(
             connect_wrapper, connector_config.name, current_state
         )
@@ -355,7 +355,7 @@ class TestConnectorHandler:
         handler: KafkaConnectHandler,
         connector_config: KafkaConnectorConfig,
         state: ConnectorNewState,
-    ):
+    ) -> None:
         self.mock_connector_status(
             connect_wrapper, connector_config.name, state.api_enum
         )
@@ -373,7 +373,7 @@ class TestConnectorHandler:
         handler: KafkaConnectHandler,
         connector_config: KafkaConnectorConfig,
         current_state: ConnectorCurrentState,
-    ):
+    ) -> None:
         self.mock_connector_status(
             connect_wrapper, connector_config.name, current_state
         )
@@ -394,7 +394,7 @@ class TestConnectorHandler:
         connect_wrapper: AsyncMock,
         handler: KafkaConnectHandler,
         connector_config: KafkaConnectorConfig,
-    ):
+    ) -> None:
         self.mock_connector_status(
             connect_wrapper, connector_config.name, ConnectorCurrentState.RUNNING
         )
@@ -413,14 +413,14 @@ class TestConnectorHandler:
         connect_wrapper: AsyncMock,
         handler: KafkaConnectHandler,
         connector_config: KafkaConnectorConfig,
-    ):
+    ) -> None:
         connect_wrapper.get_connector.side_effect = ConnectorNotFoundException()
         await handler.create_connector(connector_config, state=None, dry_run=False)
         connect_wrapper.create_connector.assert_called_once_with(connector_config, None)
 
     async def test_print_correct_log_when_destroying_connector_dry_run(
         self, handler: KafkaConnectHandler, log_info_mock: MagicMock
-    ):
+    ) -> None:
         await handler.destroy_connector(CONNECTOR_NAME, dry_run=True)
         log_info_mock.assert_called_once_with(
             magentaify(
@@ -433,7 +433,7 @@ class TestConnectorHandler:
         connect_wrapper: AsyncMock,
         handler: KafkaConnectHandler,
         log_warning_mock: MagicMock,
-    ):
+    ) -> None:
         connect_wrapper.get_connector.side_effect = ConnectorNotFoundException()
         await handler.destroy_connector(CONNECTOR_NAME, dry_run=True)
         log_warning_mock.assert_called_once_with(
@@ -442,7 +442,7 @@ class TestConnectorHandler:
 
     async def test_call_delete_connector_when_destroying_existing_connector(
         self, connect_wrapper: AsyncMock, handler: KafkaConnectHandler
-    ):
+    ) -> None:
         await handler.destroy_connector(CONNECTOR_NAME, dry_run=False)
         assert connect_wrapper.mock_calls == [
             mock.call.get_connector(CONNECTOR_NAME),
@@ -454,7 +454,7 @@ class TestConnectorHandler:
         connect_wrapper: AsyncMock,
         handler: KafkaConnectHandler,
         log_warning_mock: MagicMock,
-    ):
+    ) -> None:
         connect_wrapper.get_connector.side_effect = ConnectorNotFoundException()
         await handler.destroy_connector(CONNECTOR_NAME, dry_run=False)
         log_warning_mock.assert_called_once_with(

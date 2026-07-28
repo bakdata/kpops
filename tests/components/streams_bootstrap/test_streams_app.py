@@ -62,7 +62,7 @@ log = logging.getLogger("TestStreamsApp")
 
 @pytest.mark.usefixtures("mock_env")
 class TestStreamsApp:
-    def test_release_name(self):
+    def test_release_name(self) -> None:
         assert STREAMS_APP_CLEAN_RELEASE_NAME.endswith("-clean")
 
     @pytest.fixture()
@@ -123,12 +123,12 @@ class TestStreamsApp:
     def empty_helm_get_values(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch.object(Helm, "get_values", return_value=None)
 
-    def test_cleaner(self, streams_app: StreamsApp):
+    def test_cleaner(self, streams_app: StreamsApp) -> None:
         cleaner = streams_app._cleaner
         assert isinstance(cleaner, StreamsAppCleaner)
         assert not hasattr(cleaner, "_cleaner")
 
-    def test_cleaner_inheritance(self, streams_app: StreamsApp):
+    def test_cleaner_inheritance(self, streams_app: StreamsApp) -> None:
         streams_app.values.kafka.application_id = "test-application-id"
         streams_app.values.autoscaling = StreamsAppAutoScaling(
             enabled=True,
@@ -137,13 +137,13 @@ class TestStreamsApp:
         )
         assert streams_app._cleaner.values == streams_app.values
 
-    def test_cleaner_helm_release_name(self, streams_app: StreamsApp):
+    def test_cleaner_helm_release_name(self, streams_app: StreamsApp) -> None:
         assert (
             streams_app._cleaner.helm_release_name
             == "${pipeline.name}-test-streams-app-with-lo-c98c5-clean"
         )
 
-    def test_cleaner_helm_name_override(self, streams_app: StreamsApp):
+    def test_cleaner_helm_name_override(self, streams_app: StreamsApp) -> None:
         assert (
             streams_app._cleaner.to_helm_values()["nameOverride"]
             == STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE
@@ -153,7 +153,7 @@ class TestStreamsApp:
             == STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE
         )
 
-    def test_set_topics(self):
+    def test_set_topics(self) -> None:
         streams_app = StreamsApp.model_validate(
             {
                 "name": STREAMS_APP_NAME,
@@ -200,7 +200,7 @@ class TestStreamsApp:
         assert "inputPattern" in kafka_config
         assert "labeledInputPatterns" in kafka_config
 
-    def test_no_empty_input_topic(self):
+    def test_no_empty_input_topic(self) -> None:
         streams_app = StreamsApp.model_validate(
             {
                 "name": STREAMS_APP_NAME,
@@ -228,7 +228,7 @@ class TestStreamsApp:
         assert "inputPattern" in streams_config
         assert "extraInputPatterns" not in streams_config
 
-    def test_should_validate(self):
+    def test_should_validate(self) -> None:
         # An exception should be raised when both label and type are defined and type is input
         with pytest.raises(
             ValueError, match="Define label only if `type` is `pattern` or `None`"
@@ -273,7 +273,7 @@ class TestStreamsApp:
                 },
             )
 
-    def test_set_streams_output_from_to(self):
+    def test_set_streams_output_from_to(self) -> None:
         streams_app = StreamsApp.model_validate(
             {
                 "name": STREAMS_APP_NAME,
@@ -313,7 +313,7 @@ class TestStreamsApp:
             name="streams-app-error-topic"
         )
 
-    def test_weave_inputs_from_prev_component(self):
+    def test_weave_inputs_from_prev_component(self) -> None:
         streams_app = StreamsApp.model_validate(
             {
                 "name": STREAMS_APP_NAME,
@@ -350,7 +350,9 @@ class TestStreamsApp:
             KafkaTopic(name="a"),
         ]
 
-    async def test_deploy_order_when_dry_run_is_false(self, mocker: MockerFixture):
+    async def test_deploy_order_when_dry_run_is_false(
+        self, mocker: MockerFixture
+    ) -> None:
         streams_app = StreamsApp.model_validate(
             {
                 "name": STREAMS_APP_NAME,
@@ -467,7 +469,7 @@ class TestStreamsApp:
         self,
         streams_app: StreamsApp,
         mocker: MockerFixture,
-    ):
+    ) -> None:
         mock_helm_uninstall = mocker.patch.object(streams_app._helm, "uninstall")
 
         await streams_app.destroy(dry_run=True)
@@ -481,7 +483,7 @@ class TestStreamsApp:
         streams_app: StreamsApp,
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
-    ):
+    ) -> None:
         mock = mocker.MagicMock()
         mock_helm_upgrade_install = mocker.patch.object(Helm, "upgrade_install")
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
@@ -533,7 +535,7 @@ class TestStreamsApp:
         streams_app: StreamsApp,
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
-    ):
+    ) -> None:
         mock = mocker.MagicMock()
         mock_helm_upgrade_install = mocker.patch.object(Helm, "upgrade_install")
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
@@ -582,7 +584,7 @@ class TestStreamsApp:
 
     async def test_should_deploy_clean_up_job_with_values_in_cluster_when_reset(
         self, mocker: MockerFixture
-    ):
+    ) -> None:
         image_tag_in_cluster = "1.1.1"
         mocker.patch.object(
             Helm,
@@ -663,7 +665,7 @@ class TestStreamsApp:
 
     async def test_should_deploy_clean_up_job_with_values_in_cluster_when_clean(
         self, mocker: MockerFixture
-    ):
+    ) -> None:
         image_tag_in_cluster = "1.1.1"
         mocker.patch.object(
             Helm,
@@ -742,7 +744,7 @@ class TestStreamsApp:
             HelmUpgradeInstallFlags(version="3.6.1", wait=True, wait_for_jobs=True),
         )
 
-    async def test_get_input_output_topics(self):
+    async def test_get_input_output_topics(self) -> None:
         streams_app = StreamsApp.model_validate(
             {
                 "name": "my-app",
@@ -803,7 +805,7 @@ class TestStreamsApp:
 
     def test_raise_validation_error_when_persistence_enabled_and_size_not_set(
         self, stateful_streams_app: StreamsApp
-    ):
+    ) -> None:
         with pytest.raises(
             ValidationError,
             match=re.escape(
@@ -812,7 +814,7 @@ class TestStreamsApp:
         ):
             stateful_streams_app.values.persistence = PersistenceConfig(enabled=True)
 
-    def test_generate(self, stateful_streams_app: StreamsApp):
+    def test_generate(self, stateful_streams_app: StreamsApp) -> None:
         assert stateful_streams_app.generate() == {
             "helm_name_override": STREAMS_APP_HELM_NAME_OVERRIDE,
             "helm_release_name": STREAMS_APP_RELEASE_NAME,
@@ -897,7 +899,7 @@ class TestStreamsApp:
         empty_helm_get_values: MockerFixture,
         mock_list_pvcs: MagicMock,
         mocker: MockerFixture,
-    ):
+    ) -> None:
         mock = MagicMock()
         mock_helm_upgrade_install = mocker.patch.object(Helm, "upgrade_install")
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
@@ -961,7 +963,7 @@ class TestStreamsApp:
         mocker: MockerFixture,
         mock_list_pvcs: MagicMock,
         caplog: pytest.LogCaptureFixture,
-    ):
+    ) -> None:
         caplog.set_level(logging.DEBUG)
         # actual component
         mocker.patch.object(stateful_streams_app, "destroy")
@@ -985,7 +987,7 @@ class TestStreamsApp:
         self,
         mocker: MockerFixture,
         caplog: pytest.LogCaptureFixture,
-    ):
+    ) -> None:
         caplog.set_level(logging.WARNING)
 
         # invalid model

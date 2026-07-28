@@ -25,7 +25,7 @@ from kpops.utils.pydantic import (
         ("S3Test", "s3-test"),
     ],
 )
-def test_to_dash(input: str, expected: str):
+def test_to_dash(input: str, expected: str) -> None:
     assert to_dash(input) == expected
 
 
@@ -41,7 +41,7 @@ def test_to_dash(input: str, expected: str):
         ("S3Test", "s3_test"),  # NOTE: this one fails with Pydantic's to_snake util
     ],
 )
-def test_to_snake(input: str, expected: str):
+def test_to_snake(input: str, expected: str) -> None:
     assert to_snake(input) == expected
 
 
@@ -54,7 +54,7 @@ def test_to_snake(input: str, expected: str):
         ("errors_deadletterqueue_topic_name", "errors.deadletterqueue.topic.name"),
     ],
 )
-def test_to_dot(input: str, expected: str):
+def test_to_dot(input: str, expected: str) -> None:
     assert to_dot(input) == expected
 
 
@@ -70,7 +70,7 @@ def test_to_dot(input: str, expected: str):
         (False, "false"),
     ],
 )
-def test_to_str(input: Any, expected: str):
+def test_to_str(input: Any, expected: str) -> None:
     assert to_str(input) == expected
 
 
@@ -128,11 +128,11 @@ def test_exclude_by_value(
     dumped_model: dict[str, Any],
     excluded_values: tuple[Any, ...],
     expected: dict[str, Any],
-):
+) -> None:
     assert exclude_by_value(dumped_model, *excluded_values) == expected
 
 
-def test_serialize_as_optional():
+def test_serialize_as_optional() -> None:
     class Model(SerializeAsOptionalModel):
         optional_list: SerializeAsOptional[list[str]] = []
         optional_dict: SerializeAsOptional[dict[str, str]] = {}
