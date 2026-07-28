@@ -467,7 +467,7 @@ class TestConnectorHandler:
         handler: KafkaConnectHandler,
         connector_config: KafkaConnectorConfig,
         log_info_mock: MagicMock,
-    ):
+    ) -> None:
         await handler.reset_connector(connector_config, dry_run=True)
 
         connect_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
@@ -488,7 +488,7 @@ class TestConnectorHandler:
         connector_config: KafkaConnectorConfig,
         renderer_diff_mock: MagicMock,
         log_info_mock: MagicMock,
-    ):
+    ) -> None:
         connect_wrapper.get_connector.side_effect = ConnectorNotFoundException()
         renderer_diff_mock.return_value = ""
 
@@ -527,7 +527,7 @@ class TestConnectorHandler:
         connect_wrapper: AsyncMock,
         handler: KafkaConnectHandler,
         connector_config: KafkaConnectorConfig,
-    ):
+    ) -> None:
         await handler.reset_connector(connector_config, dry_run=False)
         assert connect_wrapper.mock_calls == [
             mock.call.get_connector(CONNECTOR_NAME),
@@ -540,7 +540,7 @@ class TestConnectorHandler:
         connect_wrapper: AsyncMock,
         handler: KafkaConnectHandler,
         connector_config: KafkaConnectorConfig,
-    ):
+    ) -> None:
         connect_wrapper.get_connector.side_effect = ConnectorNotFoundException()
 
         await handler.reset_connector(connector_config, dry_run=False)
@@ -560,7 +560,7 @@ class TestConnectorHandler:
         handler: KafkaConnectHandler,
         connector_config: KafkaConnectorConfig,
         log_warning_mock: MagicMock,
-    ):
+    ) -> None:
         """Connector existed but got deleted concurrently before it could be stopped."""
         connect_wrapper.stop_connector.side_effect = ConnectorNotFoundException()
 
@@ -578,7 +578,7 @@ class TestConnectorHandler:
         handler: KafkaConnectHandler,
         connector_config: KafkaConnectorConfig,
         log_warning_mock: MagicMock,
-    ):
+    ) -> None:
         """Temporarily created connector got deleted concurrently before cleanup."""
         connect_wrapper.get_connector.side_effect = ConnectorNotFoundException()
         connect_wrapper.delete_connector.side_effect = ConnectorNotFoundException()
