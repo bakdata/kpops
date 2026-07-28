@@ -20,7 +20,7 @@ jobs:
     with:
       release-type: ${{ inputs.release-type }}
       python-version: "3.11"
-      uv-version: "0.5.14"
+      uv-version: "0.11.32"
       changelog: true
       changelog-file: "./docs/docs/user/changelog.md"
     secrets:
