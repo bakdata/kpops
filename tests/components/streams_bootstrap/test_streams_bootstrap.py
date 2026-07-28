@@ -24,7 +24,7 @@ from kpops.components.streams_bootstrap.model import StreamsBootstrapValues
 
 @pytest.mark.usefixtures("mock_env")
 class TestStreamsBootstrap:
-    def test_default_configs(self):
+    def test_default_configs(self) -> None:
         streams_bootstrap = StreamsBootstrap.model_validate(
             {
                 "name": "example-name",
@@ -45,7 +45,9 @@ class TestStreamsBootstrap:
         assert streams_bootstrap.namespace == "test-namespace"
         assert streams_bootstrap.values.image_tag is None
 
-    async def test_should_deploy_streams_bootstrap_app(self, mocker: MockerFixture):
+    async def test_should_deploy_streams_bootstrap_app(
+        self, mocker: MockerFixture
+    ) -> None:
         streams_bootstrap = StreamsBootstrap.model_validate(
             {
                 "name": "example-name",
@@ -95,7 +97,7 @@ class TestStreamsBootstrap:
             HelmUpgradeInstallFlags(version="3.2.1"),
         )
 
-    async def test_should_raise_validation_error_for_invalid_image_tag(self):
+    async def test_should_raise_validation_error_for_invalid_image_tag(self) -> None:
         with pytest.raises(
             ValidationError,
             match=re.escape(
@@ -112,7 +114,9 @@ class TestStreamsBootstrap:
                 }
             )
 
-    async def test_should_not_raise_validation_error_for_helm_chart_version_4(self):
+    async def test_should_not_raise_validation_error_for_helm_chart_version_4(
+        self,
+    ) -> None:
         assert StreamsBootstrap.model_validate(
             {
                 "name": "example-name",
@@ -129,7 +133,9 @@ class TestStreamsBootstrap:
             },
         )
 
-    async def test_should_raise_validation_error_for_invalid_helm_chart_version(self):
+    async def test_should_raise_validation_error_for_invalid_helm_chart_version(
+        self,
+    ) -> None:
         with pytest.raises(
             ValueError,
             match=re.escape(
@@ -151,7 +157,7 @@ class TestStreamsBootstrap:
                 },
             )
 
-    def test_should_raise_validation_error_for_unsupported_attribute(self):
+    def test_should_raise_validation_error_for_unsupported_attribute(self) -> None:
         with pytest.raises(
             ValueError,
             match=re.escape(
@@ -265,11 +271,11 @@ class TestStreamsBootstrap:
         self,
         input: dict[str, Any],
         expectation: RaisesContext[ValidationError] | does_not_raise[None],
-    ):
+    ) -> None:
         with expectation:
             assert ResourceDefinition.model_validate(input)
 
-    def test_node_affinity(self):
+    def test_node_affinity(self) -> None:
         node_affinity = NodeAffinity()
         assert node_affinity.preferred_during_scheduling_ignored_during_execution == []
         assert node_affinity.model_dump(by_alias=True) == {
@@ -290,7 +296,7 @@ class TestStreamsBootstrap:
             ],
         }
 
-    def test_secret_files_refs(self):
+    def test_secret_files_refs(self) -> None:
         model = StreamsBootstrap.model_validate(
             {
                 "name": "example-name",

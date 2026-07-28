@@ -3,7 +3,7 @@ from kpops.component_handlers.helm_wrapper.utils import (
 )
 
 
-def test_helm_release_name_for_long_names():
+def test_helm_release_name_for_long_names() -> None:
     long_release_name = "example-component-name-too-long-fake-fakefakefakefakefake"
 
     actual_release_name = create_helm_release_name(long_release_name)
@@ -13,7 +13,7 @@ def test_helm_release_name_for_long_names():
     assert len(expected_helm_release_name) == 53
 
 
-def test_helm_release_name_for_install_and_clean_must_be_different():
+def test_helm_release_name_for_install_and_clean_must_be_different() -> None:
     long_release_name = "example-component-name-too-long-fake-fakefakefakefakefake"
 
     helm_clean_release_name = create_helm_release_name(long_release_name, "-clean")
@@ -24,7 +24,7 @@ def test_helm_release_name_for_install_and_clean_must_be_different():
     assert expected_helm_release_name != helm_clean_release_name
 
 
-def test_helm_release_name_for_short_names():
+def test_helm_release_name_for_short_names() -> None:
     short_release_name = "example-component-name"
 
     actual_helm_release_name = create_helm_release_name(short_release_name)

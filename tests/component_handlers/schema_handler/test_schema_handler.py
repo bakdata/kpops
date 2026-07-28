@@ -79,7 +79,7 @@ def kpops_config() -> KpopsConfig:
     )
 
 
-def test_load_schema_handler(kpops_config: KpopsConfig):
+def test_load_schema_handler(kpops_config: KpopsConfig) -> None:
     assert isinstance(SchemaHandler.load_schema_handler(kpops_config), SchemaHandler)
 
     config_disable = kpops_config.model_copy()
@@ -89,7 +89,7 @@ def test_load_schema_handler(kpops_config: KpopsConfig):
 
 
 @pytest.mark.usefixtures("custom_components")
-def test_should_lazy_load_schema_provider(kpops_config: KpopsConfig):
+def test_should_lazy_load_schema_provider(kpops_config: KpopsConfig) -> None:
     schema_handler = SchemaHandler.load_schema_handler(kpops_config)
 
     assert schema_handler is not None
@@ -106,7 +106,7 @@ def test_should_lazy_load_schema_provider(kpops_config: KpopsConfig):
 
 def test_should_raise_value_error_if_schema_provider_class_not_found(
     kpops_config: KpopsConfig,
-):
+) -> None:
     schema_handler = SchemaHandler(kpops_config)
 
     with pytest.raises(
@@ -126,7 +126,7 @@ async def test_should_log_info_when_submit_schemas_that_not_exists_and_dry_run_t
     log_info_mock: MagicMock,
     schema_registry_mock: AsyncMock,
     kpops_config: KpopsConfig,
-):
+) -> None:
     schema_handler = SchemaHandler(kpops_config)
 
     schema_registry_mock.get_versions.return_value = []
@@ -146,7 +146,7 @@ async def test_should_log_info_when_submit_schemas_that_exists_and_dry_run_true(
     log_info_mock: MagicMock,
     schema_registry_mock: AsyncMock,
     kpops_config: KpopsConfig,
-):
+) -> None:
     schema_handler = SchemaHandler(kpops_config)
 
     schema_registry_mock.get_versions.return_value = [1, 2, 3]
@@ -167,7 +167,7 @@ async def test_should_raise_exception_when_submit_schema_that_exists_and_not_com
     to_section: ToSection,
     schema_registry_mock: AsyncMock,
     kpops_config: KpopsConfig,
-):
+) -> None:
     schema_provider = TestSchemaProvider()
     schema_handler = SchemaHandler(kpops_config)
     schema_class = "com.bakdata.kpops.test.SchemaHandlerTest"
@@ -206,7 +206,7 @@ async def test_should_log_debug_when_submit_schema_that_exists_and_registered_un
     log_debug_mock: MagicMock,
     schema_registry_mock: AsyncMock,
     kpops_config: KpopsConfig,
-):
+) -> None:
     schema_provider = TestSchemaProvider()
     schema_handler = SchemaHandler(kpops_config)
     schema_class = "com.bakdata.kpops.test.SchemaHandlerTest"
@@ -240,7 +240,7 @@ async def test_should_submit_non_existing_schema_when_not_dry(
     log_info_mock: MagicMock,
     schema_registry_mock: AsyncMock,
     kpops_config: KpopsConfig,
-):
+) -> None:
     schema_provider = TestSchemaProvider()
     schema_class = "com.bakdata.kpops.test.SchemaHandlerTest"
     schema = schema_provider.provide_schema(schema_class, {})
@@ -266,7 +266,7 @@ async def test_should_log_correct_message_when_delete_schemas_and_in_dry_run(
     log_info_mock: MagicMock,
     schema_registry_mock: AsyncMock,
     kpops_config: KpopsConfig,
-):
+) -> None:
     schema_handler = SchemaHandler(kpops_config)
 
     schema_registry_mock.get_versions.return_value = []
@@ -284,7 +284,7 @@ async def test_should_delete_schemas_when_not_in_dry_run(
     to_section: ToSection,
     schema_registry_mock: AsyncMock,
     kpops_config: KpopsConfig,
-):
+) -> None:
     schema_handler = SchemaHandler(kpops_config)
 
     schema_registry_mock.get_versions.return_value = []
@@ -297,7 +297,7 @@ async def test_should_delete_schemas_when_not_in_dry_run(
 def test_should_log_warning_if_schema_handler_is_not_enabled_but_url_is_set(
     log_warning_mock: MagicMock,
     kpops_config: KpopsConfig,
-):
+) -> None:
     kpops_config.schema_registry.enabled = False
     SchemaHandler.load_schema_handler(kpops_config)
 

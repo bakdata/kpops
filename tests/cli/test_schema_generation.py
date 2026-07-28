@@ -74,7 +74,7 @@ class SubPipelineComponentCorrectDocstr(SubPipelineComponent):
     "ignore:handlers", "ignore:config", "ignore:enrich", "ignore:validate"
 )
 class TestGenSchema:
-    def test_gen_pipeline_schema_stock_and_custom_module(self):
+    def test_gen_pipeline_schema_stock_and_custom_module(self) -> None:
         result = runner.invoke(
             app,
             [
@@ -87,7 +87,7 @@ class TestGenSchema:
         assert result.exit_code == 0, result.stdout
         assert result.stdout
 
-    def test_gen_defaults_schema(self):
+    def test_gen_defaults_schema(self) -> None:
         result = runner.invoke(
             app,
             [
@@ -103,7 +103,7 @@ class TestGenSchema:
         assert schema["title"] == "DefaultsSchema"
         assert schema["required"] == [component.type for component in COMPONENTS]
 
-    def test_gen_config_schema(self):
+    def test_gen_config_schema(self) -> None:
         result = runner.invoke(
             app,
             [

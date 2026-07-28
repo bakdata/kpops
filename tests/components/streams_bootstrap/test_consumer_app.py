@@ -61,7 +61,7 @@ log = logging.getLogger("TestConsumerApp")
 
 @pytest.mark.usefixtures("mock_env")
 class TestConsumerApp:
-    def test_release_name(self):
+    def test_release_name(self) -> None:
         assert CONSUMER_APP_CLEAN_RELEASE_NAME.endswith("-clean")
 
     @pytest.fixture()
@@ -108,12 +108,12 @@ class TestConsumerApp:
     def empty_helm_get_values(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch.object(Helm, "get_values", return_value=None)
 
-    def test_cleaner(self, consumer_app: ConsumerApp):
+    def test_cleaner(self, consumer_app: ConsumerApp) -> None:
         cleaner = consumer_app._cleaner
         assert isinstance(cleaner, ConsumerAppCleaner)
         assert not hasattr(cleaner, "_cleaner")
 
-    def test_cleaner_inheritance(self, consumer_app: ConsumerApp):
+    def test_cleaner_inheritance(self, consumer_app: ConsumerApp) -> None:
         consumer_app.values.kafka.group_id = "test-group-id"
         consumer_app.values.autoscaling = StreamsAppAutoScaling(
             enabled=True,
@@ -122,13 +122,13 @@ class TestConsumerApp:
         )
         assert consumer_app._cleaner.values == consumer_app.values
 
-    def test_cleaner_helm_release_name(self, consumer_app: ConsumerApp):
+    def test_cleaner_helm_release_name(self, consumer_app: ConsumerApp) -> None:
         assert (
             consumer_app._cleaner.helm_release_name
             == "${pipeline.name}-test-consumer-app-with-l-7034d-clean"
         )
 
-    def test_cleaner_helm_name_override(self, consumer_app: ConsumerApp):
+    def test_cleaner_helm_name_override(self, consumer_app: ConsumerApp) -> None:
         assert (
             consumer_app._cleaner.to_helm_values()["nameOverride"]
             == CONSUMER_APP_CLEAN_HELM_NAME_OVERRIDE
@@ -138,7 +138,7 @@ class TestConsumerApp:
             == CONSUMER_APP_CLEAN_HELM_NAME_OVERRIDE
         )
 
-    def test_set_topics(self):
+    def test_set_topics(self) -> None:
         consumer_app = ConsumerApp.model_validate(
             {
                 "name": CONSUMER_APP_NAME,
@@ -185,7 +185,7 @@ class TestConsumerApp:
         assert "inputPattern" in kafka_config
         assert "labeledInputPatterns" in kafka_config
 
-    def test_no_empty_input_topic(self):
+    def test_no_empty_input_topic(self) -> None:
         consumer_app = ConsumerApp.model_validate(
             {
                 "name": CONSUMER_APP_NAME,
@@ -213,7 +213,7 @@ class TestConsumerApp:
         assert "inputPattern" in streams_config
         assert "extraInputPatterns" not in streams_config
 
-    def test_should_validate(self):
+    def test_should_validate(self) -> None:
         # An exception should be raised when both label and type are defined and type is input
         with pytest.raises(
             ValueError, match="Define label only if `type` is `pattern` or `None`"
@@ -236,7 +236,7 @@ class TestConsumerApp:
                 },
             )
 
-    def test_weave_inputs_from_prev_component(self):
+    def test_weave_inputs_from_prev_component(self) -> None:
         consumer_app = ConsumerApp.model_validate(
             {
                 "name": CONSUMER_APP_NAME,
@@ -273,7 +273,9 @@ class TestConsumerApp:
             KafkaTopic(name="a"),
         ]
 
-    async def test_deploy_order_when_dry_run_is_false(self, mocker: MockerFixture):
+    async def test_deploy_order_when_dry_run_is_false(
+        self, mocker: MockerFixture
+    ) -> None:
         consumer_app = ConsumerApp.model_validate(
             {
                 "name": CONSUMER_APP_NAME,
@@ -330,7 +332,7 @@ class TestConsumerApp:
         self,
         consumer_app: ConsumerApp,
         mocker: MockerFixture,
-    ):
+    ) -> None:
         mock_helm_uninstall = mocker.patch.object(consumer_app._helm, "uninstall")
 
         await consumer_app.destroy(dry_run=True)
@@ -344,7 +346,7 @@ class TestConsumerApp:
         consumer_app: ConsumerApp,
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
-    ):
+    ) -> None:
         mock = mocker.MagicMock()
         mock_helm_upgrade_install = mocker.patch.object(Helm, "upgrade_install")
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
@@ -394,7 +396,7 @@ class TestConsumerApp:
         consumer_app: ConsumerApp,
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
-    ):
+    ) -> None:
         mock = mocker.MagicMock()
         mock_helm_upgrade_install = mocker.patch.object(Helm, "upgrade_install")
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
@@ -441,7 +443,7 @@ class TestConsumerApp:
 
     async def test_should_deploy_clean_up_job_with_values_in_cluster_when_reset(
         self, mocker: MockerFixture
-    ):
+    ) -> None:
         image_tag_in_cluster = "1.1.1"
         mocker.patch.object(
             Helm,
@@ -511,7 +513,7 @@ class TestConsumerApp:
 
     async def test_should_deploy_clean_up_job_with_values_in_cluster_when_clean(
         self, mocker: MockerFixture
-    ):
+    ) -> None:
         image_tag_in_cluster = "1.1.1"
         mocker.patch.object(
             Helm,
@@ -579,7 +581,7 @@ class TestConsumerApp:
             HelmUpgradeInstallFlags(version="3.6.1", wait=True, wait_for_jobs=True),
         )
 
-    async def test_get_input_topics(self):
+    async def test_get_input_topics(self) -> None:
         consumer_app = ConsumerApp.model_validate(
             {
                 "name": "my-app",
@@ -633,7 +635,7 @@ class TestConsumerApp:
 
     def test_raise_validation_error_when_persistence_enabled_and_size_not_set(
         self, stateful_consumer_app: ConsumerApp
-    ):
+    ) -> None:
         with pytest.raises(
             ValidationError,
             match=re.escape(
@@ -642,7 +644,7 @@ class TestConsumerApp:
         ):
             stateful_consumer_app.values.persistence = PersistenceConfig(enabled=True)
 
-    def test_generate(self, stateful_consumer_app: ConsumerApp):
+    def test_generate(self, stateful_consumer_app: ConsumerApp) -> None:
         assert stateful_consumer_app.generate() == {
             "helm_name_override": CONSUMER_APP_HELM_NAME_OVERRIDE,
             "helm_release_name": CONSUMER_APP_RELEASE_NAME,
@@ -716,7 +718,7 @@ class TestConsumerApp:
         empty_helm_get_values: MockerFixture,
         mock_list_pvcs: MagicMock,
         mocker: MockerFixture,
-    ):
+    ) -> None:
         mock = MagicMock()
         mock_helm_upgrade_install = mocker.patch.object(Helm, "upgrade_install")
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
@@ -778,7 +780,7 @@ class TestConsumerApp:
         mocker: MockerFixture,
         mock_list_pvcs: MagicMock,
         caplog: pytest.LogCaptureFixture,
-    ):
+    ) -> None:
         caplog.set_level(logging.DEBUG)
         # actual component
         mocker.patch.object(stateful_consumer_app, "destroy")
@@ -802,7 +804,7 @@ class TestConsumerApp:
         self,
         mocker: MockerFixture,
         caplog: pytest.LogCaptureFixture,
-    ):
+    ) -> None:
         caplog.set_level(logging.WARNING)
 
         # invalid model

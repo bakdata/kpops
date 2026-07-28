@@ -37,7 +37,7 @@ PRODUCER_APP_CLEAN_RELEASE_NAME = create_helm_release_name(
 
 @pytest.mark.usefixtures("mock_env")
 class TestProducerApp:
-    def test_release_name(self):
+    def test_release_name(self) -> None:
         assert PRODUCER_APP_CLEAN_RELEASE_NAME.endswith("-clean")
 
     @pytest.fixture()
@@ -93,32 +93,34 @@ class TestProducerApp:
     def empty_helm_get_values(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch.object(Helm, "get_values", return_value=None)
 
-    def test_helm_name_override(self, producer_app: ProducerApp):
+    def test_helm_name_override(self, producer_app: ProducerApp) -> None:
         assert len(producer_app.helm_name_override) == 63
         assert producer_app.helm_name_override == PRODUCER_APP_HELM_NAME_OVERRIDE
 
-    def test_cron_job_helm_name_override(self, producer_app_cron_job: ProducerApp):
+    def test_cron_job_helm_name_override(
+        self, producer_app_cron_job: ProducerApp
+    ) -> None:
         assert len(producer_app_cron_job.helm_name_override) == 52
         assert (
             producer_app_cron_job.helm_name_override
             == "${pipeline.name}-test-producer-app-with-long-n-c4c51"
         )
 
-    def test_cleaner(self, producer_app: ProducerApp):
+    def test_cleaner(self, producer_app: ProducerApp) -> None:
         cleaner = producer_app._cleaner
         assert isinstance(cleaner, ProducerAppCleaner)
         assert not hasattr(cleaner, "_cleaner")
 
-    def test_cleaner_inheritance(self, producer_app: ProducerApp):
+    def test_cleaner_inheritance(self, producer_app: ProducerApp) -> None:
         assert producer_app._cleaner.values == producer_app.values
 
-    def test_cleaner_helm_release_name(self, producer_app: ProducerApp):
+    def test_cleaner_helm_release_name(self, producer_app: ProducerApp) -> None:
         assert (
             producer_app._cleaner.helm_release_name
             == "${pipeline.name}-test-producer-app-with-l-abc43-clean"
         )
 
-    def test_cleaner_helm_name_override(self, producer_app: ProducerApp):
+    def test_cleaner_helm_name_override(self, producer_app: ProducerApp) -> None:
         assert (
             producer_app._cleaner.to_helm_values()["nameOverride"]
             == PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE
@@ -128,7 +130,7 @@ class TestProducerApp:
             == PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE
         )
 
-    def test_output_topics(self):
+    def test_output_topics(self) -> None:
         producer_app = ProducerApp.model_validate(
             {
                 "name": PRODUCER_APP_NAME,
@@ -163,7 +165,7 @@ class TestProducerApp:
         self,
         producer_app: ProducerApp,
         mocker: MockerFixture,
-    ):
+    ) -> None:
         mock = mocker.AsyncMock()
         mock_create_topic = mocker.patch.object(
             get_handlers().topic_handler, "create_topic"
@@ -211,7 +213,7 @@ class TestProducerApp:
         self,
         producer_app: ProducerApp,
         mocker: MockerFixture,
-    ):
+    ) -> None:
         mock_helm_uninstall = mocker.patch.object(Helm, "uninstall")
 
         await producer_app.destroy(dry_run=True)
@@ -225,7 +227,7 @@ class TestProducerApp:
         producer_app: ProducerApp,
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
-    ):
+    ) -> None:
         mock = mocker.MagicMock()
         mock_helm_upgrade_install = mocker.patch.object(Helm, "upgrade_install")
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
@@ -286,7 +288,7 @@ class TestProducerApp:
         mocker: MockerFixture,
         producer_app: ProducerApp,
         empty_helm_get_values: MockerFixture,
-    ):
+    ) -> None:
         mock = mocker.MagicMock()
         mock_helm_upgrade_install = mocker.patch.object(Helm, "upgrade_install")
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
@@ -333,7 +335,7 @@ class TestProducerApp:
             ANY,  # __str__
         ]
 
-    def test_get_output_topics(self):
+    def test_get_output_topics(self) -> None:
         producer_app = ProducerApp.model_validate(
             {
                 "name": "my-producer",
@@ -369,7 +371,9 @@ class TestProducerApp:
             KafkaTopic(name="extra-topic-1"),
         ]
 
-    async def test_should_not_deploy_clean_up_when_rest(self, mocker: MockerFixture):
+    async def test_should_not_deploy_clean_up_when_rest(
+        self, mocker: MockerFixture
+    ) -> None:
         image_tag_in_cluster = "1.1.1"
         mocker.patch.object(
             Helm,
@@ -416,7 +420,7 @@ class TestProducerApp:
 
     async def test_should_deploy_clean_up_job_with_values_in_cluster_when_clean(
         self, mocker: MockerFixture
-    ):
+    ) -> None:
         image_tag_in_cluster = "1.1.1"
         mocker.patch.object(
             Helm,
@@ -479,7 +483,7 @@ class TestProducerApp:
 
     async def test_clean_should_fall_back_to_local_values_when_validation_of_cluster_values_fails(
         self, mocker: MockerFixture, caplog: pytest.LogCaptureFixture
-    ):
+    ) -> None:
         caplog.set_level(logging.WARNING)
 
         # invalid model
@@ -545,7 +549,7 @@ class TestProducerApp:
             HelmUpgradeInstallFlags(version="3.6.1", wait=True, wait_for_jobs=True),
         )
 
-    def test_validate_cron_expression(self):
+    def test_validate_cron_expression(self) -> None:
         with pytest.raises(ValidationError):
             assert ProducerApp.model_validate(
                 {

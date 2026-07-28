@@ -2,7 +2,7 @@ import re
 from collections import ChainMap as _ChainMap
 from collections.abc import Mapping
 from string import Template
-from typing import Any, TypeVar
+from typing import Any, ClassVar, TypeVar
 
 from typing_extensions import override
 
@@ -114,17 +114,19 @@ _sentinel_dict = {}
 class ImprovedTemplate(Template):
     """Introduces the dot as an allowed character in placeholders."""
 
-    idpattern = r"(?a:[_a-z][_.a-z0-9]*)"
+    idpattern: ClassVar[str] = r"(?a:[_a-z][_.a-z0-9]*)"
 
     @override
-    def safe_substitute(self, mapping=_sentinel_dict, /, **kws) -> str:
+    def safe_substitute(
+        self, mapping: Mapping[str, object] = _sentinel_dict, /, **kws: Any
+    ) -> str:
         if mapping is _sentinel_dict:
             mapping = kws
         elif kws:
-            mapping = _ChainMap(kws, mapping)
+            mapping = _ChainMap(kws, dict(mapping))
 
         # Helper function for .sub()
-        def convert(mo: re.Match[str]):
+        def convert(mo: re.Match[str]) -> str:
             named = mo.group("named") or mo.group("braced")
             if named is not None:
                 try:

@@ -32,7 +32,7 @@ class TestDryRunHandler:
         helm_diff_mock: MagicMock,
         mocker: MockerFixture,
         caplog: LogCaptureFixture,
-    ):
+    ) -> None:
         helm_mock.get_manifest.return_value = iter(())
         new_release = iter(
             [
@@ -66,7 +66,7 @@ class TestDryRunHandler:
         helm_diff_mock: MagicMock,
         mocker: MockerFixture,
         caplog: LogCaptureFixture,
-    ):
+    ) -> None:
         current_release = [
             HelmTemplate(
                 Path("path.yaml"),

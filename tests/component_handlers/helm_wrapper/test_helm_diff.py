@@ -17,7 +17,7 @@ class TestHelmDiff:
     def helm_diff(self) -> HelmDiff:
         return HelmDiff(HelmDiffConfig())
 
-    def test_calculate_changes_unchanged(self, helm_diff: HelmDiff):
+    def test_calculate_changes_unchanged(self, helm_diff: HelmDiff) -> None:
         templates = [
             HelmTemplate(
                 Path("a.yaml"),
@@ -49,7 +49,7 @@ class TestHelmDiff:
             ),
         ]
 
-    def test_calculate_changes_matching(self, helm_diff: HelmDiff):
+    def test_calculate_changes_matching(self, helm_diff: HelmDiff) -> None:
         # test matching corresponding template files based on their filename
         assert list(
             helm_diff.calculate_changes(
@@ -137,7 +137,7 @@ class TestHelmDiff:
             ),
         ]
 
-    def test_calculate_changes_new_release(self, helm_diff: HelmDiff):
+    def test_calculate_changes_new_release(self, helm_diff: HelmDiff) -> None:
         # test no current release
         assert list(
             helm_diff.calculate_changes(
@@ -168,7 +168,9 @@ class TestHelmDiff:
             ),
         ]
 
-    def test_log_helm_diff(self, helm_diff: HelmDiff, caplog: LogCaptureFixture):
+    def test_log_helm_diff(
+        self, helm_diff: HelmDiff, caplog: LogCaptureFixture
+    ) -> None:
         with caplog.at_level(logging.INFO, logger=logger.name):
             helm_diff.log_helm_diff(
                 logger,

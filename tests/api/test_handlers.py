@@ -30,19 +30,19 @@ def handlers() -> Generator[ComponentHandlers, None, None]:
     ComponentHandlers._instance = None
 
 
-def test_global_handlers_not_initialized():
+def test_global_handlers_not_initialized() -> None:
     with pytest.raises(
         RuntimeError, match="ComponentHandlers has not been initialized"
     ):
         get_handlers()
 
 
-def test_create_global_handlers(handlers: ComponentHandlers):
+def test_create_global_handlers(handlers: ComponentHandlers) -> None:
     assert get_handlers() == handlers
 
 
 @pytest.mark.usefixtures("handlers")
-def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
+def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture) -> None:
     config = KpopsConfig(kafka_brokers="broker:9092")
     connector_handler_mock = mocker.patch(f"{HANDLER_MODULE}.KafkaConnectHandler")
     connector_handler = KafkaConnectHandler.from_kpops_config(config)
@@ -73,7 +73,7 @@ def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
 
 
 @pytest.mark.usefixtures("handlers")
-def test_set_up_handlers_with_schema_handler(mocker: MockerFixture):
+def test_set_up_handlers_with_schema_handler(mocker: MockerFixture) -> None:
     config = KpopsConfig(
         schema_registry=SchemaRegistryConfig(enabled=True),
         kafka_brokers="broker:9092",

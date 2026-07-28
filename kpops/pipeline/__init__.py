@@ -164,7 +164,7 @@ class Pipeline:
             self._node_index[node_id] = self._graph.add_node(node_id)
         return self._node_index[node_id]
 
-    def __add_to_graph(self, component: PipelineComponent):
+    def __add_to_graph(self, component: PipelineComponent) -> None:
         node = self.__get_or_add_node(component.id)
 
         for input_topic in component.inputs:
@@ -412,5 +412,5 @@ class PipelineGenerator:
             ENV["environment"] = environment
 
     @staticmethod
-    def set_pipeline_path(path: Path):
+    def set_pipeline_path(path: Path) -> None:
         ENV[PIPELINE_PATH] = str(path.resolve())

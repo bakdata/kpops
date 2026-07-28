@@ -15,7 +15,7 @@ from kpops.utils.types import JsonType
 
 
 class TestDictOps:
-    def test_update_nested(self, mocker: MockerFixture):
+    def test_update_nested(self, mocker: MockerFixture) -> None:
         dicts = [{"k1": {"foo": 1}}, {"k1": {"bar": ""}}, {"k1": {"baz": "2"}}]
         expected = {"k1": {"foo": 1, "bar": "", "baz": "2"}}
 
@@ -84,10 +84,10 @@ class TestDictOps:
         d1: dict[str, JsonType],
         d2: dict[str, JsonType],
         expected: dict[str, JsonType],
-    ):
+    ) -> None:
         assert update_nested_pair(d1, d2) == expected
 
-    def test_substitution_generation(self):
+    def test_substitution_generation(self) -> None:
         class SimpleModel(BaseModel):
             name: str
             type_: str
