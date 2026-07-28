@@ -19,8 +19,8 @@ jobs:
     name: Release
     with:
       release-type: ${{ inputs.release-type }}
-      python-version: "3.11"
-      uv-version: "0.5.14"
+      python-version: ${{ vars.PYTHON_VERSION }}
+      uv-version: ${{ vars.UV_VERSION }}
       changelog: true
       changelog-file: "./docs/docs/user/changelog.md"
     secrets:
