@@ -1,6 +1,6 @@
 import os
 from collections import UserDict
-from collections.abc import ItemsView, KeysView, MutableMapping, ValuesView
+from collections.abc import ItemsView, KeysView, Mapping, MutableMapping, ValuesView
 
 from typing_extensions import override
 
@@ -13,7 +13,7 @@ class Environment(UserDict[str, str]):
     def __init__(
         self, mapping: MutableMapping[str, str] | None = None, /, **kwargs: str
     ) -> None:
-        self._global: MutableMapping[str, str] = os.environ
+        self._global: Mapping[str, str] = os.environ
         if mapping is None:
             mapping = {}
         if kwargs:
