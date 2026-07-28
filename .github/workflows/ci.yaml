@@ -192,6 +192,8 @@ jobs:
       - name: Publish docs from main branch
         uses: ./.github/actions/update-docs
         with:
+          python-version: ${{ vars.PYTHON_VERSION }}
+          uv-version: ${{ vars.UV_VERSION }}
           username: ${{ secrets.GH_USERNAME }}
           email: ${{ secrets.GH_EMAIL }}
           token: ${{ secrets.GH_TOKEN }}
@@ -221,6 +223,8 @@ jobs:
         if: steps.docs-changes.outputs.docs == 'true'
         uses: ./.github/actions/update-docs
         with:
+          python-version: ${{ vars.PYTHON_VERSION }}
+          uv-version: ${{ vars.UV_VERSION }}
           username: ${{ secrets.GH_USERNAME }}
           email: ${{ secrets.GH_EMAIL }}
           token: ${{ secrets.GH_TOKEN }}
