@@ -301,7 +301,8 @@ class TestConnectorApiWrapper:
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/pause",
             status_code=httpx.codes.ACCEPTED,
         )
-        await connect_wrapper.pause_connector(CONNECTOR_NAME)
+        with caplog.at_level(logging.INFO):
+            await connect_wrapper.pause_connector(CONNECTOR_NAME)
         assert len(caplog.records) == 1
         assert caplog.records[0].message == f"Connector {CONNECTOR_NAME} paused."
         assert caplog.records[0].levelname == "INFO"
@@ -328,7 +329,8 @@ class TestConnectorApiWrapper:
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/resume",
             status_code=httpx.codes.ACCEPTED,
         )
-        await connect_wrapper.resume_connector(CONNECTOR_NAME)
+        with caplog.at_level(logging.INFO):
+            await connect_wrapper.resume_connector(CONNECTOR_NAME)
         assert len(caplog.records) == 1
         assert caplog.records[0].message == f"Connector {CONNECTOR_NAME} resumed."
         assert caplog.records[0].levelname == "INFO"
@@ -355,7 +357,8 @@ class TestConnectorApiWrapper:
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/stop",
             status_code=httpx.codes.NO_CONTENT,
         )
-        await connect_wrapper.stop_connector(CONNECTOR_NAME)
+        with caplog.at_level(logging.INFO):
+            await connect_wrapper.stop_connector(CONNECTOR_NAME)
         assert len(caplog.records) == 1
         assert caplog.records[0].message == f"Connector {CONNECTOR_NAME} stopped."
         assert caplog.records[0].levelname == "INFO"
@@ -485,7 +488,8 @@ class TestConnectorApiWrapper:
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
             status_code=httpx.codes.NO_CONTENT,
         )
-        await connect_wrapper.delete_connector(CONNECTOR_NAME)
+        with caplog.at_level(logging.INFO):
+            await connect_wrapper.delete_connector(CONNECTOR_NAME)
         assert len(caplog.records) == 1
         assert caplog.records[0].message == f"Connector {CONNECTOR_NAME} deleted."
         assert caplog.records[0].levelname == "INFO"
