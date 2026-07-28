@@ -11,8 +11,6 @@
     ".pytest_cache/**",
     ".mypy_cache/**",
     "**/.venv/**",
-    "CHANGELOG.md",
-    "docs/docs/user/changelog.md",
     "**/cli-commands.md",
     "**/cli_env_vars.md",
     "**/config_env_vars.md",
@@ -20,6 +18,7 @@
     "tests/**/snapshots/**",
     "docs/docs/resources/**",
     "docs/docs/schema/**",
+    "docs/docs/user/changelog.md",
   ],
   "plugins": [
     "https://plugins.dprint.dev/json-0.19.4.wasm",

@@ -12,9 +12,6 @@ defaults:
   run:
     shell: bash
 
-env:
-  UV_VERSION: "0.5.14"
-
 jobs:
   lint:
     name: Lint
@@ -37,7 +34,7 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ matrix.python-version }}
-          version: ${{ env.UV_VERSION }}
+          version: ${{ vars.UV_VERSION }}
 
       - name: Check uv.lock
         run: uv lock --check
@@ -63,8 +60,8 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v7
         with:
-          python-version: "3.11"
-          version: ${{ env.UV_VERSION }}
+          python-version: ${{ vars.PYTHON_VERSION }}
+          version: ${{ vars.UV_VERSION }}
 
       - name: ruff
         run: uv run --frozen ruff format --check
@@ -98,7 +95,7 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ matrix.python-version }}
-          version: ${{ env.UV_VERSION }}
+          version: ${{ vars.UV_VERSION }}
 
       - name: Test
         run: uv run --frozen pytest tests
@@ -114,7 +111,7 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           python-version: "3.12"
-          version: ${{ env.UV_VERSION }}
+          version: ${{ vars.UV_VERSION }}
 
       - name: Generate schema (kpops schema)
         run: |
@@ -150,8 +147,8 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v7
         with:
-          python-version: "3.11"
-          version: ${{ env.UV_VERSION }}
+          python-version: ${{ vars.PYTHON_VERSION }}
+          version: ${{ vars.UV_VERSION }}
 
       - name: Generate snapshot time
         id: snapshot-time
