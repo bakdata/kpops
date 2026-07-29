@@ -19,7 +19,6 @@ CONNECTOR_CLEAN_RELEASE_NAME = (
     "${pipeline.name}-" + "test-connector-with-long-612f3-clean"
 )
 CONNECTOR_CLASS = "com.bakdata.connect.TestConnector"
-RESETTER_NAMESPACE = "test-namespace"
 
 
 @pytest.mark.usefixtures("mock_env")
@@ -49,7 +48,6 @@ class TestKafkaConnector:
         return KafkaConnector(  # HACK: not supposed to be instantiated, because ABC
             name=CONNECTOR_NAME,
             config=connector_config,
-            resetter_namespace=RESETTER_NAMESPACE,
         )
 
     def test_connector_config_name_override(self, connector: KafkaConnector) -> None:
@@ -58,7 +56,6 @@ class TestKafkaConnector:
         connector = KafkaConnector(
             name=CONNECTOR_NAME,
             config={"connector.class": CONNECTOR_CLASS},  # pyright: ignore[reportArgumentType], gets enriched
-            resetter_namespace=RESETTER_NAMESPACE,
         )
         assert connector.config.name == CONNECTOR_FULL_NAME
 

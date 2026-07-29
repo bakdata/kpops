@@ -248,10 +248,6 @@
   # Full documentation on connectors: https://kafka.apache.org/documentation/#connectconfigs
   config: # required
     tasks.max: 1
-  # Overriding Kafka Connect Resetter Helm values. E.g. to override the
-  # Image Tag etc.
-  resetter_values:
-    imageTag: "1.2.3"
 # Kafka source connector
 - type: kafka-source-connector # required
   name: kafka-source-connector # required
@@ -281,13 +277,6 @@
   # Full documentation on connectors: https://kafka.apache.org/documentation/#connectconfigs
   config: # required
     tasks.max: 1
-  # Overriding Kafka Connect Resetter Helm values. E.g. to override the
-  # Image Tag etc.
-  resetter_values:
-    imageTag: "1.2.3"
-  # offset.storage.topic
-  # https://kafka.apache.org/documentation/#connect_running
-  offset_topic: offset_topic
 # Base Kubernetes App
 - type: kubernetes-app
   name: kubernetes-app # required

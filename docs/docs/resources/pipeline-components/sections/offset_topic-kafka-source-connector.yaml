@@ -1,3 +1,0 @@
-  # offset.storage.topic
-  # https://kafka.apache.org/documentation/#connect_running
-  offset_topic: offset_topic
