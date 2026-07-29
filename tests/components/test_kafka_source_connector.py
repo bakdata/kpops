@@ -152,7 +152,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         dry_run = True
         await connector.reset(dry_run=dry_run)
 
-        mock_destroy.assert_not_called()
+        mock_destroy.assert_called_once_with(dry_run)
         dry_run_handler_mock.print_helm_diff.assert_not_called()
         mock_reset_connector.assert_called_once_with(connector.config, dry_run=dry_run)
 
@@ -174,7 +174,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         await connector.reset(dry_run)
 
         mock_reset_connector.assert_called_once_with(connector.config, dry_run=dry_run)
-        mock_destroy.assert_not_called()
+        mock_destroy.assert_called_once_with(dry_run)
         mock_delete_topic.assert_not_called()
         dry_run_handler_mock.print_helm_diff.assert_not_called()
 

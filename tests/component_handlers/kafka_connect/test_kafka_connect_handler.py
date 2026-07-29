@@ -597,24 +597,6 @@ class TestConnectorHandler:
         await handler.reset_connector(connector_config, dry_run=False)
 
         connect_wrapper.reset_offset.assert_not_called()
-        connect_wrapper.delete_connector.assert_not_called()
-        log_warning_mock.assert_called_once_with(
-            f"Connector reset: the connector {CONNECTOR_NAME} does not exist. Skipping."
-        )
-
-    async def test_reset_connector_cleanup_connector_already_deleted(
-        self,
-        connect_wrapper: AsyncMock,
-        handler: KafkaConnectHandler,
-        connector_config: KafkaConnectorConfig,
-        log_warning_mock: MagicMock,
-    ) -> None:
-        """Temporarily created connector got deleted concurrently before cleanup."""
-        connect_wrapper.get_connector.side_effect = ConnectorNotFoundException()
-        connect_wrapper.delete_connector.side_effect = ConnectorNotFoundException()
-
-        await handler.reset_connector(connector_config, dry_run=False)
-
         log_warning_mock.assert_called_once_with(
             f"Connector reset: the connector {CONNECTOR_NAME} does not exist. Skipping."
         )

@@ -66,23 +66,23 @@ class KafkaConnector(PipelineComponent, ABC):
 
     @override
     async def destroy(self, dry_run: bool) -> None:
-        """Delete Kafka Connector (Source/Sink) from the Kafka connect cluster."""
+        """Delete connector."""
         await get_handlers().connector_handler.destroy_connector(
             self.full_name, dry_run=dry_run
         )
 
     @override
     async def reset(self, dry_run: bool) -> None:
-        """Reset connector offsets without deleting the connector."""
+        """Reset connector offsets. Delete connector afterwards."""
         await get_handlers().connector_handler.reset_connector(
             self.config, dry_run=dry_run
         )
+        await super().reset(dry_run)
 
     @override
     async def clean(self, dry_run: bool) -> None:
         """Delete Kafka Connector. If schema handler is enabled, then remove schemas. Delete all the output topics."""
         await self.reset(dry_run)
-        await super().clean(dry_run)
         if self.to:
             if schema_handler := get_handlers().schema_handler:
                 await schema_handler.delete_schemas(to_section=self.to, dry_run=dry_run)
