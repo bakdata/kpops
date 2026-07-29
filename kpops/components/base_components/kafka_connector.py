@@ -91,14 +91,7 @@ class KafkaConnector(PipelineComponent, ABC):
 
 
 class KafkaSourceConnector(KafkaConnector):
-    """Kafka source connector model.
-
-    :param offset_topic: `offset.storage.topic`,
-        more info: https://kafka.apache.org/documentation/#connect_running,
-        defaults to None
-    """
-
-    offset_topic: str | None = None
+    """Kafka source connector model."""
 
     _connector_type: KafkaConnectorType = PrivateAttr(KafkaConnectorType.SOURCE)
 

@@ -51,7 +51,6 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                     ),
                 }
             ),
-            offset_topic=OFFSETS_TOPIC,
         )
 
     def test_from_section_raises_exception(
@@ -229,7 +228,6 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         connector = KafkaSourceConnector(
             name=CONNECTOR_NAME,
             config=connector_config,
-            offset_topic=OFFSETS_TOPIC,
         )
         assert connector.to is None
 
@@ -264,7 +262,6 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         connector = KafkaSourceConnector(
             name=CONNECTOR_NAME,
             config=connector_config,
-            offset_topic=OFFSETS_TOPIC,
         )
         assert connector.to is None
 
