@@ -217,8 +217,6 @@ task-tags = ["TODO", "HACK", "FIXME", "XXX"]
 "tests/*/__init__.py" = ["F401"]
 "tests/**/*.py" = ["PLC0415"] # allow lazy-imports
 
-[tool.ruff.lint.per-file-ignores]
-
 [tool.ruff.lint.flake8-bugbear]
 extend-immutable-calls = ["typer.Argument"]
 
