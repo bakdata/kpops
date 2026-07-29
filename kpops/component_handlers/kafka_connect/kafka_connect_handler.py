@@ -93,7 +93,7 @@ class KafkaConnectHandler:
         """Reset connector offsets.
 
         If the connector does not exist, it is created temporarily in a
-        paused state so its offsets can be reset, then deleted again afterwards.
+        paused state so its offsets can be reset.
 
         :param connector_config: The connector config.
         :param dry_run: Whether the connector reset should be run in dry run mode.
@@ -101,41 +101,21 @@ class KafkaConnectHandler:
         connector_name = connector_config.name
         try:
             await self._connect_wrapper.get_connector(connector_name)
-            connector_existed = True
         except ConnectorNotFoundException:
-            connector_existed = False
             await self.create_connector(
                 connector_config, state=ConnectorNewState.PAUSED, dry_run=dry_run
             )
 
-        try:
-            if dry_run:
-                await self.__dry_run_connector_reset(connector_name)
-            else:
+        if dry_run:
+            await self.__dry_run_connector_reset(connector_name)
+        else:
+            try:
                 await self._connect_wrapper.stop_connector(connector_name)
                 await self._connect_wrapper.reset_offset(connector_name)
-        except ConnectorNotFoundException:
-            log.warning(
-                f"Connector reset: the connector {connector_name} does not exist. Skipping."
-            )
-            return
-
-        if not connector_existed:
-            if dry_run:
-                log.info(
-                    magentaify(
-                        f"Connector reset: deleting temporarily created connector {connector_name}."
-                    )
+            except ConnectorNotFoundException:
+                log.warning(
+                    f"Connector reset: the connector {connector_name} does not exist. Skipping."
                 )
-                log.debug(f"DELETE /connectors/{connector_name} HTTP/1.1")
-                log.debug(f"HOST: {self._connect_wrapper.url}")
-            else:
-                try:
-                    await self._connect_wrapper.delete_connector(connector_name)
-                except ConnectorNotFoundException:
-                    log.warning(
-                        f"Connector reset: the connector {connector_name} does not exist. Skipping."
-                    )
 
     async def __dry_run_connector_creation(
         self,
