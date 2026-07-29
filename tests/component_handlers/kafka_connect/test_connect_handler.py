@@ -106,6 +106,12 @@ class TestConnectorHandler:
         log_info_mock: MagicMock,
     ) -> None:
         renderer_diff_mock.return_value = None
+        connect_wrapper.get_connector.return_value = ConnectorResponse(
+            name=CONNECTOR_NAME,
+            config=connector_config,
+            tasks=[],
+            type=KafkaConnectorType.SINK,
+        )
 
         await handler.create_connector(connector_config, state=None, dry_run=True)
         connect_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
@@ -305,6 +311,12 @@ class TestConnectorHandler:
             "Missing connector name.",
         ]
         connect_wrapper.validate_connector_config.return_value = errors
+        connect_wrapper.get_connector.return_value = ConnectorResponse(
+            name=CONNECTOR_NAME,
+            config=connector_config,
+            tasks=[],
+            type=KafkaConnectorType.SINK,
+        )
         formatted_errors = "\n".join(errors)
 
         with pytest.raises(
@@ -345,7 +357,7 @@ class TestConnectorHandler:
         assert connect_wrapper.mock_calls == [
             mock.call.get_connector(CONNECTOR_NAME),
             mock.call.get_connector_status(CONNECTOR_NAME),
-            mock.call.update_connector_config(connector_config),
+            mock.call.update_connector_config(connector_config, dry_run=False),
         ]
 
     @pytest.mark.parametrize("state", list(ConnectorNewState))
@@ -363,7 +375,7 @@ class TestConnectorHandler:
         assert connect_wrapper.mock_calls == [
             mock.call.get_connector(CONNECTOR_NAME),
             mock.call.get_connector_status(CONNECTOR_NAME),
-            mock.call.update_connector_config(connector_config),
+            mock.call.update_connector_config(connector_config, dry_run=False),
         ]
 
     @pytest.mark.parametrize("current_state", list(ConnectorCurrentState))
@@ -383,10 +395,12 @@ class TestConnectorHandler:
         expected_calls = [
             mock.call.get_connector(CONNECTOR_NAME),
             mock.call.get_connector_status(CONNECTOR_NAME),
-            mock.call.update_connector_config(connector_config),
+            mock.call.update_connector_config(connector_config, dry_run=False),
         ]
         if current_state is not ConnectorCurrentState.RUNNING:
-            expected_calls.append(mock.call.resume_connector(connector_config.name))
+            expected_calls.append(
+                mock.call.resume_connector(connector_config.name, dry_run=False)
+            )
         assert connect_wrapper.mock_calls == expected_calls
 
     async def test_update_and_pause_connector(
@@ -404,8 +418,8 @@ class TestConnectorHandler:
         assert connect_wrapper.mock_calls == [
             mock.call.get_connector(CONNECTOR_NAME),
             mock.call.get_connector_status(CONNECTOR_NAME),
-            mock.call.pause_connector(connector_config.name),
-            mock.call.update_connector_config(connector_config),
+            mock.call.pause_connector(connector_config.name, dry_run=False),
+            mock.call.update_connector_config(connector_config, dry_run=False),
         ]
 
     async def test_call_create_connector_when_connector_does_not_exists(
@@ -416,7 +430,9 @@ class TestConnectorHandler:
     ) -> None:
         connect_wrapper.get_connector.side_effect = ConnectorNotFoundException()
         await handler.create_connector(connector_config, state=None, dry_run=False)
-        connect_wrapper.create_connector.assert_called_once_with(connector_config, None)
+        connect_wrapper.create_connector.assert_called_once_with(
+            connector_config, None, dry_run=False
+        )
 
     async def test_print_correct_log_when_destroying_connector_dry_run(
         self, handler: KafkaConnectHandler, log_info_mock: MagicMock
@@ -446,7 +462,7 @@ class TestConnectorHandler:
         await handler.destroy_connector(CONNECTOR_NAME, dry_run=False)
         assert connect_wrapper.mock_calls == [
             mock.call.get_connector(CONNECTOR_NAME),
-            mock.call.delete_connector(CONNECTOR_NAME),
+            mock.call.delete_connector(CONNECTOR_NAME, dry_run=False),
         ]
 
     async def test_print_correct_warning_log_when_destroying_connector_and_connector_exists(
@@ -472,8 +488,12 @@ class TestConnectorHandler:
 
         connect_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
         connect_wrapper.create_connector.assert_not_called()
-        connect_wrapper.stop_connector.assert_not_called()
-        connect_wrapper.reset_offset.assert_not_called()
+        connect_wrapper.stop_connector.assert_called_once_with(
+            CONNECTOR_NAME, dry_run=True
+        )
+        connect_wrapper.reset_offset.assert_called_once_with(
+            CONNECTOR_NAME, dry_run=True
+        )
         connect_wrapper.delete_connector.assert_not_called()
         log_info_mock.assert_called_once_with(
             magentaify(
@@ -498,10 +518,18 @@ class TestConnectorHandler:
         connect_wrapper.validate_connector_config.assert_called_once_with(
             connector_config
         )
-        connect_wrapper.create_connector.assert_not_called()
-        connect_wrapper.stop_connector.assert_not_called()
-        connect_wrapper.reset_offset.assert_not_called()
-        connect_wrapper.delete_connector.assert_not_called()
+        connect_wrapper.create_connector.assert_called_once_with(
+            connector_config, ConnectorNewState.PAUSED, dry_run=True
+        )
+        connect_wrapper.stop_connector.assert_called_once_with(
+            CONNECTOR_NAME, dry_run=True
+        )
+        connect_wrapper.reset_offset.assert_called_once_with(
+            CONNECTOR_NAME, dry_run=True
+        )
+        connect_wrapper.delete_connector.assert_called_once_with(
+            CONNECTOR_NAME, dry_run=True
+        )
 
         assert log_info_mock.mock_calls == [
             mock.call(
@@ -531,8 +559,8 @@ class TestConnectorHandler:
         await handler.reset_connector(connector_config, dry_run=False)
         assert connect_wrapper.mock_calls == [
             mock.call.get_connector(CONNECTOR_NAME),
-            mock.call.stop_connector(CONNECTOR_NAME),
-            mock.call.reset_offset(CONNECTOR_NAME),
+            mock.call.stop_connector(CONNECTOR_NAME, dry_run=False),
+            mock.call.reset_offset(CONNECTOR_NAME, dry_run=False),
         ]
 
     async def test_reset_connector_when_connector_missing(
@@ -548,10 +576,12 @@ class TestConnectorHandler:
         assert connect_wrapper.mock_calls == [
             mock.call.get_connector(CONNECTOR_NAME),
             mock.call.get_connector(CONNECTOR_NAME),
-            mock.call.create_connector(connector_config, ConnectorNewState.PAUSED),
-            mock.call.stop_connector(CONNECTOR_NAME),
-            mock.call.reset_offset(CONNECTOR_NAME),
-            mock.call.delete_connector(CONNECTOR_NAME),
+            mock.call.create_connector(
+                connector_config, ConnectorNewState.PAUSED, dry_run=False
+            ),
+            mock.call.stop_connector(CONNECTOR_NAME, dry_run=False),
+            mock.call.reset_offset(CONNECTOR_NAME, dry_run=False),
+            mock.call.delete_connector(CONNECTOR_NAME, dry_run=False),
         ]
 
     async def test_reset_connector_disappears_during_reset(

@@ -1,7 +1,7 @@
+import ast
 import json
 import logging
 from typing import Any
-from unittest.mock import AsyncMock, patch
 
 import httpx
 import pytest
@@ -94,43 +94,47 @@ class TestConnectorApiWrapper:
             "topic.tracking.allow.reset": "false",
         }
 
-    @patch("httpx.AsyncClient.post")
     async def test_create_connector_request(
         self,
-        mock_post: AsyncMock,
+        httpx_mock: HTTPXMock,
         connect_wrapper: ConnectWrapper,
         connector_config: KafkaConnectorConfig,
     ) -> None:
+        httpx_mock.add_response(
+            method="POST",
+            url=f"{DEFAULT_HOST}/connectors",
+            status_code=httpx.codes.INTERNAL_SERVER_ERROR,
+        )
         with pytest.raises(KafkaConnectError):
             await connect_wrapper.create_connector(connector_config)
 
-        mock_post.assert_called_with(
-            "/connectors",
-            json={
-                "name": CONNECTOR_NAME,
-                "config": connector_config.model_dump(),
-            },
-        )
+        request = httpx_mock.get_requests()[0]
+        assert json.loads(request.content) == {
+            "name": CONNECTOR_NAME,
+            "config": connector_config.model_dump(),
+        }
 
-    @patch("httpx.AsyncClient.post")
     async def test_create_connector_request_with_initial_state(
         self,
-        mock_post: AsyncMock,
+        httpx_mock: HTTPXMock,
         connect_wrapper: ConnectWrapper,
         connector_config: KafkaConnectorConfig,
     ) -> None:
+        httpx_mock.add_response(
+            method="POST",
+            url=f"{DEFAULT_HOST}/connectors",
+            status_code=httpx.codes.INTERNAL_SERVER_ERROR,
+        )
         with pytest.raises(KafkaConnectError):
             await connect_wrapper.create_connector(
                 connector_config, ConnectorNewState.RUNNING
             )
-        mock_post.assert_called_with(
-            "/connectors",
-            json={
-                "name": CONNECTOR_NAME,
-                "config": connector_config.model_dump(),
-                "initial_state": "RUNNING",
-            },
-        )
+        request = httpx_mock.get_requests()[0]
+        assert json.loads(request.content) == {
+            "name": CONNECTOR_NAME,
+            "config": connector_config.model_dump(),
+            "initial_state": "RUNNING",
+        }
 
     async def test_create_connector(
         self,
@@ -374,19 +378,22 @@ class TestConnectorApiWrapper:
         with pytest.raises(KafkaConnectError):
             await connect_wrapper.stop_connector(CONNECTOR_NAME)
 
-    @patch("httpx.AsyncClient.put")
     async def test_update_connector_request(
         self,
-        mock_put: AsyncMock,
+        httpx_mock: HTTPXMock,
         connect_wrapper: ConnectWrapper,
         connector_config: KafkaConnectorConfig,
     ) -> None:
+        httpx_mock.add_response(
+            method="PUT",
+            url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/config",
+            status_code=httpx.codes.INTERNAL_SERVER_ERROR,
+            json={},
+        )
         with pytest.raises(KafkaConnectError):
             await connect_wrapper.update_connector_config(connector_config)
-        mock_put.assert_called_with(
-            f"/connectors/{CONNECTOR_NAME}/config",
-            json=connector_config.model_dump(),
-        )
+        request = httpx_mock.get_requests()[0]
+        assert json.loads(request.content) == connector_config.model_dump()
 
     async def test_update_connector(
         self,
@@ -556,21 +563,26 @@ class TestConnectorApiWrapper:
             }
         )
 
-    @patch("httpx.AsyncClient.put")
     async def test_validate_connector_config_request(
         self,
-        mock_put: AsyncMock,
+        httpx_mock: HTTPXMock,
         connect_wrapper: ConnectWrapper,
         file_stream_connector_config: KafkaConnectorConfig,
     ) -> None:
+        endpoint = (
+            f"/connector-plugins/{file_stream_connector_config.name}/config/validate"
+        )
+        httpx_mock.add_response(
+            method="PUT",
+            url=f"{DEFAULT_HOST}{endpoint}",
+            status_code=httpx.codes.INTERNAL_SERVER_ERROR,
+        )
         with pytest.raises(KafkaConnectError):
             await connect_wrapper.validate_connector_config(
                 file_stream_connector_config
             )
-        mock_put.assert_called_with(
-            f"/connector-plugins/{file_stream_connector_config.name}/config/validate",
-            json=file_stream_connector_config.model_dump(),
-        )
+        request = httpx_mock.get_requests()[0]
+        assert json.loads(request.content) == file_stream_connector_config.model_dump()
 
     async def test_validate_connector_config(
         self,
@@ -596,3 +608,119 @@ class TestConnectorApiWrapper:
         assert errors == [
             "Found error for field file: Missing required configuration 'file' which has no default value."
         ]
+
+    async def test_request_and_response_event_hooks_log_debug(
+        self,
+        connect_wrapper: ConnectWrapper,
+        httpx_mock: HTTPXMock,
+        connector_config: KafkaConnectorConfig,
+        connector_response: dict[str, Any],
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        httpx_mock.add_response(
+            method="POST",
+            url=f"{DEFAULT_HOST}/connectors",
+            headers=HEADERS,
+            status_code=httpx.codes.CREATED,
+            json=connector_response,
+        )
+        with caplog.at_level(logging.DEBUG):
+            await connect_wrapper.create_connector(connector_config)
+
+        debug_messages = [
+            record.message for record in caplog.records if record.levelname == "DEBUG"
+        ]
+        assert debug_messages[0] == f"POST {DEFAULT_HOST}/connectors"
+        assert json.loads(debug_messages[1]) == {
+            "name": CONNECTOR_NAME,
+            "config": connector_config.model_dump(),
+        }
+        assert debug_messages[2].startswith("HTTP/1.1 201 Created")
+        assert ast.literal_eval(debug_messages[3]) == connector_response
+
+    @pytest.mark.parametrize(
+        ("method_name", "arg_is_config", "http_method", "endpoint", "expects_body"),
+        [
+            pytest.param(
+                "create_connector", True, "POST", "/connectors", True, id="create"
+            ),
+            pytest.param(
+                "update_connector_config",
+                True,
+                "PUT",
+                f"/connectors/{CONNECTOR_NAME}/config",
+                True,
+                id="update",
+            ),
+            pytest.param(
+                "pause_connector",
+                False,
+                "PUT",
+                f"/connectors/{CONNECTOR_NAME}/pause",
+                False,
+                id="pause",
+            ),
+            pytest.param(
+                "resume_connector",
+                False,
+                "PUT",
+                f"/connectors/{CONNECTOR_NAME}/resume",
+                False,
+                id="resume",
+            ),
+            pytest.param(
+                "stop_connector",
+                False,
+                "PUT",
+                f"/connectors/{CONNECTOR_NAME}/stop",
+                False,
+                id="stop",
+            ),
+            pytest.param(
+                "delete_connector",
+                False,
+                "DELETE",
+                f"/connectors/{CONNECTOR_NAME}",
+                False,
+                id="delete",
+            ),
+            pytest.param(
+                "reset_offset",
+                False,
+                "DELETE",
+                f"/connectors/{CONNECTOR_NAME}/offsets",
+                False,
+                id="reset_offset",
+            ),
+        ],
+    )
+    async def test_dry_run_does_not_send_request(
+        self,
+        connect_wrapper: ConnectWrapper,
+        httpx_mock: HTTPXMock,
+        connector_config: KafkaConnectorConfig,
+        caplog: pytest.LogCaptureFixture,
+        method_name: str,
+        arg_is_config: bool,
+        http_method: str,
+        endpoint: str,
+        expects_body: bool,
+    ) -> None:
+        method = getattr(connect_wrapper, method_name)
+        arg = connector_config if arg_is_config else CONNECTOR_NAME
+
+        with caplog.at_level(logging.DEBUG):
+            result = await method(arg, dry_run=True)
+
+        assert result is None
+        # no actual HTTP request was made
+        assert httpx_mock.get_requests() == []
+
+        debug_messages = [
+            record.message for record in caplog.records if record.levelname == "DEBUG"
+        ]
+        assert debug_messages[0] == f"{http_method} {DEFAULT_HOST}{endpoint}"
+        if expects_body:
+            assert debug_messages[1]  # request body was logged
+        else:
+            assert len(debug_messages) == 1
