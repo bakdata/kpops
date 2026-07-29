@@ -30,8 +30,8 @@ log = logging.getLogger("KafkaConnectAPI")
 
 
 @final
-class ConnectWrapper:
-    """Wraps Kafka Connect APIs."""
+class KafkaConnect:
+    """Wraps Kafka Connect REST API."""
 
     def __init__(self, config: KafkaConnectConfig) -> None:
         self._config: KafkaConnectConfig = config

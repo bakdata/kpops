@@ -3,11 +3,11 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Self, final
 
-from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
 from kpops.component_handlers.kafka_connect.exception import (
     ConnectorNotFoundException,
     ConnectorStateException,
 )
+from kpops.component_handlers.kafka_connect.kafka_connect_api import KafkaConnect
 from kpops.component_handlers.kafka_connect.model import (
     ConnectorCurrentState,
     ConnectorNewState,
@@ -27,7 +27,7 @@ log = logging.getLogger("KafkaConnectHandler")
 
 @final
 class KafkaConnectHandler:
-    def __init__(self, connect_wrapper: ConnectWrapper) -> None:
+    def __init__(self, connect_wrapper: KafkaConnect) -> None:
         self._connect_wrapper = connect_wrapper
 
     async def create_connector(
@@ -221,5 +221,5 @@ class KafkaConnectHandler:
     @classmethod
     def from_kpops_config(cls, config: KpopsConfig) -> Self:
         return cls(
-            connect_wrapper=ConnectWrapper(config.kafka_connect),
+            connect_wrapper=KafkaConnect(config.kafka_connect),
         )

@@ -9,11 +9,11 @@ from anyio import Path
 from pytest_httpx import HTTPXMock
 from pytest_mock import MockerFixture
 
-from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
 from kpops.component_handlers.kafka_connect.exception import (
     ConnectorNotFoundException,
     KafkaConnectError,
 )
+from kpops.component_handlers.kafka_connect.kafka_connect_api import KafkaConnect
 from kpops.component_handlers.kafka_connect.model import (
     ConnectorCurrentState,
     ConnectorNewState,
@@ -31,11 +31,11 @@ HEADERS = {"Accept": "application/json", "Content-Type": "application/json"}
 CONNECTOR_NAME = "test-connector"
 
 
-class TestConnectorApiWrapper:
+class TestKafkaConnect:
     @pytest.fixture()
-    def connect_wrapper(self) -> ConnectWrapper:
+    def connect_wrapper(self) -> KafkaConnect:
         config = KpopsConfig.model_validate({})
-        return ConnectWrapper(config.kafka_connect)
+        return KafkaConnect(config.kafka_connect)
 
     @pytest.fixture()
     def connector_response(self) -> dict[str, Any]:
@@ -97,7 +97,7 @@ class TestConnectorApiWrapper:
     async def test_create_connector_request(
         self,
         httpx_mock: HTTPXMock,
-        connect_wrapper: ConnectWrapper,
+        connect_wrapper: KafkaConnect,
         connector_config: KafkaConnectorConfig,
     ) -> None:
         httpx_mock.add_response(
@@ -117,7 +117,7 @@ class TestConnectorApiWrapper:
     async def test_create_connector_request_with_initial_state(
         self,
         httpx_mock: HTTPXMock,
-        connect_wrapper: ConnectWrapper,
+        connect_wrapper: KafkaConnect,
         connector_config: KafkaConnectorConfig,
     ) -> None:
         httpx_mock.add_response(
@@ -138,7 +138,7 @@ class TestConnectorApiWrapper:
 
     async def test_create_connector(
         self,
-        connect_wrapper: ConnectWrapper,
+        connect_wrapper: KafkaConnect,
         httpx_mock: HTTPXMock,
         connector_config: KafkaConnectorConfig,
         connector_response: dict[str, Any],
@@ -157,7 +157,7 @@ class TestConnectorApiWrapper:
     @pytest.mark.usefixtures("mock_sleep")
     async def test_create_connector_retry(
         self,
-        connect_wrapper: ConnectWrapper,
+        connect_wrapper: KafkaConnect,
         httpx_mock: HTTPXMock,
         connector_response: dict[str, Any],
         connector_config: KafkaConnectorConfig,
@@ -193,7 +193,7 @@ class TestConnectorApiWrapper:
 
     async def test_get_connector(
         self,
-        connect_wrapper: ConnectWrapper,
+        connect_wrapper: KafkaConnect,
         httpx_mock: HTTPXMock,
         connector_response: dict[str, Any],
     ) -> None:
@@ -208,7 +208,7 @@ class TestConnectorApiWrapper:
 
     async def test_get_connector_not_found(
         self,
-        connect_wrapper: ConnectWrapper,
+        connect_wrapper: KafkaConnect,
         httpx_mock: HTTPXMock,
     ) -> None:
         httpx_mock.add_response(
@@ -224,7 +224,7 @@ class TestConnectorApiWrapper:
     @pytest.mark.usefixtures("mock_sleep")
     async def test_get_connector_retry(
         self,
-        connect_wrapper: ConnectWrapper,
+        connect_wrapper: KafkaConnect,
         httpx_mock: HTTPXMock,
         connector_response: dict[str, Any],
         caplog: pytest.LogCaptureFixture,
@@ -263,7 +263,7 @@ class TestConnectorApiWrapper:
     )
     async def test_get_connector_status(
         self,
-        connect_wrapper: ConnectWrapper,
+        connect_wrapper: KafkaConnect,
         httpx_mock: HTTPXMock,
         api_state: str,
         enum_state: ConnectorCurrentState,
@@ -296,7 +296,7 @@ class TestConnectorApiWrapper:
 
     async def test_pause_connector(
         self,
-        connect_wrapper: ConnectWrapper,
+        connect_wrapper: KafkaConnect,
         httpx_mock: HTTPXMock,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
@@ -312,7 +312,7 @@ class TestConnectorApiWrapper:
         assert caplog.records[0].levelname == "INFO"
 
     async def test_pause_error(
-        self, connect_wrapper: ConnectWrapper, httpx_mock: HTTPXMock
+        self, connect_wrapper: KafkaConnect, httpx_mock: HTTPXMock
     ) -> None:
         httpx_mock.add_response(
             method="PUT",
@@ -324,7 +324,7 @@ class TestConnectorApiWrapper:
 
     async def test_resume_connector(
         self,
-        connect_wrapper: ConnectWrapper,
+        connect_wrapper: KafkaConnect,
         httpx_mock: HTTPXMock,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
@@ -340,7 +340,7 @@ class TestConnectorApiWrapper:
         assert caplog.records[0].levelname == "INFO"
 
     async def test_resume_connector_error(
-        self, connect_wrapper: ConnectWrapper, httpx_mock: HTTPXMock
+        self, connect_wrapper: KafkaConnect, httpx_mock: HTTPXMock
     ) -> None:
         httpx_mock.add_response(
             method="PUT",
@@ -352,7 +352,7 @@ class TestConnectorApiWrapper:
 
     async def test_stop_connector(
         self,
-        connect_wrapper: ConnectWrapper,
+        connect_wrapper: KafkaConnect,
         httpx_mock: HTTPXMock,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
@@ -368,7 +368,7 @@ class TestConnectorApiWrapper:
         assert caplog.records[0].levelname == "INFO"
 
     async def test_stop_connector_error(
-        self, connect_wrapper: ConnectWrapper, httpx_mock: HTTPXMock
+        self, connect_wrapper: KafkaConnect, httpx_mock: HTTPXMock
     ) -> None:
         httpx_mock.add_response(
             method="PUT",
@@ -381,7 +381,7 @@ class TestConnectorApiWrapper:
     async def test_update_connector_request(
         self,
         httpx_mock: HTTPXMock,
-        connect_wrapper: ConnectWrapper,
+        connect_wrapper: KafkaConnect,
         connector_config: KafkaConnectorConfig,
     ) -> None:
         httpx_mock.add_response(
@@ -397,7 +397,7 @@ class TestConnectorApiWrapper:
 
     async def test_update_connector(
         self,
-        connect_wrapper: ConnectWrapper,
+        connect_wrapper: KafkaConnect,
         httpx_mock: HTTPXMock,
         connector_config: KafkaConnectorConfig,
         connector_response: dict[str, Any],
@@ -424,7 +424,7 @@ class TestConnectorApiWrapper:
 
     async def test_update_create_connector(
         self,
-        connect_wrapper: ConnectWrapper,
+        connect_wrapper: KafkaConnect,
         httpx_mock: HTTPXMock,
         connector_config: KafkaConnectorConfig,
         connector_response: dict[str, Any],
@@ -449,7 +449,7 @@ class TestConnectorApiWrapper:
     @pytest.mark.usefixtures("mock_sleep")
     async def test_update_connector_retry(
         self,
-        connect_wrapper: ConnectWrapper,
+        connect_wrapper: KafkaConnect,
         httpx_mock: HTTPXMock,
         connector_response: dict[str, Any],
         connector_config: KafkaConnectorConfig,
@@ -486,7 +486,7 @@ class TestConnectorApiWrapper:
 
     async def test_delete_connector(
         self,
-        connect_wrapper: ConnectWrapper,
+        connect_wrapper: KafkaConnect,
         httpx_mock: HTTPXMock,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
@@ -503,7 +503,7 @@ class TestConnectorApiWrapper:
 
     async def test_delete_connector_not_found(
         self,
-        connect_wrapper: ConnectWrapper,
+        connect_wrapper: KafkaConnect,
         httpx_mock: HTTPXMock,
     ) -> None:
         httpx_mock.add_response(
@@ -522,7 +522,7 @@ class TestConnectorApiWrapper:
     @pytest.mark.usefixtures("mock_sleep")
     async def test_delete_connector_retry(
         self,
-        connect_wrapper: ConnectWrapper,
+        connect_wrapper: KafkaConnect,
         httpx_mock: HTTPXMock,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
@@ -566,7 +566,7 @@ class TestConnectorApiWrapper:
     async def test_validate_connector_config_request(
         self,
         httpx_mock: HTTPXMock,
-        connect_wrapper: ConnectWrapper,
+        connect_wrapper: KafkaConnect,
         file_stream_connector_config: KafkaConnectorConfig,
     ) -> None:
         endpoint = (
@@ -586,7 +586,7 @@ class TestConnectorApiWrapper:
 
     async def test_validate_connector_config(
         self,
-        connect_wrapper: ConnectWrapper,
+        connect_wrapper: KafkaConnect,
         httpx_mock: HTTPXMock,
         file_stream_connector_config: KafkaConnectorConfig,
     ) -> None:
@@ -611,7 +611,7 @@ class TestConnectorApiWrapper:
 
     async def test_request_and_response_event_hooks_log_debug(
         self,
-        connect_wrapper: ConnectWrapper,
+        connect_wrapper: KafkaConnect,
         httpx_mock: HTTPXMock,
         connector_config: KafkaConnectorConfig,
         connector_response: dict[str, Any],
@@ -696,7 +696,7 @@ class TestConnectorApiWrapper:
     )
     async def test_dry_run_does_not_send_request(
         self,
-        connect_wrapper: ConnectWrapper,
+        connect_wrapper: KafkaConnect,
         httpx_mock: HTTPXMock,
         connector_config: KafkaConnectorConfig,
         caplog: pytest.LogCaptureFixture,
