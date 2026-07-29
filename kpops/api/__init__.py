@@ -13,7 +13,7 @@ from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
 )
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
-from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
+from kpops.component_handlers.topic.kafka_rest import KafkaRest
 from kpops.config import KpopsConfig
 from kpops.core.operation import OperationMode
 from kpops.core.registry import Registry
@@ -410,7 +410,7 @@ def _setup_handlers(config: KpopsConfig) -> ComponentHandlers:
     """
     schema_handler = SchemaHandler.load_schema_handler(config)
     connector_handler = KafkaConnectHandler.from_kpops_config(config)
-    proxy_wrapper = ProxyWrapper(config.kafka_rest)
-    topic_handler = TopicHandler(proxy_wrapper)
+    kafka_rest = KafkaRest(config.kafka_rest)
+    topic_handler = TopicHandler(kafka_rest)
 
     return ComponentHandlers(schema_handler, connector_handler, topic_handler)
