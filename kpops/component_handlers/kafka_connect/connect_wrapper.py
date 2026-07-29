@@ -63,11 +63,11 @@ class ConnectWrapper:
         response = await self._client.post(
             "/connectors", json=payload.model_dump(exclude_none=True)
         )
-        if response.status_code == httpx.codes.CREATED:
+        if response.status_code == httpx.codes.CREATED.value:
             log.info(f"Connector {connector_config.name} created.")
             log.debug(response.json())
             return ConnectorResponse.model_validate(response.json())
-        if response.status_code == httpx.codes.CONFLICT:
+        if response.status_code == httpx.codes.CONFLICT.value:
             log.warning(
                 "Rebalancing in progress while creating a connector... Retrying..."
             )
@@ -83,12 +83,12 @@ class ConnectWrapper:
         :return: Information about the connector.
         """
         response = await self._client.get(f"/connectors/{connector_name}")
-        if response.status_code == httpx.codes.OK:
+        if response.is_success:
             log.debug(response.json())
             return ConnectorResponse.model_validate(response.json())
-        if response.status_code == httpx.codes.NOT_FOUND:
+        if response.status_code == httpx.codes.NOT_FOUND.value:
             raise ConnectorNotFoundException
-        if response.status_code == httpx.codes.CONFLICT:
+        if response.status_code == httpx.codes.CONFLICT.value:
             log.warning(
                 "Rebalancing in progress while getting a connector... Retrying..."
             )
@@ -106,10 +106,10 @@ class ConnectWrapper:
         :return: Status of the connector.
         """
         response = await self._client.get(f"/connectors/{connector_name}/status")
-        if response.status_code == httpx.codes.OK:
+        if response.is_success:
             log.debug(response.json())
             return ConnectorStatusResponse.model_validate(response.json())
-        if response.status_code == httpx.codes.NOT_FOUND:
+        if response.status_code == httpx.codes.NOT_FOUND.value:
             raise ConnectorNotFoundException
         raise KafkaConnectError(response)
 
@@ -120,9 +120,10 @@ class ConnectWrapper:
         :param connector_name: Name of the connector
         """
         response = await self._client.put(f"/connectors/{connector_name}/pause")
-        if response.status_code != httpx.codes.ACCEPTED:
-            raise KafkaConnectError(response)
-        log.info(f"Connector {connector_name} paused.")
+        if response.is_success:
+            log.info(f"Connector {connector_name} paused.")
+            return
+        raise KafkaConnectError(response)
 
     async def resume_connector(self, connector_name: str) -> None:
         """Resume connector.
@@ -131,9 +132,10 @@ class ConnectWrapper:
         :param connector_name: Name of the connector
         """
         response = await self._client.put(f"/connectors/{connector_name}/resume")
-        if response.status_code != httpx.codes.ACCEPTED:
-            raise KafkaConnectError(response)
-        log.info(f"Connector {connector_name} resumed.")
+        if response.is_success:
+            log.info(f"Connector {connector_name} resumed.")
+            return
+        raise KafkaConnectError(response)
 
     async def stop_connector(self, connector_name: str) -> None:
         """Stop connector.
@@ -142,9 +144,10 @@ class ConnectWrapper:
         :param connector_name: Name of the connector
         """
         response = await self._client.put(f"/connectors/{connector_name}/stop")
-        if response.status_code != httpx.codes.NO_CONTENT:
-            raise KafkaConnectError(response)
-        log.info(f"Connector {connector_name} stopped.")
+        if response.is_success:
+            log.info(f"Connector {connector_name} stopped.")
+            return
+        raise KafkaConnectError(response)
 
     async def update_connector_config(
         self, connector_config: KafkaConnectorConfig
@@ -165,15 +168,15 @@ class ConnectWrapper:
         )
 
         data: dict[str, Any] = response.json()
-        if response.status_code == httpx.codes.OK:
+        if response.status_code == httpx.codes.OK.value:
             log.info(f"Config for connector {connector_name} updated.")
             log.debug(data)
             return ConnectorResponse.model_validate(data)
-        if response.status_code == httpx.codes.CREATED:
+        if response.status_code == httpx.codes.CREATED.value:
             log.info(f"Connector {connector_name} created.")
             log.debug(data)
             return ConnectorResponse.model_validate(data)
-        if response.status_code == httpx.codes.CONFLICT:
+        if response.status_code == httpx.codes.CONFLICT.value:
             log.warning(
                 "Rebalancing in progress while updating a connector... Retrying..."
             )
@@ -195,7 +198,7 @@ class ConnectWrapper:
             json=connector_config.model_dump(),
         )
 
-        if response.status_code == httpx.codes.OK:
+        if response.status_code == httpx.codes.OK.value:
             kafka_connect_error_response = KafkaConnectConfigErrorResponse(
                 **response.json()
             )
@@ -220,12 +223,12 @@ class ConnectWrapper:
         :raises ConnectorNotFoundException: Connector not found
         """
         response = await self._client.delete(f"/connectors/{connector_name}")
-        if response.status_code == httpx.codes.NO_CONTENT:
+        if response.status_code == httpx.codes.NO_CONTENT.value:
             log.info(f"Connector {connector_name} deleted.")
             return None
-        if response.status_code == httpx.codes.NOT_FOUND:
+        if response.status_code == httpx.codes.NOT_FOUND.value:
             raise ConnectorNotFoundException
-        if response.status_code == httpx.codes.CONFLICT:
+        if response.status_code == httpx.codes.CONFLICT.value:
             log.warning(
                 "Rebalancing in progress while deleting a connector... Retrying..."
             )
@@ -242,9 +245,9 @@ class ConnectWrapper:
         :raises ConnectorNotFoundException: Connector not found
         """
         response = await self._client.delete(f"/connectors/{connector_name}/offsets")
-        if response.status_code == httpx.codes.OK:
+        if response.is_success:
             log.info(f"Connector {connector_name} offsets reset.")
             return
-        if response.status_code == httpx.codes.NOT_FOUND:
+        if response.status_code == httpx.codes.NOT_FOUND.value:
             raise ConnectorNotFoundException
         raise KafkaConnectError(response)
