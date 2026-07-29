@@ -642,7 +642,7 @@ class TestGenerate:
             ),
             pytest.raises(
                 ValueError,
-                match="The component name illegal_name is invalid for Kubernetes.",
+                match=r"The component name illegal_name is invalid for Kubernetes.",
             ),
         ):
             runner.invoke(
@@ -666,7 +666,7 @@ class TestGenerate:
             ),
             pytest.raises(
                 ValidationError,
-                match="Pipeline steps must have unique id, 'component-resources-pipeline-duplicate-step-names-component' already exists.",
+                match=r"Pipeline steps must have unique id, 'component-resources-pipeline-duplicate-step-names-component' already exists.",
             ),
         ):
             runner.invoke(
@@ -681,7 +681,7 @@ class TestGenerate:
             )
 
     def test_validate_loops_on_pipeline(self) -> None:
-        with pytest.raises(ValueError, match="Pipeline is not a valid DAG."):
+        with pytest.raises(ValueError, match=r"Pipeline is not a valid DAG."):
             runner.invoke(
                 app,
                 [

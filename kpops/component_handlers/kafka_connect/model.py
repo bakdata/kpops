@@ -66,7 +66,7 @@ class KafkaConnectorConfig(DescConfigModel):
 
     @pydantic.field_validator("topics", mode="before")
     @classmethod
-    def deserialize_topics(cls, topics: Any) -> list[KafkaTopic] | None | Any:
+    def deserialize_topics(cls, topics: Any) -> list[KafkaTopic] | Any | None:
         if isinstance(topics, str):
             return [KafkaTopic(name=topic_name) for topic_name in topics.split(",")]
         return topics

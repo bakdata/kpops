@@ -20,7 +20,7 @@ if TYPE_CHECKING:
         from typing import Self
 
 
-class ServiceType(str, enum.Enum):
+class ServiceType(enum.StrEnum):
     """Represents the different Kubernetes service types.
 
     https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
@@ -32,7 +32,7 @@ class ServiceType(str, enum.Enum):
     EXTERNAL_NAME = "ExternalName"
 
 
-class ProtocolSchema(str, enum.Enum):
+class ProtocolSchema(enum.StrEnum):
     """Represents the different Kubernetes protocols.
 
     https://kubernetes.io/docs/reference/networking/service-protocols/
@@ -43,7 +43,7 @@ class ProtocolSchema(str, enum.Enum):
     SCTP = "SCTP"
 
 
-class ImagePullPolicy(str, enum.Enum):
+class ImagePullPolicy(enum.StrEnum):
     """Represents the different Kubernetes image pull policies.
 
     https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
@@ -57,7 +57,7 @@ class ImagePullPolicy(str, enum.Enum):
 Weight = Annotated[int, pydantic.Field(ge=1, le=100)]
 
 
-class NodeSelectorOperator(str, enum.Enum):
+class NodeSelectorOperator(enum.StrEnum):
     """Represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists, DoesNotExist. Gt, and Lt."""
 
     IN = "In"
@@ -141,7 +141,7 @@ class NodeAffinity(SerializeAsOptionalModel, DescConfigModel, CamelCaseConfigMod
     ] = []
 
 
-class LabelSelectorOperator(str, enum.Enum):
+class LabelSelectorOperator(enum.StrEnum):
     """Operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist."""
 
     IN = "In"
@@ -246,18 +246,18 @@ class Affinity(DescConfigModel, CamelCaseConfigModel):
     pod_anti_affinity: PodAffinity | None = None
 
 
-class Operation(str, enum.Enum):
+class Operation(enum.StrEnum):
     EXISTS = "Exists"
     EQUAL = "Equal"
 
 
-class Effects(str, enum.Enum):
+class Effects(enum.StrEnum):
     NO_EXECUTE = "NoExecute"
     NO_SCHEDULE = "NoSchedule"
     PREFER_NO_SCHEDULE = "PreferNoSchedule"
 
 
-class RestartPolicy(str, enum.Enum):
+class RestartPolicy(enum.StrEnum):
     ALWAYS = "Always"
     ON_FAILURE = "OnFailure"
     NEVER = "Never"

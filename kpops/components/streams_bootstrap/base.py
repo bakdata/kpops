@@ -59,7 +59,7 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
             msg = f"Invalid version format: {version}"
             raise ValueError(msg)
 
-        major, minor, patch, suffix, _ = pattern_match.groups()
+        major, _minor, _patch, _suffix, _ = pattern_match.groups()
         major = int(major)
 
         if major < 3:
