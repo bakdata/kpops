@@ -16,7 +16,6 @@ kafka-connector.yaml:
 kafka-sink-connector.yaml: []
 kafka-source-connector.yaml:
 - from_-kafka-source-connector.yaml
-- offset_topic-kafka-source-connector.yaml
 kubernetes-app.yaml:
 - prefix.yaml
 - from_.yaml

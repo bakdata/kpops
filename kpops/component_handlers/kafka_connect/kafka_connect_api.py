@@ -133,7 +133,7 @@ class KafkaConnect:
         """
         response = await self.request("GET", f"/connectors/{connector_name}")
         assert response is not None
-        if response.status_code == httpx.codes.OK.value:
+        if response.is_success:
             return ConnectorResponse.model_validate_json(response.content)
         if response.status_code == httpx.codes.NOT_FOUND.value:
             raise ConnectorNotFoundException
@@ -156,7 +156,7 @@ class KafkaConnect:
         """
         response = await self.request("GET", f"/connectors/{connector_name}/status")
         assert response is not None
-        if response.status_code == httpx.codes.OK.value:
+        if response.is_success:
             return ConnectorStatusResponse.model_validate_json(response.content)
         if response.status_code == httpx.codes.NOT_FOUND.value:
             raise ConnectorNotFoundException
@@ -176,9 +176,10 @@ class KafkaConnect:
         )
         if response is None:
             return
-        if response.status_code != httpx.codes.ACCEPTED.value:
-            raise KafkaConnectError(response)
-        log.info(f"Connector {connector_name} paused.")
+        if response.is_success:
+            log.info(f"Connector {connector_name} paused.")
+            return
+        raise KafkaConnectError(response)
 
     async def resume_connector(
         self, connector_name: str, *, dry_run: bool = False
@@ -194,9 +195,10 @@ class KafkaConnect:
         )
         if response is None:
             return
-        if response.status_code != httpx.codes.ACCEPTED.value:
-            raise KafkaConnectError(response)
-        log.info(f"Connector {connector_name} resumed.")
+        if response.is_success:
+            log.info(f"Connector {connector_name} resumed.")
+            return
+        raise KafkaConnectError(response)
 
     async def stop_connector(
         self, connector_name: str, *, dry_run: bool = False
@@ -212,9 +214,10 @@ class KafkaConnect:
         )
         if response is None:
             return
-        if response.status_code != httpx.codes.NO_CONTENT.value:
-            raise KafkaConnectError(response)
-        log.info(f"Connector {connector_name} stopped.")
+        if response.is_success:
+            log.info(f"Connector {connector_name} stopped.")
+            return
+        raise KafkaConnectError(response)
 
     async def update_connector_config(
         self, connector_config: KafkaConnectorConfig, *, dry_run: bool = False
@@ -328,7 +331,7 @@ class KafkaConnect:
         )
         if response is None:
             return
-        if response.status_code == httpx.codes.OK.value:
+        if response.is_success:
             log.info(f"Connector {connector_name} offsets reset.")
             return
         if response.status_code == httpx.codes.NOT_FOUND.value:

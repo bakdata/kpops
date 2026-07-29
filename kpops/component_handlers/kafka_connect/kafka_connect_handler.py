@@ -27,8 +27,8 @@ log = logging.getLogger("KafkaConnectHandler")
 
 @final
 class KafkaConnectHandler:
-    def __init__(self, connect_wrapper: KafkaConnect) -> None:
-        self._connect_wrapper = connect_wrapper
+    def __init__(self, kafka_connect: KafkaConnect) -> None:
+        self._kafka_connect = kafka_connect
 
     async def create_connector(
         self,
@@ -47,8 +47,8 @@ class KafkaConnectHandler:
         """
         connector_name = connector_config.name
         try:
-            connector = await self._connect_wrapper.get_connector(connector_name)
-            status = await self._connect_wrapper.get_connector_status(connector_name)
+            connector = await self._kafka_connect.get_connector(connector_name)
+            status = await self._kafka_connect.get_connector_status(connector_name)
             await self.__update_existing_connector(
                 connector,
                 connector_config,
@@ -79,7 +79,7 @@ class KafkaConnectHandler:
             case ConnectorCurrentState.RUNNING, ConnectorNewState.PAUSED:
                 if dry_run:
                     log.info("Pausing connector")
-                await self._connect_wrapper.pause_connector(
+                await self._kafka_connect.pause_connector(
                     connector_name, dry_run=dry_run
                 )
             case _:
@@ -92,7 +92,7 @@ class KafkaConnectHandler:
         ):
             log.info(f"Updating config:\n{diff}")
 
-        await self._connect_wrapper.update_connector_config(
+        await self._kafka_connect.update_connector_config(
             connector_config, dry_run=dry_run
         )
 
@@ -102,9 +102,7 @@ class KafkaConnectHandler:
         ):
             if dry_run:
                 log.info("Resuming connector")
-            await self._connect_wrapper.resume_connector(
-                connector_name, dry_run=dry_run
-            )
+            await self._kafka_connect.resume_connector(connector_name, dry_run=dry_run)
 
     async def __create_new_connector(
         self,
@@ -124,7 +122,7 @@ class KafkaConnectHandler:
             log_msg.append(f"with config:\n{diff}")
             log.info(" ".join(log_msg))
 
-        await self._connect_wrapper.create_connector(
+        await self._kafka_connect.create_connector(
             connector_config, state, dry_run=dry_run
         )
 
@@ -132,7 +130,7 @@ class KafkaConnectHandler:
         self, connector_config: KafkaConnectorConfig
     ) -> None:
         connector_name = connector_config.name
-        errors = await self._connect_wrapper.validate_connector_config(connector_config)
+        errors = await self._kafka_connect.validate_connector_config(connector_config)
         if len(errors) > 0:
             formatted_errors = "\n".join(errors)
             msg = f"Connector Creation: validating the connector config for connector {connector_name} resulted in the following errors: {formatted_errors}"
@@ -146,16 +144,14 @@ class KafkaConnectHandler:
         :param dry_run: Whether the connector deletion should be run in dry run mode.
         """
         try:
-            await self._connect_wrapper.get_connector(connector_name)
+            await self._kafka_connect.get_connector(connector_name)
             if dry_run:
                 log.info(
                     magentaify(
                         f"Connector Destruction: connector {connector_name} already exists. Deleting connector."
                     )
                 )
-            await self._connect_wrapper.delete_connector(
-                connector_name, dry_run=dry_run
-            )
+            await self._kafka_connect.delete_connector(connector_name, dry_run=dry_run)
         except ConnectorNotFoundException:
             if dry_run:
                 log.warning(
@@ -179,7 +175,7 @@ class KafkaConnectHandler:
         """
         connector_name = connector_config.name
         try:
-            await self._connect_wrapper.get_connector(connector_name)
+            await self._kafka_connect.get_connector(connector_name)
             connector_existed = True
         except ConnectorNotFoundException:
             connector_existed = False
@@ -194,8 +190,8 @@ class KafkaConnectHandler:
                         f"Connector reset: resetting offsets for connector {connector_name}."
                     )
                 )
-            await self._connect_wrapper.stop_connector(connector_name, dry_run=dry_run)
-            await self._connect_wrapper.reset_offset(connector_name, dry_run=dry_run)
+            await self._kafka_connect.stop_connector(connector_name, dry_run=dry_run)
+            await self._kafka_connect.reset_offset(connector_name, dry_run=dry_run)
         except ConnectorNotFoundException:
             log.warning(
                 f"Connector reset: the connector {connector_name} does not exist. Skipping."
@@ -210,7 +206,7 @@ class KafkaConnectHandler:
                     )
                 )
             try:
-                await self._connect_wrapper.delete_connector(
+                await self._kafka_connect.delete_connector(
                     connector_name, dry_run=dry_run
                 )
             except ConnectorNotFoundException:
@@ -221,5 +217,5 @@ class KafkaConnectHandler:
     @classmethod
     def from_kpops_config(cls, config: KpopsConfig) -> Self:
         return cls(
-            connect_wrapper=KafkaConnect(config.kafka_connect),
+            kafka_connect=KafkaConnect(config.kafka_connect),
         )
