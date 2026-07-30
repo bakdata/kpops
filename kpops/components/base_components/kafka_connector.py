@@ -2,99 +2,22 @@ from __future__ import annotations
 
 import logging
 from abc import ABC
-from functools import cached_property
-from typing import Any, Literal, NoReturn, Self
+from typing import Any, NoReturn
 
-import pydantic
-from pydantic import Field, PrivateAttr, ValidationInfo, field_validator
+from pydantic import PrivateAttr, ValidationInfo, field_validator
 from typing_extensions import override
 
 from kpops.component_handlers import get_handlers
-from kpops.component_handlers.helm_wrapper.model import (
-    HelmRepoConfig,
-)
 from kpops.component_handlers.kafka_connect.model import (
     ConnectorNewState,
     KafkaConnectorConfig,
     KafkaConnectorType,
 )
-from kpops.components.base_components.cleaner import Cleaner
-from kpops.components.base_components.helm_app import HelmAppValues
 from kpops.components.base_components.models.from_section import FromTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.components.common.topic import KafkaTopic
-from kpops.config import get_config
-from kpops.utils.colorify import magentaify
-from kpops.utils.pydantic import CamelCaseConfigModel, SkipGenerate
 
 log = logging.getLogger("KafkaConnector")
-
-
-class KafkaConnectorResetterConfig(CamelCaseConfigModel):
-    brokers: str
-    connector: str
-    delete_consumer_group: bool | None = None
-    offset_topic: str | None = None
-
-
-class KafkaConnectorResetterValues(HelmAppValues):
-    connector_type: Literal["source", "sink"]
-    config: KafkaConnectorResetterConfig
-
-
-class KafkaConnectorResetter(Cleaner, ABC):
-    """Helm app for resetting and cleaning a Kafka Connector.
-
-    :param repo_config: Configuration of the Helm chart repo to be used for
-        deploying the component, defaults to kafka-connect-resetter Helm repo
-    :param version: Helm chart version, defaults to "1.0.4"
-    """
-
-    from_: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
-    to: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
-    values: KafkaConnectorResetterValues  # pyright: ignore[reportIncompatibleVariableOverride]
-    repo_config: SkipGenerate[HelmRepoConfig] = HelmRepoConfig(  # pyright: ignore[reportIncompatibleVariableOverride]
-        repository_name="bakdata-kafka-connect-resetter",
-        url="https://bakdata.github.io/kafka-connect-resetter/",
-    )
-    version: str | None = "1.0.4"
-
-    @property
-    @override
-    def helm_chart(self) -> str:
-        return f"{self.repo_config.repository_name}/kafka-connect-resetter"
-
-    @override
-    async def reset(self, dry_run: bool) -> None:
-        """Reset connector.
-
-        At first, it deletes the previous cleanup job (connector resetter)
-        to make sure that there is no running clean job in the cluster. Then it releases a cleanup job.
-        If retain_clean_jobs config is set to false the cleanup job will be deleted subsequently.
-
-        :param dry_run: If the cleanup should be run in dry run mode or not
-        """
-        log.info(
-            magentaify(
-                f"Connector Cleanup: uninstalling cleanup job Helm release from previous runs for {self.values.config.connector}"
-            )
-        )
-        await self.destroy(dry_run)
-
-        log.info(
-            magentaify(
-                f"Connector Cleanup: deploy Connect {self.values.connector_type} resetter for {self.values.config.connector}"
-            )
-        )
-        await self.deploy(dry_run)
-
-        if not get_config().retain_clean_jobs:
-            log.info(magentaify("Connector Cleanup: uninstall Kafka Resetter."))
-            await self.destroy(dry_run)
-
-    @override
-    async def clean(self, dry_run: bool) -> None:
-        await self.reset(dry_run)
 
 
 class KafkaConnector(PipelineComponent, ABC):
@@ -104,15 +27,10 @@ class KafkaConnector(PipelineComponent, ABC):
 
     :param config: Connector config
     :param state: Connector state
-    :param resetter_namespace: Kubernetes namespace in which the Kafka Connect resetter shall be deployed
-    :param resetter_values: Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc.,
-        defaults to empty HelmAppValues
     """
 
     config: KafkaConnectorConfig
     state: ConnectorNewState | None = None
-    resetter_namespace: str | None = None
-    resetter_values: HelmAppValues = Field(default_factory=HelmAppValues)
     _connector_type: KafkaConnectorType = PrivateAttr()
 
     @field_validator("config", mode="before")
@@ -132,35 +50,6 @@ class KafkaConnector(PipelineComponent, ABC):
         config["name"] = component_name
         return KafkaConnectorConfig.model_validate(config)
 
-    @cached_property
-    def _resetter(self) -> KafkaConnectorResetter:
-        kwargs: dict[str, Any] = {}
-        if self.resetter_namespace:
-            kwargs["namespace"] = self.resetter_namespace
-        return KafkaConnectorResetter(
-            **kwargs,
-            **self.model_dump(
-                by_alias=True,
-                exclude={
-                    "_resetter",
-                    "resetter_values",
-                    "resetter_namespace",
-                    "values",
-                    "config",
-                    "from_",
-                    "to",
-                },
-            ),
-            values=KafkaConnectorResetterValues(
-                connector_type=self._connector_type.value,
-                config=KafkaConnectorResetterConfig(
-                    connector=self.full_name,
-                    brokers=get_config().kafka_brokers,
-                ),
-                **self.resetter_values.model_dump(),
-            ),
-        )
-
     @override
     async def deploy(self, dry_run: bool) -> None:
         """Deploy Kafka Connector (Source/Sink). Create output topics and register schemas if configured."""
@@ -177,15 +66,23 @@ class KafkaConnector(PipelineComponent, ABC):
 
     @override
     async def destroy(self, dry_run: bool) -> None:
-        """Delete Kafka Connector (Source/Sink) from the Kafka connect cluster."""
+        """Delete connector."""
         await get_handlers().connector_handler.destroy_connector(
             self.full_name, dry_run=dry_run
         )
 
     @override
+    async def reset(self, dry_run: bool) -> None:
+        """Reset connector offsets. Delete connector afterwards."""
+        await get_handlers().connector_handler.reset_connector(
+            self.config, dry_run=dry_run
+        )
+        await super().reset(dry_run)
+
+    @override
     async def clean(self, dry_run: bool) -> None:
         """Delete Kafka Connector. If schema handler is enabled, then remove schemas. Delete all the output topics."""
-        await super().clean(dry_run)
+        await self.reset(dry_run)
         if self.to:
             if schema_handler := get_handlers().schema_handler:
                 await schema_handler.delete_schemas(to_section=self.to, dry_run=dry_run)
@@ -194,39 +91,14 @@ class KafkaConnector(PipelineComponent, ABC):
 
 
 class KafkaSourceConnector(KafkaConnector):
-    """Kafka source connector model.
-
-    :param offset_topic: `offset.storage.topic`,
-        more info: https://kafka.apache.org/documentation/#connect_running,
-        defaults to None
-    """
-
-    offset_topic: str | None = None
+    """Kafka source connector model."""
 
     _connector_type: KafkaConnectorType = PrivateAttr(KafkaConnectorType.SOURCE)
-
-    @pydantic.model_validator(mode="after")
-    def populate_offset_topic(self) -> Self:
-        if self.offset_topic:
-            self._resetter.values.config.offset_topic = self.offset_topic
-        return self
 
     @override
     def apply_from_inputs(self, name: str, topic: FromTopic) -> NoReturn:
         msg = "Kafka source connector doesn't support FromSection"
         raise NotImplementedError(msg)
-
-    @override
-    async def reset(self, dry_run: bool) -> None:
-        """Reset state. Keep connector."""
-        await super().reset(dry_run)
-        await self._resetter.reset(dry_run)
-
-    @override
-    async def clean(self, dry_run: bool) -> None:
-        """Delete connector and reset state."""
-        await super().clean(dry_run)
-        await self._resetter.clean(dry_run)
 
 
 class KafkaSinkConnector(KafkaConnector):
@@ -250,17 +122,3 @@ class KafkaSinkConnector(KafkaConnector):
     @override
     def set_error_topic(self, topic: KafkaTopic) -> None:
         self.config.errors_deadletterqueue_topic_name = topic
-
-    @override
-    async def reset(self, dry_run: bool) -> None:
-        """Reset state. Keep consumer group and connector."""
-        await super().reset(dry_run)
-        self._resetter.values.config.delete_consumer_group = False
-        await self._resetter.reset(dry_run)
-
-    @override
-    async def clean(self, dry_run: bool) -> None:
-        """Delete connector and consumer group."""
-        await super().clean(dry_run)
-        self._resetter.values.config.delete_consumer_group = True
-        await self._resetter.clean(dry_run)

@@ -87,6 +87,36 @@ class KafkaConnectHandler:
                     f"Connector Destruction: the connector {connector_name} does not exist. Skipping."
                 )
 
+    async def reset_connector(
+        self, connector_config: KafkaConnectorConfig, *, dry_run: bool
+    ) -> None:
+        """Reset connector offsets.
+
+        If the connector does not exist, it is created temporarily in a
+        paused state so its offsets can be reset.
+
+        :param connector_config: The connector config.
+        :param dry_run: Whether the connector reset should be run in dry run mode.
+        """
+        connector_name = connector_config.name
+        try:
+            await self._connect_wrapper.get_connector(connector_name)
+        except ConnectorNotFoundException:
+            await self.create_connector(
+                connector_config, state=ConnectorNewState.PAUSED, dry_run=dry_run
+            )
+
+        if dry_run:
+            await self.__dry_run_connector_reset(connector_name)
+        else:
+            try:
+                await self._connect_wrapper.stop_connector(connector_name)
+                await self._connect_wrapper.reset_offset(connector_name)
+            except ConnectorNotFoundException:
+                log.warning(
+                    f"Connector reset: the connector {connector_name} does not exist. Skipping."
+                )
+
     async def __dry_run_connector_creation(
         self,
         connector_config: KafkaConnectorConfig,
@@ -141,6 +171,17 @@ class KafkaConnectHandler:
             log.info(
                 f"Connector Creation: connector config for {connector_name} is valid!"
             )
+
+    async def __dry_run_connector_reset(self, connector_name: str) -> None:
+        log.info(
+            magentaify(
+                f"Connector reset: resetting offsets for connector {connector_name}."
+            )
+        )
+        log.debug(f"PUT /connectors/{connector_name}/stop HTTP/1.1")
+        log.debug(f"HOST: {self._connect_wrapper.url}")
+        log.debug(f"DELETE /connectors/{connector_name}/offsets HTTP/1.1")
+        log.debug(f"HOST: {self._connect_wrapper.url}")
 
     async def __dry_run_connector_deletion(self, connector_name: str) -> None:
         try:

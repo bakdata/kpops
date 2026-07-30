@@ -301,7 +301,8 @@ class TestConnectorApiWrapper:
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/pause",
             status_code=httpx2.codes.ACCEPTED,
         )
-        await connect_wrapper.pause_connector(CONNECTOR_NAME)
+        with caplog.at_level(logging.INFO):
+            await connect_wrapper.pause_connector(CONNECTOR_NAME)
         assert len(caplog.records) == 1
         assert caplog.records[0].message == f"Connector {CONNECTOR_NAME} paused."
         assert caplog.records[0].levelname == "INFO"
@@ -328,7 +329,8 @@ class TestConnectorApiWrapper:
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/resume",
             status_code=httpx2.codes.ACCEPTED,
         )
-        await connect_wrapper.resume_connector(CONNECTOR_NAME)
+        with caplog.at_level(logging.INFO):
+            await connect_wrapper.resume_connector(CONNECTOR_NAME)
         assert len(caplog.records) == 1
         assert caplog.records[0].message == f"Connector {CONNECTOR_NAME} resumed."
         assert caplog.records[0].levelname == "INFO"
@@ -355,7 +357,8 @@ class TestConnectorApiWrapper:
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/stop",
             status_code=httpx2.codes.NO_CONTENT,
         )
-        await connect_wrapper.stop_connector(CONNECTOR_NAME)
+        with caplog.at_level(logging.INFO):
+            await connect_wrapper.stop_connector(CONNECTOR_NAME)
         assert len(caplog.records) == 1
         assert caplog.records[0].message == f"Connector {CONNECTOR_NAME} stopped."
         assert caplog.records[0].levelname == "INFO"
@@ -485,7 +488,8 @@ class TestConnectorApiWrapper:
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
             status_code=httpx2.codes.NO_CONTENT,
         )
-        await connect_wrapper.delete_connector(CONNECTOR_NAME)
+        with caplog.at_level(logging.INFO):
+            await connect_wrapper.delete_connector(CONNECTOR_NAME)
         assert len(caplog.records) == 1
         assert caplog.records[0].message == f"Connector {CONNECTOR_NAME} deleted."
         assert caplog.records[0].levelname == "INFO"
@@ -540,6 +544,49 @@ class TestConnectorApiWrapper:
         assert caplog.records[0].levelname == "WARNING"
         assert caplog.records[1].message == "Connector test-connector deleted."
         assert caplog.records[1].levelname == "INFO"
+
+    async def test_reset_offset(
+        self,
+        connect_wrapper: ConnectWrapper,
+        httpx_mock: HTTPXMock,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        httpx_mock.add_response(
+            method="DELETE",
+            url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/offsets",
+            status_code=httpx2.codes.NO_CONTENT,
+        )
+        with caplog.at_level(logging.INFO):
+            await connect_wrapper.reset_offset(CONNECTOR_NAME)
+        assert len(caplog.records) == 1
+        assert caplog.records[0].message == f"Connector {CONNECTOR_NAME} offsets reset."
+        assert caplog.records[0].levelname == "INFO"
+
+    async def test_reset_offset_not_found(
+        self,
+        connect_wrapper: ConnectWrapper,
+        httpx_mock: HTTPXMock,
+    ) -> None:
+        httpx_mock.add_response(
+            method="DELETE",
+            url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/offsets",
+            headers=HEADERS,
+            status_code=httpx2.codes.NOT_FOUND,
+            json={},
+        )
+        with pytest.raises(ConnectorNotFoundException):
+            await connect_wrapper.reset_offset(CONNECTOR_NAME)
+
+    async def test_reset_offset_error(
+        self, connect_wrapper: ConnectWrapper, httpx_mock: HTTPXMock
+    ) -> None:
+        httpx_mock.add_response(
+            method="DELETE",
+            url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/offsets",
+            status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
+        )
+        with pytest.raises(KafkaConnectError):
+            await connect_wrapper.reset_offset(CONNECTOR_NAME)
 
     @pytest.fixture()
     def file_stream_connector_config(self) -> KafkaConnectorConfig:

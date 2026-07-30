@@ -886,32 +886,6 @@ class TestGenerate:
             == "in-order-to-have-len-fifty-two-name-should-end--here"
         )
 
-    def test_substitution_in_inflated_component(self) -> None:
-        pipeline = kpops.generate(RESOURCE_PATH / "resetter_values" / PIPELINE_YAML)
-        assert isinstance(pipeline.components[1], KafkaSinkConnector)
-        assert (
-            pipeline.components[1]._resetter.values.label == "inflated-connector-name"  # pyright: ignore[reportAttributeAccessIssue,reportUnknownMemberType]
-        )
-        assert (
-            pipeline.components[1]._resetter.values.imageTag  # pyright: ignore[reportAttributeAccessIssue,reportUnknownMemberType]
-            == "override-default-image-tag"
-        )
-
-    def test_substitution_in_resetter(self) -> None:
-        pipeline = kpops.generate(
-            RESOURCE_PATH
-            / "resetter_values"
-            / KpopsFileType.PIPELINE.as_yaml_file(suffix="_connector_only"),
-        )
-        assert isinstance(pipeline.components[0], KafkaSinkConnector)
-        assert pipeline.components[0].name == "es-sink-connector"
-        assert pipeline.components[0]._resetter.name == "es-sink-connector"
-        assert pipeline.components[0]._resetter.values.label == "es-sink-connector"  # pyright: ignore[reportAttributeAccessIssue,reportUnknownMemberType]
-        assert (
-            pipeline.components[0]._resetter.values.imageTag  # pyright: ignore[reportAttributeAccessIssue,reportUnknownMemberType]
-            == "override-default-image-tag"
-        )
-
     def test_streams_bootstrap(self, snapshot: Snapshot) -> None:
         pipeline = kpops.generate(
             RESOURCE_PATH / "streams-bootstrap" / PIPELINE_YAML,
