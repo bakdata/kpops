@@ -4,7 +4,7 @@ from typing import Any
 
 import httpx
 
-from kpops.exception import ServiceException
+from kpops.core.exception import ServiceException
 
 
 class ServiceConnectionError(ServiceException):

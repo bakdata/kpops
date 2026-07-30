@@ -1,10 +1,10 @@
 import pytest
+import typer
 from pytest_mock import MockerFixture
 from structlog.testing import capture_logs
-import typer
 
 from kpops.cli.main import cli
-from kpops.exception import KpopsException
+from kpops.core.exception import KpopsException
 
 
 def test_cli_exits_with_code_1_on_kpops_exception(mocker: MockerFixture) -> None:

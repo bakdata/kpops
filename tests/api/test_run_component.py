@@ -10,7 +10,7 @@ from structlog.testing import capture_logs
 from kpops.api import _run_component
 from kpops.component_handlers.topic.exception import KafkaRestProxyError
 from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.exception import KpopsException
+from kpops.core.exception import KpopsException
 from kpops.utils.logging import bound_service_context
 
 

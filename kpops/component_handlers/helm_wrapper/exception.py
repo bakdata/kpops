@@ -1,6 +1,6 @@
 from typing import ClassVar
 
-from kpops.exception import ServiceException
+from kpops.core.exception import ServiceException
 
 
 class HelmException(ServiceException):

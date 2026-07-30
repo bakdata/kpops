@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from structlog.typing import EventDict, WrappedLogger
 
     from kpops.components.base_components.pipeline_component import PipelineComponent
-    from kpops.exception import KpopsException
+    from kpops.core.exception import KpopsException
 
 logging.getLogger("httpx").setLevel(logging.WARNING)
 

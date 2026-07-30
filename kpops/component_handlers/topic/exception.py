@@ -4,7 +4,7 @@ from kpops.component_handlers.utils.exception import (
     HttpResponseError,
     ServiceConnectionError,
 )
-from kpops.exception import ServiceException
+from kpops.core.exception import ServiceException
 
 
 class KafkaRestProxyException(ServiceException):

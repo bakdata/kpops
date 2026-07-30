@@ -15,9 +15,9 @@ from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.component_handlers.utils.exception import HttpResponseError
 from kpops.config import KpopsConfig
+from kpops.core.exception import KpopsException
 from kpops.core.operation import OperationMode
 from kpops.core.registry import Registry
-from kpops.exception import KpopsException
 from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.pipeline import (
     Pipeline,

@@ -18,8 +18,8 @@ from kpops.const.file_type import (
     PIPELINE_YAML,
     KpopsFileType,
 )
+from kpops.core.exception import KpopsException
 from kpops.core.operation import OperationMode
-from kpops.exception import KpopsException
 from kpops.utils.gen_schema import (
     gen_config_schema,
     gen_defaults_schema,
