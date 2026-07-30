@@ -1,9 +1,9 @@
 from typing import ClassVar
 
-from kpops.exception import KpopsException
+from kpops.exception import ServiceException
 
 
-class HelmException(KpopsException):
+class HelmException(ServiceException):
     service: ClassVar[str] = "Helm"
 
 

@@ -1,16 +1,14 @@
 from __future__ import annotations
 
-from typing import Any, ClassVar
+from typing import Any
 
 import httpx
 
-from kpops.exception import KpopsException
+from kpops.exception import ServiceException
 
 
-class ServiceConnectionError(KpopsException):
+class ServiceConnectionError(ServiceException):
     """Connection to an external service failed."""
-
-    service: ClassVar[str]
 
     def __init__(self, url: str, cause: Exception) -> None:
         self.url: str = url
@@ -18,10 +16,8 @@ class ServiceConnectionError(KpopsException):
         super().__init__(str(cause))
 
 
-class HttpResponseError(KpopsException):
+class HttpResponseError(ServiceException):
     """An external service responded with a non-success HTTP status."""
-
-    service: ClassVar[str]
 
     def __init__(self, response: httpx.Response) -> None:
         self.error_code: int = response.status_code

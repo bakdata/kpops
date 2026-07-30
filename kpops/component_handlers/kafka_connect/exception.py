@@ -4,10 +4,10 @@ from kpops.component_handlers.utils.exception import (
     HttpResponseError,
     ServiceConnectionError,
 )
-from kpops.exception import KpopsException
+from kpops.exception import ServiceException
 
 
-class KafkaConnectException(KpopsException):
+class KafkaConnectException(ServiceException):
     service: ClassVar[str] = "Kafka Connect"
 
 
