@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Any, final
 import httpx
 import structlog
 
+from kpops.component_handlers.kafka_connect import KAFKA_CONNECT
 from kpops.component_handlers.kafka_connect.exception import (
     ConnectorNotFoundException,
     KafkaConnectConnectionError,
@@ -28,7 +29,7 @@ if TYPE_CHECKING:
     from kpops.config import KafkaConnectConfig
 
 
-log = structlog.get_logger("KafkaConnect")
+log = structlog.get_logger(KAFKA_CONNECT)
 
 
 @final
@@ -109,9 +110,7 @@ class KafkaConnect:
         :return: The current connector info if successful, None if dry run.
         """
         with bound_service_context(
-            service="Kafka Connect",
-            url=str(self.url),
-            connector_name=connector_config.name,
+            url=str(self.url), connector_name=connector_config.name
         ):
             payload = CreateConnector(
                 config=connector_config,
@@ -141,9 +140,7 @@ class KafkaConnect:
         :param connector_name: Name of the connector
         :return: Information about the connector.
         """
-        with bound_service_context(
-            service="Kafka Connect", url=str(self.url), connector_name=connector_name
-        ):
+        with bound_service_context(url=str(self.url), connector_name=connector_name):
             response = await self.request("GET", f"/connectors/{connector_name}")
             assert response is not None
             if response.is_success:
@@ -165,9 +162,7 @@ class KafkaConnect:
         :param connector_name: Name of the connector
         :return: Status of the connector.
         """
-        with bound_service_context(
-            service="Kafka Connect", url=str(self.url), connector_name=connector_name
-        ):
+        with bound_service_context(url=str(self.url), connector_name=connector_name):
             response = await self.request("GET", f"/connectors/{connector_name}/status")
             assert response is not None
             if response.is_success:
@@ -185,9 +180,7 @@ class KafkaConnect:
         :param connector_name: Name of the connector
         :param dry_run: Whether to log the request instead of sending it.
         """
-        with bound_service_context(
-            service="Kafka Connect", url=str(self.url), connector_name=connector_name
-        ):
+        with bound_service_context(url=str(self.url), connector_name=connector_name):
             response = await self.request(
                 "PUT", f"/connectors/{connector_name}/pause", dry_run=dry_run
             )
@@ -207,9 +200,7 @@ class KafkaConnect:
         :param connector_name: Name of the connector
         :param dry_run: Whether to log the request instead of sending it.
         """
-        with bound_service_context(
-            service="Kafka Connect", url=str(self.url), connector_name=connector_name
-        ):
+        with bound_service_context(url=str(self.url), connector_name=connector_name):
             response = await self.request(
                 "PUT", f"/connectors/{connector_name}/resume", dry_run=dry_run
             )
@@ -229,9 +220,7 @@ class KafkaConnect:
         :param connector_name: Name of the connector
         :param dry_run: Whether to log the request instead of sending it.
         """
-        with bound_service_context(
-            service="Kafka Connect", url=str(self.url), connector_name=connector_name
-        ):
+        with bound_service_context(url=str(self.url), connector_name=connector_name):
             response = await self.request(
                 "PUT", f"/connectors/{connector_name}/stop", dry_run=dry_run
             )
@@ -255,9 +244,7 @@ class KafkaConnect:
             None if dry run.
         """
         connector_name = connector_config.name
-        with bound_service_context(
-            service="Kafka Connect", url=str(self.url), connector_name=connector_name
-        ):
+        with bound_service_context(url=str(self.url), connector_name=connector_name):
             response = await self.request(
                 "PUT",
                 f"/connectors/{connector_name}/config",
@@ -292,9 +279,7 @@ class KafkaConnect:
         :return: List of all found errors
         """
         with bound_service_context(
-            service="Kafka Connect",
-            url=str(self.url),
-            connector_name=connector_config.name,
+            url=str(self.url), connector_name=connector_config.name
         ):
             response = await self.request(
                 "PUT",
@@ -330,9 +315,7 @@ class KafkaConnect:
         :param dry_run: Whether to log the request instead of sending it.
         :raises ConnectorNotFoundException: Connector not found
         """
-        with bound_service_context(
-            service="Kafka Connect", url=str(self.url), connector_name=connector_name
-        ):
+        with bound_service_context(url=str(self.url), connector_name=connector_name):
             response = await self.request(
                 "DELETE", f"/connectors/{connector_name}", dry_run=dry_run
             )
@@ -358,9 +341,7 @@ class KafkaConnect:
         :param dry_run: Whether to log the request instead of sending it.
         :raises ConnectorNotFoundException: Connector not found
         """
-        with bound_service_context(
-            service="Kafka Connect", url=str(self.url), connector_name=connector_name
-        ):
+        with bound_service_context(url=str(self.url), connector_name=connector_name):
             response = await self.request(
                 "DELETE", f"/connectors/{connector_name}/offsets", dry_run=dry_run
             )

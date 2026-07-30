@@ -24,6 +24,56 @@ def _drop_root_logger_name(
     return event_dict
 
 
+def _build_console_renderer() -> structlog.dev.ConsoleRenderer:
+    """Build a ConsoleRenderer with the logger name before the event message.
+
+    The default column order renders `[level] event  [logger] key=value...`;
+    we want `[level] [logger] event  key=value...` instead.
+    """
+    colors = structlog.dev.ConsoleRenderer().colors
+    styles = structlog.dev.ConsoleRenderer.get_default_column_styles(colors)
+    level_styles = structlog.dev.ConsoleRenderer.get_default_level_styles(colors)
+
+    logger_name_formatter = structlog.dev.KeyValueColumnFormatter(
+        key_style=None,
+        value_style=styles.bright + styles.logger_name,
+        reset_style=styles.reset,
+        value_repr=str,
+        prefix="[",
+        postfix="]",
+    )
+    return structlog.dev.ConsoleRenderer(
+        columns=[
+            structlog.dev.Column(
+                "level",
+                structlog.dev.LogLevelColumnFormatter(
+                    level_styles, reset_style=styles.reset
+                ),
+            ),
+            structlog.dev.Column("logger", logger_name_formatter),
+            structlog.dev.Column("logger_name", logger_name_formatter),
+            structlog.dev.Column(
+                "event",
+                structlog.dev.KeyValueColumnFormatter(
+                    key_style=None,
+                    value_style=styles.bright,
+                    reset_style=styles.reset,
+                    value_repr=str,
+                ),
+            ),
+            structlog.dev.Column(
+                "",
+                structlog.dev.KeyValueColumnFormatter(
+                    key_style=styles.kv_key,
+                    value_style=styles.kv_value,
+                    reset_style=styles.reset,
+                    value_repr=str,
+                ),
+            ),
+        ]
+    )
+
+
 structlog.configure(
     processors=[
         structlog.contextvars.merge_contextvars,
@@ -47,7 +97,7 @@ _formatter = structlog.stdlib.ProcessorFormatter(
     processors=[
         structlog.stdlib.ProcessorFormatter.remove_processors_meta,
         _drop_root_logger_name,
-        structlog.dev.ConsoleRenderer(),
+        _build_console_renderer(),
     ],
 )
 _stream_handler = logging.StreamHandler()
@@ -66,11 +116,16 @@ def log_action(action: str, pipeline_component: PipelineComponent) -> None:
     log.info("\n")
 
 
-def log_kpops_exception(e: KpopsException) -> None:
+def log_kpops_exception(
+    e: KpopsException, *, logger: structlog.stdlib.BoundLogger | None = None
+) -> None:
+    resolved_logger: structlog.stdlib.BoundLogger = (
+        logger if logger is not None else log
+    )
     if logging.getLogger().isEnabledFor(logging.DEBUG):
-        log.exception(str(e))
+        resolved_logger.exception(str(e))
     else:
-        log.error(str(e))
+        resolved_logger.error(str(e))
     e.logged = True
 
 

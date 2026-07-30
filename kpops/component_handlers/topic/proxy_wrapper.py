@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any, final
 import httpx
 import structlog
 
+from kpops.component_handlers.topic import KAFKA_REST_PROXY
 from kpops.component_handlers.topic.exception import (
     KafkaRestProxyConnectionError,
     KafkaRestProxyError,
@@ -24,7 +25,7 @@ if TYPE_CHECKING:
 
     from kpops.config import KafkaRestConfig
 
-log = structlog.get_logger("KafkaRestProxy")
+log = structlog.get_logger(KAFKA_REST_PROXY)
 
 HEADERS = {"Content-Type": "application/json"}
 
@@ -73,7 +74,7 @@ class ProxyWrapper:
         :raises KafkaRestProxyError: Kafka REST proxy error
         :return: The Kafka cluster ID.
         """
-        with bound_service_context(service="Kafka REST Proxy", url=str(self.url)):
+        with bound_service_context(url=str(self.url)):
             response = self._sync_request("GET", url=f"{self._config.url!s}v3/clusters")
 
             if response.status_code == httpx.codes.OK:
@@ -96,7 +97,7 @@ class ProxyWrapper:
         :raises KafkaRestProxyConnectionError: Connection to Kafka REST Proxy failed
         :raises KafkaRestProxyError: Kafka REST proxy error
         """
-        with bound_service_context(service="Kafka REST Proxy", url=str(self.url)):
+        with bound_service_context(url=str(self.url)):
             response = await self._request(
                 "POST",
                 url=f"{self.url!s}v3/clusters/{self.cluster_id}/topics",
@@ -120,7 +121,7 @@ class ProxyWrapper:
         :raises KafkaRestProxyConnectionError: Connection to Kafka REST Proxy failed
         :raises KafkaRestProxyError: Kafka REST proxy error
         """
-        with bound_service_context(service="Kafka REST Proxy", url=str(self.url)):
+        with bound_service_context(url=str(self.url)):
             response = await self._request(
                 "DELETE",
                 url=f"{self.url!s}v3/clusters/{self.cluster_id}/topics/{topic_name}",
@@ -144,7 +145,7 @@ class ProxyWrapper:
         :raises KafkaRestProxyError: Kafka REST proxy error
         :return: Response of the get topic API.
         """
-        with bound_service_context(service="Kafka REST Proxy", url=str(self.url)):
+        with bound_service_context(url=str(self.url)):
             response = await self._request(
                 "GET",
                 url=f"{self.url!s}v3/clusters/{self.cluster_id}/topics/{topic_name}",
@@ -175,7 +176,7 @@ class ProxyWrapper:
         :raises KafkaRestProxyError: Kafka REST proxy error
         :return: The topic configuration.
         """
-        with bound_service_context(service="Kafka REST Proxy", url=str(self.url)):
+        with bound_service_context(url=str(self.url)):
             response = await self._request(
                 "GET",
                 url=f"{self.url!s}v3/clusters/{self.cluster_id}/topics/{topic_name}/configs",
@@ -208,7 +209,7 @@ class ProxyWrapper:
         :raises KafkaRestProxyConnectionError: Connection to Kafka REST Proxy failed
         :raises KafkaRestProxyError: Kafka REST proxy error
         """
-        with bound_service_context(service="Kafka REST Proxy", url=str(self.url)):
+        with bound_service_context(url=str(self.url)):
             response = await self._request(
                 "POST",
                 url=f"{self.url!s}v3/clusters/{self.cluster_id}/topics/{topic_name}/configs:alter",
@@ -232,7 +233,7 @@ class ProxyWrapper:
         :raises KafkaRestProxyError: Kafka REST proxy error
         :return: The broker configuration.
         """
-        with bound_service_context(service="Kafka REST Proxy", url=str(self.url)):
+        with bound_service_context(url=str(self.url)):
             response = await self._request(
                 "GET",
                 url=f"{self.url!s}v3/clusters/{self.cluster_id}/brokers/-/configs",

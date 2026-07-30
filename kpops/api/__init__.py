@@ -5,6 +5,8 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import structlog
+
 from kpops.api.options import FilterType
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
@@ -42,7 +44,9 @@ async def _run_component(
     except KpopsException as e:
         if isinstance(e, HttpResponseError):
             log.debug("Response details", status_code=e.error_code, body=e.body)
-        log_kpops_exception(e)
+        service = getattr(e, "service", None)
+        service_log = structlog.get_logger(service) if service else log
+        log_kpops_exception(e, logger=service_log)
         raise
 
 

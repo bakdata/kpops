@@ -1,5 +1,4 @@
 import pytest
-import typer
 from pytest_mock import MockerFixture
 from structlog.testing import capture_logs
 
