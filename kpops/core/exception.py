@@ -1,12 +1,18 @@
 from __future__ import annotations
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
+
+if TYPE_CHECKING:
+    import structlog
 
 
 class KpopsException(Exception):
     """Base class for all expected, user-facing KPOps errors."""
 
     logged: bool = False
+
+    def log_extra(self, logger: structlog.stdlib.BoundLogger) -> None:
+        """Log extra debug context."""
 
 
 class ServiceException(KpopsException):

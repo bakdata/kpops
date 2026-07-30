@@ -7,11 +7,12 @@ from typing import TYPE_CHECKING
 
 import structlog
 
+from kpops.core.exception import KpopsException, ServiceException
+
 if TYPE_CHECKING:
     from structlog.typing import EventDict, WrappedLogger
 
     from kpops.components.base_components.pipeline_component import PipelineComponent
-    from kpops.core.exception import KpopsException
 
 logging.getLogger("httpx").setLevel(logging.WARNING)
 
@@ -116,16 +117,13 @@ def log_action(action: str, pipeline_component: PipelineComponent) -> None:
     log.info("\n")
 
 
-def log_kpops_exception(
-    e: KpopsException, *, logger: structlog.stdlib.BoundLogger | None = None
-) -> None:
-    resolved_logger: structlog.stdlib.BoundLogger = (
-        logger if logger is not None else log
-    )
+def log_kpops_exception(e: KpopsException) -> None:
+    logger = structlog.get_logger(e.service) if isinstance(e, ServiceException) else log
+    e.log_extra(logger)
     if logging.getLogger().isEnabledFor(logging.DEBUG):
-        resolved_logger.exception(str(e))
+        logger.exception(str(e))
     else:
-        resolved_logger.error(str(e))
+        logger.error(str(e))
     e.logged = True
 
 

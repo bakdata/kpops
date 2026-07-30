@@ -1,10 +1,14 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import httpx
+from typing_extensions import override
 
 from kpops.core.exception import ServiceException
+
+if TYPE_CHECKING:
+    import structlog
 
 
 class ServiceConnectionError(ServiceException):
@@ -31,6 +35,10 @@ class HttpResponseError(ServiceException):
             return self.response.json()
         except ValueError:
             return None
+
+    @override
+    def log_extra(self, logger: structlog.stdlib.BoundLogger) -> None:
+        logger.debug("Response details", status_code=self.error_code, body=self.body)
 
     @staticmethod
     def _extract_reason(response: httpx.Response) -> str | None:

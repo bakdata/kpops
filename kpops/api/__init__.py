@@ -5,8 +5,6 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-import structlog
-
 from kpops.api.options import FilterType
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
@@ -15,7 +13,6 @@ from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
-from kpops.component_handlers.utils.exception import HttpResponseError
 from kpops.config import KpopsConfig
 from kpops.core.exception import KpopsException
 from kpops.core.operation import OperationMode
@@ -42,11 +39,7 @@ async def _run_component(
     try:
         await operation
     except KpopsException as e:
-        if isinstance(e, HttpResponseError):
-            log.debug("Response details", status_code=e.error_code, body=e.body)
-        service = getattr(e, "service", None)
-        service_log = structlog.get_logger(service) if service else log
-        log_kpops_exception(e, logger=service_log)
+        log_kpops_exception(e)
         raise
 
 
