@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 from typing import Annotated
 
@@ -399,7 +398,7 @@ def cli() -> None:
     except KpopsException as e:
         if not e.logged:
             log_kpops_exception(e)
-        sys.exit(1)
+        raise typer.Exit(1) from e
 
 
 if __name__ == "__main__":
