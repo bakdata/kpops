@@ -1,12 +1,12 @@
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 from typing import Annotated
 
 import typer
 
 import kpops.api as kpops
-from kpops.api.logs import log
 from kpops.api.options import FilterType
 from kpops.cli.utils import (
     collect_pipeline_paths,
@@ -20,11 +20,13 @@ from kpops.const.file_type import (
     KpopsFileType,
 )
 from kpops.core.operation import OperationMode
+from kpops.exception import KpopsException
 from kpops.utils.gen_schema import (
     gen_config_schema,
     gen_defaults_schema,
     gen_pipeline_schema,
 )
+from kpops.utils.logging import log, log_kpops_exception
 from kpops.utils.yaml import print_yaml
 
 app = typer.Typer(pretty_exceptions_enable=False)
@@ -390,5 +392,15 @@ def main(
 ) -> None: ...
 
 
+def cli() -> None:
+    """CLI entrypoint."""
+    try:
+        app()
+    except KpopsException as e:
+        if not e.logged:
+            log_kpops_exception(e)
+        sys.exit(1)
+
+
 if __name__ == "__main__":
-    app()
+    cli()

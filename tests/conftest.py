@@ -16,7 +16,7 @@ logger.setLevel(logging.INFO)  # quiet faker locale messages
 
 @pytest.fixture(autouse=True, scope="session")
 def setup_logging() -> None:
-    from kpops.api.logs import log
+    from kpops.utils.logging import log
 
     assert log
 
