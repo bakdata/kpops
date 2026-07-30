@@ -97,7 +97,7 @@ class Helm:
                 else:
                     raise
 
-            if self.version.minor > 7:
+            if self.version.major >= 4 or self.version.minor >= 7:
                 self.__execute(["helm", "repo", "update", repository_name])
             else:
                 self.__execute(["helm", "repo", "update"])
