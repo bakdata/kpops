@@ -140,7 +140,7 @@
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
-                    "default": "3.6.1",
+                    "default": "7.2.2-SNAPSHOT",
                     "description": "Helm chart version",
                     "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
                     "title": "Version",
@@ -2368,7 +2368,7 @@
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
-                    "default": "3.6.1",
+                    "default": "7.2.2-SNAPSHOT",
                     "description": "Helm chart version",
                     "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
                     "title": "Version",
@@ -3569,7 +3569,7 @@
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
-                    "default": "3.6.1",
+                    "default": "7.2.2-SNAPSHOT",
                     "description": "Helm chart version",
                     "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
                     "title": "Version",
@@ -4323,7 +4323,7 @@
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
-                    "default": "3.6.1",
+                    "default": "7.2.2-SNAPSHOT",
                     "description": "Helm chart version",
                     "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
                     "title": "Version",
@@ -5082,7 +5082,7 @@
                     "anyOf": [
                         {
                             "items": {
-                                "type": "string"
+                                "type": "object"
                             },
                             "type": "array"
                         },
@@ -5091,7 +5091,7 @@
                         }
                     ],
                     "default": [],
-                    "description": "List of additional KEDA triggers, see https://keda.sh/docs/latest/scalers/",
+                    "description": "List of KEDA triggers appended to the generated Kafka lag triggers, see https://keda.sh/docs/latest/scalers/",
                     "title": "Additionaltriggers"
                 },
                 "cooldownPeriod": {
@@ -5152,7 +5152,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Average target value to trigger scaling actions. Mandatory to set when auto-scaling is enabled.",
+                    "description": "Average target value to trigger scaling actions. Mandatory when using chart-generated Kafka lag triggers.",
                     "title": "Lagthreshold"
                 },
                 "maxReplicas": {
@@ -5207,6 +5207,19 @@
                     "description": "This is the interval to check each trigger on. https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval",
                     "title": "Pollinginterval"
                 },
+                "scalingModifiers": {
+                    "anyOf": [
+                        {
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "KEDA composite metric configuration. Requires explicit triggers",
+                    "title": "Scalingmodifiers"
+                },
                 "topics": {
                     "anyOf": [
                         {
@@ -5222,6 +5235,22 @@
                     "default": [],
                     "description": "List of topics used by the streams app",
                     "title": "Topics"
+                },
+                "triggers": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "type": "object"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": [],
+                    "description": "Complete list of KEDA triggers. When set, these replace all chart-generated Kafka lag triggers",
+                    "title": "Triggers"
                 }
             },
             "title": "StreamsAppAutoScaling",

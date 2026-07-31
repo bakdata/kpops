@@ -106,7 +106,23 @@
       topics: # List of topics used by the streams app.
         - topic1
         - topic2
-      additionalTriggers: [] # List of additional KEDA triggers.
+      # Complete list of KEDA triggers. When set, these replace all
+      # chart-generated Kafka lag triggers.
+      triggers: []
+      # - type: cron
+      #   name: business_hours
+      #   metadata:
+      #     timezone: Europe/Vienna
+      #     start: "0 8 * * 1-5"
+      #     end: "0 18 * * 1-5"
+      #     desiredReplicas: "2"
+      # List of KEDA triggers appended to chart-generated Kafka lag triggers.
+      additionalTriggers: []
+      # KEDA composite metric configuration. Requires explicit triggers.
+      # scalingModifiers:
+      #   formula: business_hours
+      #   target: "1"
+      #   metricType: AverageValue
   # Helm repository configuration (optional)
   # If not set the helm repo add will not be called. Useful when using local Helm charts
   repo_config:

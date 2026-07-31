@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import StrEnum
-from typing import ClassVar, Self
+from typing import Any, ClassVar, Self
 
 import pydantic
 from pydantic import ConfigDict, Field
@@ -112,7 +112,7 @@ class StreamsAppAutoScaling(
 
     :param enabled: Whether to enable auto-scaling using KEDA., defaults to False
     :param lag_threshold: Average target value to trigger scaling actions.
-        Mandatory to set when auto-scaling is enabled.
+        Mandatory when using chart-generated Kafka lag triggers.
     :param polling_interval: This is the interval to check each trigger on.
         https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval,
         defaults to 30
@@ -137,9 +137,13 @@ class StreamsAppAutoScaling(
         defaults to None
     :param internal_topics: List of auto-generated Kafka Streams topics used by the streams app, defaults to []
     :param topics: List of topics used by the streams app, defaults to []
-    :param additional_triggers: List of additional KEDA triggers,
-        see https://keda.sh/docs/latest/scalers/,
+    :param triggers: Complete list of KEDA triggers. When set, these replace all
+        chart-generated Kafka lag triggers, defaults to []
+    :param additional_triggers: List of KEDA triggers appended to the generated
+        Kafka lag triggers, see https://keda.sh/docs/latest/scalers/,
         defaults to []
+    :param scaling_modifiers: KEDA composite metric configuration. Requires explicit
+        triggers, defaults to None
     """
 
     enabled: bool = False
@@ -161,7 +165,9 @@ class StreamsAppAutoScaling(
     )
     internal_topics: SerializeAsOptional[list[str]] = []
     topics: SerializeAsOptional[list[str]] = []
-    additional_triggers: SerializeAsOptional[list[str]] = []
+    triggers: SerializeAsOptional[list[dict[str, Any]]] = []
+    additional_triggers: SerializeAsOptional[list[dict[str, Any]]] = []
+    scaling_modifiers: dict[str, Any] | None = None
 
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 
