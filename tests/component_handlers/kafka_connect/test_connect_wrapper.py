@@ -3,10 +3,10 @@ import logging
 from typing import Any
 from unittest.mock import AsyncMock, patch
 
-import httpx
+import httpx2
 import pytest
 from anyio import Path
-from pytest_httpx import HTTPXMock
+from pytest_httpx2 import HTTPXMock
 from pytest_mock import MockerFixture
 
 from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
@@ -94,7 +94,7 @@ class TestConnectorApiWrapper:
             "topic.tracking.allow.reset": "false",
         }
 
-    @patch("httpx.AsyncClient.post")
+    @patch("httpx2.AsyncClient.post")
     async def test_create_connector_request(
         self,
         mock_post: AsyncMock,
@@ -112,7 +112,7 @@ class TestConnectorApiWrapper:
             },
         )
 
-    @patch("httpx.AsyncClient.post")
+    @patch("httpx2.AsyncClient.post")
     async def test_create_connector_request_with_initial_state(
         self,
         mock_post: AsyncMock,
@@ -143,7 +143,7 @@ class TestConnectorApiWrapper:
             method="POST",
             url=f"{DEFAULT_HOST}/connectors",
             headers=HEADERS,
-            status_code=httpx.codes.CREATED,
+            status_code=httpx2.codes.CREATED,
             json=connector_response,
         )
 
@@ -164,14 +164,14 @@ class TestConnectorApiWrapper:
             method="POST",
             url=ENDPOINT,
             headers=HEADERS,
-            status_code=httpx.codes.CONFLICT,
+            status_code=httpx2.codes.CONFLICT,
             json={},
         )
         httpx_mock.add_response(
             method="POST",
             url=ENDPOINT,
             headers=HEADERS,
-            status_code=httpx.codes.CREATED,
+            status_code=httpx2.codes.CREATED,
             json=connector_response,
         )
 
@@ -211,7 +211,7 @@ class TestConnectorApiWrapper:
             method="GET",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
             headers=HEADERS,
-            status_code=httpx.codes.NOT_FOUND,
+            status_code=httpx2.codes.NOT_FOUND,
             json={},
         )
         with pytest.raises(ConnectorNotFoundException):
@@ -230,7 +230,7 @@ class TestConnectorApiWrapper:
             method="GET",
             url=ENDPOINT,
             headers=HEADERS,
-            status_code=httpx.codes.CONFLICT,
+            status_code=httpx2.codes.CONFLICT,
             json={},
         )
         httpx_mock.add_response(
@@ -277,7 +277,7 @@ class TestConnectorApiWrapper:
             method="GET",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/status",
             headers=HEADERS,
-            status_code=httpx.codes.OK,
+            status_code=httpx2.codes.OK,
             json=actual_response,
         )
         status = await connect_wrapper.get_connector_status(CONNECTOR_NAME)
@@ -299,7 +299,7 @@ class TestConnectorApiWrapper:
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/pause",
-            status_code=httpx.codes.ACCEPTED,
+            status_code=httpx2.codes.ACCEPTED,
         )
         with caplog.at_level(logging.INFO):
             await connect_wrapper.pause_connector(CONNECTOR_NAME)
@@ -313,7 +313,7 @@ class TestConnectorApiWrapper:
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/pause",
-            status_code=httpx.codes.INTERNAL_SERVER_ERROR,
+            status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
         )
         with pytest.raises(KafkaConnectError):
             await connect_wrapper.pause_connector(CONNECTOR_NAME)
@@ -327,7 +327,7 @@ class TestConnectorApiWrapper:
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/resume",
-            status_code=httpx.codes.ACCEPTED,
+            status_code=httpx2.codes.ACCEPTED,
         )
         with caplog.at_level(logging.INFO):
             await connect_wrapper.resume_connector(CONNECTOR_NAME)
@@ -341,7 +341,7 @@ class TestConnectorApiWrapper:
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/resume",
-            status_code=httpx.codes.INTERNAL_SERVER_ERROR,
+            status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
         )
         with pytest.raises(KafkaConnectError):
             await connect_wrapper.resume_connector(CONNECTOR_NAME)
@@ -355,7 +355,7 @@ class TestConnectorApiWrapper:
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/stop",
-            status_code=httpx.codes.NO_CONTENT,
+            status_code=httpx2.codes.NO_CONTENT,
         )
         with caplog.at_level(logging.INFO):
             await connect_wrapper.stop_connector(CONNECTOR_NAME)
@@ -369,12 +369,12 @@ class TestConnectorApiWrapper:
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/stop",
-            status_code=httpx.codes.INTERNAL_SERVER_ERROR,
+            status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
         )
         with pytest.raises(KafkaConnectError):
             await connect_wrapper.stop_connector(CONNECTOR_NAME)
 
-    @patch("httpx.AsyncClient.put")
+    @patch("httpx2.AsyncClient.put")
     async def test_update_connector_request(
         self,
         mock_put: AsyncMock,
@@ -400,7 +400,7 @@ class TestConnectorApiWrapper:
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/config",
             headers=HEADERS,
-            status_code=httpx.codes.OK,
+            status_code=httpx2.codes.OK,
             json=connector_response,
         )
         with caplog.at_level(logging.INFO):
@@ -427,7 +427,7 @@ class TestConnectorApiWrapper:
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/config",
             headers=HEADERS,
-            status_code=httpx.codes.CREATED,
+            status_code=httpx2.codes.CREATED,
             json=connector_response,
         )
         with caplog.at_level(logging.INFO):
@@ -453,7 +453,7 @@ class TestConnectorApiWrapper:
             method="PUT",
             url=ENDPOINT,
             headers=HEADERS,
-            status_code=httpx.codes.CONFLICT,
+            status_code=httpx2.codes.CONFLICT,
             json={},
         )
         httpx_mock.add_response(
@@ -486,7 +486,7 @@ class TestConnectorApiWrapper:
         httpx_mock.add_response(
             method="DELETE",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
-            status_code=httpx.codes.NO_CONTENT,
+            status_code=httpx2.codes.NO_CONTENT,
         )
         with caplog.at_level(logging.INFO):
             await connect_wrapper.delete_connector(CONNECTOR_NAME)
@@ -503,9 +503,9 @@ class TestConnectorApiWrapper:
             method="DELETE",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
             headers=HEADERS,
-            status_code=httpx.codes.NOT_FOUND,
+            status_code=httpx2.codes.NOT_FOUND,
             json={
-                "error_code": httpx.codes.NOT_FOUND.value,
+                "error_code": httpx2.codes.NOT_FOUND.value,
                 "message": f"Connector {CONNECTOR_NAME} not found",
             },
         )
@@ -524,13 +524,13 @@ class TestConnectorApiWrapper:
             method="DELETE",
             url=ENDPOINT,
             headers=HEADERS,
-            status_code=httpx.codes.CONFLICT,
+            status_code=httpx2.codes.CONFLICT,
             json={},
         )
         httpx_mock.add_response(
             method="DELETE",
             url=ENDPOINT,
-            status_code=httpx.codes.NO_CONTENT,
+            status_code=httpx2.codes.NO_CONTENT,
         )
 
         with caplog.at_level(logging.INFO):
@@ -554,7 +554,7 @@ class TestConnectorApiWrapper:
         httpx_mock.add_response(
             method="DELETE",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/offsets",
-            status_code=httpx.codes.NO_CONTENT,
+            status_code=httpx2.codes.NO_CONTENT,
         )
         with caplog.at_level(logging.INFO):
             await connect_wrapper.reset_offset(CONNECTOR_NAME)
@@ -571,7 +571,7 @@ class TestConnectorApiWrapper:
             method="DELETE",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/offsets",
             headers=HEADERS,
-            status_code=httpx.codes.NOT_FOUND,
+            status_code=httpx2.codes.NOT_FOUND,
             json={},
         )
         with pytest.raises(ConnectorNotFoundException):
@@ -583,7 +583,7 @@ class TestConnectorApiWrapper:
         httpx_mock.add_response(
             method="DELETE",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/offsets",
-            status_code=httpx.codes.INTERNAL_SERVER_ERROR,
+            status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
         )
         with pytest.raises(KafkaConnectError):
             await connect_wrapper.reset_offset(CONNECTOR_NAME)
@@ -599,7 +599,7 @@ class TestConnectorApiWrapper:
             }
         )
 
-    @patch("httpx.AsyncClient.put")
+    @patch("httpx2.AsyncClient.put")
     async def test_validate_connector_config_request(
         self,
         mock_put: AsyncMock,
