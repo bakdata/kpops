@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import StrEnum
-from typing import ClassVar, Self
+from typing import ClassVar, Self, Any
 
 import pydantic
 from pydantic import ConfigDict, Field
@@ -161,7 +161,7 @@ class StreamsAppAutoScaling(
     )
     internal_topics: SerializeAsOptional[list[str]] = []
     topics: SerializeAsOptional[list[str]] = []
-    additional_triggers: SerializeAsOptional[list[str]] = []
+    additional_triggers: SerializeAsOptional[list[dict[str, Any]]] = []
 
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 
