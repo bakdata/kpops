@@ -2,12 +2,12 @@ import json
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
-import httpx
+import httpx2
 import pytest
 import pytest_asyncio
 from anyio import Path
 from pydantic import AnyHttpUrl
-from pytest_httpx import HTTPXMock
+from pytest_httpx2 import HTTPXMock
 from pytest_mock import MockerFixture
 
 from kpops.component_handlers.topic.exception import (
@@ -45,13 +45,13 @@ class TestProxyWrapper:
             method="GET",
             url=f"{DEFAULT_HOST}/v3/clusters",
             json=cluster_response,
-            status_code=httpx.codes.OK,
+            status_code=httpx2.codes.OK,
         )
         assert kafka_rest.url == AnyHttpUrl(DEFAULT_HOST)
         assert kafka_rest.cluster_id == "cluster-1"
         return kafka_rest
 
-    @patch("httpx.AsyncClient.post")
+    @patch("httpx2.AsyncClient.post")
     async def test_should_create_topic_with_all_topic_configuration(
         self, mock_post: AsyncMock, kafka_rest: KafkaRest
     ) -> None:
@@ -76,7 +76,7 @@ class TestProxyWrapper:
             json=topic_spec,
         )
 
-    @patch("httpx.AsyncClient.post")
+    @patch("httpx2.AsyncClient.post")
     async def test_should_create_topic_with_no_configuration(
         self, mock_post: AsyncMock, kafka_rest: KafkaRest
     ) -> None:
@@ -93,7 +93,7 @@ class TestProxyWrapper:
             json=topic_spec,
         )
 
-    @patch("httpx.AsyncClient.get")
+    @patch("httpx2.AsyncClient.get")
     async def test_should_call_get_topic(
         self, mock_get: AsyncMock, kafka_rest: KafkaRest
     ) -> None:
@@ -107,7 +107,7 @@ class TestProxyWrapper:
             headers=HEADERS,
         )
 
-    @patch("httpx.AsyncClient.post")
+    @patch("httpx2.AsyncClient.post")
     async def test_should_call_batch_alter_topic_config(
         self, mock_put: AsyncMock, kafka_rest: KafkaRest
     ) -> None:
@@ -133,7 +133,7 @@ class TestProxyWrapper:
             },
         )
 
-    @patch("httpx.AsyncClient.delete")
+    @patch("httpx2.AsyncClient.delete")
     async def test_should_call_delete_topic(
         self, mock_delete: AsyncMock, kafka_rest: KafkaRest
     ) -> None:
@@ -147,7 +147,7 @@ class TestProxyWrapper:
             headers=HEADERS,
         )
 
-    @patch("httpx.AsyncClient.get")
+    @patch("httpx2.AsyncClient.get")
     async def test_should_call_get_broker_config(
         self, mock_get: AsyncMock, kafka_rest: KafkaRest
     ) -> None:
@@ -180,7 +180,7 @@ class TestProxyWrapper:
             url=f"{DEFAULT_HOST}/v3/clusters/cluster-1/topics",
             json=topic_spec,
             headers=HEADERS,
-            status_code=httpx.codes.CREATED,
+            status_code=httpx2.codes.CREATED,
         )
         await kafka_rest.create_topic(topic_spec=TopicSpec.model_validate(topic_spec))
         log_info_mock.assert_called_once_with("Topic topic-X created.")
@@ -197,7 +197,7 @@ class TestProxyWrapper:
             method="DELETE",
             url=f"{DEFAULT_HOST}/v3/clusters/cluster-1/topics/{topic_name}",
             headers=HEADERS,
-            status_code=httpx.codes.NO_CONTENT,
+            status_code=httpx2.codes.NO_CONTENT,
         )
         await kafka_rest.delete_topic(topic_name=topic_name)
         log_info_mock.assert_called_once_with("Topic topic-X deleted.")
@@ -231,7 +231,7 @@ class TestProxyWrapper:
             method="GET",
             url=f"{DEFAULT_HOST}/v3/clusters/cluster-1/topics/{topic_name}",
             headers=HEADERS,
-            status_code=httpx.codes.OK,
+            status_code=httpx2.codes.OK,
             json=res,
         )
 
@@ -252,7 +252,7 @@ class TestProxyWrapper:
             method="GET",
             url=f"{DEFAULT_HOST}/v3/clusters/cluster-1/topics/{topic_name}",
             headers=HEADERS,
-            status_code=httpx.codes.NOT_FOUND,
+            status_code=httpx2.codes.NOT_FOUND,
             json={
                 "error_code": 40403,
                 "message": "This server does not host this topic-partition.",
@@ -276,7 +276,7 @@ class TestProxyWrapper:
             url=f"{DEFAULT_HOST}/v3/clusters/cluster-1/topics/{topic_name}/configs:alter",
             headers=HEADERS,
             json={"data": [{"name": config_name, "operation": "DELETE"}]},
-            status_code=httpx.codes.NO_CONTENT,
+            status_code=httpx2.codes.NO_CONTENT,
         )
 
         await kafka_rest.batch_alter_topic_config(

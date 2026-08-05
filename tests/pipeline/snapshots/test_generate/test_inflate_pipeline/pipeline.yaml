@@ -149,7 +149,6 @@
     max.buffered.records: '20000'
     read.timeout.ms: '120000'
     tasks.max: '1'
-  resetter_values: {}
 - type: streams-app
   name: should-inflate-inflated-streams-app
   enabled: true

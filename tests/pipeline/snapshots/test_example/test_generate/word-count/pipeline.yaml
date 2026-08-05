@@ -73,4 +73,3 @@
     tasks.max: '1'
     key.converter: org.apache.kafka.connect.storage.StringConverter
     value.converter: org.apache.kafka.connect.storage.StringConverter
-  resetter_values: {}

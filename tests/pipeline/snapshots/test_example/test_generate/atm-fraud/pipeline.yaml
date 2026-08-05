@@ -224,4 +224,3 @@
     errors.deadletterqueue.topic.replication.factor: '1'
     errors.tolerance: all
     pk.mode: record_value
-  resetter_values: {}
