@@ -3,10 +3,10 @@ import json
 import logging
 from typing import Any
 
-import httpx
+import httpx2
 import pytest
 from anyio import Path
-from pytest_httpx import HTTPXMock
+from pytest_httpx2 import HTTPXMock
 from pytest_mock import MockerFixture
 
 from kpops.component_handlers.kafka_connect.exception import (
@@ -103,7 +103,7 @@ class TestKafkaConnect:
         httpx_mock.add_response(
             method="POST",
             url=f"{DEFAULT_HOST}/connectors",
-            status_code=httpx.codes.INTERNAL_SERVER_ERROR,
+            status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
         )
         with pytest.raises(KafkaConnectError):
             await kafka_connect.create_connector(connector_config)
@@ -123,7 +123,7 @@ class TestKafkaConnect:
         httpx_mock.add_response(
             method="POST",
             url=f"{DEFAULT_HOST}/connectors",
-            status_code=httpx.codes.INTERNAL_SERVER_ERROR,
+            status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
         )
         with pytest.raises(KafkaConnectError):
             await kafka_connect.create_connector(
@@ -147,7 +147,7 @@ class TestKafkaConnect:
             method="POST",
             url=f"{DEFAULT_HOST}/connectors",
             headers=HEADERS,
-            status_code=httpx.codes.CREATED,
+            status_code=httpx2.codes.CREATED,
             json=connector_response,
         )
 
@@ -168,14 +168,14 @@ class TestKafkaConnect:
             method="POST",
             url=ENDPOINT,
             headers=HEADERS,
-            status_code=httpx.codes.CONFLICT,
+            status_code=httpx2.codes.CONFLICT,
             json={},
         )
         httpx_mock.add_response(
             method="POST",
             url=ENDPOINT,
             headers=HEADERS,
-            status_code=httpx.codes.CREATED,
+            status_code=httpx2.codes.CREATED,
             json=connector_response,
         )
 
@@ -215,7 +215,7 @@ class TestKafkaConnect:
             method="GET",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
             headers=HEADERS,
-            status_code=httpx.codes.NOT_FOUND,
+            status_code=httpx2.codes.NOT_FOUND,
             json={},
         )
         with pytest.raises(ConnectorNotFoundException):
@@ -234,7 +234,7 @@ class TestKafkaConnect:
             method="GET",
             url=ENDPOINT,
             headers=HEADERS,
-            status_code=httpx.codes.CONFLICT,
+            status_code=httpx2.codes.CONFLICT,
             json={},
         )
         httpx_mock.add_response(
@@ -281,7 +281,7 @@ class TestKafkaConnect:
             method="GET",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/status",
             headers=HEADERS,
-            status_code=httpx.codes.OK,
+            status_code=httpx2.codes.OK,
             json=actual_response,
         )
         status = await kafka_connect.get_connector_status(CONNECTOR_NAME)
@@ -303,7 +303,7 @@ class TestKafkaConnect:
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/pause",
-            status_code=httpx.codes.ACCEPTED,
+            status_code=httpx2.codes.ACCEPTED,
         )
         with caplog.at_level(logging.INFO):
             await kafka_connect.pause_connector(CONNECTOR_NAME)
@@ -317,7 +317,7 @@ class TestKafkaConnect:
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/pause",
-            status_code=httpx.codes.INTERNAL_SERVER_ERROR,
+            status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
         )
         with pytest.raises(KafkaConnectError):
             await kafka_connect.pause_connector(CONNECTOR_NAME)
@@ -331,7 +331,7 @@ class TestKafkaConnect:
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/resume",
-            status_code=httpx.codes.ACCEPTED,
+            status_code=httpx2.codes.ACCEPTED,
         )
         with caplog.at_level(logging.INFO):
             await kafka_connect.resume_connector(CONNECTOR_NAME)
@@ -345,7 +345,7 @@ class TestKafkaConnect:
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/resume",
-            status_code=httpx.codes.INTERNAL_SERVER_ERROR,
+            status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
         )
         with pytest.raises(KafkaConnectError):
             await kafka_connect.resume_connector(CONNECTOR_NAME)
@@ -359,7 +359,7 @@ class TestKafkaConnect:
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/stop",
-            status_code=httpx.codes.NO_CONTENT,
+            status_code=httpx2.codes.NO_CONTENT,
         )
         with caplog.at_level(logging.INFO):
             await kafka_connect.stop_connector(CONNECTOR_NAME)
@@ -373,7 +373,7 @@ class TestKafkaConnect:
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/stop",
-            status_code=httpx.codes.INTERNAL_SERVER_ERROR,
+            status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
         )
         with pytest.raises(KafkaConnectError):
             await kafka_connect.stop_connector(CONNECTOR_NAME)
@@ -387,7 +387,7 @@ class TestKafkaConnect:
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/config",
-            status_code=httpx.codes.INTERNAL_SERVER_ERROR,
+            status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
             json={},
         )
         with pytest.raises(KafkaConnectError):
@@ -407,7 +407,7 @@ class TestKafkaConnect:
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/config",
             headers=HEADERS,
-            status_code=httpx.codes.OK,
+            status_code=httpx2.codes.OK,
             json=connector_response,
         )
         with caplog.at_level(logging.INFO):
@@ -434,7 +434,7 @@ class TestKafkaConnect:
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/config",
             headers=HEADERS,
-            status_code=httpx.codes.CREATED,
+            status_code=httpx2.codes.CREATED,
             json=connector_response,
         )
         with caplog.at_level(logging.INFO):
@@ -460,7 +460,7 @@ class TestKafkaConnect:
             method="PUT",
             url=ENDPOINT,
             headers=HEADERS,
-            status_code=httpx.codes.CONFLICT,
+            status_code=httpx2.codes.CONFLICT,
             json={},
         )
         httpx_mock.add_response(
@@ -493,7 +493,7 @@ class TestKafkaConnect:
         httpx_mock.add_response(
             method="DELETE",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
-            status_code=httpx.codes.NO_CONTENT,
+            status_code=httpx2.codes.NO_CONTENT,
         )
         with caplog.at_level(logging.INFO):
             await kafka_connect.delete_connector(CONNECTOR_NAME)
@@ -510,9 +510,9 @@ class TestKafkaConnect:
             method="DELETE",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
             headers=HEADERS,
-            status_code=httpx.codes.NOT_FOUND,
+            status_code=httpx2.codes.NOT_FOUND,
             json={
-                "error_code": httpx.codes.NOT_FOUND.value,
+                "error_code": httpx2.codes.NOT_FOUND.value,
                 "message": f"Connector {CONNECTOR_NAME} not found",
             },
         )
@@ -531,13 +531,13 @@ class TestKafkaConnect:
             method="DELETE",
             url=ENDPOINT,
             headers=HEADERS,
-            status_code=httpx.codes.CONFLICT,
+            status_code=httpx2.codes.CONFLICT,
             json={},
         )
         httpx_mock.add_response(
             method="DELETE",
             url=ENDPOINT,
-            status_code=httpx.codes.NO_CONTENT,
+            status_code=httpx2.codes.NO_CONTENT,
         )
 
         with caplog.at_level(logging.INFO):
@@ -561,7 +561,7 @@ class TestKafkaConnect:
         httpx_mock.add_response(
             method="DELETE",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/offsets",
-            status_code=httpx.codes.NO_CONTENT,
+            status_code=httpx2.codes.NO_CONTENT,
         )
         with caplog.at_level(logging.INFO):
             await kafka_connect.reset_offset(CONNECTOR_NAME)
@@ -578,7 +578,7 @@ class TestKafkaConnect:
             method="DELETE",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/offsets",
             headers=HEADERS,
-            status_code=httpx.codes.NOT_FOUND,
+            status_code=httpx2.codes.NOT_FOUND,
             json={},
         )
         with pytest.raises(ConnectorNotFoundException):
@@ -590,7 +590,7 @@ class TestKafkaConnect:
         httpx_mock.add_response(
             method="DELETE",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/offsets",
-            status_code=httpx.codes.INTERNAL_SERVER_ERROR,
+            status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
         )
         with pytest.raises(KafkaConnectError):
             await kafka_connect.reset_offset(CONNECTOR_NAME)
@@ -618,7 +618,7 @@ class TestKafkaConnect:
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}{endpoint}",
-            status_code=httpx.codes.INTERNAL_SERVER_ERROR,
+            status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
         )
         with pytest.raises(KafkaConnectError):
             await kafka_connect.validate_connector_config(file_stream_connector_config)
@@ -662,7 +662,7 @@ class TestKafkaConnect:
             method="POST",
             url=f"{DEFAULT_HOST}/connectors",
             headers=HEADERS,
-            status_code=httpx.codes.CREATED,
+            status_code=httpx2.codes.CREATED,
             json=connector_response,
         )
         with caplog.at_level(logging.DEBUG):
