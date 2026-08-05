@@ -23,7 +23,7 @@ HEADERS = {"Content-Type": "application/json"}
 DEFAULT_HOST = "http://localhost:8082"
 
 
-class TestProxyWrapper:
+class TestKafkaRest:
     @pytest.fixture(autouse=True)
     def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch("kpops.component_handlers.topic.kafka_rest.log.info")
