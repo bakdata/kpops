@@ -53,8 +53,6 @@ class KafkaConnect:
     async def _log_request(request: httpx2.Request) -> None:
         """Log an outgoing request."""
         log.debug(f"{request.method} {request.url}")
-        if request.content:
-            log.debug(request.content.decode())
 
     @staticmethod
     async def _log_response(response: httpx2.Response) -> None:

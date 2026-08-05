@@ -672,25 +672,18 @@ class TestKafkaConnect:
             record.message for record in caplog.records if record.levelname == "DEBUG"
         ]
         assert debug_messages[0] == f"POST {DEFAULT_HOST}/connectors"
-        assert json.loads(debug_messages[1]) == {
-            "name": CONNECTOR_NAME,
-            "config": connector_config.model_dump(),
-        }
-        assert debug_messages[2].startswith("HTTP/1.1 201 Created")
-        assert ast.literal_eval(debug_messages[3]) == connector_response
+        assert debug_messages[1].startswith("HTTP/1.1 201 Created")
+        assert ast.literal_eval(debug_messages[2]) == connector_response
 
     @pytest.mark.parametrize(
-        ("method_name", "arg_is_config", "http_method", "endpoint", "expects_body"),
+        ("method_name", "arg_is_config", "http_method", "endpoint"),
         [
-            pytest.param(
-                "create_connector", True, "POST", "/connectors", True, id="create"
-            ),
+            pytest.param("create_connector", True, "POST", "/connectors", id="create"),
             pytest.param(
                 "update_connector_config",
                 True,
                 "PUT",
                 f"/connectors/{CONNECTOR_NAME}/config",
-                True,
                 id="update",
             ),
             pytest.param(
@@ -698,7 +691,6 @@ class TestKafkaConnect:
                 False,
                 "PUT",
                 f"/connectors/{CONNECTOR_NAME}/pause",
-                False,
                 id="pause",
             ),
             pytest.param(
@@ -706,7 +698,6 @@ class TestKafkaConnect:
                 False,
                 "PUT",
                 f"/connectors/{CONNECTOR_NAME}/resume",
-                False,
                 id="resume",
             ),
             pytest.param(
@@ -714,7 +705,6 @@ class TestKafkaConnect:
                 False,
                 "PUT",
                 f"/connectors/{CONNECTOR_NAME}/stop",
-                False,
                 id="stop",
             ),
             pytest.param(
@@ -722,7 +712,6 @@ class TestKafkaConnect:
                 False,
                 "DELETE",
                 f"/connectors/{CONNECTOR_NAME}",
-                False,
                 id="delete",
             ),
             pytest.param(
@@ -730,7 +719,6 @@ class TestKafkaConnect:
                 False,
                 "DELETE",
                 f"/connectors/{CONNECTOR_NAME}/offsets",
-                False,
                 id="reset_offset",
             ),
         ],
@@ -745,7 +733,6 @@ class TestKafkaConnect:
         arg_is_config: bool,
         http_method: str,
         endpoint: str,
-        expects_body: bool,
     ) -> None:
         method = getattr(kafka_connect, method_name)
         arg = connector_config if arg_is_config else CONNECTOR_NAME
@@ -761,7 +748,4 @@ class TestKafkaConnect:
             record.message for record in caplog.records if record.levelname == "DEBUG"
         ]
         assert debug_messages[0] == f"{http_method} {DEFAULT_HOST}{endpoint}"
-        if expects_body:
-            assert debug_messages[1]  # request body was logged
-        else:
-            assert len(debug_messages) == 1
+        assert len(debug_messages) == 1
