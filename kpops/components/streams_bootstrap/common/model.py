@@ -165,6 +165,12 @@ class StreamsAppAutoScaling(
 
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
 
+    @pydantic.field_serializer("lag_threshold")
+    def serialize_lag_threshold(self, lag_threshold: int | None) -> str | None:
+        if lag_threshold is None:
+            return None
+        return str(lag_threshold)
+
 
 class PersistenceConfig(CamelCaseConfigModel, DescConfigModel):
     """streams-bootstrap persistence configurations.

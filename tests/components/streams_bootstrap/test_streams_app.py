@@ -143,6 +143,14 @@ class TestStreamsApp:
             == "${pipeline.name}-test-streams-app-with-lo-c98c5-clean"
         )
 
+    def test_lag_threshold_big_value(self, streams_app: StreamsApp):
+        streams_app.values.autoscaling = StreamsAppAutoScaling(
+            enabled=True,
+            lag_threshold=133713371337,
+        )
+        helm_values = streams_app.to_helm_values()
+        assert helm_values["autoscaling"]["lagThreshold"] == "133713371337"
+
     def test_cleaner_helm_name_override(self, streams_app: StreamsApp):
         assert (
             streams_app._cleaner.to_helm_values()["nameOverride"]
