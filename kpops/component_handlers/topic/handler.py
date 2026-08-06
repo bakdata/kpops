@@ -7,12 +7,12 @@ from kpops.component_handlers.topic.exception import (
     TopicNotFoundException,
     TopicTransactionError,
 )
+from kpops.component_handlers.topic.kafka_rest import HEADERS, KafkaRest
 from kpops.component_handlers.topic.model import (
     TopicConfigResponse,
     TopicResponse,
     TopicSpec,
 )
-from kpops.component_handlers.topic.proxy_wrapper import HEADERS, ProxyWrapper
 from kpops.component_handlers.topic.utils import (
     get_effective_config,
     parse_and_compare_topic_configs,
@@ -27,8 +27,8 @@ log = logging.getLogger("KafkaTopic")
 
 @final
 class TopicHandler:
-    def __init__(self, proxy_wrapper: ProxyWrapper) -> None:
-        self.proxy_wrapper = proxy_wrapper
+    def __init__(self, kafka_rest: KafkaRest) -> None:
+        self.kafka_rest = kafka_rest
 
     async def create_topic(self, topic: KafkaTopic, dry_run: bool) -> None:
         """Create a new Kafka topic or update topic configuration if it already exists.
@@ -68,11 +68,9 @@ class TopicHandler:
         self, topic: KafkaTopic, topic_spec: TopicSpec
     ) -> None:
         try:
-            topic_in_cluster = await self.proxy_wrapper.get_topic(topic.name)
+            topic_in_cluster = await self.kafka_rest.get_topic(topic.name)
             topic_name = topic_in_cluster.topic_name
-            topic_config_in_cluster = await self.proxy_wrapper.get_topic_config(
-                topic_name
-            )
+            topic_config_in_cluster = await self.kafka_rest.get_topic_config(topic_name)
             in_cluster_config, new_config = parse_and_compare_topic_configs(
                 topic_config_in_cluster, topic.config.configs
             )
@@ -89,7 +87,7 @@ class TopicHandler:
             }
             log.debug(error_message)
 
-            broker_config = await self.proxy_wrapper.get_broker_config()
+            broker_config = await self.kafka_rest.get_broker_config()
             effective_config = get_effective_config(broker_config)
 
             self.__check_partition_count(topic_in_cluster, topic_spec, effective_config)
@@ -102,8 +100,8 @@ class TopicHandler:
                     f"Topic Creation: {topic.name} does not exist in the cluster. Creating topic."
                 )
             )
-            log.debug(f"POST /clusters/{self.proxy_wrapper.cluster_id}/topics HTTP/1.1")
-            log.debug(f"Host: {self.proxy_wrapper.url}")
+            log.debug(f"POST /clusters/{self.kafka_rest.cluster_id}/topics HTTP/1.1")
+            log.debug(f"Host: {self.kafka_rest.url}")
             log.debug(HEADERS)
             log.debug(topic_spec.model_dump())
 
@@ -111,10 +109,8 @@ class TopicHandler:
         self, topic: KafkaTopic, topic_spec: TopicSpec
     ) -> None:
         try:
-            await self.proxy_wrapper.get_topic(topic.name)
-            topic_config_in_cluster = await self.proxy_wrapper.get_topic_config(
-                topic.name
-            )
+            await self.kafka_rest.get_topic(topic.name)
+            topic_config_in_cluster = await self.kafka_rest.get_topic_config(topic.name)
             differences = self.__get_topic_config_diff(
                 topic_config_in_cluster, topic.config.configs
             )
@@ -130,14 +126,14 @@ class TopicHandler:
                         json_body.append(
                             {"name": difference.key, "value": config_value}
                         )
-                await self.proxy_wrapper.batch_alter_topic_config(topic.name, json_body)
+                await self.kafka_rest.batch_alter_topic_config(topic.name, json_body)
 
             else:
                 log.info(
                     f"Topic Creation: config of topic {topic.name} didn't change. Skipping update."
                 )
         except TopicNotFoundException:
-            await self.proxy_wrapper.create_topic(topic_spec)
+            await self.kafka_rest.create_topic(topic_spec)
 
     @staticmethod
     def __check_partition_count(
@@ -178,20 +174,18 @@ class TopicHandler:
 
     async def __dry_run_topic_deletion(self, topic_name: str) -> None:
         try:
-            topic_in_cluster = await self.proxy_wrapper.get_topic(topic_name)
+            topic_in_cluster = await self.kafka_rest.get_topic(topic_name)
             log.info(
                 magentaify(
                     f"Topic Deletion: topic {topic_in_cluster.topic_name} exists in the cluster. Deleting topic."
                 )
             )
-            log.debug(
-                f"DELETE /clusters/{self.proxy_wrapper.cluster_id}/topics HTTP/1.1"
-            )
+            log.debug(f"DELETE /clusters/{self.kafka_rest.cluster_id}/topics HTTP/1.1")
         except TopicNotFoundException:
             log.warning(
                 f"Topic Deletion: topic {topic_name} does not exist in the cluster and cannot be deleted. Skipping."
             )
-            log.debug(f"Host: {self.proxy_wrapper.url}")
+            log.debug(f"Host: {self.kafka_rest.url}")
             log.debug(HEADERS)
             log.debug("HTTP/1.1 404 Not Found")
             log.debug(HEADERS)
@@ -203,8 +197,8 @@ class TopicHandler:
 
     async def __execute_topic_deletion(self, topic_name: str) -> None:
         try:
-            await self.proxy_wrapper.get_topic(topic_name)
-            await self.proxy_wrapper.delete_topic(topic_name)
+            await self.kafka_rest.get_topic(topic_name)
+            await self.kafka_rest.delete_topic(topic_name)
         except TopicNotFoundException:
             log.warning(
                 f"Topic Deletion: topic {topic_name} does not exist in the cluster and cannot be deleted. Skipping."

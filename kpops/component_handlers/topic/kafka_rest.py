@@ -28,8 +28,8 @@ HEADERS = {"Content-Type": "application/json"}
 
 
 @final
-class ProxyWrapper:
-    """Wraps Kafka REST Proxy APIs."""
+class KafkaRest:
+    """Wraps Kafka REST Proxy API."""
 
     def __init__(self, config: KafkaRestConfig) -> None:
         self._config: KafkaRestConfig = config
