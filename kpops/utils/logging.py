@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
     from kpops.components.base_components.pipeline_component import PipelineComponent
 
-logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("httpx2").setLevel(logging.WARNING)
 
 
 def _drop_root_logger_name(
@@ -112,7 +112,7 @@ LOG_DIVIDER = "#" * 100
 def log_action(action: str, pipeline_component: PipelineComponent) -> None:
     log.info("\n")
     log.info(LOG_DIVIDER)
-    log.info(f"{action} {pipeline_component.name}")
+    log.info(action, component_name=pipeline_component.name)
     log.info(LOG_DIVIDER)
     log.info("\n")
 

@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+from contextlib import suppress
 from functools import cached_property
 from typing import TYPE_CHECKING, Any, final
 
-import httpx
+import httpx2
 import structlog
 
 from kpops.component_handlers.topic import KAFKA_REST_PROXY
@@ -31,13 +32,69 @@ HEADERS = {"Content-Type": "application/json"}
 
 
 @final
-class ProxyWrapper:
+class KafkaRest:
     """Wraps Kafka REST Proxy APIs."""
 
     def __init__(self, config: KafkaRestConfig) -> None:
         self._config: KafkaRestConfig = config
-        self._client = httpx.AsyncClient(timeout=config.timeout)
-        self._sync_client = httpx.Client(timeout=config.timeout)
+        self._client = httpx2.AsyncClient(
+            timeout=config.timeout,
+            event_hooks={
+                "request": [self._log_request],
+                "response": [self._log_response],
+            },
+        )
+        self._sync_client = httpx2.Client(
+            timeout=config.timeout,
+            event_hooks={
+                "request": [self._sync_log_request],
+                "response": [self._sync_log_response],
+            },
+        )
+
+    @staticmethod
+    async def _log_request(request: httpx2.Request) -> None:
+        """Log an outgoing request."""
+        log.debug(
+            f"{request.method} {request.url}",
+            method=request.method,
+            url=str(request.url),
+        )
+
+    @staticmethod
+    async def _log_response(response: httpx2.Response) -> None:
+        """Log an incoming response."""
+        await response.aread()
+        body = None
+        with suppress(ValueError):
+            body = response.json()
+        log.debug(
+            f"{response.http_version} {response.status_code} {response.reason_phrase}",
+            status_code=response.status_code,
+            body=body,
+        )
+
+    @staticmethod
+    def _sync_log_request(request: httpx2.Request) -> None:
+        """Log an outgoing request."""
+        log.debug(
+            f"{request.method} {request.url}",
+            method=request.method,
+            url=str(request.url),
+        )
+
+    @staticmethod
+    def _sync_log_response(response: httpx2.Response) -> None:
+        """Log an incoming response."""
+        response.read()
+        body = None
+        with suppress(ValueError):
+            body = response.json()
+        log.debug(
+            f"{response.http_version} {response.status_code} {response.reason_phrase}",
+            status_code=response.status_code,
+            body=body,
+        )
 
     async def _request(
         self,
@@ -46,18 +103,17 @@ class ProxyWrapper:
         *,
         headers: dict[str, str] | None = None,
         json: dict[str, Any] | None = None,
-    ) -> httpx.Response:
+    ) -> httpx2.Response:
         """Send a request, translating transport failures into a KafkaRestProxyConnectionError."""
         try:
             return await self._client.request(method, url, headers=headers, json=json)
-        except httpx.TransportError as ex:
+        except httpx2.TransportError as ex:
             raise KafkaRestProxyConnectionError(url=url, cause=ex) from ex
 
-    def _sync_request(self, method: str, url: str) -> httpx.Response:
-        """Sync counterpart to `_request`."""
+    def _sync_request(self, method: str, url: str) -> httpx2.Response:
         try:
             return self._sync_client.request(method, url)
-        except httpx.TransportError as ex:
+        except httpx2.TransportError as ex:
             raise KafkaRestProxyConnectionError(url=url, cause=ex) from ex
 
     @cached_property
@@ -77,7 +133,7 @@ class ProxyWrapper:
         with bound_service_context(url=str(self.url)):
             response = self._sync_request("GET", url=f"{self._config.url!s}v3/clusters")
 
-            if response.status_code == httpx.codes.OK:
+            if response.status_code == httpx2.codes.OK.value:
                 cluster_information = response.json()
                 return cluster_information["data"][0]["cluster_id"]
 
@@ -105,7 +161,7 @@ class ProxyWrapper:
                 json=topic_spec.model_dump(exclude_none=True),
             )
 
-            if response.status_code == httpx.codes.CREATED:
+            if response.status_code == httpx2.codes.CREATED.value:
                 log.info("Topic created.", topic_name=topic_spec.topic_name)
                 return
 
@@ -128,7 +184,7 @@ class ProxyWrapper:
                 headers=HEADERS,
             )
 
-            if response.status_code == httpx.codes.NO_CONTENT:
+            if response.status_code == httpx2.codes.NO_CONTENT.value:
                 log.info("Topic deleted.", topic_name=topic_name)
                 return
 
@@ -152,12 +208,12 @@ class ProxyWrapper:
                 headers=HEADERS,
             )
 
-            if response.status_code == httpx.codes.OK:
+            if response.status_code == httpx2.codes.OK.value:
                 log.debug("Topic found.", topic_name=topic_name)
                 return TopicResponse.model_validate(response.json())
 
             elif (
-                response.status_code == httpx.codes.NOT_FOUND
+                response.status_code == httpx2.codes.NOT_FOUND.value
                 and response.json()["error_code"] == 40403
             ):
                 log.debug("Topic not found.", topic_name=topic_name)
@@ -183,12 +239,12 @@ class ProxyWrapper:
                 headers=HEADERS,
             )
 
-            if response.status_code == httpx.codes.OK:
+            if response.status_code == httpx2.codes.OK.value:
                 log.debug("Configs found.", topic_name=topic_name)
                 return TopicConfigResponse.model_validate(response.json())
 
             elif (
-                response.status_code == httpx.codes.NOT_FOUND
+                response.status_code == httpx2.codes.NOT_FOUND.value
                 and response.json()["error_code"] == 40403
             ):
                 log.debug("Configs not found.", topic_name=topic_name)
@@ -217,7 +273,7 @@ class ProxyWrapper:
                 json={"data": json_body},
             )
 
-            if response.status_code == httpx.codes.NO_CONTENT:
+            if response.status_code == httpx2.codes.NO_CONTENT.value:
                 log.info("Config of topic was altered.", topic_name=topic_name)
                 return
 
@@ -240,7 +296,7 @@ class ProxyWrapper:
                 headers=HEADERS,
             )
 
-            if response.status_code == httpx.codes.OK:
+            if response.status_code == httpx2.codes.OK.value:
                 log.debug("Broker configs found.")
                 return BrokerConfigResponse.model_validate(response.json())
 

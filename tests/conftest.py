@@ -1,4 +1,3 @@
-import logging
 import os
 import shutil
 from collections.abc import Iterator
@@ -6,12 +5,12 @@ from pathlib import Path
 from unittest import mock
 
 import pytest
+import structlog
 
 from kpops.utils.environment import ENV, Environment
 from kpops.utils.yaml import load_yaml_file
 
-logger = logging.getLogger("faker")
-logger.setLevel(logging.INFO)  # quiet faker locale messages
+logger = structlog.get_logger("faker")
 
 
 @pytest.fixture(autouse=True, scope="session")
@@ -55,7 +54,7 @@ def custom_components() -> Iterator[None]:
     src = Path("tests/pipeline/test_components")
     dst = Path("kpops/components/test_components")
     try:
-        shutil.copytree(src, dst)
+        shutil.copytree(src, dst, dirs_exist_ok=True)
         yield
     finally:
         shutil.rmtree(dst)

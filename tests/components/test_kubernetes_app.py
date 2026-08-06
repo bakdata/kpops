@@ -1,7 +1,4 @@
-from unittest.mock import MagicMock
-
 import pytest
-from pytest_mock import MockerFixture
 
 from kpops.component_handlers.helm_wrapper.model import (
     HelmRepoConfig,
@@ -11,6 +8,7 @@ from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
     KubernetesAppValues,
 )
+from kpops.config import KpopsConfig
 
 HELM_RELEASE_NAME = create_helm_release_name("${pipeline.name}-test-kubernetes-app")
 
@@ -19,10 +17,11 @@ class KubernetesTestValues(KubernetesAppValues):
     foo: str
 
 
+@pytest.mark.usefixtures("mock_env", "clear_kpops_config")
 class TestKubernetesApp:
-    @pytest.fixture()
-    def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch("kpops.components.base_components.kubernetes_app.log.info")
+    @pytest.fixture(autouse=True)
+    def config(self) -> KpopsConfig:
+        return KpopsConfig.create(None, verbose=False)
 
     @pytest.fixture()
     def app_values(self) -> KubernetesTestValues:
@@ -44,7 +43,8 @@ class TestKubernetesApp:
         self, app_values: KubernetesTestValues
     ) -> None:
         with pytest.raises(
-            ValueError, match=r"The component name .* is invalid for Kubernetes."
+            ValueError,
+            match=r"The component name .* is invalid for Kubernetes\.",
         ):
             KubernetesApp(
                 name="Not-Compatible*",
@@ -53,7 +53,8 @@ class TestKubernetesApp:
             )
 
         with pytest.raises(
-            ValueError, match=r"The component name .* is invalid for Kubernetes."
+            ValueError,
+            match=r"The component name .* is invalid for Kubernetes\.",
         ):
             KubernetesApp(
                 name="snake_case*",

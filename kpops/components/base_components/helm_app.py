@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-import logging
 from functools import cached_property
 from typing import Annotated, Any
 
 import pydantic
+import structlog
 from pydantic import Field, computed_field
 from typing_extensions import override
 
@@ -33,7 +33,7 @@ from kpops.manifests.kubernetes import K8S_LABEL_MAX_LEN, KubernetesManifest
 from kpops.utils.colorify import magentaify
 from kpops.utils.pydantic import SkipGenerate
 
-log = logging.getLogger("HelmApp")
+log = structlog.get_logger("HelmApp")
 
 
 class HelmAppValues(KubernetesAppValues):
@@ -215,8 +215,8 @@ class HelmApp(KubernetesApp):
             self._helm.get_manifest(self.helm_release_name, self.namespace)
         )
         if current_release:
-            log.info(f"Helm release {self.helm_release_name} already exists")
+            log.info("Helm release already exists", release=self.helm_release_name)
         else:
-            log.info(f"Helm release {self.helm_release_name} does not exist")
+            log.info("Helm release does not exist", release=self.helm_release_name)
         new_release = Helm.load_manifest(stdout)
         self._helm_diff.log_helm_diff(log, current_release, new_release)

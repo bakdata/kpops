@@ -1,10 +1,10 @@
 import json
 from typing import Any
 
-import httpx
+import httpx2
 import pytest
 from anyio import Path
-from pytest_httpx import HTTPXMock
+from pytest_httpx2 import HTTPXMock
 from pytest_mock import MockerFixture
 from structlog.testing import capture_logs
 
@@ -104,7 +104,7 @@ class TestKafkaConnect:
         httpx_mock.add_response(
             method="POST",
             url=f"{DEFAULT_HOST}/connectors",
-            status_code=httpx.codes.INTERNAL_SERVER_ERROR,
+            status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
         )
         with pytest.raises(KafkaConnectError):
             await kafka_connect.create_connector(connector_config)
@@ -124,7 +124,7 @@ class TestKafkaConnect:
         httpx_mock.add_response(
             method="POST",
             url=f"{DEFAULT_HOST}/connectors",
-            status_code=httpx.codes.INTERNAL_SERVER_ERROR,
+            status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
         )
         with pytest.raises(KafkaConnectError):
             await kafka_connect.create_connector(
@@ -148,7 +148,7 @@ class TestKafkaConnect:
             method="POST",
             url=f"{DEFAULT_HOST}/connectors",
             headers=HEADERS,
-            status_code=httpx.codes.CREATED,
+            status_code=httpx2.codes.CREATED,
             json=connector_response,
         )
 
@@ -168,14 +168,14 @@ class TestKafkaConnect:
             method="POST",
             url=ENDPOINT,
             headers=HEADERS,
-            status_code=httpx.codes.CONFLICT,
+            status_code=httpx2.codes.CONFLICT,
             json={},
         )
         httpx_mock.add_response(
             method="POST",
             url=ENDPOINT,
             headers=HEADERS,
-            status_code=httpx.codes.CREATED,
+            status_code=httpx2.codes.CREATED,
             json=connector_response,
         )
 
@@ -183,7 +183,7 @@ class TestKafkaConnect:
             await kafka_connect.create_connector(connector_config)
 
         assert {
-            "event": "Rebalancing in progress while creating. Retrying...",
+            "event": "Rebalancing in progress while creating a connector... Retrying...",
             "log_level": "warning",
         } in cap_logs
         assert {
@@ -216,7 +216,7 @@ class TestKafkaConnect:
             method="GET",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
             headers=HEADERS,
-            status_code=httpx.codes.NOT_FOUND,
+            status_code=httpx2.codes.NOT_FOUND,
             json={},
         )
         with pytest.raises(ConnectorNotFoundException):
@@ -234,7 +234,7 @@ class TestKafkaConnect:
             method="GET",
             url=ENDPOINT,
             headers=HEADERS,
-            status_code=httpx.codes.CONFLICT,
+            status_code=httpx2.codes.CONFLICT,
             json={},
         )
         httpx_mock.add_response(
@@ -246,7 +246,7 @@ class TestKafkaConnect:
         with capture_logs() as cap_logs:
             actual_response = await kafka_connect.get_connector(CONNECTOR_NAME)
         assert {
-            "event": "Rebalancing in progress while getting. Retrying...",
+            "event": "Rebalancing in progress while getting a connector... Retrying...",
             "log_level": "warning",
         } in cap_logs
         assert actual_response == ConnectorResponse.model_validate(connector_response)
@@ -280,7 +280,7 @@ class TestKafkaConnect:
             method="GET",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/status",
             headers=HEADERS,
-            status_code=httpx.codes.OK,
+            status_code=httpx2.codes.OK,
             json=actual_response,
         )
         status = await kafka_connect.get_connector_status(CONNECTOR_NAME)
@@ -301,7 +301,7 @@ class TestKafkaConnect:
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/pause",
-            status_code=httpx.codes.ACCEPTED,
+            status_code=httpx2.codes.ACCEPTED,
         )
         with capture_logs() as cap_logs:
             await kafka_connect.pause_connector(CONNECTOR_NAME)
@@ -317,7 +317,7 @@ class TestKafkaConnect:
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/pause",
-            status_code=httpx.codes.INTERNAL_SERVER_ERROR,
+            status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
         )
         with pytest.raises(KafkaConnectError):
             await kafka_connect.pause_connector(CONNECTOR_NAME)
@@ -330,7 +330,7 @@ class TestKafkaConnect:
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/resume",
-            status_code=httpx.codes.ACCEPTED,
+            status_code=httpx2.codes.ACCEPTED,
         )
         with capture_logs() as cap_logs:
             await kafka_connect.resume_connector(CONNECTOR_NAME)
@@ -346,7 +346,7 @@ class TestKafkaConnect:
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/resume",
-            status_code=httpx.codes.INTERNAL_SERVER_ERROR,
+            status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
         )
         with pytest.raises(KafkaConnectError):
             await kafka_connect.resume_connector(CONNECTOR_NAME)
@@ -359,7 +359,7 @@ class TestKafkaConnect:
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/stop",
-            status_code=httpx.codes.NO_CONTENT,
+            status_code=httpx2.codes.NO_CONTENT,
         )
         with capture_logs() as cap_logs:
             await kafka_connect.stop_connector(CONNECTOR_NAME)
@@ -375,7 +375,7 @@ class TestKafkaConnect:
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/stop",
-            status_code=httpx.codes.INTERNAL_SERVER_ERROR,
+            status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
         )
         with pytest.raises(KafkaConnectError):
             await kafka_connect.stop_connector(CONNECTOR_NAME)
@@ -389,7 +389,7 @@ class TestKafkaConnect:
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/config",
-            status_code=httpx.codes.INTERNAL_SERVER_ERROR,
+            status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
             json={},
         )
         with pytest.raises(KafkaConnectError):
@@ -408,7 +408,7 @@ class TestKafkaConnect:
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/config",
             headers=HEADERS,
-            status_code=httpx.codes.OK,
+            status_code=httpx2.codes.OK,
             json=connector_response,
         )
         with capture_logs() as cap_logs:
@@ -433,7 +433,7 @@ class TestKafkaConnect:
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/config",
             headers=HEADERS,
-            status_code=httpx.codes.CREATED,
+            status_code=httpx2.codes.CREATED,
             json=connector_response,
         )
         with capture_logs() as cap_logs:
@@ -460,7 +460,7 @@ class TestKafkaConnect:
             method="PUT",
             url=ENDPOINT,
             headers=HEADERS,
-            status_code=httpx.codes.CONFLICT,
+            status_code=httpx2.codes.CONFLICT,
             json={},
         )
         httpx_mock.add_response(
@@ -474,7 +474,7 @@ class TestKafkaConnect:
             await kafka_connect.update_connector_config(connector_config)
 
         assert {
-            "event": "Rebalancing in progress while updating. Retrying...",
+            "event": "Rebalancing in progress while updating a connector... Retrying...",
             "log_level": "warning",
         } in cap_logs
         assert {
@@ -491,7 +491,7 @@ class TestKafkaConnect:
         httpx_mock.add_response(
             method="DELETE",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
-            status_code=httpx.codes.NO_CONTENT,
+            status_code=httpx2.codes.NO_CONTENT,
         )
         with capture_logs() as cap_logs:
             await kafka_connect.delete_connector(CONNECTOR_NAME)
@@ -510,9 +510,9 @@ class TestKafkaConnect:
             method="DELETE",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
             headers=HEADERS,
-            status_code=httpx.codes.NOT_FOUND,
+            status_code=httpx2.codes.NOT_FOUND,
             json={
-                "error_code": httpx.codes.NOT_FOUND.value,
+                "error_code": httpx2.codes.NOT_FOUND.value,
                 "message": f"Connector {CONNECTOR_NAME} not found",
             },
         )
@@ -530,20 +530,20 @@ class TestKafkaConnect:
             method="DELETE",
             url=ENDPOINT,
             headers=HEADERS,
-            status_code=httpx.codes.CONFLICT,
+            status_code=httpx2.codes.CONFLICT,
             json={},
         )
         httpx_mock.add_response(
             method="DELETE",
             url=ENDPOINT,
-            status_code=httpx.codes.NO_CONTENT,
+            status_code=httpx2.codes.NO_CONTENT,
         )
 
         with capture_logs() as cap_logs:
             await kafka_connect.delete_connector(CONNECTOR_NAME)
 
         assert {
-            "event": "Rebalancing in progress while deleting. Retrying...",
+            "event": "Rebalancing in progress while deleting a connector... Retrying...",
             "log_level": "warning",
         } in cap_logs
         assert {
@@ -560,7 +560,7 @@ class TestKafkaConnect:
         httpx_mock.add_response(
             method="DELETE",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/offsets",
-            status_code=httpx.codes.NO_CONTENT,
+            status_code=httpx2.codes.NO_CONTENT,
         )
         with capture_logs() as cap_logs:
             await kafka_connect.reset_offset(CONNECTOR_NAME)
@@ -579,7 +579,7 @@ class TestKafkaConnect:
             method="DELETE",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/offsets",
             headers=HEADERS,
-            status_code=httpx.codes.NOT_FOUND,
+            status_code=httpx2.codes.NOT_FOUND,
             json={},
         )
         with pytest.raises(ConnectorNotFoundException):
@@ -591,7 +591,7 @@ class TestKafkaConnect:
         httpx_mock.add_response(
             method="DELETE",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/offsets",
-            status_code=httpx.codes.INTERNAL_SERVER_ERROR,
+            status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
         )
         with pytest.raises(KafkaConnectError):
             await kafka_connect.reset_offset(CONNECTOR_NAME)
@@ -599,7 +599,7 @@ class TestKafkaConnect:
     async def test_should_raise_connection_error_when_service_unreachable(
         self, kafka_connect: KafkaConnect, httpx_mock: HTTPXMock
     ) -> None:
-        httpx_mock.add_exception(httpx.ConnectError("Connection refused"))
+        httpx_mock.add_exception(httpx2.ConnectError("Connection refused"))
 
         with pytest.raises(KafkaConnectConnectionError, match="Connection refused"):
             await kafka_connect.get_connector(CONNECTOR_NAME)
@@ -617,8 +617,8 @@ class TestKafkaConnect:
         assert isinstance(exception, KafkaConnectException)
 
     def test_umbrella_exception_catches_http_response_error(self) -> None:
-        request = httpx.Request("GET", "http://x")
-        response = httpx.Response(500, json={"message": "oops"}, request=request)
+        request = httpx2.Request("GET", "http://x")
+        response = httpx2.Response(500, json={"message": "oops"}, request=request)
         error = KafkaConnectError(response)
         assert isinstance(error, KafkaConnectException)
 
@@ -645,7 +645,7 @@ class TestKafkaConnect:
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}{endpoint}",
-            status_code=httpx.codes.INTERNAL_SERVER_ERROR,
+            status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
         )
         with pytest.raises(KafkaConnectError):
             await kafka_connect.validate_connector_config(file_stream_connector_config)
@@ -668,6 +668,7 @@ class TestKafkaConnect:
             url=f"{DEFAULT_HOST}/connector-plugins/{file_stream_connector_config.name}/config/validate",
             headers=HEADERS,
             json=actual_response,
+            status_code=httpx2.codes.OK,
         )
 
         errors = await kafka_connect.validate_connector_config(
@@ -688,33 +689,26 @@ class TestKafkaConnect:
             method="POST",
             url=f"{DEFAULT_HOST}/connectors",
             headers=HEADERS,
-            status_code=httpx.codes.CREATED,
+            status_code=httpx2.codes.CREATED,
             json=connector_response,
         )
         with capture_logs() as cap_logs:
             await kafka_connect.create_connector(connector_config)
 
-        debug_events = [e["event"] for e in cap_logs if e["log_level"] == "debug"]
-        assert debug_events[0] == f"POST {DEFAULT_HOST}/connectors"
-        assert json.loads(debug_events[1]) == {
-            "name": CONNECTOR_NAME,
-            "config": connector_config.model_dump(),
-        }
-        assert debug_events[2].startswith("HTTP/1.1 201 Created")
-        assert debug_events[3] == connector_response
+        debug_events = [e for e in cap_logs if e["log_level"] == "debug"]
+        assert debug_events[0]["event"] == f"POST {DEFAULT_HOST}/connectors"
+        assert debug_events[1]["event"].startswith("HTTP/1.1 201 Created")
+        assert debug_events[1]["body"] == connector_response
 
     @pytest.mark.parametrize(
-        ("method_name", "arg_is_config", "http_method", "endpoint", "expects_body"),
+        ("method_name", "arg_is_config", "http_method", "endpoint"),
         [
-            pytest.param(
-                "create_connector", True, "POST", "/connectors", True, id="create"
-            ),
+            pytest.param("create_connector", True, "POST", "/connectors", id="create"),
             pytest.param(
                 "update_connector_config",
                 True,
                 "PUT",
                 f"/connectors/{CONNECTOR_NAME}/config",
-                True,
                 id="update",
             ),
             pytest.param(
@@ -722,7 +716,6 @@ class TestKafkaConnect:
                 False,
                 "PUT",
                 f"/connectors/{CONNECTOR_NAME}/pause",
-                False,
                 id="pause",
             ),
             pytest.param(
@@ -730,7 +723,6 @@ class TestKafkaConnect:
                 False,
                 "PUT",
                 f"/connectors/{CONNECTOR_NAME}/resume",
-                False,
                 id="resume",
             ),
             pytest.param(
@@ -738,7 +730,6 @@ class TestKafkaConnect:
                 False,
                 "PUT",
                 f"/connectors/{CONNECTOR_NAME}/stop",
-                False,
                 id="stop",
             ),
             pytest.param(
@@ -746,7 +737,6 @@ class TestKafkaConnect:
                 False,
                 "DELETE",
                 f"/connectors/{CONNECTOR_NAME}",
-                False,
                 id="delete",
             ),
             pytest.param(
@@ -754,7 +744,6 @@ class TestKafkaConnect:
                 False,
                 "DELETE",
                 f"/connectors/{CONNECTOR_NAME}/offsets",
-                False,
                 id="reset_offset",
             ),
         ],
@@ -768,7 +757,6 @@ class TestKafkaConnect:
         arg_is_config: bool,
         http_method: str,
         endpoint: str,
-        expects_body: bool,
     ) -> None:
         method = getattr(kafka_connect, method_name)
         arg = connector_config if arg_is_config else CONNECTOR_NAME
@@ -782,7 +770,4 @@ class TestKafkaConnect:
 
         debug_events = [e["event"] for e in cap_logs if e["log_level"] == "debug"]
         assert debug_events[0] == f"{http_method} {DEFAULT_HOST}{endpoint}"
-        if expects_body:
-            assert debug_events[1]  # request body was logged
-        else:
-            assert len(debug_events) == 1
+        assert len(debug_events) == 1

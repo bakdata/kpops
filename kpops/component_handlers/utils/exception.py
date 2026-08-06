@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-import httpx
+import httpx2
 from typing_extensions import override
 
 from kpops.core.exception import ServiceException
@@ -23,9 +23,9 @@ class ServiceConnectionError(ServiceException):
 class HttpResponseError(ServiceException):
     """An external service responded with a non-success HTTP status."""
 
-    def __init__(self, response: httpx.Response) -> None:
+    def __init__(self, response: httpx2.Response) -> None:
         self.error_code: int = response.status_code
-        self.response: httpx.Response = response
+        self.response: httpx2.Response = response
         reason = self._extract_reason(response)
         super().__init__(reason if reason else "Unknown error")
 
@@ -41,7 +41,7 @@ class HttpResponseError(ServiceException):
         logger.debug("Response details", status_code=self.error_code, body=self.body)
 
     @staticmethod
-    def _extract_reason(response: httpx.Response) -> str | None:
+    def _extract_reason(response: httpx2.Response) -> str | None:
         content_type = response.headers.get("Content-Type", "")
         if not content_type.startswith("application/json"):
             return None

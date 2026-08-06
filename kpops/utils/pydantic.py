@@ -1,9 +1,9 @@
 import json
-import logging
 from pathlib import Path
 from typing import Annotated, Any, ClassVar, TypeAlias, final
 
 import humps
+import structlog
 from pydantic import (
     BaseModel,
     BeforeValidator,
@@ -208,7 +208,7 @@ class DescConfigModel(BaseModel):
 class YamlConfigSettingsSource(PydanticBaseSettingsSource):
     """Loads variables from a YAML file at the project's root."""
 
-    log: logging.Logger = logging.getLogger()
+    log: structlog.stdlib.BoundLogger = structlog.get_logger()
 
     config_dir: Path = Path()
     config_file_base_name: str = "config"

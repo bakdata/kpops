@@ -1,9 +1,8 @@
+import contextlib
 import re
-from contextlib import nullcontext as does_not_raise
 from typing import Any
 
 import pytest
-from _pytest.python_api import RaisesContext
 from pydantic import ValidationError
 from pytest_mock import MockerFixture
 
@@ -181,88 +180,80 @@ class TestStreamsBootstrap:
     @pytest.mark.parametrize(
         ("input", "expectation"),
         [
-            pytest.param({"cpu": 1}, does_not_raise(), id="cpu int"),
-            pytest.param({"cpu": "1"}, does_not_raise(), id="cpu str without unit"),
-            pytest.param({"cpu": "10m"}, does_not_raise(), id="cpu str milli CPU"),
+            pytest.param({"cpu": 1}, None, id="cpu int"),
+            pytest.param({"cpu": "1"}, None, id="cpu str without unit"),
+            pytest.param({"cpu": "10m"}, None, id="cpu str milli CPU"),
             pytest.param(
                 {"cpu": "100foo"},
-                pytest.raises(ValidationError),
+                ValidationError,
                 id="cpu str disallow regex mismatch",
             ),
-            pytest.param(
-                {"cpu": 0}, pytest.raises(ValidationError), id="cpu int disallow 0"
-            ),
+            pytest.param({"cpu": 0}, ValidationError, id="cpu int disallow 0"),
             pytest.param(
                 {"cpu": -1},
-                pytest.raises(ValidationError),
+                ValidationError,
                 id="cpu int disallow negative",
             ),
-            pytest.param({"memory": 1}, does_not_raise(), id="memory int"),
-            pytest.param(
-                {"memory": "1"}, does_not_raise(), id="memory str without unit"
-            ),
-            pytest.param({"memory": "10G"}, does_not_raise(), id="memory str gigabyte"),
-            pytest.param({"memory": "1Gi"}, does_not_raise(), id="memory str gibibyte"),
-            pytest.param({"memory": "10M"}, does_not_raise(), id="memory str megabyte"),
-            pytest.param(
-                {"memory": "10Mi"}, does_not_raise(), id="memory str mebibyte"
-            ),
-            pytest.param(
-                {"memory": "2.5G"}, does_not_raise(), id="memory str decimal gigabyte"
-            ),
+            pytest.param({"memory": 1}, None, id="memory int"),
+            pytest.param({"memory": "1"}, None, id="memory str without unit"),
+            pytest.param({"memory": "10G"}, None, id="memory str gigabyte"),
+            pytest.param({"memory": "1Gi"}, None, id="memory str gibibyte"),
+            pytest.param({"memory": "10M"}, None, id="memory str megabyte"),
+            pytest.param({"memory": "10Mi"}, None, id="memory str mebibyte"),
+            pytest.param({"memory": "2.5G"}, None, id="memory str decimal gigabyte"),
             pytest.param(
                 {"memory": "0.599M"},
-                does_not_raise(),
+                None,
                 id="memory str decimal megabyte",
             ),
             pytest.param(
                 {"memory": 0},
-                pytest.raises(ValidationError),
+                ValidationError,
                 id="memory int disallow 0",
             ),
             pytest.param(
                 {"memory": -1},
-                pytest.raises(ValidationError),
+                ValidationError,
                 id="memory int disallow negative",
             ),
             pytest.param(
                 {"ephemeral-storage": "10G"},
-                does_not_raise(),
+                None,
                 id="ephemeral-storage str gigabyte",
             ),
             pytest.param(
                 {"ephemeral-storage": "1Gi"},
-                does_not_raise(),
+                None,
                 id="ephemeral-storage str gibibyte",
             ),
             pytest.param(
                 {"ephemeral-storage": "10M"},
-                does_not_raise(),
+                None,
                 id="ephemeral-storage str megabyte",
             ),
             pytest.param(
                 {"ephemeral-storage": "10Mi"},
-                does_not_raise(),
+                None,
                 id="ephemeral-storage str mebibyte",
             ),
             pytest.param(
                 {"ephemeral-storage": "2.5G"},
-                does_not_raise(),
+                None,
                 id="ephemeral-storage str decimal gigabyte",
             ),
             pytest.param(
                 {"ephemeral-storage": "0.599M"},
-                does_not_raise(),
+                None,
                 id="ephemeral-storage str decimal megabyte",
             ),
             pytest.param(
                 {"ephemeral-storage": 0},
-                pytest.raises(ValidationError),
+                ValidationError,
                 id="ephemeral-storage int disallow 0",
             ),
             pytest.param(
                 {"ephemeral-storage": -1},
-                pytest.raises(ValidationError),
+                ValidationError,
                 id="ephemeral-storage int disallow negative",
             ),
         ],
@@ -270,9 +261,14 @@ class TestStreamsBootstrap:
     def test_resource_definition(
         self,
         input: dict[str, Any],
-        expectation: RaisesContext[ValidationError] | does_not_raise[None],
+        expectation: type[Exception] | None,
     ) -> None:
-        with expectation:
+        if expectation is None:
+            context = contextlib.nullcontext()
+        else:
+            context = pytest.raises(expectation)
+
+        with context:
             assert ResourceDefinition.model_validate(input)
 
     def test_node_affinity(self) -> None:

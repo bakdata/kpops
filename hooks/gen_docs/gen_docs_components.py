@@ -1,10 +1,10 @@
 """Generates pipeline definition examples from manually written building blocks."""
 
-import logging
 import sys
 from pathlib import Path
 from typing import NamedTuple, cast
 
+import structlog
 import yaml
 
 from hooks import ROOT
@@ -79,7 +79,7 @@ DANGEROUS_FILES_TO_CHANGE = {
 # pre-commit/lefthook pass changed files as args
 SCRIPT_ARGUMENTS = set(sys.argv)
 
-log = logging.getLogger("DocumentationGenerator")
+log = structlog.get_logger("DocumentationGenerator")
 
 
 class KpopsComponent(NamedTuple):
@@ -162,7 +162,7 @@ def concatenate_text_files(*sources: Path, target: Path) -> None:
     with target.open("w+") as f:
         for source in sources:
             f.write(source.read_text())
-    log.debug("Successfully generated %s", target)
+    log.debug("Successfully generated file", target=target)
 
 
 def check_for_changes_in_kpops_component_structure() -> bool:

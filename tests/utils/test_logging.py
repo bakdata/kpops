@@ -1,4 +1,4 @@
-import httpx
+import httpx2
 import structlog
 from structlog.testing import capture_logs
 
@@ -47,8 +47,8 @@ def test_uses_named_logger_matching_the_failing_service() -> None:
 
 
 def test_logs_response_body_details_for_http_response_errors() -> None:
-    request = httpx.Request("GET", "http://x")
-    response = httpx.Response(500, json={"message": "oops"}, request=request)
+    request = httpx2.Request("GET", "http://x")
+    response = httpx2.Response(500, json={"message": "oops"}, request=request)
     error = KafkaRestProxyError(response)
 
     with capture_logs() as cap_logs:

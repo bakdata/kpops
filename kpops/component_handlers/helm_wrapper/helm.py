@@ -320,4 +320,4 @@ class Helm:
             elif "error" in lower:
                 raise HelmError(stderr)
             elif "warning" in lower:
-                log.warning(line)
+                log.warning("Helm output warning", warning=line)

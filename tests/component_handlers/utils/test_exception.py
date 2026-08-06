@@ -1,6 +1,6 @@
 from typing import ClassVar
 
-import httpx
+import httpx2
 import pytest
 
 from kpops.component_handlers.utils.exception import (
@@ -8,7 +8,7 @@ from kpops.component_handlers.utils.exception import (
     ServiceConnectionError,
 )
 
-REQUEST = httpx.Request("GET", "http://service.local")
+REQUEST = httpx2.Request("GET", "http://service.local")
 
 
 class _ExampleHttpError(HttpResponseError):
@@ -21,7 +21,7 @@ class _ExampleConnectionError(ServiceConnectionError):
 
 class TestHttpResponseError:
     def test_uses_message_field_from_json_body_as_reason(self) -> None:
-        response = httpx.Response(
+        response = httpx2.Response(
             404,
             json={"error_code": 40403, "message": "Topic not found."},
             request=REQUEST,
@@ -32,17 +32,17 @@ class TestHttpResponseError:
         assert error.response is response
 
     def test_falls_back_to_unknown_error_when_no_json_body(self) -> None:
-        response = httpx.Response(500, request=REQUEST)
+        response = httpx2.Response(500, request=REQUEST)
         error = _ExampleHttpError(response)
         assert str(error) == "Unknown error"
 
     def test_falls_back_to_unknown_error_when_json_body_has_no_message(self) -> None:
-        response = httpx.Response(500, json={"foo": "bar"}, request=REQUEST)
+        response = httpx2.Response(500, json={"foo": "bar"}, request=REQUEST)
         error = _ExampleHttpError(response)
         assert str(error) == "Unknown error"
 
     def test_message_never_embeds_service_name_or_status_code(self) -> None:
-        response = httpx.Response(
+        response = httpx2.Response(
             503, json={"message": "Service unavailable"}, request=REQUEST
         )
         error = _ExampleHttpError(response)
@@ -50,14 +50,14 @@ class TestHttpResponseError:
         assert "503" not in str(error)
 
     def test_body_property_returns_parsed_json(self) -> None:
-        response = httpx.Response(
+        response = httpx2.Response(
             500, json={"message": "oops", "detail": "x"}, request=REQUEST
         )
         error = _ExampleHttpError(response)
         assert error.body == {"message": "oops", "detail": "x"}
 
     def test_body_property_returns_none_for_non_json_response(self) -> None:
-        response = httpx.Response(500, text="not json", request=REQUEST)
+        response = httpx2.Response(500, text="not json", request=REQUEST)
         error = _ExampleHttpError(response)
         assert error.body is None
 

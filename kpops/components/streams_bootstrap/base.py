@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import logging
 import re
 from abc import ABC
 from typing import TYPE_CHECKING, Self
 
 import pydantic
+import structlog
 from pydantic import Field
 from typing_extensions import override
 
@@ -31,7 +31,7 @@ STREAMS_BOOTSTRAP_VERSION = "3.6.1"
 STREAMS_BOOTSTRAP_VERSION_PATTERN = r"^(\d+)\.(\d+)\.(\d+)(-[a-zA-Z]+(\.[a-zA-Z]+)?)?$"
 COMPILED_VERSION_PATTERN = re.compile(STREAMS_BOOTSTRAP_VERSION_PATTERN)
 
-log = logging.getLogger("StreamsBootstrap")
+log = structlog.get_logger("StreamsBootstrap")
 
 
 class StreamsBootstrap(KafkaApp, HelmApp, ABC):
@@ -74,7 +74,8 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
             not self.values.image_tag or self.values.image_tag == "latest"
         ):
             log.warning(
-                f"The image tag for component '{self.name}' is set or defaulted to 'latest'. Please, consider providing a stable image tag."
+                "The image tag is set or defaulted to 'latest'. Please, consider providing a stable image tag.",
+                component_name=self.name,
             )
         return self
 
@@ -126,12 +127,12 @@ class StreamsBootstrapCleaner(Cleaner, ABC):
 
         :param dry_run: Dry run command
         """
-        log.info(f"Uninstall old cleanup job for {self.helm_release_name}")
+        log.info("Uninstalling old cleanup job", release=self.helm_release_name)
         await self.destroy(dry_run)
 
-        log.info(f"Deploy cleanup job for {self.helm_release_name}")
+        log.info("Deploying cleanup job", release=self.helm_release_name)
         await self.deploy(dry_run)
 
         if not get_config().retain_clean_jobs:
-            log.info(f"Uninstall cleanup job for {self.helm_release_name}")
+            log.info("Uninstalling cleanup job", release=self.helm_release_name)
             await self.destroy(dry_run)

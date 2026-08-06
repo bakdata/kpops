@@ -1,16 +1,16 @@
-from logging import Logger
 from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
-from _pytest.logging import LogCaptureFixture
+import structlog
 from pytest_mock import MockerFixture
+from structlog.testing import capture_logs
 
 from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
 from kpops.component_handlers.helm_wrapper.model import HelmTemplate
 from kpops.manifests.kubernetes import KubernetesManifest
 
-log = Logger("TestLogger")
+log = structlog.get_logger("TestLogger")
 
 
 class TestDryRunHandler:
@@ -31,7 +31,6 @@ class TestDryRunHandler:
         helm_mock: MagicMock,
         helm_diff_mock: MagicMock,
         mocker: MockerFixture,
-        caplog: LogCaptureFixture,
     ) -> None:
         helm_mock.get_manifest.return_value = iter(())
         new_release = iter(
@@ -48,15 +47,19 @@ class TestDryRunHandler:
             "kpops.component_handlers.helm_wrapper.dry_run_handler.Helm.load_manifest",
             return_value=new_release,
         )
-        log.addHandler(caplog.handler)
 
         dry_run_handler = DryRunHandler(helm_mock, helm_diff_mock, "test-namespace")
-        dry_run_handler.print_helm_diff("A test stdout", "a-release-name", log)
+        with capture_logs() as cap_logs:
+            dry_run_handler.print_helm_diff("A test stdout", "a-release-name", log)
 
         helm_mock.get_manifest.assert_called_once_with(
             "a-release-name", "test-namespace"
         )
-        assert "Helm release a-release-name does not exist" in caplog.text
+        assert {
+            "event": "Helm release does not exist",
+            "release": "a-release-name",
+            "log_level": "info",
+        } in cap_logs
         mock_load_manifest.assert_called_once_with("A test stdout")
         helm_diff_mock.log_helm_diff.assert_called_once_with(log, [], new_release)
 
@@ -65,7 +68,6 @@ class TestDryRunHandler:
         helm_mock: MagicMock,
         helm_diff_mock: MagicMock,
         mocker: MockerFixture,
-        caplog: LogCaptureFixture,
     ) -> None:
         current_release = [
             HelmTemplate(
@@ -91,15 +93,19 @@ class TestDryRunHandler:
             "kpops.component_handlers.helm_wrapper.dry_run_handler.Helm.load_manifest",
             return_value=iter(new_release),
         )
-        log.addHandler(caplog.handler)
 
         dry_run_handler = DryRunHandler(helm_mock, helm_diff_mock, "test-namespace")
-        dry_run_handler.print_helm_diff("A test stdout", "a-release-name", log)
+        with capture_logs() as cap_logs:
+            dry_run_handler.print_helm_diff("A test stdout", "a-release-name", log)
 
         helm_mock.get_manifest.assert_called_once_with(
             "a-release-name", "test-namespace"
         )
-        assert "Helm release a-release-name already exists" in caplog.text
+        assert {
+            "event": "Helm release already exists",
+            "release": "a-release-name",
+            "log_level": "info",
+        } in cap_logs
         mock_load_manifest.assert_called_once_with("A test stdout")
         helm_diff_mock.log_helm_diff.assert_called_once_with(
             log, current_release, new_release
