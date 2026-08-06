@@ -1,3 +1,4 @@
+import re
 from unittest.mock import MagicMock
 
 import pytest
@@ -102,6 +103,8 @@ def test_strimzi_kafka_topic_missing_config(
 
     with pytest.raises(
         ValidationError,
-        match="When manifesting KafkaTopic you must define 'strimzi_topic.label' in the config.yaml",
+        match=re.escape(
+            "When manifesting KafkaTopic you must define 'strimzi_topic.label' in the config.yaml"
+        ),
     ):
         StrimziKafkaTopic.from_topic(kafka_topic)

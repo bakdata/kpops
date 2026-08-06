@@ -1,3 +1,4 @@
+import re
 from collections.abc import Iterable
 from typing import ClassVar
 
@@ -32,10 +33,10 @@ class TestKafkaTopic:
         assert model.model_dump()["topic"] == "topic-name"
 
         exc_msg = "Topic should be a valid KafkaTopic instance or topic name string"
-        with pytest.raises(ValueError, match=exc_msg):
+        with pytest.raises(ValueError, match=re.escape(exc_msg)):
             Model(topic="")  # pyright: ignore[reportArgumentType]
 
-        with pytest.raises(ValueError, match=exc_msg):
+        with pytest.raises(ValueError, match=re.escape(exc_msg)):
             Model(topic=1)  # pyright: ignore[reportArgumentType]
 
     @pytest.mark.parametrize(

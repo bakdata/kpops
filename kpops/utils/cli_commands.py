@@ -36,9 +36,7 @@ def extract_config_fields_for_yaml(
                 else:
                     extracted_fields[key] = str(value.default)
         else:
-            extracted_fields[key] = extract_config_fields_for_yaml(
-                fields[key], required
-            )
+            extracted_fields[key] = extract_config_fields_for_yaml(value, required)
     return extracted_fields
 
 

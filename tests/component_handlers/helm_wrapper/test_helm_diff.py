@@ -189,10 +189,12 @@ class TestHelmDiff:
                 ],
             )
             assert caplog.messages == [
-                "\n"
-                "\x1b[32m+ apiVersion: v1\n"
-                "\x1b[0m\x1b[32m+ kind: Deployment\n"
-                "\x1b[0m\x1b[32m+ metadata:\n"
-                "\x1b[0m\x1b[32m+   a: '1'\n"
-                "\x1b[0m"
+                (
+                    "\n"
+                    "\x1b[32m+ apiVersion: v1\n"
+                    "\x1b[0m\x1b[32m+ kind: Deployment\n"
+                    "\x1b[0m\x1b[32m+ metadata:\n"
+                    "\x1b[0m\x1b[32m+   a: '1'\n"
+                    "\x1b[0m"
+                )
             ]

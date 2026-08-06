@@ -56,7 +56,7 @@ class Registry:
 
     @staticmethod
     def iter_component_modules() -> Iterator[ModuleType]:
-        import kpops.components
+        import kpops.components  # noqa: PLC0415
 
         yield kpops.components
         yield from _iter_namespace(kpops.components)
