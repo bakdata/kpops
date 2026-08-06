@@ -1,3 +1,4 @@
+import logging
 import os
 import shutil
 from collections.abc import Iterator
@@ -5,12 +6,12 @@ from pathlib import Path
 from unittest import mock
 
 import pytest
-import structlog
 
 from kpops.utils.environment import ENV, Environment
 from kpops.utils.yaml import load_yaml_file
 
-logger = structlog.get_logger("faker")
+logger = logging.getLogger("faker")
+logger.setLevel(logging.INFO)  # quiet faker locale messages
 
 
 @pytest.fixture(autouse=True, scope="session")
