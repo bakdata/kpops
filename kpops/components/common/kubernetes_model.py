@@ -14,10 +14,7 @@ from kpops.utils.pydantic import (
 )
 
 if TYPE_CHECKING:
-    try:
-        from typing import Self
-    except ImportError:
-        from typing import Self
+    from typing import Self
 
 
 class ServiceType(enum.StrEnum):

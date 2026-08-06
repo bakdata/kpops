@@ -1,4 +1,3 @@
-import logging
 from collections.abc import AsyncIterator
 from pathlib import Path
 from unittest.mock import AsyncMock
@@ -11,6 +10,7 @@ from lightkube.models.core_v1 import (
 from lightkube.models.meta_v1 import ObjectMeta
 from lightkube.resources.core_v1 import PersistentVolumeClaim
 from pytest_mock import MockerFixture
+from structlog.testing import capture_logs
 
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
 
@@ -83,58 +83,64 @@ async def test_list_pvcs(
 async def test_delete_pvcs_dry_run(
     pvc_handler: PVCHandler,
     mocker: MockerFixture,
-    caplog: pytest.LogCaptureFixture,
 ) -> None:
-    caplog.set_level(logging.DEBUG)
     mock_delete = mocker.patch.object(
         pvc_handler._client, "delete", return_value=AsyncMock()
     )
-    await pvc_handler.delete_pvcs(True)
+    with capture_logs() as cap_logs:
+        await pvc_handler.delete_pvcs(True)
     mock_delete.assert_not_called()
-    assert (
-        "Deleting in namespace 'test-namespace' StatefulSet 'test-app' PVCs ['datadir-test-app-1', 'datadir-test-app-2']"
-        in caplog.text
-    )
+    assert {
+        "event": "Deleting PVCs.",
+        "app_name": "test-app",
+        "namespace": "test-namespace",
+        "pvc_names": ["datadir-test-app-1", "datadir-test-app-2"],
+        "log_level": "debug",
+    } in cap_logs
 
 
 async def test_delete_pvcs_dry_run_no_pvcs(
     pvc_handler: PVCHandler,
     mocker: MockerFixture,
-    caplog: pytest.LogCaptureFixture,
 ) -> None:
-    caplog.set_level(logging.DEBUG)
     mock_list = mocker.patch.object(
         pvc_handler._client, "list", return_value=AsyncMock()
     )
     mock_delete = mocker.patch.object(
         pvc_handler._client, "delete", return_value=AsyncMock()
     )
-    await pvc_handler.delete_pvcs(True)
+    with capture_logs() as cap_logs:
+        await pvc_handler.delete_pvcs(True)
     mock_list.assert_called_once()
     mock_delete.assert_not_called()
-    assert (
-        "No PVCs found for app 'test-app', in namespace 'test-namespace'" in caplog.text
-    )
+    assert {
+        "event": "No PVCs found.",
+        "app_name": "test-app",
+        "namespace": "test-namespace",
+        "log_level": "warning",
+    } in cap_logs
 
 
 @pytest.mark.usefixtures("mock_list_pvcs")
 async def test_delete_pvcs(
     pvc_handler: PVCHandler,
     mocker: MockerFixture,
-    caplog: pytest.LogCaptureFixture,
 ) -> None:
-    caplog.set_level(logging.DEBUG)
     mock_delete = mocker.patch.object(
         pvc_handler._client, "delete", return_value=AsyncMock()
     )
-    await pvc_handler.delete_pvcs(False)
+    with capture_logs() as cap_logs:
+        await pvc_handler.delete_pvcs(False)
     mock_delete.assert_has_calls(
         [
             mocker.call.delete(PersistentVolumeClaim, "datadir-test-app-1"),
             mocker.call.delete(PersistentVolumeClaim, "datadir-test-app-2"),
         ]
     )
-    assert (
-        "Deleting in namespace 'test-namespace' StatefulSet 'test-app' PVCs ['datadir-test-app-1', 'datadir-test-app-2']"
-        in caplog.text
-    )
+    assert {
+        "event": "Deleting PVCs.",
+        "app_name": "test-app",
+        "namespace": "test-namespace",
+        "pvc_names": ["datadir-test-app-1", "datadir-test-app-2"],
+        "log_level": "debug",
+    } in cap_logs

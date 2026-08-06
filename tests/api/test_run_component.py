@@ -1,14 +1,12 @@
 import asyncio
 from typing import cast
 
-import httpx
 import pytest
 from pytest_mock import MockerFixture
 from structlog.contextvars import merge_contextvars
 from structlog.testing import capture_logs
 
 from kpops.api import _run_component
-from kpops.component_handlers.topic.exception import KafkaRestProxyError
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.core.exception import KpopsException
 from kpops.utils.logging import bound_service_context
@@ -18,29 +16,6 @@ def fake_component(mocker: MockerFixture, name: str) -> PipelineComponent:
     component = mocker.MagicMock()
     component.name = name
     return cast("PipelineComponent", component)
-
-
-async def test_logs_and_reraises_kpops_exception_with_bound_context(
-    mocker: MockerFixture,
-) -> None:
-    component = fake_component(mocker, "test-component")
-
-    async def failing_operation() -> None:
-        with bound_service_context(service="Kafka REST Proxy", url="http://x"):
-            msg = "boom"
-            raise KpopsException(msg)
-
-    with (
-        capture_logs() as cap_logs,
-        pytest.raises(KpopsException) as exc_info,
-    ):
-        await _run_component("Deploy", component, failing_operation())
-
-    assert exc_info.value.logged is True
-    assert {
-        "event": "boom",
-        "log_level": "error",
-    }.items() <= next(e for e in cap_logs if e["log_level"] == "error").items()
 
 
 async def test_reraised_exception_is_marked_logged_to_avoid_double_logging(
@@ -56,28 +31,6 @@ async def test_reraised_exception_is_marked_logged_to_avoid_double_logging(
         await _run_component("Deploy", component, failing_operation())
 
     assert exc_info.value.logged is True
-
-
-async def test_logs_response_body_details_for_http_response_errors(
-    mocker: MockerFixture,
-) -> None:
-    component = fake_component(mocker, "test-component")
-    request = httpx.Request("GET", "http://x")
-    response = httpx.Response(500, json={"message": "oops"}, request=request)
-
-    async def failing_operation() -> None:
-        raise KafkaRestProxyError(response)
-
-    with capture_logs() as cap_logs, pytest.raises(KafkaRestProxyError):
-        await _run_component("Deploy", component, failing_operation())
-
-    debug_entries = [e for e in cap_logs if e["log_level"] == "debug"]
-    assert any(
-        e["event"] == "Response details"
-        and e.get("status_code") == 500
-        and e.get("body") == {"message": "oops"}
-        for e in debug_entries
-    )
 
 
 async def test_does_not_swallow_non_kpops_exceptions(mocker: MockerFixture) -> None:
@@ -103,7 +56,7 @@ async def test_parallel_component_failures_are_isolated(
     component_b = fake_component(mocker, "component-b")
 
     async def failing(name: str) -> None:
-        with bound_service_context(service="Kafka REST Proxy", url=f"http://{name}"):
+        with bound_service_context(url=f"http://{name}"):
             msg = f"{name} failed"
             raise KpopsException(msg)
 

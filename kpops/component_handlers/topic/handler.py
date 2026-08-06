@@ -1,18 +1,19 @@
 from __future__ import annotations
 
-import logging
 from typing import Any, final
+
+import structlog
 
 from kpops.component_handlers.topic.exception import (
     TopicNotFoundException,
     TopicTransactionError,
 )
+from kpops.component_handlers.topic.kafka_rest import KafkaRest
 from kpops.component_handlers.topic.model import (
     TopicConfigResponse,
     TopicResponse,
     TopicSpec,
 )
-from kpops.component_handlers.topic.proxy_wrapper import HEADERS, ProxyWrapper
 from kpops.component_handlers.topic.utils import (
     get_effective_config,
     parse_and_compare_topic_configs,
@@ -22,13 +23,13 @@ from kpops.components.common.topic import KafkaTopic
 from kpops.utils.colorify import greenify, magentaify
 from kpops.utils.dict_differ import Diff, DiffType, render_diff
 
-log = logging.getLogger("KafkaTopic")
+log = structlog.get_logger("KafkaTopic")
 
 
 @final
 class TopicHandler:
-    def __init__(self, proxy_wrapper: ProxyWrapper) -> None:
-        self.proxy_wrapper = proxy_wrapper
+    def __init__(self, kafka_rest: KafkaRest) -> None:
+        self.kafka_rest = kafka_rest
 
     async def create_topic(self, topic: KafkaTopic, dry_run: bool) -> None:
         """Create a new Kafka topic or update topic configuration if it already exists.
@@ -68,28 +69,19 @@ class TopicHandler:
         self, topic: KafkaTopic, topic_spec: TopicSpec
     ) -> None:
         try:
-            topic_in_cluster = await self.proxy_wrapper.get_topic(topic.name)
+            topic_in_cluster = await self.kafka_rest.get_topic(topic.name)
             topic_name = topic_in_cluster.topic_name
-            topic_config_in_cluster = await self.proxy_wrapper.get_topic_config(
-                topic_name
-            )
+            topic_config_in_cluster = await self.kafka_rest.get_topic_config(topic_name)
             in_cluster_config, new_config = parse_and_compare_topic_configs(
                 topic_config_in_cluster, topic.config.configs
             )
             if diff := render_diff(in_cluster_config, new_config):
-                log.info(f"Config changes for topic {topic_name}:")
+                log.info("Config changes for topic", topic_name=topic_name)
                 log.info("\n" + diff)
 
-            log.info(f"Topic Creation: {topic_name} already exists in cluster.")
-            log.debug("HTTP/1.1 400 Bad Request")
-            log.debug(HEADERS)
-            error_message = {
-                "error_code": 40002,
-                "message": f"Topic '{topic_name}' already exists.",
-            }
-            log.debug(error_message)
+            log.info("Topic already exists in cluster.", topic_name=topic_name)
 
-            broker_config = await self.proxy_wrapper.get_broker_config()
+            broker_config = await self.kafka_rest.get_broker_config()
             effective_config = get_effective_config(broker_config)
 
             self.__check_partition_count(topic_in_cluster, topic_spec, effective_config)
@@ -102,19 +94,13 @@ class TopicHandler:
                     f"Topic Creation: {topic.name} does not exist in the cluster. Creating topic."
                 )
             )
-            log.debug(f"POST /clusters/{self.proxy_wrapper.cluster_id}/topics HTTP/1.1")
-            log.debug(f"Host: {self.proxy_wrapper.url}")
-            log.debug(HEADERS)
-            log.debug(topic_spec.model_dump())
 
     async def __execute_topic_creation(
         self, topic: KafkaTopic, topic_spec: TopicSpec
     ) -> None:
         try:
-            await self.proxy_wrapper.get_topic(topic.name)
-            topic_config_in_cluster = await self.proxy_wrapper.get_topic_config(
-                topic.name
-            )
+            await self.kafka_rest.get_topic(topic.name)
+            topic_config_in_cluster = await self.kafka_rest.get_topic_config(topic.name)
             differences = self.__get_topic_config_diff(
                 topic_config_in_cluster, topic.config.configs
             )
@@ -130,14 +116,15 @@ class TopicHandler:
                         json_body.append(
                             {"name": difference.key, "value": config_value}
                         )
-                await self.proxy_wrapper.batch_alter_topic_config(topic.name, json_body)
+                await self.kafka_rest.batch_alter_topic_config(topic.name, json_body)
 
             else:
                 log.info(
-                    f"Topic Creation: config of topic {topic.name} didn't change. Skipping update."
+                    "Config of topic didn't change. Skipping update.",
+                    topic_name=topic.name,
                 )
         except TopicNotFoundException:
-            await self.proxy_wrapper.create_topic(topic_spec)
+            await self.kafka_rest.create_topic(topic_spec)
 
     @staticmethod
     def __check_partition_count(
@@ -151,7 +138,9 @@ class TopicHandler:
             topic_spec.partitions_count or int(broker_config["num.partitions"])
         ):
             log.debug(
-                f"Topic Creation: partition count of topic {topic_name} did not change. Current partitions count {partition_count}. Updating configs."
+                "Topic partition count did not change. Updating configs.",
+                topic_name=topic_name,
+                partition_count=partition_count,
             )
         else:
             msg = f"Topic Creation: partition count of topic {topic_name} changed! Partitions count of topic {topic_name} is {partition_count}. The given partitions count {topic_spec.partitions_count}."
@@ -170,7 +159,9 @@ class TopicHandler:
             or int(broker_config["default.replication.factor"])
         ):
             log.debug(
-                f"Topic Creation: replication factor of topic {topic_name} did not change. Current replication factor {replication_factor}. Updating configs."
+                "Topic replication factor did not change. Updating configs.",
+                topic_name=topic_name,
+                replication_factor=replication_factor,
             )
         else:
             msg = f"Topic Creation: replication factor of topic {topic_name} changed! Replication factor of topic {topic_name} is {replication_factor}. The given replication count {topic_spec.replication_factor}."
@@ -178,36 +169,26 @@ class TopicHandler:
 
     async def __dry_run_topic_deletion(self, topic_name: str) -> None:
         try:
-            topic_in_cluster = await self.proxy_wrapper.get_topic(topic_name)
+            topic_in_cluster = await self.kafka_rest.get_topic(topic_name)
             log.info(
                 magentaify(
                     f"Topic Deletion: topic {topic_in_cluster.topic_name} exists in the cluster. Deleting topic."
                 )
             )
-            log.debug(
-                f"DELETE /clusters/{self.proxy_wrapper.cluster_id}/topics HTTP/1.1"
-            )
         except TopicNotFoundException:
             log.warning(
-                f"Topic Deletion: topic {topic_name} does not exist in the cluster and cannot be deleted. Skipping."
+                "Topic does not exist in the cluster and cannot be deleted. Skipping.",
+                topic_name=topic_name,
             )
-            log.debug(f"Host: {self.proxy_wrapper.url}")
-            log.debug(HEADERS)
-            log.debug("HTTP/1.1 404 Not Found")
-            log.debug(HEADERS)
-            error_message = {
-                "error_code": 40403,
-                "message": f"This server does not host the topic-partition '{topic_name}'.",
-            }
-            log.debug(error_message)
 
     async def __execute_topic_deletion(self, topic_name: str) -> None:
         try:
-            await self.proxy_wrapper.get_topic(topic_name)
-            await self.proxy_wrapper.delete_topic(topic_name)
+            await self.kafka_rest.get_topic(topic_name)
+            await self.kafka_rest.delete_topic(topic_name)
         except TopicNotFoundException:
             log.warning(
-                f"Topic Deletion: topic {topic_name} does not exist in the cluster and cannot be deleted. Skipping."
+                "Topic does not exist in the cluster and cannot be deleted. Skipping.",
+                topic_name=topic_name,
             )
 
     @classmethod

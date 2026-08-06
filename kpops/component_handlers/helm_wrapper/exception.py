@@ -1,10 +1,11 @@
 from typing import ClassVar
 
+from kpops.component_handlers.helm_wrapper import HELM
 from kpops.core.exception import ServiceException
 
 
 class HelmException(ServiceException):
-    service: ClassVar[str] = "Helm"
+    service: ClassVar[str] = HELM
 
 
 class ReleaseNotFoundException(HelmException):

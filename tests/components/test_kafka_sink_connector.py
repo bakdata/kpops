@@ -37,10 +37,6 @@ CONNECTOR_TYPE = KafkaConnectorType.SINK.value
 
 
 class TestKafkaSinkConnector(TestKafkaConnector):
-    @pytest.fixture()
-    def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch("kpops.components.base_components.kafka_connector.log.info")
-
     @override
     @pytest.fixture()
     def connector(self, connector_config: KafkaConnectorConfig) -> KafkaSinkConnector:

@@ -12,8 +12,7 @@ from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
 )
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
-from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
-from kpops.component_handlers.utils.exception import HttpResponseError
+from kpops.component_handlers.topic.kafka_rest import KafkaRest
 from kpops.config import KpopsConfig
 from kpops.core.exception import KpopsException
 from kpops.core.operation import OperationMode
@@ -40,8 +39,6 @@ async def _run_component(
     try:
         await operation
     except KpopsException as e:
-        if isinstance(e, HttpResponseError):
-            log.debug("Response details", status_code=e.error_code, body=e.body)
         log_kpops_exception(e)
         raise
 
@@ -72,18 +69,20 @@ def generate(
         config, dotenv, environment, verbose, operation_mode
     )
     pipeline = _create_pipeline(pipeline_path, kpops_config, environment)
-    log.info(f"Picked up pipeline '{pipeline_path.parent.name}'")
+    log.info("Picked up pipeline", pipeline=pipeline_path.parent.name)
     if steps:
         component_names = steps
         log.debug(
-            f"KPOPS_PIPELINE_STEPS is defined with values: {component_names} and filter type of {filter_type.value}"
+            "KPOPS_PIPELINE_STEPS is defined",
+            steps=component_names,
+            filter_type=filter_type.value,
         )
 
         predicate = filter_type.create_default_step_names_filter_predicate(
             component_names
         )
         pipeline.filter(predicate)
-        log.info(f"Filtered pipeline:\n{pipeline.step_names}")
+        log.info("Filtered pipeline", steps=pipeline.step_names)
     return pipeline
 
 
@@ -423,7 +422,7 @@ def _setup_handlers(config: KpopsConfig) -> ComponentHandlers:
     """
     schema_handler = SchemaHandler.load_schema_handler(config)
     connector_handler = KafkaConnectHandler.from_kpops_config(config)
-    proxy_wrapper = ProxyWrapper(config.kafka_rest)
-    topic_handler = TopicHandler(proxy_wrapper)
+    kafka_rest = KafkaRest(config.kafka_rest)
+    topic_handler = TopicHandler(kafka_rest)
 
     return ComponentHandlers(schema_handler, connector_handler, topic_handler)

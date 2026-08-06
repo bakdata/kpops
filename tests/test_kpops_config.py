@@ -105,6 +105,6 @@ def test_strimzi_topic_config_valid() -> None:
 def test_strimzi_topic_config_empty_label() -> None:
     with pytest.raises(
         ValidationError,
-        match=r"'strimzi_topic.label' must contain a single key-value pair.",
+        match=re.escape("'strimzi_topic.label' must contain a single key-value pair."),
     ):
         StrimziTopicConfig.model_validate({"label": {}})

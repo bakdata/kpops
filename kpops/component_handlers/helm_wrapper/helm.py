@@ -13,6 +13,7 @@ import structlog
 import yaml
 from cachetools import cached
 
+from kpops.component_handlers.helm_wrapper import HELM
 from kpops.component_handlers.helm_wrapper.exception import (
     HelmError,
     ReleaseNotFoundException,
@@ -33,7 +34,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator
 
 
-log = structlog.get_logger("Helm")
+log = structlog.get_logger(HELM)
 
 
 def cache_key(
@@ -82,9 +83,7 @@ class Helm:
         command.extend(repo_auth_flags.to_command(self.version))
 
         with bound_service_context(
-            service="Helm",
-            repository_name=repository_name,
-            repository_url=repository_url,
+            repository_name=repository_name, repository_url=repository_url
         ):
             try:
                 self.__execute(command)
@@ -115,9 +114,7 @@ class Helm:
         if flags is None:
             flags = HelmUpgradeInstallFlags()
         with (
-            bound_service_context(
-                service="Helm", release_name=release_name, namespace=namespace
-            ),
+            bound_service_context(release_name=release_name, namespace=namespace),
             tempfile.NamedTemporaryFile("w", delete=False) as values_file,
         ):
             yaml.safe_dump(values, values_file)
@@ -154,9 +151,7 @@ class Helm:
         ]
         if dry_run:
             command.append("--dry-run")
-        with bound_service_context(
-            service="Helm", release_name=release_name, namespace=namespace
-        ):
+        with bound_service_context(release_name=release_name, namespace=namespace):
             try:
                 return await self.__async_execute(command)
             except ReleaseNotFoundException:
@@ -178,9 +173,7 @@ class Helm:
             "--output",
             "yaml",
         ]
-        with bound_service_context(
-            service="Helm", release_name=release_name, namespace=namespace
-        ):
+        with bound_service_context(release_name=release_name, namespace=namespace):
             try:
                 command_result = await self.__async_execute(command)
                 return yaml.safe_load(command_result)
@@ -212,10 +205,7 @@ class Helm:
             flags = HelmTemplateFlags()
         with (
             bound_service_context(
-                service="Helm",
-                release_name=release_name,
-                chart=chart,
-                namespace=namespace,
+                release_name=release_name, chart=chart, namespace=namespace
             ),
             tempfile.NamedTemporaryFile(mode="w", delete=False) as values_file,
         ):
@@ -245,9 +235,7 @@ class Helm:
             namespace,
         ]
 
-        with bound_service_context(
-            service="Helm", release_name=release_name, namespace=namespace
-        ):
+        with bound_service_context(release_name=release_name, namespace=namespace):
             try:
                 stdout = self.__execute(command=command)
                 return Helm.load_manifest(stdout)
@@ -332,4 +320,4 @@ class Helm:
             elif "error" in lower:
                 raise HelmError(stderr)
             elif "warning" in lower:
-                log.warning(line)
+                log.warning("Helm output warning", warning=line)
