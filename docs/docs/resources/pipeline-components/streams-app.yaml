@@ -112,7 +112,7 @@
       # - type: cron
       #   name: business_hours
       #   metadata:
-      #     timezone: Europe/Vienna
+      #     timezone: Europe/Berlin
       #     start: "0 8 * * 1-5"
       #     end: "0 18 * * 1-5"
       #     desiredReplicas: "2"
