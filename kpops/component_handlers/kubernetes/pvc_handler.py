@@ -5,7 +5,7 @@ import structlog
 from lightkube.core.async_client import AsyncClient
 from lightkube.resources.core_v1 import PersistentVolumeClaim
 
-log = structlog.get_logger("PVC_handler")
+log = structlog.get_logger("PVCHandler")
 
 
 @final
