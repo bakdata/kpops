@@ -1,4 +1,3 @@
-import re
 from unittest.mock import MagicMock
 
 import pytest
@@ -52,9 +51,7 @@ class TestKubernetesApp:
     ) -> None:
         with pytest.raises(
             ValueError,
-            match=re.escape("The component name ")
-            + ".*"
-            + re.escape(" is invalid for Kubernetes."),
+            match=r"The component name .* is invalid for Kubernetes\.",
         ):
             KubernetesApp(
                 name="Not-Compatible*",
@@ -64,9 +61,7 @@ class TestKubernetesApp:
 
         with pytest.raises(
             ValueError,
-            match=re.escape("The component name ")
-            + ".*"
-            + re.escape(" is invalid for Kubernetes."),
+            match=r"The component name .* is invalid for Kubernetes\.",
         ):
             KubernetesApp(
                 name="snake_case*",
