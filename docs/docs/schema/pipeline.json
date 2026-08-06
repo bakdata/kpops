@@ -245,6 +245,7 @@
                 "files": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -361,6 +362,7 @@
                 "livenessProbe": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -388,7 +390,7 @@
                 "persistence": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/PersistenceConfig"
+                            "$ref": "#/$defs/kpops__components__streams_bootstrap__common__model__PersistenceConfig"
                         },
                         {
                             "type": "null"
@@ -459,6 +461,7 @@
                 "readinessProbe": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -485,6 +488,7 @@
                     "anyOf": [
                         {
                             "items": {
+                                "additionalProperties": true,
                                 "type": "object"
                             },
                             "type": "array"
@@ -500,6 +504,7 @@
                 "secretRefs": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -592,6 +597,7 @@
                 "config": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -1695,45 +1701,6 @@
             "title": "OutputTopicTypes",
             "type": "string"
         },
-        "PersistenceConfig": {
-            "description": "streams-bootstrap persistence configurations.",
-            "properties": {
-                "enabled": {
-                    "default": false,
-                    "description": "Whether to use a persistent volume to store the state of the streams app.",
-                    "title": "Enabled",
-                    "type": "boolean"
-                },
-                "size": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "The size of the PersistentVolume to allocate to each streams pod in the StatefulSet.",
-                    "title": "Size"
-                },
-                "storageClass": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Storage class to use for the persistent volume.",
-                    "title": "Storageclass"
-                }
-            },
-            "title": "PersistenceConfig",
-            "type": "object"
-        },
         "PodAffinity": {
             "description": "Pod affinity is a group of inter pod affinity scheduling rules.",
             "properties": {
@@ -2338,6 +2305,7 @@
                 "files": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -2436,6 +2404,7 @@
                 "livenessProbe": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -2510,6 +2479,7 @@
                 "readinessProbe": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -2561,6 +2531,7 @@
                     "anyOf": [
                         {
                             "items": {
+                                "additionalProperties": true,
                                 "type": "object"
                             },
                             "type": "array"
@@ -2576,6 +2547,7 @@
                 "secretRefs": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -3416,7 +3388,7 @@
                     "title": "NameOverride"
                 },
                 "persistence": {
-                    "$ref": "#/$defs/PersistenceConfig",
+                    "$ref": "#/$defs/kpops__components__streams_bootstrap_v2__streams__model__PersistenceConfig",
                     "default": {
                         "enabled": false,
                         "size": null,
@@ -3544,6 +3516,7 @@
                 "files": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -3662,6 +3635,7 @@
                 "livenessProbe": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -3689,7 +3663,7 @@
                 "persistence": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/PersistenceConfig"
+                            "$ref": "#/$defs/kpops__components__streams_bootstrap__common__model__PersistenceConfig"
                         },
                         {
                             "type": "null"
@@ -3760,6 +3734,7 @@
                 "readinessProbe": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -3786,6 +3761,7 @@
                     "anyOf": [
                         {
                             "items": {
+                                "additionalProperties": true,
                                 "type": "object"
                             },
                             "type": "array"
@@ -3801,6 +3777,7 @@
                 "secretRefs": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -4081,6 +4058,58 @@
             "title": "WeightedPodAffinityTerm",
             "type": "object"
         },
+        "kpops__components__streams_bootstrap__common__model__PersistenceConfig": {
+            "description": "streams-bootstrap persistence configurations.",
+            "properties": {
+                "enabled": {
+                    "default": false,
+                    "description": "Whether to use a persistent volume to store the state of the streams app.",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
+                "size": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The size of the PersistentVolume to allocate to each streams pod in the StatefulSet.",
+                    "title": "Size"
+                },
+                "storageClass": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Storage class to use for the persistent volume.",
+                    "title": "Storageclass"
+                },
+                "volumeAttributesClassName": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "VolumeAttributesClass to use for the persistent volume.",
+                    "title": "Volumeattributesclassname"
+                }
+            },
+            "title": "PersistenceConfig",
+            "type": "object"
+        },
         "kpops__components__streams_bootstrap__common__model__StreamsAppAutoScaling": {
             "additionalProperties": true,
             "description": "Kubernetes Event-driven Autoscaling config.",
@@ -4260,6 +4289,7 @@
                 "config": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -4404,6 +4434,45 @@
             "title": "StreamsConfig",
             "type": "object"
         },
+        "kpops__components__streams_bootstrap_v2__streams__model__PersistenceConfig": {
+            "description": "streams-bootstrap persistence configurations.",
+            "properties": {
+                "enabled": {
+                    "default": false,
+                    "description": "Whether to use a persistent volume to store the state of the streams app.",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
+                "size": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The size of the PersistentVolume to allocate to each streams pod in the StatefulSet.",
+                    "title": "Size"
+                },
+                "storageClass": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Storage class to use for the persistent volume.",
+                    "title": "Storageclass"
+                }
+            },
+            "title": "PersistenceConfig",
+            "type": "object"
+        },
         "kpops__components__streams_bootstrap_v2__streams__model__StreamsAppAutoScaling": {
             "additionalProperties": true,
             "description": "Kubernetes Event-driven Autoscaling config.",
@@ -4506,6 +4575,7 @@
                     "type": "string"
                 },
                 "config": {
+                    "additionalProperties": true,
                     "default": {},
                     "description": "Configuration",
                     "title": "Config",
