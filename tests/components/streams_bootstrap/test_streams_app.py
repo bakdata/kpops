@@ -845,6 +845,93 @@ class TestStreamsApp:
             "version": "3.6.1",
         }
 
+    def test_generate_with_autoscaling_triggers(self, streams_app: StreamsApp) -> None:
+        streams_app.values.autoscaling = StreamsAppAutoScaling(
+            enabled=True,
+            triggers=[
+                {
+                    "type": "cron",
+                    "name": "business_hours",
+                    "metadata": {
+                        "timezone": "Europe/Berlin",
+                        "start": "0 8 * * 1-5",
+                        "end": "0 18 * * 1-5",
+                        "desiredReplicas": "2",
+                    },
+                }
+            ],
+        )
+        assert streams_app.generate()["values"]["autoscaling"] == {
+            "enabled": True,
+            "triggers": [
+                {
+                    "type": "cron",
+                    "name": "business_hours",
+                    "metadata": {
+                        "timezone": "Europe/Berlin",
+                        "start": "0 8 * * 1-5",
+                        "end": "0 18 * * 1-5",
+                        "desiredReplicas": "2",
+                    },
+                }
+            ],
+        }
+
+    def test_generate_with_autoscaling_scaling_modifiers(
+        self, streams_app: StreamsApp
+    ) -> None:
+        streams_app.values.autoscaling = StreamsAppAutoScaling(
+            enabled=True,
+            triggers=[{"type": "cron", "name": "business_hours", "metadata": {}}],
+            scaling_modifiers={
+                "formula": "business_hours",
+                "target": "1",
+                "metricType": "AverageValue",
+            },
+        )
+        assert streams_app.generate()["values"]["autoscaling"]["scalingModifiers"] == {
+            "formula": "business_hours",
+            "target": "1",
+            "metricType": "AverageValue",
+        }
+
+    def test_generate_with_autoscaling_additional_triggers(
+        self, streams_app: StreamsApp
+    ) -> None:
+        streams_app.values.autoscaling = StreamsAppAutoScaling(
+            enabled=True,
+            lag_threshold=100,
+            additional_triggers=[
+                {
+                    "type": "cpu",
+                    "metricType": "Utilization",
+                    "metadata": {"value": "80"},
+                }
+            ],
+        )
+        assert streams_app.generate()["values"]["autoscaling"] == {
+            "enabled": True,
+            "lagThreshold": 100,
+            "additionalTriggers": [
+                {
+                    "type": "cpu",
+                    "metricType": "Utilization",
+                    "metadata": {"value": "80"},
+                }
+            ],
+        }
+
+    def test_generate_without_autoscaling_triggers(
+        self, streams_app: StreamsApp
+    ) -> None:
+        streams_app.values.autoscaling = StreamsAppAutoScaling(
+            enabled=True, lag_threshold=100
+        )
+        assert streams_app.generate()["values"]["autoscaling"] == {
+            "enabled": True,
+            "lagThreshold": 100,
+        }
+
     @pytest.fixture()
     def pvc1(self) -> PersistentVolumeClaim:
         return PersistentVolumeClaim(

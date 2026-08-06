@@ -664,6 +664,42 @@ class TestConsumerApp:
             "version": "3.6.1",
         }
 
+    def test_generate_with_autoscaling_triggers(
+        self, consumer_app: ConsumerApp
+    ) -> None:
+        consumer_app.values.autoscaling = StreamsAppAutoScaling(
+            enabled=True,
+            triggers=[
+                {
+                    "type": "cron",
+                    "name": "business_hours",
+                    "metadata": {
+                        "timezone": "Europe/Berlin",
+                        "start": "0 8 * * 1-5",
+                        "end": "0 18 * * 1-5",
+                        "desiredReplicas": "2",
+                    },
+                }
+            ],
+            scaling_modifiers={"formula": "business_hours", "target": "1"},
+        )
+        assert consumer_app.generate()["values"]["autoscaling"] == {
+            "enabled": True,
+            "triggers": [
+                {
+                    "type": "cron",
+                    "name": "business_hours",
+                    "metadata": {
+                        "timezone": "Europe/Berlin",
+                        "start": "0 8 * * 1-5",
+                        "end": "0 18 * * 1-5",
+                        "desiredReplicas": "2",
+                    },
+                }
+            ],
+            "scalingModifiers": {"formula": "business_hours", "target": "1"},
+        }
+
     @pytest.fixture()
     def pvc1(self) -> PersistentVolumeClaim:
         return PersistentVolumeClaim(
