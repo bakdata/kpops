@@ -1,5 +1,6 @@
 import json
 import logging
+import re
 from unittest import mock
 from unittest.mock import AsyncMock, MagicMock
 
@@ -388,7 +389,9 @@ class TestTopicHandler:
 
         with pytest.raises(
             TopicTransactionError,
-            match=r"Topic Creation: partition count of topic topic-X changed! Partitions count of topic topic-X is 10. The given partitions count 200.",
+            match=re.escape(
+                "Topic Creation: partition count of topic topic-X changed! Partitions count of topic topic-X is 10. The given partitions count 200."
+            ),
         ):
             await topic_handler.create_topic(topic, dry_run=True)
         kafka_rest.get_topic_config.assert_called_once()  # dry run requests the config to create the diff
@@ -410,7 +413,9 @@ class TestTopicHandler:
 
         with pytest.raises(
             TopicTransactionError,
-            match=r"Topic Creation: replication factor of topic topic-X changed! Replication factor of topic topic-X is 3. The given replication count 300.",
+            match=re.escape(
+                "Topic Creation: replication factor of topic topic-X changed! Replication factor of topic topic-X is 3. The given replication count 300."
+            ),
         ):
             await topic_handler.create_topic(topic, dry_run=True)
         kafka_rest.get_topic_config.assert_called_once()  # dry run requests the config to create the diff

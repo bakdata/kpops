@@ -1,3 +1,4 @@
+import re
 from unittest import mock
 from unittest.mock import AsyncMock, MagicMock
 
@@ -321,7 +322,9 @@ class TestConnectorHandler:
 
         with pytest.raises(
             ConnectorStateException,
-            match=f"Connector Creation: validating the connector config for connector {CONNECTOR_NAME} resulted in the following errors: {formatted_errors}",
+            match=re.escape(
+                f"Connector Creation: validating the connector config for connector {CONNECTOR_NAME} resulted in the following errors: {formatted_errors}"
+            ),
         ):
             await handler.create_connector(connector_config, state=None, dry_run=True)
 
