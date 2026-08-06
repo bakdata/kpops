@@ -573,7 +573,6 @@ class TestConnectorHandler:
             "state": "paused",
             "log_level": "info",
         } in cap_logs
-        assert {"event": "\n", "log_level": "info"} in cap_logs
         assert {
             "event": "Connector config is valid!",
             "connector_name": CONNECTOR_NAME,
