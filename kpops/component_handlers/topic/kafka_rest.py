@@ -4,7 +4,7 @@ import logging
 from functools import cached_property
 from typing import TYPE_CHECKING, Any, final
 
-import httpx
+import httpx2
 
 from kpops.component_handlers.topic.exception import (
     KafkaRestProxyError,
@@ -28,13 +28,13 @@ HEADERS = {"Content-Type": "application/json"}
 
 
 @final
-class ProxyWrapper:
-    """Wraps Kafka REST Proxy APIs."""
+class KafkaRest:
+    """Wraps Kafka REST Proxy API."""
 
     def __init__(self, config: KafkaRestConfig) -> None:
         self._config: KafkaRestConfig = config
-        self._client = httpx.AsyncClient(timeout=config.timeout)
-        self._sync_client = httpx.Client(timeout=config.timeout)
+        self._client = httpx2.AsyncClient(timeout=config.timeout)
+        self._sync_client = httpx2.Client(timeout=config.timeout)
 
     @cached_property
     def cluster_id(self) -> str:
@@ -51,7 +51,7 @@ class ProxyWrapper:
         """
         response = self._sync_client.get(url=f"{self._config.url!s}v3/clusters")
 
-        if response.status_code == httpx.codes.OK:
+        if response.status_code == httpx2.codes.OK:
             cluster_information = response.json()
             return cluster_information["data"][0]["cluster_id"]
 
@@ -76,7 +76,7 @@ class ProxyWrapper:
             json=topic_spec.model_dump(exclude_none=True),
         )
 
-        if response.status_code == httpx.codes.CREATED:
+        if response.status_code == httpx2.codes.CREATED:
             log.info(f"Topic {topic_spec.topic_name} created.")
             log.debug(response.json())
             return
@@ -97,7 +97,7 @@ class ProxyWrapper:
             headers=HEADERS,
         )
 
-        if response.status_code == httpx.codes.NO_CONTENT:
+        if response.status_code == httpx2.codes.NO_CONTENT:
             log.info(f"Topic {topic_name} deleted.")
             return
 
@@ -118,13 +118,13 @@ class ProxyWrapper:
             headers=HEADERS,
         )
 
-        if response.status_code == httpx.codes.OK:
+        if response.status_code == httpx2.codes.OK:
             log.debug(f"Topic {topic_name} found.")
             log.debug(response.json())
             return TopicResponse.model_validate(response.json())
 
         elif (
-            response.status_code == httpx.codes.NOT_FOUND
+            response.status_code == httpx2.codes.NOT_FOUND
             and response.json()["error_code"] == 40403
         ):
             log.debug(f"Topic {topic_name} not found.")
@@ -148,13 +148,13 @@ class ProxyWrapper:
             headers=HEADERS,
         )
 
-        if response.status_code == httpx.codes.OK:
+        if response.status_code == httpx2.codes.OK:
             log.debug(f"Configs for {topic_name} found.")
             log.debug(response.json())
             return TopicConfigResponse.model_validate(response.json())
 
         elif (
-            response.status_code == httpx.codes.NOT_FOUND
+            response.status_code == httpx2.codes.NOT_FOUND
             and response.json()["error_code"] == 40403
         ):
             log.debug(f"Configs for {topic_name} not found.")
@@ -181,7 +181,7 @@ class ProxyWrapper:
             json={"data": json_body},
         )
 
-        if response.status_code == httpx.codes.NO_CONTENT:
+        if response.status_code == httpx2.codes.NO_CONTENT:
             log.info(f"Config of topic {topic_name} was altered.")
             return
 
@@ -201,7 +201,7 @@ class ProxyWrapper:
             headers=HEADERS,
         )
 
-        if response.status_code == httpx.codes.OK:
+        if response.status_code == httpx2.codes.OK:
             log.debug("Broker configs found.")
             log.debug(response.json())
             return BrokerConfigResponse.model_validate(response.json())

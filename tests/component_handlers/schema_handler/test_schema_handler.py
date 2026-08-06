@@ -1,5 +1,6 @@
 import json
 import logging
+import re
 from unittest import mock
 from unittest.mock import AsyncMock, MagicMock
 
@@ -111,9 +112,11 @@ def test_should_raise_value_error_if_schema_provider_class_not_found(
 
     with pytest.raises(
         ValueError,
-        match="No schema provider found. "
-        "Please implement the abstract method in "
-        f"{SchemaProvider.__module__}.{SchemaProvider.__name__}.",
+        match=re.escape(
+            "No schema provider found. "
+            "Please implement the abstract method in "
+            f"{SchemaProvider.__module__}.{SchemaProvider.__name__}."
+        ),
     ):
         schema_handler.schema_provider.provide_schema(
             "com.bakdata.kpops.test.SchemaHandlerTest", {}

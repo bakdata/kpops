@@ -230,8 +230,8 @@ class TestEnvDocGen:
             f.write(",".join(csv_record))
         write_csv_to_md_file(source, target, title, description, heading)
         with target.open("r", newline="") as f:
-            assert f.read().replace("\r\n", "\n").replace("\r", "\n") == expected + str(
+            assert f.read().replace("\r\n", "\n").replace("\r", "\n") == expected + (
                 "|Name|Default Value|Required|Description|Setting name|\n"
                 "|----|-------------|--------|-----------|------------|\n"
-                "|NAME|default      |True    |description|setting_name|\n",
+                "|NAME|default      |True    |description|setting_name|\n"
             )

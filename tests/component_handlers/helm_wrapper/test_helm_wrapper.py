@@ -1,4 +1,5 @@
 import os
+import re
 from pathlib import Path
 from textwrap import dedent
 from unittest import mock
@@ -63,7 +64,7 @@ class TestHelmWrapper:
         helm = Helm._instance
         if not helm:
             return
-        helm.add_repo.cache_clear()  # pyright: ignore[reportAttributeAccessIssue,reportUnknownMemberType]
+        helm.add_repo.cache_clear()
         if hasattr(helm, "version"):
             del helm.version
 
@@ -670,7 +671,9 @@ class TestHelmWrapper:
         mock_execute.return_value = "v2.9.0+gc9f554d"
         with pytest.raises(
             RuntimeError,
-            match="The supported Helm version is 3.x.x|4.x.x. The current Helm version is 2.9.0",
+            match=re.escape(
+                "The supported Helm version is 3.x.x|4.x.x. The current Helm version is 2.9.0"
+            ),
         ):
             Helm(helm_config=HelmConfig())
 
@@ -679,6 +682,7 @@ class TestHelmWrapper:
     ) -> None:
         mock_execute.return_value = "123"
         with pytest.raises(
-            RuntimeError, match="Could not parse the Helm version.\n\nHelm output:\n123"
+            RuntimeError,
+            match=re.escape("Could not parse the Helm version.\n\nHelm output:\n123"),
         ):
             Helm(helm_config=HelmConfig())
