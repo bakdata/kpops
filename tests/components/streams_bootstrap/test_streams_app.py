@@ -137,6 +137,26 @@ class TestStreamsApp:
         )
         assert streams_app._cleaner.values == streams_app.values
 
+    def test_additional_triggers_helm_values(self, streams_app: StreamsApp):
+        additional_triggers = [
+            {
+                "type": "cron",
+                "metadata": {
+                    "timezone": "Asia/Kolkata",
+                    "start": "0 6 * * *",
+                    "end": "0 20 * * *",
+                    "desiredReplicas": "10",
+                },
+            },
+        ]
+        streams_app.values.autoscaling = StreamsAppAutoScaling(
+            enabled=True,
+            lag_threshold=100,
+            additional_triggers=additional_triggers,
+        )
+        helm_values = streams_app.to_helm_values()
+        assert helm_values["autoscaling"]["additionalTriggers"] == additional_triggers
+
     def test_cleaner_helm_release_name(self, streams_app: StreamsApp):
         assert (
             streams_app._cleaner.helm_release_name
