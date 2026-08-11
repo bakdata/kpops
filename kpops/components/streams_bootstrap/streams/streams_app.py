@@ -1,6 +1,6 @@
-import logging
 from functools import cached_property
 
+import structlog
 from pydantic import ValidationError
 from typing_extensions import override
 
@@ -22,7 +22,7 @@ from kpops.manifests.argo import ArgoHook, enrich_annotations
 from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.manifests.strimzi.kafka_topic import StrimziKafkaTopic
 
-log = logging.getLogger("StreamsApp")
+log = structlog.get_logger("StreamsApp")
 
 
 class StreamsAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
@@ -163,12 +163,11 @@ class StreamsApp(StreamsBootstrap):
                 self._cleaner.values.name_override = name_override
                 self._cleaner.values.fullname_override = name_override
             except ValidationError as validation_error:
-                warning_msg = f"The values in the cluster are invalid with the current model. Falling back to the enriched values of {PIPELINE_YAML} and {DEFAULTS_YAML}"
-                log.warning(warning_msg)
-                debug_msg = f"Cluster values: {cluster_values}"
-                log.debug(debug_msg)
-                debug_msg = f"Validation error: {validation_error}"
-                log.debug(debug_msg)
+                log.warning(
+                    f"The values in the cluster are invalid with the current model. Falling back to the enriched values of {PIPELINE_YAML} and {DEFAULTS_YAML}"
+                )
+                log.debug("Cluster values", values=cluster_values)
+                log.debug("Validation error", error=validation_error)
 
         await super().destroy(dry_run)
 

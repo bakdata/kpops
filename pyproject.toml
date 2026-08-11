@@ -32,11 +32,12 @@ dependencies = [
   "pyyaml>=6.0",
   "rich>=12.4.4",
   "rustworkx>=0.18.0",
+  "structlog>=26.1.0",
   "typer>=0.12.5",
 ]
 
 [project.scripts]
-kpops = "kpops.cli.main:app"
+kpops = "kpops.cli.main:cli"
 
 [dependency-groups]
 dev = [

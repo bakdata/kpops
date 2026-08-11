@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import importlib
 import inspect
-import logging
 import pkgutil
 import sys
 from collections.abc import Iterable
@@ -11,7 +10,7 @@ from pathlib import Path
 from types import ModuleType
 from typing import TYPE_CHECKING, TypeVar
 
-import typer
+import structlog
 
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.const import KPOPS_MODULE
@@ -25,7 +24,7 @@ _PluginT = TypeVar("_PluginT")
 ClassDict = dict[str, type[_PluginT]]  # type -> class
 
 sys.path.append(str(Path.cwd()))
-log = logging.getLogger("Registry")
+log = structlog.get_logger("Registry")
 
 
 @dataclass
@@ -73,7 +72,9 @@ def import_module(module_name: str) -> ModuleType:
     module = importlib.import_module(module_name)
     if module.__file__:
         log.debug(
-            f"Loading {typer.style(module.__name__, bold=True)} ({module.__file__})"
+            "Loading module",
+            module=module.__name__,
+            path=module.__file__,
         )
     return module
 

@@ -2,6 +2,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
+from structlog.testing import capture_logs
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.model import (
@@ -23,10 +24,6 @@ class TestHelmApp:
         return mocker.patch(
             "kpops.components.base_components.helm_app.Helm", return_value=AsyncMock()
         ).return_value
-
-    @pytest.fixture()
-    def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch("kpops.components.base_components.helm_app.log.info")
 
     @pytest.fixture()
     def app_values(self) -> HelmAppValues:
@@ -239,52 +236,52 @@ class TestHelmApp:
         self,
         helm_app: HelmApp,
         helm_mock: MagicMock,
-        log_info_mock: MagicMock,
     ) -> None:
         stdout = 'HelmApp - release "test-helm-app" uninstalled'
         helm_mock.uninstall.return_value = stdout
 
-        await helm_app.destroy(True)
+        with capture_logs() as cap_logs:
+            await helm_app.destroy(True)
 
         helm_mock.uninstall.assert_called_once_with(
             "test-namespace", "${pipeline.name}-test-helm-app", True
         )
 
-        log_info_mock.assert_called_once_with(magentaify(stdout))
+        assert {"event": magentaify(stdout), "log_level": "info"} in cap_logs
 
     async def test_should_call_helm_uninstall_when_resetting_helm_app(
         self,
         helm_app: HelmApp,
         helm_mock: MagicMock,
-        log_info_mock: MagicMock,
     ) -> None:
         stdout = 'HelmApp - release "test-helm-app" uninstalled'
         helm_mock.uninstall.return_value = stdout
 
-        await helm_app.reset(True)
+        with capture_logs() as cap_logs:
+            await helm_app.reset(True)
 
         helm_mock.uninstall.assert_called_once_with(
             "test-namespace", "${pipeline.name}-test-helm-app", True
         )
 
-        log_info_mock.assert_called_once_with(magentaify(stdout))
+        assert {"event": magentaify(stdout), "log_level": "info"} in cap_logs
 
     async def test_should_call_helm_uninstall_when_cleaning_helm_app(
         self,
         helm_app: HelmApp,
         helm_mock: MagicMock,
-        log_info_mock: MagicMock,
     ) -> None:
         stdout = 'HelmApp - release "test-helm-app" uninstalled'
         helm_mock.uninstall.return_value = stdout
 
-        await helm_app.clean(True)
+        with capture_logs() as cap_logs:
+            await helm_app.clean(True)
 
         helm_mock.uninstall.assert_called_once_with(
             "test-namespace", "${pipeline.name}-test-helm-app", True
         )
 
-        log_info_mock.assert_called_once_with(magentaify(stdout))
+        assert {"event": magentaify(stdout), "log_level": "info"} in cap_logs
 
     def test_helm_name_override(
         self,

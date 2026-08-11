@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-import logging
 from abc import ABC
 from typing import Any, ClassVar, Self
 
 import pydantic
+import structlog
 from pydantic import AliasChoices, ConfigDict, Field
 from typing_extensions import deprecated
 
@@ -32,7 +32,7 @@ STREAMS_BOOTSTRAP_VERSION = "2.9.0"
 # Source of the pattern: https://kubernetes.io/docs/concepts/containers/images/#image-names
 IMAGE_TAG_PATTERN = r"^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$"
 
-log = logging.getLogger("StreamsBootstrap")
+log = structlog.get_logger("StreamsBootstrap")
 
 
 class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
@@ -122,7 +122,8 @@ class StreamsBootstrapV2(KafkaApp, HelmApp, ABC):
     def warning_for_latest_image_tag(self) -> Self:
         if self.validate_ and self.values.image_tag == "latest":
             log.warning(
-                f"The image tag for component '{self.name}' is set or defaulted to 'latest'. Please, consider providing a stable image tag."
+                "The image tag is set or defaulted to 'latest'. Please, consider providing a stable image tag.",
+                component_name=self.name,
             )
         return self
 

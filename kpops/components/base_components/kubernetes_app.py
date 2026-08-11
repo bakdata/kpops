@@ -1,17 +1,17 @@
 from __future__ import annotations
 
-import logging
 import re
 from abc import ABC
 from typing import ClassVar
 
+import structlog
 from pydantic import ConfigDict
 from typing_extensions import override
 
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel
 
-log = logging.getLogger("KubernetesApp")
+log = structlog.get_logger("KubernetesApp")
 
 KUBERNETES_NAME_CHECK_PATTERN = re.compile(
     r"^(?![0-9]+$)(?!.*-$)(?!-)[a-z0-9-.]{1,253}(?<!_)$"

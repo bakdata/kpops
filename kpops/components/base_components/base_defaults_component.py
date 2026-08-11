@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import logging
 from abc import ABC
 from collections.abc import Generator, Hashable, Sequence
 from dataclasses import asdict
@@ -10,7 +9,7 @@ from pathlib import Path
 from typing import Any, ClassVar, Self, TypeVar, cast
 
 import pydantic
-import typer
+import structlog
 from pydantic import (
     AliasChoices,
     ConfigDict,
@@ -33,7 +32,7 @@ from kpops.utils.pydantic import DescConfigModel, issubclass_patched, to_dash
 from kpops.utils.types import JsonType
 from kpops.utils.yaml import load_yaml_file, substitute_nested
 
-log = logging.getLogger("BaseDefaultsComponent")
+log = structlog.get_logger("BaseDefaultsComponent")
 
 
 class BaseDefaultsComponent(DescConfigModel, ABC):
@@ -165,10 +164,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
             pipeline_path, config, ENV.get("environment")
         )
         defaults = cls.load_defaults(*defaults_file_paths_)
-        log.debug(
-            typer.style("Enriching component of type ", bold=False)
-            + typer.style(cls.type, bold=True, underline=True)
-        )
+        log.debug("Enriching component", type=cls.type)
         return update_nested_pair(kwargs, defaults)
 
     @classmethod
@@ -219,7 +215,9 @@ def defaults_from_yaml(path: Path, key: str) -> dict[str, Any]:
         return {}
     default_path = path.relative_to(Path.cwd())
     log.debug(
-        f"Found defaults for component type {typer.style(key, bold=True, fg=typer.colors.MAGENTA)} in {default_path}"
+        "Found defaults for component type",
+        type=key,
+        default_path=default_path,
     )
     return value
 
