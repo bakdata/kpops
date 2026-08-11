@@ -16,7 +16,8 @@ EXAMPLES_PATH = Path("examples").absolute()
 @pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache", "clear_kpops_config")
 class TestExample:
     @pytest.fixture(scope="class", autouse=True)
-    def cd(self) -> Generator[None]:
+    @classmethod
+    def cd(cls) -> Generator[None]:
         cwd = Path.cwd().absolute()
         os.chdir(EXAMPLES_PATH)
         yield
