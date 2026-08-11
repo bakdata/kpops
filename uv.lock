@@ -520,7 +520,7 @@ dev = [
     { name = "lefthook", specifier = ">=1.10.4" },
     { name = "polyfactory", specifier = ">=2.13.0" },
     { name = "pytablewriter", extras = ["from"], specifier = ">=1.0.0" },
-    { name = "pytest", specifier = ">=8.3.2" },
+    { name = "pytest", specifier = ">=9.0.0" },
     { name = "pytest-asyncio", specifier = ">=0.23.8" },
     { name = "pytest-mock", specifier = ">=3.14.0" },
     { name = "pytest-rerunfailures", specifier = ">=14.0" },
