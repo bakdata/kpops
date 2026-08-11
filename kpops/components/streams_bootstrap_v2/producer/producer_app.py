@@ -1,6 +1,6 @@
-import logging
 from functools import cached_property
 
+import structlog
 from pydantic import Field, ValidationError
 from typing_extensions import deprecated, override
 
@@ -15,7 +15,7 @@ from kpops.components.streams_bootstrap_v2.base import StreamsBootstrapV2
 from kpops.components.streams_bootstrap_v2.producer.model import ProducerAppV2Values
 from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
 
-log = logging.getLogger("ProducerAppV2")
+log = structlog.get_logger("ProducerAppV2")
 
 
 class ProducerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrapV2):  # pyright: ignore[reportIncompatibleVariableOverride]
@@ -103,12 +103,11 @@ class ProducerAppV2(StreamsBootstrapV2):
                 self._cleaner.values.name_override = name_override
                 self._cleaner.values.fullname_override = name_override
             except ValidationError as validation_error:
-                warning_msg = f"The values in the cluster are invalid with the current model. Falling back to the enriched values of {PIPELINE_YAML} and {DEFAULTS_YAML}"
-                log.warning(warning_msg)
-                debug_msg = f"Cluster values: {cluster_values}"
-                log.debug(debug_msg)
-                debug_msg = f"Validation error: {validation_error}"
-                log.debug(debug_msg)
+                log.warning(
+                    f"The values in the cluster are invalid with the current model. Falling back to the enriched values of {PIPELINE_YAML} and {DEFAULTS_YAML}"
+                )
+                log.debug("Cluster values", values=cluster_values)
+                log.debug("Validation error", error=validation_error)
 
         await super().destroy(dry_run)
 

@@ -7,8 +7,10 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
+from structlog.testing import capture_logs
 
 from kpops.component_handlers.helm_wrapper.exception import (
+    HelmError,
     ParseError,
     ReleaseNotFoundException,
 )
@@ -41,10 +43,6 @@ class TestHelmWrapper:
     @pytest.fixture()
     def run_command_async(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch.object(Helm, "_Helm__async_execute")
-
-    @pytest.fixture()
-    def log_warning_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch("kpops.component_handlers.helm_wrapper.helm.log.warning")
 
     @pytest.fixture()
     def mock_version(self, mocker: MockerFixture) -> MagicMock:
@@ -349,18 +347,19 @@ class TestHelmWrapper:
         self,
         run_command_async: AsyncMock,
         helm: Helm,
-        log_warning_mock: MagicMock,
     ) -> None:
         run_command_async.side_effect = ReleaseNotFoundException()
-        await helm.uninstall(
-            namespace="test-namespace",
-            release_name="test-release",
-            dry_run=False,
-        )
+        with capture_logs() as cap_logs:
+            await helm.uninstall(
+                namespace="test-namespace",
+                release_name="test-release",
+                dry_run=False,
+            )
 
-        log_warning_mock.assert_called_once_with(
-            "Release with name test-release not found. Could not uninstall app."
-        )
+        assert {
+            "event": "Release not found. Could not uninstall app.",
+            "log_level": "warning",
+        } in cap_logs
 
     async def test_should_call_run_command_method_when_installing_streams_app__with_dry_run(
         self, helm: Helm, run_command_async: AsyncMock
@@ -382,7 +381,7 @@ class TestHelmWrapper:
         )
 
     def test_validate_console_output(self) -> None:
-        with pytest.raises(RuntimeError):
+        with pytest.raises(HelmError):
             Helm.parse_helm_command_stderr_output(
                 "A specific\n eRrOr was found in this line"
             )
@@ -390,9 +389,9 @@ class TestHelmWrapper:
             Helm.parse_helm_command_stderr_output("New \nmessage\n ReLease: noT foUnD")
         try:
             Helm.parse_helm_command_stderr_output("This is \njust WaRnIng nothing more")
-        except RuntimeError as e:
+        except HelmError as e:
             pytest.fail(
-                f"validate_console_output() raised RuntimeError unexpectedly!\nError message: {e}"
+                f"validate_console_output() raised HelmError unexpectedly!\nError message: {e}"
             )
         try:
             Helm.parse_helm_command_stderr_output("This is \njust WaRnIng nothing more")

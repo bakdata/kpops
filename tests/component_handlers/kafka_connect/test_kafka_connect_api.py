@@ -1,6 +1,4 @@
-import ast
 import json
-import logging
 from typing import Any
 
 import httpx2
@@ -8,10 +6,13 @@ import pytest
 from anyio import Path
 from pytest_httpx2 import HTTPXMock
 from pytest_mock import MockerFixture
+from structlog.testing import capture_logs
 
 from kpops.component_handlers.kafka_connect.exception import (
     ConnectorNotFoundException,
+    KafkaConnectConnectionError,
     KafkaConnectError,
+    KafkaConnectException,
 )
 from kpops.component_handlers.kafka_connect.kafka_connect_api import KafkaConnect
 from kpops.component_handlers.kafka_connect.model import (
@@ -161,7 +162,6 @@ class TestKafkaConnect:
         httpx_mock: HTTPXMock,
         connector_response: dict[str, Any],
         connector_config: KafkaConnectorConfig,
-        caplog: pytest.LogCaptureFixture,
     ) -> None:
         ENDPOINT = f"{DEFAULT_HOST}/connectors"
         httpx_mock.add_response(
@@ -179,17 +179,18 @@ class TestKafkaConnect:
             json=connector_response,
         )
 
-        with caplog.at_level(logging.INFO):
+        with capture_logs() as cap_logs:
             await kafka_connect.create_connector(connector_config)
 
-        assert len(caplog.records) == 2
-        assert (
-            caplog.records[0].message
-            == "Rebalancing in progress while creating a connector... Retrying..."
-        )
-        assert caplog.records[0].levelname == "WARNING"
-        assert caplog.records[1].message == "Connector test-connector created."
-        assert caplog.records[1].levelname == "INFO"
+        assert {
+            "event": "Rebalancing in progress while creating a connector... Retrying...",
+            "log_level": "warning",
+        } in cap_logs
+        assert {
+            "event": "Connector created.",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
 
     async def test_get_connector(
         self,
@@ -227,7 +228,6 @@ class TestKafkaConnect:
         kafka_connect: KafkaConnect,
         httpx_mock: HTTPXMock,
         connector_response: dict[str, Any],
-        caplog: pytest.LogCaptureFixture,
     ) -> None:
         ENDPOINT = f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}"
         httpx_mock.add_response(
@@ -243,13 +243,12 @@ class TestKafkaConnect:
             headers=HEADERS,
             json=connector_response,
         )
-        with caplog.at_level(logging.WARNING):
+        with capture_logs() as cap_logs:
             actual_response = await kafka_connect.get_connector(CONNECTOR_NAME)
-        assert len(caplog.records) == 1
-        assert (
-            caplog.records[0].message
-            == "Rebalancing in progress while getting a connector... Retrying..."
-        )
+        assert {
+            "event": "Rebalancing in progress while getting a connector... Retrying...",
+            "log_level": "warning",
+        } in cap_logs
         assert actual_response == ConnectorResponse.model_validate(connector_response)
 
     @pytest.mark.parametrize(
@@ -298,18 +297,19 @@ class TestKafkaConnect:
         self,
         kafka_connect: KafkaConnect,
         httpx_mock: HTTPXMock,
-        caplog: pytest.LogCaptureFixture,
     ) -> None:
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/pause",
             status_code=httpx2.codes.ACCEPTED,
         )
-        with caplog.at_level(logging.INFO):
+        with capture_logs() as cap_logs:
             await kafka_connect.pause_connector(CONNECTOR_NAME)
-        assert len(caplog.records) == 1
-        assert caplog.records[0].message == f"Connector {CONNECTOR_NAME} paused."
-        assert caplog.records[0].levelname == "INFO"
+        assert {
+            "event": "Connector paused.",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
 
     async def test_pause_error(
         self, kafka_connect: KafkaConnect, httpx_mock: HTTPXMock
@@ -326,18 +326,19 @@ class TestKafkaConnect:
         self,
         kafka_connect: KafkaConnect,
         httpx_mock: HTTPXMock,
-        caplog: pytest.LogCaptureFixture,
     ) -> None:
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/resume",
             status_code=httpx2.codes.ACCEPTED,
         )
-        with caplog.at_level(logging.INFO):
+        with capture_logs() as cap_logs:
             await kafka_connect.resume_connector(CONNECTOR_NAME)
-        assert len(caplog.records) == 1
-        assert caplog.records[0].message == f"Connector {CONNECTOR_NAME} resumed."
-        assert caplog.records[0].levelname == "INFO"
+        assert {
+            "event": "Connector resumed.",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
 
     async def test_resume_connector_error(
         self, kafka_connect: KafkaConnect, httpx_mock: HTTPXMock
@@ -354,18 +355,19 @@ class TestKafkaConnect:
         self,
         kafka_connect: KafkaConnect,
         httpx_mock: HTTPXMock,
-        caplog: pytest.LogCaptureFixture,
     ) -> None:
         httpx_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/stop",
             status_code=httpx2.codes.NO_CONTENT,
         )
-        with caplog.at_level(logging.INFO):
+        with capture_logs() as cap_logs:
             await kafka_connect.stop_connector(CONNECTOR_NAME)
-        assert len(caplog.records) == 1
-        assert caplog.records[0].message == f"Connector {CONNECTOR_NAME} stopped."
-        assert caplog.records[0].levelname == "INFO"
+        assert {
+            "event": "Connector stopped.",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
 
     async def test_stop_connector_error(
         self, kafka_connect: KafkaConnect, httpx_mock: HTTPXMock
@@ -401,7 +403,6 @@ class TestKafkaConnect:
         httpx_mock: HTTPXMock,
         connector_config: KafkaConnectorConfig,
         connector_response: dict[str, Any],
-        caplog: pytest.LogCaptureFixture,
     ) -> None:
         httpx_mock.add_response(
             method="PUT",
@@ -410,17 +411,16 @@ class TestKafkaConnect:
             status_code=httpx2.codes.OK,
             json=connector_response,
         )
-        with caplog.at_level(logging.INFO):
+        with capture_logs() as cap_logs:
             actual_response = await kafka_connect.update_connector_config(
                 connector_config
             )
         assert ConnectorResponse.model_validate(connector_response) == actual_response
-        assert len(caplog.records) == 1
-        assert (
-            caplog.records[0].message
-            == f"Config for connector {CONNECTOR_NAME} updated."
-        )
-        assert caplog.records[0].levelname == "INFO"
+        assert {
+            "event": "Config for connector updated.",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
 
     async def test_update_create_connector(
         self,
@@ -428,7 +428,6 @@ class TestKafkaConnect:
         httpx_mock: HTTPXMock,
         connector_config: KafkaConnectorConfig,
         connector_response: dict[str, Any],
-        caplog: pytest.LogCaptureFixture,
     ) -> None:
         httpx_mock.add_response(
             method="PUT",
@@ -437,14 +436,16 @@ class TestKafkaConnect:
             status_code=httpx2.codes.CREATED,
             json=connector_response,
         )
-        with caplog.at_level(logging.INFO):
+        with capture_logs() as cap_logs:
             actual_response = await kafka_connect.update_connector_config(
                 connector_config
             )
         assert ConnectorResponse.model_validate(connector_response) == actual_response
-        assert len(caplog.records) == 1
-        assert caplog.records[0].message == f"Connector {CONNECTOR_NAME} created."
-        assert caplog.records[0].levelname == "INFO"
+        assert {
+            "event": "Connector created.",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
 
     @pytest.mark.usefixtures("mock_sleep")
     async def test_update_connector_retry(
@@ -453,7 +454,6 @@ class TestKafkaConnect:
         httpx_mock: HTTPXMock,
         connector_response: dict[str, Any],
         connector_config: KafkaConnectorConfig,
-        caplog: pytest.LogCaptureFixture,
     ) -> None:
         ENDPOINT = f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/config"
         httpx_mock.add_response(
@@ -470,36 +470,36 @@ class TestKafkaConnect:
             json=connector_response,
         )
 
-        with caplog.at_level(logging.INFO):
+        with capture_logs() as cap_logs:
             await kafka_connect.update_connector_config(connector_config)
 
-        assert len(caplog.records) == 2
-        assert (
-            caplog.records[0].message
-            == "Rebalancing in progress while updating a connector... Retrying..."
-        )
-        assert caplog.records[0].levelname == "WARNING"
-        assert (
-            caplog.records[1].message == "Config for connector test-connector updated."
-        )
-        assert caplog.records[1].levelname == "INFO"
+        assert {
+            "event": "Rebalancing in progress while updating a connector... Retrying...",
+            "log_level": "warning",
+        } in cap_logs
+        assert {
+            "event": "Config for connector updated.",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
 
     async def test_delete_connector(
         self,
         kafka_connect: KafkaConnect,
         httpx_mock: HTTPXMock,
-        caplog: pytest.LogCaptureFixture,
     ) -> None:
         httpx_mock.add_response(
             method="DELETE",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
             status_code=httpx2.codes.NO_CONTENT,
         )
-        with caplog.at_level(logging.INFO):
+        with capture_logs() as cap_logs:
             await kafka_connect.delete_connector(CONNECTOR_NAME)
-        assert len(caplog.records) == 1
-        assert caplog.records[0].message == f"Connector {CONNECTOR_NAME} deleted."
-        assert caplog.records[0].levelname == "INFO"
+        assert {
+            "event": "Connector deleted.",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
 
     async def test_delete_connector_not_found(
         self,
@@ -524,7 +524,6 @@ class TestKafkaConnect:
         self,
         kafka_connect: KafkaConnect,
         httpx_mock: HTTPXMock,
-        caplog: pytest.LogCaptureFixture,
     ) -> None:
         ENDPOINT = f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}"
         httpx_mock.add_response(
@@ -540,34 +539,36 @@ class TestKafkaConnect:
             status_code=httpx2.codes.NO_CONTENT,
         )
 
-        with caplog.at_level(logging.INFO):
+        with capture_logs() as cap_logs:
             await kafka_connect.delete_connector(CONNECTOR_NAME)
 
-        assert len(caplog.records) == 2
-        assert (
-            caplog.records[0].message
-            == "Rebalancing in progress while deleting a connector... Retrying..."
-        )
-        assert caplog.records[0].levelname == "WARNING"
-        assert caplog.records[1].message == "Connector test-connector deleted."
-        assert caplog.records[1].levelname == "INFO"
+        assert {
+            "event": "Rebalancing in progress while deleting a connector... Retrying...",
+            "log_level": "warning",
+        } in cap_logs
+        assert {
+            "event": "Connector deleted.",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
 
     async def test_reset_offset(
         self,
         kafka_connect: KafkaConnect,
         httpx_mock: HTTPXMock,
-        caplog: pytest.LogCaptureFixture,
     ) -> None:
         httpx_mock.add_response(
             method="DELETE",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/offsets",
             status_code=httpx2.codes.NO_CONTENT,
         )
-        with caplog.at_level(logging.INFO):
+        with capture_logs() as cap_logs:
             await kafka_connect.reset_offset(CONNECTOR_NAME)
-        assert len(caplog.records) == 1
-        assert caplog.records[0].message == f"Connector {CONNECTOR_NAME} offsets reset."
-        assert caplog.records[0].levelname == "INFO"
+        assert {
+            "event": "Connector offsets reset.",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
 
     async def test_reset_offset_not_found(
         self,
@@ -594,6 +595,32 @@ class TestKafkaConnect:
         )
         with pytest.raises(KafkaConnectError):
             await kafka_connect.reset_offset(CONNECTOR_NAME)
+
+    async def test_should_raise_connection_error_when_service_unreachable(
+        self, kafka_connect: KafkaConnect, httpx_mock: HTTPXMock
+    ) -> None:
+        httpx_mock.add_exception(httpx2.ConnectError("Connection refused"))
+
+        with pytest.raises(KafkaConnectConnectionError, match="Connection refused"):
+            await kafka_connect.get_connector(CONNECTOR_NAME)
+
+    @pytest.mark.parametrize(
+        "exception",
+        [
+            ConnectorNotFoundException(),
+            KafkaConnectConnectionError(url="http://x", cause=ValueError("x")),
+        ],
+    )
+    def test_umbrella_exception_catches_all_kafka_connect_errors(
+        self, exception: Exception
+    ) -> None:
+        assert isinstance(exception, KafkaConnectException)
+
+    def test_umbrella_exception_catches_http_response_error(self) -> None:
+        request = httpx2.Request("GET", "http://x")
+        response = httpx2.Response(500, json={"message": "oops"}, request=request)
+        error = KafkaConnectError(response)
+        assert isinstance(error, KafkaConnectException)
 
     @pytest.fixture()
     def file_stream_connector_config(self) -> KafkaConnectorConfig:
@@ -641,6 +668,7 @@ class TestKafkaConnect:
             url=f"{DEFAULT_HOST}/connector-plugins/{file_stream_connector_config.name}/config/validate",
             headers=HEADERS,
             json=actual_response,
+            status_code=httpx2.codes.OK,
         )
 
         errors = await kafka_connect.validate_connector_config(
@@ -656,7 +684,6 @@ class TestKafkaConnect:
         httpx_mock: HTTPXMock,
         connector_config: KafkaConnectorConfig,
         connector_response: dict[str, Any],
-        caplog: pytest.LogCaptureFixture,
     ) -> None:
         httpx_mock.add_response(
             method="POST",
@@ -665,15 +692,13 @@ class TestKafkaConnect:
             status_code=httpx2.codes.CREATED,
             json=connector_response,
         )
-        with caplog.at_level(logging.DEBUG):
+        with capture_logs() as cap_logs:
             await kafka_connect.create_connector(connector_config)
 
-        debug_messages = [
-            record.message for record in caplog.records if record.levelname == "DEBUG"
-        ]
-        assert debug_messages[0] == f"POST {DEFAULT_HOST}/connectors"
-        assert debug_messages[1].startswith("HTTP/1.1 201 Created")
-        assert ast.literal_eval(debug_messages[2]) == connector_response
+        debug_events = [e for e in cap_logs if e["log_level"] == "debug"]
+        assert debug_events[0]["event"] == f"POST {DEFAULT_HOST}/connectors"
+        assert debug_events[1]["event"].startswith("HTTP/1.1 201 Created")
+        assert debug_events[1]["body"] == connector_response
 
     @pytest.mark.parametrize(
         ("method_name", "arg_is_config", "http_method", "endpoint"),
@@ -728,7 +753,6 @@ class TestKafkaConnect:
         kafka_connect: KafkaConnect,
         httpx_mock: HTTPXMock,
         connector_config: KafkaConnectorConfig,
-        caplog: pytest.LogCaptureFixture,
         method_name: str,
         arg_is_config: bool,
         http_method: str,
@@ -737,15 +761,13 @@ class TestKafkaConnect:
         method = getattr(kafka_connect, method_name)
         arg = connector_config if arg_is_config else CONNECTOR_NAME
 
-        with caplog.at_level(logging.DEBUG):
+        with capture_logs() as cap_logs:
             result = await method(arg, dry_run=True)
 
         assert result is None
         # no actual HTTP request was made
         assert httpx_mock.get_requests() == []
 
-        debug_messages = [
-            record.message for record in caplog.records if record.levelname == "DEBUG"
-        ]
-        assert debug_messages[0] == f"{http_method} {DEFAULT_HOST}{endpoint}"
-        assert len(debug_messages) == 1
+        debug_events = [e["event"] for e in cap_logs if e["log_level"] == "debug"]
+        assert debug_events[0] == f"{http_method} {DEFAULT_HOST}{endpoint}"
+        assert len(debug_events) == 1

@@ -1,8 +1,8 @@
-import logging
 from unittest.mock import ANY, MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
+from structlog.testing import capture_logs
 
 from kpops.component_handlers import get_handlers
 from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
@@ -272,7 +272,7 @@ class TestProducerApp:
             mocker.call.print_helm_diff(
                 ANY,
                 PRODUCER_APP_CLEAN_RELEASE_NAME,
-                logging.getLogger("HelmApp"),
+                ANY,
             ),
             mocker.call.helm_uninstall(
                 "test-namespace",
@@ -482,10 +482,8 @@ class TestProducerApp:
         )
 
     async def test_clean_should_fall_back_to_local_values_when_validation_of_cluster_values_fails(
-        self, mocker: MockerFixture, caplog: pytest.LogCaptureFixture
+        self, mocker: MockerFixture
     ) -> None:
-        caplog.set_level(logging.WARNING)
-
         # invalid model
         mocker.patch.object(
             Helm,
@@ -525,11 +523,12 @@ class TestProducerApp:
         mocker.patch.object(DryRunHandler, "print_helm_diff")
 
         dry_run = True
-        await producer_app.clean(dry_run)
-        assert (
-            "The values in the cluster are invalid with the current model. Falling back to the enriched values of pipeline.yaml and defaults.yaml"
-            in caplog.text
-        )
+        with capture_logs() as cap_logs:
+            await producer_app.clean(dry_run)
+        assert {
+            "event": "The values in the cluster are invalid with the current model. Falling back to the enriched values of pipeline.yaml and defaults.yaml",
+            "log_level": "warning",
+        } in cap_logs
 
         mock_helm_upgrade_install.assert_called_once_with(
             PRODUCER_APP_CLEAN_RELEASE_NAME,

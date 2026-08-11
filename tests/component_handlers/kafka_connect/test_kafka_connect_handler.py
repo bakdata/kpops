@@ -4,6 +4,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
+from structlog.testing import capture_logs
 
 from kpops.component_handlers.kafka_connect.exception import (
     ConnectorNotFoundException,
@@ -28,24 +29,6 @@ TOPIC_NAME = "test-topic"
 
 
 class TestConnectorHandler:
-    @pytest.fixture()
-    def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch(
-            "kpops.component_handlers.kafka_connect.kafka_connect_handler.log.info"
-        )
-
-    @pytest.fixture()
-    def log_warning_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch(
-            "kpops.component_handlers.kafka_connect.kafka_connect_handler.log.warning"
-        )
-
-    @pytest.fixture()
-    def log_error_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch(
-            "kpops.component_handlers.kafka_connect.kafka_connect_handler.log.error"
-        )
-
     @pytest.fixture()
     def kafka_connect(self) -> AsyncMock:
         return AsyncMock()
@@ -72,7 +55,6 @@ class TestConnectorHandler:
         self,
         kafka_connect: AsyncMock,
         handler: KafkaConnectHandler,
-        log_info_mock: MagicMock,
         state: ConnectorNewState | None,
     ) -> None:
         kafka_connect.get_connector.side_effect = ConnectorNotFoundException()
@@ -85,18 +67,26 @@ class TestConnectorHandler:
         }
 
         config = KafkaConnectorConfig.model_validate(configs)
-        await handler.create_connector(config, state=state, dry_run=True)
+        with capture_logs() as cap_logs:
+            await handler.create_connector(config, state=state, dry_run=True)
         kafka_connect.get_connector.assert_called_once_with(CONNECTOR_NAME)
         kafka_connect.validate_connector_config.assert_called_once_with(config)
 
-        assert log_info_mock.mock_calls == [
-            mock.call(
-                f"Connector Creation: connector {CONNECTOR_NAME} does not exist. Creating connector {f'in {state.value} state ' if state else ''}with config:\n\x1b[32m+ connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n\x1b[0m\x1b[32m+ name: {CONNECTOR_NAME}\n\x1b[0m\x1b[32m+ tasks.max: '1'\n\x1b[0m\x1b[32m+ topics: {TOPIC_NAME}\n\x1b[0m"
-            ),
-            mock.call(
-                f"Connector Creation: connector config for {CONNECTOR_NAME} is valid!"
-            ),
-        ]
+        assert {
+            "event": "Connector does not exist. Creating connector",
+            "connector_name": CONNECTOR_NAME,
+            "state": state.value if state else None,
+            "log_level": "info",
+        } in cap_logs
+        assert {
+            "event": f"\n\x1b[32m+ connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n\x1b[0m\x1b[32m+ name: {CONNECTOR_NAME}\n\x1b[0m\x1b[32m+ tasks.max: '1'\n\x1b[0m\x1b[32m+ topics: {TOPIC_NAME}\n\x1b[0m",
+            "log_level": "info",
+        } in cap_logs
+        assert {
+            "event": "Connector config is valid!",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
 
     async def test_create_connector_dry_run_connector_exists(
         self,
@@ -104,7 +94,6 @@ class TestConnectorHandler:
         handler: KafkaConnectHandler,
         connector_config: KafkaConnectorConfig,
         renderer_diff_mock: MagicMock,
-        log_info_mock: MagicMock,
     ) -> None:
         renderer_diff_mock.return_value = None
         kafka_connect.get_connector.return_value = ConnectorResponse(
@@ -114,26 +103,28 @@ class TestConnectorHandler:
             type=KafkaConnectorType.SINK,
         )
 
-        await handler.create_connector(connector_config, state=None, dry_run=True)
+        with capture_logs() as cap_logs:
+            await handler.create_connector(connector_config, state=None, dry_run=True)
         kafka_connect.get_connector.assert_called_once_with(CONNECTOR_NAME)
         kafka_connect.validate_connector_config.assert_called_once_with(
             connector_config
         )
 
-        assert log_info_mock.mock_calls == [
-            mock.call.log_info(
-                f"Connector Creation: connector {CONNECTOR_NAME} already exists."
-            ),
-            mock.call.log_info(
-                f"Connector Creation: connector config for {CONNECTOR_NAME} is valid!"
-            ),
-        ]
+        assert {
+            "event": "Connector already exists.",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
+        assert {
+            "event": "Connector config is valid!",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
 
     async def test_log_correct_message_when_create_connector_and_connector_not_exists_dry_run(
         self,
         kafka_connect: AsyncMock,
         handler: KafkaConnectHandler,
-        log_info_mock: MagicMock,
     ) -> None:
         kafka_connect.get_connector.side_effect = ConnectorNotFoundException()
 
@@ -145,18 +136,26 @@ class TestConnectorHandler:
         }
 
         config = KafkaConnectorConfig.model_validate(configs)
-        await handler.create_connector(config, state=None, dry_run=True)
+        with capture_logs() as cap_logs:
+            await handler.create_connector(config, state=None, dry_run=True)
         kafka_connect.get_connector.assert_called_once_with(CONNECTOR_NAME)
         kafka_connect.validate_connector_config.assert_called_once_with(config)
 
-        assert log_info_mock.mock_calls == [
-            mock.call(
-                f"Connector Creation: connector {CONNECTOR_NAME} does not exist. Creating connector with config:\n\x1b[32m+ connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n\x1b[0m\x1b[32m+ name: {CONNECTOR_NAME}\n\x1b[0m\x1b[32m+ tasks.max: '1'\n\x1b[0m\x1b[32m+ topics: {TOPIC_NAME}\n\x1b[0m"
-            ),
-            mock.call(
-                f"Connector Creation: connector config for {CONNECTOR_NAME} is valid!"
-            ),
-        ]
+        assert {
+            "event": "Connector does not exist. Creating connector",
+            "connector_name": CONNECTOR_NAME,
+            "state": None,
+            "log_level": "info",
+        } in cap_logs
+        assert {
+            "event": f"\n\x1b[32m+ connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n\x1b[0m\x1b[32m+ name: {CONNECTOR_NAME}\n\x1b[0m\x1b[32m+ tasks.max: '1'\n\x1b[0m\x1b[32m+ topics: {TOPIC_NAME}\n\x1b[0m",
+            "log_level": "info",
+        } in cap_logs
+        assert {
+            "event": "Connector config is valid!",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
 
     @pytest.fixture
     def mock_get_connector(self, kafka_connect: AsyncMock) -> None:
@@ -191,30 +190,38 @@ class TestConnectorHandler:
         self,
         kafka_connect: AsyncMock,
         handler: KafkaConnectHandler,
-        log_info_mock: MagicMock,
         connector_config_update: KafkaConnectorConfig,
         current_state: ConnectorCurrentState,
     ) -> None:
         self.mock_connector_status(kafka_connect, CONNECTOR_NAME, current_state)
-        await handler.create_connector(
-            connector_config_update, state=None, dry_run=True
-        )
+        with capture_logs() as cap_logs:
+            await handler.create_connector(
+                connector_config_update, state=None, dry_run=True
+            )
         kafka_connect.get_connector.assert_called_once_with(CONNECTOR_NAME)
         kafka_connect.validate_connector_config.assert_called_once_with(
             connector_config_update
         )
 
-        assert log_info_mock.mock_calls == [
-            mock.call(
-                f"Connector Creation: connector {CONNECTOR_NAME} already exists."
-            ),
-            mock.call(
-                f"Updating config:\n  connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n  name: {CONNECTOR_NAME}\n\x1b[31m- tasks.max: '1'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m\x1b[32m+ tasks.max: '2'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m  topics: {TOPIC_NAME}\n"
-            ),
-            mock.call(
-                f"Connector Creation: connector config for {CONNECTOR_NAME} is valid!"
-            ),
-        ]
+        assert {
+            "event": "Connector already exists.",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
+        assert {
+            "event": "Updating config",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
+        assert {
+            "event": f"\n  connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n  name: {CONNECTOR_NAME}\n\x1b[31m- tasks.max: '1'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m\x1b[32m+ tasks.max: '2'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m  topics: {TOPIC_NAME}\n",
+            "log_level": "info",
+        } in cap_logs
+        assert {
+            "event": "Connector config is valid!",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
 
     @pytest.mark.parametrize("state", list(ConnectorNewState))
     @pytest.mark.usefixtures("mock_get_connector")
@@ -222,25 +229,33 @@ class TestConnectorHandler:
         self,
         kafka_connect: AsyncMock,
         handler: KafkaConnectHandler,
-        log_info_mock: MagicMock,
         connector_config_update: KafkaConnectorConfig,
         state: ConnectorNewState,
     ) -> None:
         self.mock_connector_status(kafka_connect, CONNECTOR_NAME, state.api_enum)
-        await handler.create_connector(
-            connector_config_update, state=state, dry_run=True
-        )
-        assert log_info_mock.mock_calls == [
-            mock.call(
-                f"Connector Creation: connector {CONNECTOR_NAME} already exists."
-            ),
-            mock.call(
-                f"Updating config:\n  connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n  name: {CONNECTOR_NAME}\n\x1b[31m- tasks.max: '1'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m\x1b[32m+ tasks.max: '2'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m  topics: {TOPIC_NAME}\n"
-            ),
-            mock.call(
-                f"Connector Creation: connector config for {CONNECTOR_NAME} is valid!"
-            ),
-        ]
+        with capture_logs() as cap_logs:
+            await handler.create_connector(
+                connector_config_update, state=state, dry_run=True
+            )
+        assert {
+            "event": "Connector already exists.",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
+        assert {
+            "event": "Updating config",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
+        assert {
+            "event": f"\n  connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n  name: {CONNECTOR_NAME}\n\x1b[31m- tasks.max: '1'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m\x1b[32m+ tasks.max: '2'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m  topics: {TOPIC_NAME}\n",
+            "log_level": "info",
+        } in cap_logs
+        assert {
+            "event": "Connector config is valid!",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
 
     @pytest.mark.parametrize("current_state", list(ConnectorCurrentState))
     @pytest.mark.usefixtures("mock_get_connector")
@@ -248,57 +263,78 @@ class TestConnectorHandler:
         self,
         kafka_connect: AsyncMock,
         handler: KafkaConnectHandler,
-        log_info_mock: MagicMock,
         connector_config_update: KafkaConnectorConfig,
         current_state: ConnectorCurrentState,
     ) -> None:
         self.mock_connector_status(kafka_connect, CONNECTOR_NAME, current_state)
-        await handler.create_connector(
-            connector_config_update, state=ConnectorNewState.RUNNING, dry_run=True
-        )
-        expected_calls = [
-            mock.call(
-                f"Connector Creation: connector {CONNECTOR_NAME} already exists."
-            ),
-            mock.call(
-                f"Updating config:\n  connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n  name: {CONNECTOR_NAME}\n\x1b[31m- tasks.max: '1'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m\x1b[32m+ tasks.max: '2'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m  topics: {TOPIC_NAME}\n"
-            ),
-        ]
-        if current_state is not ConnectorCurrentState.RUNNING:
-            expected_calls.append(mock.call("Resuming connector"))
-        expected_calls.append(
-            mock.call(
-                f"Connector Creation: connector config for {CONNECTOR_NAME} is valid!"
+        with capture_logs() as cap_logs:
+            await handler.create_connector(
+                connector_config_update, state=ConnectorNewState.RUNNING, dry_run=True
             )
-        )
-        assert log_info_mock.mock_calls == expected_calls
+        assert {
+            "event": "Connector already exists.",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
+        assert {
+            "event": "Updating config",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
+        assert {
+            "event": f"\n  connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n  name: {CONNECTOR_NAME}\n\x1b[31m- tasks.max: '1'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m\x1b[32m+ tasks.max: '2'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m  topics: {TOPIC_NAME}\n",
+            "log_level": "info",
+        } in cap_logs
+        if current_state is not ConnectorCurrentState.RUNNING:
+            assert {
+                "event": "Resuming connector",
+                "connector_name": CONNECTOR_NAME,
+                "log_level": "info",
+            } in cap_logs
+        assert {
+            "event": "Connector config is valid!",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
 
     @pytest.mark.usefixtures("mock_get_connector")
     async def test_update_and_pause_connector_dry_run(
         self,
         kafka_connect: AsyncMock,
         handler: KafkaConnectHandler,
-        log_info_mock: MagicMock,
         connector_config_update: KafkaConnectorConfig,
     ) -> None:
         self.mock_connector_status(
             kafka_connect, CONNECTOR_NAME, ConnectorCurrentState.RUNNING
         )
-        await handler.create_connector(
-            connector_config_update, state=ConnectorNewState.PAUSED, dry_run=True
-        )
-        assert log_info_mock.mock_calls == [
-            mock.call(
-                f"Connector Creation: connector {CONNECTOR_NAME} already exists."
-            ),
-            mock.call("Pausing connector"),
-            mock.call(
-                f"Updating config:\n  connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n  name: {CONNECTOR_NAME}\n\x1b[31m- tasks.max: '1'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m\x1b[32m+ tasks.max: '2'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m  topics: {TOPIC_NAME}\n"
-            ),
-            mock.call(
-                f"Connector Creation: connector config for {CONNECTOR_NAME} is valid!"
-            ),
-        ]
+        with capture_logs() as cap_logs:
+            await handler.create_connector(
+                connector_config_update, state=ConnectorNewState.PAUSED, dry_run=True
+            )
+        assert {
+            "event": "Connector already exists.",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
+        assert {
+            "event": "Pausing connector",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
+        assert {
+            "event": "Updating config",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
+        assert {
+            "event": f"\n  connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n  name: {CONNECTOR_NAME}\n\x1b[31m- tasks.max: '1'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m\x1b[32m+ tasks.max: '2'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m  topics: {TOPIC_NAME}\n",
+            "log_level": "info",
+        } in cap_logs
+        assert {
+            "event": "Connector config is valid!",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
 
     @pytest.mark.usefixtures("renderer_diff_mock")
     async def test_log_invalid_config_when_create_connector_dry_run(
@@ -432,26 +468,30 @@ class TestConnectorHandler:
         )
 
     async def test_print_correct_log_when_destroying_connector_dry_run(
-        self, handler: KafkaConnectHandler, log_info_mock: MagicMock
+        self, handler: KafkaConnectHandler
     ) -> None:
-        await handler.destroy_connector(CONNECTOR_NAME, dry_run=True)
-        log_info_mock.assert_called_once_with(
-            magentaify(
+        with capture_logs() as cap_logs:
+            await handler.destroy_connector(CONNECTOR_NAME, dry_run=True)
+        assert {
+            "event": magentaify(
                 f"Connector Destruction: connector {CONNECTOR_NAME} already exists. Deleting connector."
-            )
-        )
+            ),
+            "log_level": "info",
+        } in cap_logs
 
     async def test_print_correct_warning_log_when_destroying_connector_and_connector_exists_dry_run(
         self,
         kafka_connect: AsyncMock,
         handler: KafkaConnectHandler,
-        log_warning_mock: MagicMock,
     ) -> None:
         kafka_connect.get_connector.side_effect = ConnectorNotFoundException()
-        await handler.destroy_connector(CONNECTOR_NAME, dry_run=True)
-        log_warning_mock.assert_called_once_with(
-            f"Connector Destruction: connector {CONNECTOR_NAME} does not exist and cannot be deleted. Skipping."
-        )
+        with capture_logs() as cap_logs:
+            await handler.destroy_connector(CONNECTOR_NAME, dry_run=True)
+        assert {
+            "event": "Connector does not exist and cannot be deleted. Skipping.",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "warning",
+        } in cap_logs
 
     async def test_call_delete_connector_when_destroying_existing_connector(
         self, kafka_connect: AsyncMock, handler: KafkaConnectHandler
@@ -466,22 +506,24 @@ class TestConnectorHandler:
         self,
         kafka_connect: AsyncMock,
         handler: KafkaConnectHandler,
-        log_warning_mock: MagicMock,
     ) -> None:
         kafka_connect.get_connector.side_effect = ConnectorNotFoundException()
-        await handler.destroy_connector(CONNECTOR_NAME, dry_run=False)
-        log_warning_mock.assert_called_once_with(
-            f"Connector Destruction: the connector {CONNECTOR_NAME} does not exist. Skipping."
-        )
+        with capture_logs() as cap_logs:
+            await handler.destroy_connector(CONNECTOR_NAME, dry_run=False)
+        assert {
+            "event": "Connector does not exist. Skipping.",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "warning",
+        } in cap_logs
 
     async def test_reset_connector_dry_run(
         self,
         kafka_connect: AsyncMock,
         handler: KafkaConnectHandler,
         connector_config: KafkaConnectorConfig,
-        log_info_mock: MagicMock,
     ) -> None:
-        await handler.reset_connector(connector_config, dry_run=True)
+        with capture_logs() as cap_logs:
+            await handler.reset_connector(connector_config, dry_run=True)
 
         kafka_connect.get_connector.assert_called_once_with(CONNECTOR_NAME)
         kafka_connect.create_connector.assert_not_called()
@@ -490,11 +532,12 @@ class TestConnectorHandler:
         )
         kafka_connect.reset_offset.assert_called_once_with(CONNECTOR_NAME, dry_run=True)
         kafka_connect.delete_connector.assert_not_called()
-        log_info_mock.assert_called_once_with(
-            magentaify(
+        assert {
+            "event": magentaify(
                 f"Connector reset: resetting offsets for connector {CONNECTOR_NAME}."
-            )
-        )
+            ),
+            "log_level": "info",
+        } in cap_logs
 
     async def test_reset_connector_dry_run_connector_missing(
         self,
@@ -502,12 +545,12 @@ class TestConnectorHandler:
         handler: KafkaConnectHandler,
         connector_config: KafkaConnectorConfig,
         renderer_diff_mock: MagicMock,
-        log_info_mock: MagicMock,
     ) -> None:
         kafka_connect.get_connector.side_effect = ConnectorNotFoundException()
         renderer_diff_mock.return_value = ""
 
-        await handler.reset_connector(connector_config, dry_run=True)
+        with capture_logs() as cap_logs:
+            await handler.reset_connector(connector_config, dry_run=True)
 
         assert kafka_connect.get_connector.call_count == 2
         kafka_connect.validate_connector_config.assert_called_once_with(
@@ -524,24 +567,29 @@ class TestConnectorHandler:
             CONNECTOR_NAME, dry_run=True
         )
 
-        assert log_info_mock.mock_calls == [
-            mock.call(
-                f"Connector Creation: connector {CONNECTOR_NAME} does not exist. Creating connector in paused state with config:\n"
+        assert {
+            "event": "Connector does not exist. Creating connector",
+            "connector_name": CONNECTOR_NAME,
+            "state": "paused",
+            "log_level": "info",
+        } in cap_logs
+        assert {
+            "event": "Connector config is valid!",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "info",
+        } in cap_logs
+        assert {
+            "event": magentaify(
+                f"Connector reset: resetting offsets for connector {CONNECTOR_NAME}."
             ),
-            mock.call(
-                f"Connector Creation: connector config for {CONNECTOR_NAME} is valid!"
+            "log_level": "info",
+        } in cap_logs
+        assert {
+            "event": magentaify(
+                f"Connector reset: deleting temporarily created connector {CONNECTOR_NAME}."
             ),
-            mock.call(
-                magentaify(
-                    f"Connector reset: resetting offsets for connector {CONNECTOR_NAME}."
-                )
-            ),
-            mock.call(
-                magentaify(
-                    f"Connector reset: deleting temporarily created connector {CONNECTOR_NAME}."
-                )
-            ),
-        ]
+            "log_level": "info",
+        } in cap_logs
 
     async def test_reset_connector(
         self,
@@ -582,14 +630,16 @@ class TestConnectorHandler:
         kafka_connect: AsyncMock,
         handler: KafkaConnectHandler,
         connector_config: KafkaConnectorConfig,
-        log_warning_mock: MagicMock,
     ) -> None:
         """Connector existed but got deleted concurrently before it could be stopped."""
         kafka_connect.stop_connector.side_effect = ConnectorNotFoundException()
 
-        await handler.reset_connector(connector_config, dry_run=False)
+        with capture_logs() as cap_logs:
+            await handler.reset_connector(connector_config, dry_run=False)
 
         kafka_connect.reset_offset.assert_not_called()
-        log_warning_mock.assert_called_once_with(
-            f"Connector reset: the connector {CONNECTOR_NAME} does not exist. Skipping."
-        )
+        assert {
+            "event": "Connector does not exist. Skipping.",
+            "connector_name": CONNECTOR_NAME,
+            "log_level": "warning",
+        } in cap_logs

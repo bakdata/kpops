@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-import logging
 import re
 import subprocess
 import tempfile
@@ -10,10 +9,15 @@ from functools import cached_property
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Self, final
 
+import structlog
 import yaml
 from cachetools import cached
 
-from kpops.component_handlers.helm_wrapper.exception import ReleaseNotFoundException
+from kpops.component_handlers.helm_wrapper import HELM
+from kpops.component_handlers.helm_wrapper.exception import (
+    HelmError,
+    ReleaseNotFoundException,
+)
 from kpops.component_handlers.helm_wrapper.model import (
     HelmChart,
     HelmConfig,
@@ -24,12 +28,13 @@ from kpops.component_handlers.helm_wrapper.model import (
     Version,
 )
 from kpops.manifests.kubernetes import KubernetesManifest
+from kpops.utils.logging import bound_service_context
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator
 
 
-log = logging.getLogger("Helm")
+log = structlog.get_logger(HELM)
 
 
 def cache_key(
@@ -77,25 +82,24 @@ class Helm:
         ]
         command.extend(repo_auth_flags.to_command(self.version))
 
-        try:
-            self.__execute(command)
-        except (ReleaseNotFoundException, RuntimeError) as e:
-            if (
-                len(e.args) == 1
-                and re.match(
+        with bound_service_context(
+            repository_name=repository_name, repository_url=repository_url
+        ):
+            try:
+                self.__execute(command)
+            except HelmError as e:
+                if re.match(
                     "Error: repository name (.*) already exists, please specify a different name",
-                    e.args[0],
-                )
-                is not None
-            ):
-                log.exception(f"Could not add repository {repository_name}.")
-            else:
-                raise
+                    e.stderr,
+                ):
+                    log.warning("Could not add repository: already exists.")
+                else:
+                    raise
 
-        if self.version.minor > 7:
-            self.__execute(["helm", "repo", "update", repository_name])
-        else:
-            self.__execute(["helm", "repo", "update"])
+            if self.version.minor > 7:
+                self.__execute(["helm", "repo", "update", repository_name])
+            else:
+                self.__execute(["helm", "repo", "update"])
 
     async def upgrade_install(
         self,
@@ -109,7 +113,10 @@ class Helm:
         """Prepare and execute the `helm upgrade --install` command."""
         if flags is None:
             flags = HelmUpgradeInstallFlags()
-        with tempfile.NamedTemporaryFile("w", delete=False) as values_file:
+        with (
+            bound_service_context(release_name=release_name, namespace=namespace),
+            tempfile.NamedTemporaryFile("w", delete=False) as values_file,
+        ):
             yaml.safe_dump(values, values_file)
 
             command = [
@@ -144,12 +151,11 @@ class Helm:
         ]
         if dry_run:
             command.append("--dry-run")
-        try:
-            return await self.__async_execute(command)
-        except ReleaseNotFoundException:
-            log.warning(
-                f"Release with name {release_name} not found. Could not uninstall app."
-            )
+        with bound_service_context(release_name=release_name, namespace=namespace):
+            try:
+                return await self.__async_execute(command)
+            except ReleaseNotFoundException:
+                log.warning("Release not found. Could not uninstall app.")
 
     async def get_values(
         self,
@@ -167,13 +173,12 @@ class Helm:
             "--output",
             "yaml",
         ]
-        try:
-            command_result = await self.__async_execute(command)
-            return yaml.safe_load(command_result)
-        except ReleaseNotFoundException:
-            log.warning(
-                f"Release with name {release_name} not found. Could not get values."
-            )
+        with bound_service_context(release_name=release_name, namespace=namespace):
+            try:
+                command_result = await self.__async_execute(command)
+                return yaml.safe_load(command_result)
+            except ReleaseNotFoundException:
+                log.warning("Release not found. Could not get values.")
 
     def template(
         self,
@@ -198,7 +203,12 @@ class Helm:
         """
         if flags is None:
             flags = HelmTemplateFlags()
-        with tempfile.NamedTemporaryFile(mode="w", delete=False) as values_file:
+        with (
+            bound_service_context(
+                release_name=release_name, chart=chart, namespace=namespace
+            ),
+            tempfile.NamedTemporaryFile(mode="w", delete=False) as values_file,
+        ):
             yaml.safe_dump(values, values_file)
             command = [
                 "helm",
@@ -225,11 +235,12 @@ class Helm:
             namespace,
         ]
 
-        try:
-            stdout = self.__execute(command=command)
-            return Helm.load_manifest(stdout)
-        except ReleaseNotFoundException:
-            return ()
+        with bound_service_context(release_name=release_name, namespace=namespace):
+            try:
+                stdout = self.__execute(command=command)
+                return Helm.load_manifest(stdout)
+            except ReleaseNotFoundException:
+                return ()
 
     @cached_property
     def version(self) -> Version:
@@ -266,7 +277,7 @@ class Helm:
 
     def __execute(self, command: list[str]) -> str:
         command = self.__set_global_flags(command)
-        log.debug(f"Executing {' '.join(command)}")
+        log.debug("Executing command.", command=" ".join(command))
         process = subprocess.run(
             command,
             check=False,
@@ -274,12 +285,12 @@ class Helm:
             text=True,
         )
         Helm.parse_helm_command_stderr_output(process.stderr)
-        log.debug(process.stdout)
+        log.debug("Command output.", stdout=process.stdout)
         return process.stdout
 
     async def __async_execute(self, command: list[str]) -> str:
         command = self.__set_global_flags(command)
-        log.debug(f"Executing {' '.join(command)}")
+        log.debug("Executing command.", command=" ".join(command))
         proc = await asyncio.create_subprocess_exec(
             *command,
             stdout=asyncio.subprocess.PIPE,
@@ -288,12 +299,12 @@ class Helm:
 
         stdout, stderr = await proc.communicate()
         Helm.parse_helm_command_stderr_output(stderr.decode())
-        log.debug(stdout)
+        log.debug("Command output.", stdout=stdout)
         return stdout.decode()
 
     def __set_global_flags(self, command: list[str]) -> list[str]:
         if self._context:
-            log.debug(f"Changing the Kubernetes context to {self._context}")
+            log.debug("Changing the Kubernetes context.", context=self._context)
             command.extend(["--kube-context", self._context])
         if self._debug:
             log.debug("Enabling verbose mode.")
@@ -307,6 +318,6 @@ class Helm:
             if "release: not found" in lower:
                 raise ReleaseNotFoundException
             elif "error" in lower:
-                raise RuntimeError(stderr)
+                raise HelmError(stderr)
             elif "warning" in lower:
-                log.warning(line)
+                log.warning("Helm output warning", warning=line)

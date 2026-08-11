@@ -5,7 +5,6 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from kpops.api.logs import log, log_action
 from kpops.api.options import FilterType
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
@@ -15,6 +14,7 @@ from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.kafka_rest import KafkaRest
 from kpops.config import KpopsConfig
+from kpops.core.exception import KpopsException
 from kpops.core.operation import OperationMode
 from kpops.core.registry import Registry
 from kpops.manifests.kubernetes import KubernetesManifest
@@ -23,10 +23,24 @@ from kpops.pipeline import (
     PipelineGenerator,
 )
 from kpops.utils.cli_commands import init_project
+from kpops.utils.logging import log, log_action, log_kpops_exception
 
 if TYPE_CHECKING:
+    from collections.abc import Awaitable
+
     from kpops.components.base_components.pipeline_component import PipelineComponent
     from kpops.config import KpopsConfig
+
+
+async def _run_component(
+    action: str, component: PipelineComponent, operation: Awaitable[None]
+) -> None:
+    log_action(action, component)
+    try:
+        await operation
+    except KpopsException as e:
+        log_kpops_exception(e)
+        raise
 
 
 def generate(
@@ -55,18 +69,20 @@ def generate(
         config, dotenv, environment, verbose, operation_mode
     )
     pipeline = _create_pipeline(pipeline_path, kpops_config, environment)
-    log.info(f"Picked up pipeline '{pipeline_path.parent.name}'")
+    log.info("Picked up pipeline", pipeline=pipeline_path.parent.name)
     if steps:
         component_names = steps
         log.debug(
-            f"KPOPS_PIPELINE_STEPS is defined with values: {component_names} and filter type of {filter_type.value}"
+            "KPOPS_PIPELINE_STEPS is defined",
+            steps=component_names,
+            filter_type=filter_type.value,
         )
 
         predicate = filter_type.create_default_step_names_filter_predicate(
             component_names
         )
         pipeline.filter(predicate)
-        log.info(f"Filtered pipeline:\n{pipeline.step_names}")
+        log.info("Filtered pipeline", steps=pipeline.step_names)
     return pipeline
 
 
@@ -204,8 +220,7 @@ def deploy(
     )
 
     async def deploy_runner(component: PipelineComponent) -> None:
-        log_action("Deploy", component)
-        await component.deploy(dry_run)
+        await _run_component("Deploy", component, component.deploy(dry_run))
 
     async def async_deploy() -> None:
         if parallel:
@@ -252,8 +267,7 @@ def destroy(
     )
 
     async def destroy_runner(component: PipelineComponent) -> None:
-        log_action("Destroy", component)
-        await component.destroy(dry_run)
+        await _run_component("Destroy", component, component.destroy(dry_run))
 
     async def async_destroy() -> None:
         if parallel:
@@ -302,8 +316,7 @@ def reset(
     )
 
     async def reset_runner(component: PipelineComponent) -> None:
-        log_action("Reset", component)
-        await component.reset(dry_run)
+        await _run_component("Reset", component, component.reset(dry_run))
 
     async def async_reset() -> None:
         if parallel:
@@ -350,8 +363,7 @@ def clean(
     )
 
     async def clean_runner(component: PipelineComponent) -> None:
-        log_action("Clean", component)
-        await component.clean(dry_run)
+        await _run_component("Clean", component, component.clean(dry_run))
 
     async def async_clean() -> None:
         if parallel:

@@ -1,15 +1,15 @@
-import logging
 from pathlib import Path
 
 import pytest
-from pytest import LogCaptureFixture
+import structlog
+from structlog.testing import capture_logs
 
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
 from kpops.component_handlers.helm_wrapper.model import HelmDiffConfig, HelmTemplate
 from kpops.manifests.kubernetes import KubernetesManifest, ObjectMeta
 from kpops.utils.dict_differ import Change
 
-logger = logging.getLogger("TestHelmDiff")
+logger = structlog.get_logger("TestHelmDiff")
 
 
 class TestHelmDiff:
@@ -168,10 +168,8 @@ class TestHelmDiff:
             ),
         ]
 
-    def test_log_helm_diff(
-        self, helm_diff: HelmDiff, caplog: LogCaptureFixture
-    ) -> None:
-        with caplog.at_level(logging.INFO, logger=logger.name):
+    def test_log_helm_diff(self, helm_diff: HelmDiff) -> None:
+        with capture_logs() as cap_logs:
             helm_diff.log_helm_diff(
                 logger,
                 (),
@@ -188,13 +186,14 @@ class TestHelmDiff:
                     )
                 ],
             )
-            assert caplog.messages == [
-                (
-                    "\n"
-                    "\x1b[32m+ apiVersion: v1\n"
-                    "\x1b[0m\x1b[32m+ kind: Deployment\n"
-                    "\x1b[0m\x1b[32m+ metadata:\n"
-                    "\x1b[0m\x1b[32m+   a: '1'\n"
-                    "\x1b[0m"
-                )
-            ]
+        assert {
+            "event": (
+                "\n"
+                "\x1b[32m+ apiVersion: v1\n"
+                "\x1b[0m\x1b[32m+ kind: Deployment\n"
+                "\x1b[0m\x1b[32m+ metadata:\n"
+                "\x1b[0m\x1b[32m+   a: '1'\n"
+                "\x1b[0m"
+            ),
+            "log_level": "info",
+        } in cap_logs
