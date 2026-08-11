@@ -206,6 +206,81 @@ class TestHelmWrapper:
             ),
         ]
 
+    def test_helm_repo_update_excludes_repository_name_when_version_is_old(
+        self, mock_execute: MagicMock, mocker: MockerFixture
+    ) -> None:
+        mocker.patch.object(
+            Helm,
+            "version",
+            return_value=Version(major=3, minor=6, patch=0),
+            new_callable=mocker.PropertyMock,
+        )
+        helm = Helm(HelmConfig())
+
+        helm.add_repo(
+            "test-repository",
+            "fake",
+            RepoAuthFlags(ca_file=Path("a_file.ca"), insecure_skip_tls_verify=True),
+        )
+        assert mock_execute.mock_calls == [
+            mock.call(
+                [
+                    "helm",
+                    "repo",
+                    "add",
+                    "test-repository",
+                    "fake",
+                    "--ca-file",
+                    "a_file.ca",
+                    "--insecure-skip-tls-verify",
+                ],
+            ),
+            mock.call(
+                ["helm", "repo", "update"],
+            ),
+        ]
+
+    @pytest.mark.parametrize(
+        "version",
+        [
+            Version(major=3, minor=7, patch=0),
+            Version(major=4, minor=0, patch=0),
+        ],
+    )
+    def test_helm_repo_update_includes_repository_name_when_version_is_new(
+        self, mock_execute: MagicMock, mocker: MockerFixture, version: Version
+    ) -> None:
+        mocker.patch.object(
+            Helm,
+            "version",
+            return_value=version,
+            new_callable=mocker.PropertyMock,
+        )
+        helm = Helm(HelmConfig())
+
+        helm.add_repo(
+            "test-repository",
+            "fake",
+            RepoAuthFlags(ca_file=Path("a_file.ca"), insecure_skip_tls_verify=True),
+        )
+        assert mock_execute.mock_calls == [
+            mock.call(
+                [
+                    "helm",
+                    "repo",
+                    "add",
+                    "test-repository",
+                    "fake",
+                    "--ca-file",
+                    "a_file.ca",
+                    "--insecure-skip-tls-verify",
+                ],
+            ),
+            mock.call(
+                ["helm", "repo", "update", "test-repository"],
+            ),
+        ]
+
     async def test_should_include_configured_tls_parameters_on_update(
         self, helm: Helm, run_command_async: AsyncMock
     ) -> None:
