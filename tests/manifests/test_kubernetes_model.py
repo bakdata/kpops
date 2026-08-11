@@ -1,18 +1,20 @@
 from textwrap import dedent
+from typing import ClassVar
 
 import pytest
 
 from kpops.manifests.kubernetes import KubernetesManifest, ObjectMeta
 
 
-class TestCRD(KubernetesManifest):
+class CRD(KubernetesManifest):
+    __test__: ClassVar[bool] = False
     api_version: str = "v1"
-    kind: str = "TestCRD"
+    kind: str = "CRD"
 
 
 @pytest.fixture
-def crd_manifest() -> TestCRD:
-    return TestCRD(metadata=ObjectMeta.model_validate({"foo": "bar"}))
+def crd_manifest() -> CRD:
+    return CRD(metadata=ObjectMeta.model_validate({"foo": "bar"}))
 
 
 @pytest.fixture
@@ -30,12 +32,12 @@ def example_manifest() -> KubernetesManifest:
     )
 
 
-def test_serialize_model_include_required_fields(crd_manifest: TestCRD) -> None:
+def test_serialize_model_include_required_fields(crd_manifest: CRD) -> None:
     """Test that the serialize_model method excludes unset fields."""
     serialized = crd_manifest.model_dump()
     expected_serialized = {
         "apiVersion": "v1",
-        "kind": "TestCRD",
+        "kind": "CRD",
         "metadata": {"foo": "bar"},
     }
     assert serialized == expected_serialized
