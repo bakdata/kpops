@@ -39,13 +39,6 @@ class TestExample:
             pytest.param("word-count"),
             pytest.param(
                 "atm-fraud",
-                marks=(
-                    # NOTE: remove after pipeline has been updated to streams-bootstrap v3
-                    # depends on https://github.com/bakdata/pipeline-atm-fraud/issues/4
-                    pytest.mark.filterwarnings(
-                        "ignore:.*StreamsBootstrapV2|(Producer|Streams)AppV2.*:DeprecationWarning"
-                    )
-                ),
             ),
         ],
     )

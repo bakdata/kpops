@@ -114,6 +114,9 @@ packages = ["kpops"]
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
+filterwarnings = [
+  'ignore:(StreamsBootstrapV2|ProducerAppV2|StreamsAppV2) component is deprecated.*:DeprecationWarning',
+]
 
 [tool.ruff]
 output-format = "grouped"
