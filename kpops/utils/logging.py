@@ -133,16 +133,14 @@ def log_kpops_exception(e: KpopsException) -> None:
 def bound_service_context(**kwargs: str) -> Generator[None]:
     """Bind structlog context for the duration of an operation.
 
-    Always resets on exit. If a `KpopsException` propagates, the bound kwargs
-    are attached to it so they're still available when logged further up the
-    stack, since the contextvars binding itself won't survive there.
+    If a `KpopsException` propagates, the bound kwargs are attached to it so
+    they're still available when logged further up the stack, since the
+    contextvars binding itself is reset.
     """
-    tokens = structlog.contextvars.bind_contextvars(**kwargs)
     try:
-        yield
+        with structlog.contextvars.bound_contextvars(**kwargs):
+            yield
     except KpopsException as e:
         if not e.context:
             e.context = kwargs
         raise
-    finally:
-        structlog.contextvars.reset_contextvars(**tokens)
