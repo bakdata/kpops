@@ -846,6 +846,18 @@ class TestStreamsApp:
             "version": "3.6.1",
         }
 
+    def test_generate_with_volume_attributes_class_name(
+        self, stateful_streams_app: StreamsApp
+    ) -> None:
+        stateful_streams_app.values.persistence = PersistenceConfig(
+            enabled=True, size="5Gi", volume_attributes_class_name="my-vac"
+        )
+        assert stateful_streams_app.generate()["values"]["persistence"] == {
+            "enabled": True,
+            "size": "5Gi",
+            "volumeAttributesClassName": "my-vac",
+        }
+
     @pytest.fixture()
     def pvc1(self) -> PersistentVolumeClaim:
         return PersistentVolumeClaim(
