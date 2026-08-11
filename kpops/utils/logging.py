@@ -119,6 +119,8 @@ def log_action(action: str, pipeline_component: PipelineComponent) -> None:
 
 def log_kpops_exception(e: KpopsException) -> None:
     logger = structlog.get_logger(e.service) if isinstance(e, ServiceException) else log
+    if e.context:
+        logger = logger.bind(**e.context)
     e.log_extra(logger)
     if logging.getLogger().isEnabledFor(logging.DEBUG):
         logger.exception(str(e))
@@ -128,14 +130,17 @@ def log_kpops_exception(e: KpopsException) -> None:
 
 
 @contextlib.contextmanager
-def bound_service_context(**kw: str) -> Generator[None]:
+def bound_service_context(**kwargs: str) -> Generator[None]:
     """Bind structlog context for the duration of an operation.
 
-    On success the binding is cleared; on failure it's left in place so
-    it's still bound when the exception is logged further up the stack.
-    Not using structlog's `bound_contextvars`, which uses try/finally and
-    would clear the binding even when an exception propagates.
+    If a `KpopsException` propagates, the bound kwargs are attached to it so
+    they're still available when logged further up the stack, since the
+    contextvars binding itself is reset.
     """
-    tokens = structlog.contextvars.bind_contextvars(**kw)
-    yield
-    structlog.contextvars.reset_contextvars(**tokens)
+    try:
+        with structlog.contextvars.bound_contextvars(**kwargs):
+            yield
+    except KpopsException as e:
+        if not e.context:
+            e.context = kwargs
+        raise

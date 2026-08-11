@@ -10,6 +10,7 @@ class KpopsException(Exception):
     """Base class for all expected, user-facing KPOps errors."""
 
     logged: bool = False
+    context: dict[str, str] | None = None
 
     def log_extra(self, logger: structlog.stdlib.BoundLogger) -> None:
         """Log extra debug context."""
