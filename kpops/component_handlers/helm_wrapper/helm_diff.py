@@ -1,12 +1,13 @@
-import logging
 from collections.abc import Iterable, Iterator
 from typing import final
+
+import structlog
 
 from kpops.component_handlers.helm_wrapper.model import HelmDiffConfig, HelmTemplate
 from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.utils.dict_differ import Change, render_diff
 
-log = logging.getLogger("HelmDiff")
+log = structlog.get_logger("HelmDiff")
 
 
 @final
@@ -47,7 +48,7 @@ class HelmDiff:
 
     def log_helm_diff(
         self,
-        logger: logging.Logger,
+        logger: structlog.stdlib.BoundLogger,
         current_release: Iterable[HelmTemplate],
         new_release: Iterable[HelmTemplate],
     ) -> None:

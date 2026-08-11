@@ -1,10 +1,10 @@
-import logging
 import re
 from collections.abc import AsyncIterator
 from pathlib import Path
 from unittest.mock import ANY, MagicMock
 
 import pytest
+import structlog
 from lightkube.models.core_v1 import (
     PersistentVolumeClaimSpec,
     PersistentVolumeClaimStatus,
@@ -12,6 +12,7 @@ from lightkube.models.core_v1 import (
 from lightkube.models.meta_v1 import ObjectMeta
 from lightkube.resources.core_v1 import PersistentVolumeClaim
 from pytest_mock import MockerFixture
+from structlog.testing import capture_logs
 
 from kpops.component_handlers import get_handlers
 from kpops.component_handlers.helm_wrapper.helm import Helm
@@ -52,7 +53,7 @@ STREAMS_APP_CLEAN_RELEASE_NAME = create_helm_release_name(
     STREAMS_APP_CLEAN_FULL_NAME, "-clean"
 )
 
-log = logging.getLogger("TestStreamsApp")
+log = structlog.get_logger("TestStreamsApp")
 
 
 @pytest.mark.filterwarnings(
@@ -929,9 +930,7 @@ class TestStreamsApp:
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
         mock_list_pvcs: MagicMock,
-        caplog: pytest.LogCaptureFixture,
     ) -> None:
-        caplog.set_level(logging.DEBUG)
         # actual component
         mocker.patch.object(stateful_streams_app, "destroy")
 
@@ -942,21 +941,22 @@ class TestStreamsApp:
         mocker.patch.object(cleaner, "deploy")
 
         dry_run = True
-        await stateful_streams_app.clean(dry_run=dry_run)
+        with capture_logs() as cap_logs:
+            await stateful_streams_app.clean(dry_run=dry_run)
 
         mock_list_pvcs.assert_called_once()
-        assert (
-            f"Deleting in namespace 'test-namespace' StatefulSet '{STREAMS_APP_FULL_NAME}' PVCs ['test-pvc1', 'test-pvc2', 'test-pvc3']"
-            in caplog.text
-        )
+        assert {
+            "event": "Deleting PVCs.",
+            "app_name": STREAMS_APP_FULL_NAME,
+            "namespace": "test-namespace",
+            "pvc_names": ["test-pvc1", "test-pvc2", "test-pvc3"],
+            "log_level": "debug",
+        } in cap_logs
 
     async def test_clean_should_fall_back_to_local_values_when_validation_of_cluster_values_fails(
         self,
         mocker: MockerFixture,
-        caplog: pytest.LogCaptureFixture,
     ) -> None:
-        caplog.set_level(logging.WARNING)
-
         # invalid model
         mocker.patch.object(
             Helm,
@@ -1003,12 +1003,13 @@ class TestStreamsApp:
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
 
         dry_run = False
-        await streams_app.clean(dry_run=dry_run)
+        with capture_logs() as cap_logs:
+            await streams_app.clean(dry_run=dry_run)
 
-        assert (
-            "The values in the cluster are invalid with the current model. Falling back to the enriched values of pipeline.yaml and defaults.yaml"
-            in caplog.text
-        )
+        assert {
+            "event": "The values in the cluster are invalid with the current model. Falling back to the enriched values of pipeline.yaml and defaults.yaml",
+            "log_level": "warning",
+        } in cap_logs
 
         mock_helm_upgrade_install.assert_called_once_with(
             STREAMS_APP_CLEAN_RELEASE_NAME,

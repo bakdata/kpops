@@ -3,12 +3,12 @@ import re
 from pathlib import Path
 from typing import Any
 from unittest import mock
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock
 
 import pytest
 import yaml
-from pytest_mock import MockerFixture
 from pytest_snapshot.plugin import Snapshot
+from structlog.testing import capture_logs
 from typer.testing import CliRunner
 
 import kpops.api as kpops
@@ -32,10 +32,6 @@ RESOURCE_PATH = Path(__file__).parent / "resources"
     "mock_env", "load_yaml_file_clear_cache", "custom_components", "clear_kpops_config"
 )
 class TestGenerate:
-    @pytest.fixture(autouse=True)
-    def log_info(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch("kpops.api.log.info")
-
     def test_python_api(self) -> None:
         pipeline = kpops.generate(
             RESOURCE_PATH / "first-pipeline" / PIPELINE_YAML,
@@ -47,31 +43,47 @@ class TestGenerate:
             "filter",
         ]
 
-    def test_python_api_filter_include(self, log_info: MagicMock) -> None:
-        pipeline = kpops.generate(
-            RESOURCE_PATH / "first-pipeline" / PIPELINE_YAML,
-            steps={"converter"},
-            filter_type=FilterType.INCLUDE,
-        )
+    def test_python_api_filter_include(self) -> None:
+        with capture_logs() as cap_logs:
+            pipeline = kpops.generate(
+                RESOURCE_PATH / "first-pipeline" / PIPELINE_YAML,
+                steps={"converter"},
+                filter_type=FilterType.INCLUDE,
+            )
         assert len(pipeline) == 1
         assert pipeline.components[0].type == "converter"
-        assert log_info.call_count == 2
-        log_info.assert_any_call("Picked up pipeline 'first-pipeline'")
-        log_info.assert_any_call("Filtered pipeline:\n['converter']")
+        assert {
+            "event": "Picked up pipeline",
+            "pipeline": "first-pipeline",
+            "log_level": "info",
+        } in cap_logs
+        assert {
+            "event": "Filtered pipeline",
+            "steps": ["converter"],
+            "log_level": "info",
+        } in cap_logs
 
-    def test_python_api_filter_exclude(self, log_info: MagicMock) -> None:
-        pipeline = kpops.generate(
-            RESOURCE_PATH / "first-pipeline" / PIPELINE_YAML,
-            steps={"converter", "scheduled-producer"},
-            filter_type=FilterType.EXCLUDE,
-        )
+    def test_python_api_filter_exclude(self) -> None:
+        with capture_logs() as cap_logs:
+            pipeline = kpops.generate(
+                RESOURCE_PATH / "first-pipeline" / PIPELINE_YAML,
+                steps={"converter", "scheduled-producer"},
+                filter_type=FilterType.EXCLUDE,
+            )
         assert len(pipeline) == 1
         assert pipeline.components[0].type == "filter"
-        assert log_info.call_count == 2
-        log_info.assert_any_call("Picked up pipeline 'first-pipeline'")
-        log_info.assert_any_call(
-            "Filtered pipeline:\n['a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name']"
-        )
+        assert {
+            "event": "Picked up pipeline",
+            "pipeline": "first-pipeline",
+            "log_level": "info",
+        } in cap_logs
+        assert {
+            "event": "Filtered pipeline",
+            "steps": [
+                "a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name"
+            ],
+            "log_level": "info",
+        } in cap_logs
 
     def test_load_pipeline(self, snapshot: Snapshot) -> None:
         result = runner.invoke(

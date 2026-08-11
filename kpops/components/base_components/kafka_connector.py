@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import logging
 from abc import ABC
 from typing import Any, NoReturn
 
+import structlog
 from pydantic import PrivateAttr, ValidationInfo, field_validator
 from typing_extensions import override
 
@@ -17,7 +17,7 @@ from kpops.components.base_components.models.from_section import FromTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.components.common.topic import KafkaTopic
 
-log = logging.getLogger("KafkaConnector")
+log = structlog.get_logger("KafkaConnector")
 
 
 class KafkaConnector(PipelineComponent, ABC):

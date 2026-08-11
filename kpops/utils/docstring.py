@@ -1,8 +1,3 @@
-import logging
-
-log = logging.getLogger("docstring_utils")
-
-
 def describe_attr(name: str, docstr: str | None) -> str:
     """Read attribute description from class docstring.
 

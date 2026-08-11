@@ -1,7 +1,4 @@
-from unittest.mock import MagicMock
-
 import pytest
-from pytest_mock import MockerFixture
 
 from kpops.component_handlers.helm_wrapper.model import (
     HelmRepoConfig,
@@ -25,10 +22,6 @@ class TestKubernetesApp:
     @pytest.fixture(autouse=True)
     def config(self) -> KpopsConfig:
         return KpopsConfig.create(None, verbose=False)
-
-    @pytest.fixture()
-    def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch("kpops.components.base_components.kubernetes_app.log.info")
 
     @pytest.fixture()
     def app_values(self) -> KubernetesTestValues:

@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import json
-import logging
 from functools import cached_property
 from typing import TYPE_CHECKING, final
 
+import structlog
 from schema_registry.client import AsyncSchemaRegistryClient
 from schema_registry.client.schema import AvroSchema
 from schema_registry.client.utils import SchemaVersion
@@ -15,13 +15,13 @@ from kpops.component_handlers.schema_handler.schema_provider import (
 )
 from kpops.core.exception import ClassNotFoundError
 from kpops.core.registry import Registry, find_class
-from kpops.utils.colorify import greenify, magentaify, yellowify
+from kpops.utils.colorify import greenify, magentaify
 
 if TYPE_CHECKING:
     from kpops.components.base_components.models.to_section import ToSection
     from kpops.config import KpopsConfig
 
-log = logging.getLogger("SchemaHandler")
+log = structlog.get_logger("SchemaHandler")
 
 
 @final
@@ -49,10 +49,8 @@ class SchemaHandler:
             return cls(config)
         if not config.schema_registry.enabled and config.schema_registry.url:
             log.warning(
-                yellowify(
-                    f"The property schema_registry.enabled is set to False but the URL is set to {config.schema_registry.url}."
-                    f"\nIf you want to use the schema handler make sure to enable it."
-                )
+                "The property schema_registry.enabled is set to False but the URL is set. If you want to use the schema handler make sure to enable it.",
+                url=str(config.schema_registry.url),
             )
         return None
 
@@ -133,7 +131,9 @@ class SchemaHandler:
                 subject=subject, schema=schema
             )
             log.info(
-                f"Schema Submission: schema submitted for {subject} with model {schema_class}."
+                "Schema submitted.",
+                subject=subject,
+                model=schema_class,
             )
 
     async def __subject_exists(self, subject: str) -> bool:
@@ -161,20 +161,28 @@ class SchemaHandler:
                 raise Exception(msg)
         else:
             log.debug(
-                f"Schema Submission: schema was already submitted for the subject {subject} as version {registered_version.schema}. Therefore, the specified schema must be compatible."  # pyright: ignore[reportUnknownMemberType]
+                "Schema was already submitted. Therefore, the specified schema must be compatible.",
+                subject=subject,
+                version=registered_version.schema,  # pyright: ignore[reportUnknownMemberType]
             )
 
         log.info(
-            f"Schema Submission: compatible schema for {subject} with model {schema_class}."
+            "Compatible schema found.",
+            subject=subject,
+            model=schema_class,
         )
 
     async def __delete_subject(self, subject: str, dry_run: bool) -> None:
         if dry_run:
-            log.info(magentaify(f"Schema Deletion: will delete subject {subject}."))
+            log.info(
+                magentaify("Schema Deletion: will delete subject."), subject=subject
+            )
         else:
             version_list: list[
                 SchemaVersion
             ] = await self.schema_registry_client.delete_subject(subject)  # pyright: ignore[reportUnknownMemberType]
             log.info(
-                f"Schema Deletion: deleted {len(version_list)} versions for subject {subject}."
+                "Deleted subject.",
+                subject=subject,
+                versions=len(version_list),
             )

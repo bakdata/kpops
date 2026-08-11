@@ -1,5 +1,6 @@
-from logging import Logger
 from typing import final
+
+import structlog
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
@@ -12,7 +13,9 @@ class DryRunHandler:
         self._helm_diff = helm_diff
         self.namespace = namespace
 
-    def print_helm_diff(self, stdout: str, helm_release_name: str, log: Logger) -> None:
+    def print_helm_diff(
+        self, stdout: str, helm_release_name: str, log: structlog.stdlib.BoundLogger
+    ) -> None:
         """Print the diff of the last and current release of this component.
 
         :param stdout: The output of a Helm command that installs or upgrades the release
@@ -23,8 +26,8 @@ class DryRunHandler:
             self._helm.get_manifest(helm_release_name, self.namespace)
         )
         if current_release:
-            log.info(f"Helm release {helm_release_name} already exists")
+            log.info("Helm release already exists", release=helm_release_name)
         else:
-            log.info(f"Helm release {helm_release_name} does not exist")
+            log.info("Helm release does not exist", release=helm_release_name)
         new_release = Helm.load_manifest(stdout)
         self._helm_diff.log_helm_diff(log, current_release, new_release)

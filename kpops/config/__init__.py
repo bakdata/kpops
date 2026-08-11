@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import ClassVar
 
 import pydantic
+import structlog
 from pydantic import AnyHttpUrl, Field, PrivateAttr, TypeAdapter
 from pydantic.json_schema import SkipJsonSchema
 from pydantic_settings import (
@@ -22,7 +23,7 @@ from kpops.utils.pydantic import YamlConfigSettingsSource
 
 ENV_PREFIX = "KPOPS_"
 
-log = logging.getLogger("KPOpsConfig")
+log = structlog.get_logger("KPOpsConfig")
 
 
 class StrimziTopicConfig(BaseSettings):

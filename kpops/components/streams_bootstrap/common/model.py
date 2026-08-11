@@ -178,11 +178,13 @@ class PersistenceConfig(CamelCaseConfigModel, DescConfigModel):
     :param enabled: Whether to use a persistent volume to store the state of the streams app.
     :param size: The size of the PersistentVolume to allocate to each streams pod in the StatefulSet.
     :param storage_class: Storage class to use for the persistent volume.
+    :param volume_attributes_class_name: VolumeAttributesClass to use for the persistent volume.
     """
 
     enabled: bool = False
     size: str | None = None
     storage_class: str | None = None
+    volume_attributes_class_name: str | None = None
 
     @pydantic.model_validator(mode="after")
     def validate_mandatory_fields_are_set(self) -> Self:

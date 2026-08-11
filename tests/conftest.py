@@ -16,7 +16,7 @@ logger.setLevel(logging.INFO)  # quiet faker locale messages
 
 @pytest.fixture(autouse=True, scope="session")
 def setup_logging() -> None:
-    from kpops.api.logs import log
+    from kpops.utils.logging import log
 
     assert log
 
@@ -55,7 +55,7 @@ def custom_components() -> Iterator[None]:
     src = Path("tests/pipeline/test_components")
     dst = Path("kpops/components/test_components")
     try:
-        shutil.copytree(src, dst)
+        shutil.copytree(src, dst, dirs_exist_ok=True)
         yield
     finally:
         shutil.rmtree(dst)

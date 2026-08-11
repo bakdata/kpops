@@ -2,8 +2,8 @@ from typing import Any
 
 import pytest
 
-from kpops.components.common.kubernetes_model import SerializeAsOptional
 from kpops.utils.pydantic import (
+    SerializeAsOptional,
     SerializeAsOptionalModel,
     exclude_by_value,
     to_dash,

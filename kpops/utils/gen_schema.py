@@ -3,11 +3,11 @@
 
 import inspect
 import json
-import logging
 from abc import ABC
 from collections.abc import Sequence
 from typing import Annotated, Any, Literal, Union
 
+import structlog
 from pydantic import (
     BaseModel,
     Field,
@@ -33,7 +33,7 @@ from kpops.core.registry import Registry
 class MultiComponentGenerateJsonSchema(GenerateJsonSchema): ...
 
 
-log = logging.getLogger("")
+log = structlog.get_logger("")
 
 registry = Registry()
 registry.discover_components()
@@ -58,7 +58,10 @@ def _is_valid_component(
     if not allow_abstract and (
         inspect.isabstract(component) or ABC in component.__bases__
     ):
-        log.warning(f"SKIPPED {component.__name__}, component is abstract.")
+        log.warning(
+            "Component is abstract. Skipping schema generation.",
+            component=component.__name__,
+        )
         return False
     return True
 

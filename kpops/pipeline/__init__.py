@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import asyncio
-import logging
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, TypeAlias
 
 import rustworkx as rx
+import structlog
 import yaml
 from pydantic import (
     SerializeAsAny,
@@ -27,7 +27,7 @@ if TYPE_CHECKING:
 
     from kpops.config import KpopsConfig
 
-log = logging.getLogger("PipelineGenerator")
+log = structlog.get_logger("PipelineGenerator")
 
 ComponentFilterPredicate: TypeAlias = Callable[[PipelineComponent], bool]
 
