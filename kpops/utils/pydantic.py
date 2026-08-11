@@ -45,13 +45,13 @@ def to_dot(s: str) -> str:
     return s.replace("_", ".")
 
 
-def by_alias(model: BaseModel | type[BaseModel], field_name: str) -> str:
+def by_alias(Model: type[BaseModel], field_name: str) -> str:
     """Return field alias if exists else field name.
 
     :param field_name: Name of the field to get alias of
     :param model: Model that owns the field
     """
-    field_info = model.model_fields.get(field_name)
+    field_info = Model.model_fields.get(field_name)
     if not field_info:
         return field_name
     return field_info.alias or field_info.serialization_alias or field_name
@@ -98,7 +98,9 @@ def exclude_by_name(
     }
 
 
-def exclude_defaults(model: BaseModel, dumped_model: dict[str, _V]) -> dict[str, _V]:
+def exclude_defaults(
+    Model: type[BaseModel], dumped_model: dict[str, _V]
+) -> dict[str, _V]:
     """Strip all key-value pairs with default values.
 
     :param model: Model
@@ -107,7 +109,7 @@ def exclude_defaults(model: BaseModel, dumped_model: dict[str, _V]) -> dict[str,
     """
     default_fields = {
         field_name: field_info.default
-        for field_name, field_info in model.model_fields.items()
+        for field_name, field_info in Model.model_fields.items()
     }
     return {
         field_name: field_value

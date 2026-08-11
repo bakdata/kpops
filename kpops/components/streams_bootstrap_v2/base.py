@@ -83,7 +83,7 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
         info: pydantic.SerializationInfo,
     ) -> dict[str, Any]:
         return exclude_defaults(
-            self, exclude_by_value(default_serialize_handler(self), None)
+            self.__class__, exclude_by_value(default_serialize_handler(self), None)
         )
 
 

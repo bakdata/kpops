@@ -89,7 +89,10 @@ class KafkaConnectorConfig(DescConfigModel):
         info: pydantic.SerializationInfo,
     ) -> dict[str, str]:
         result = exclude_by_value(default_serialize_handler(self), None)
-        return {by_alias(self, name): to_str(value) for name, value in result.items()}
+        return {
+            by_alias(self.__class__, name): to_str(value)
+            for name, value in result.items()
+        }
 
 
 class UpperStrEnum(StrEnum):
