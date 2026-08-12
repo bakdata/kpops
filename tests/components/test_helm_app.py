@@ -1,10 +1,11 @@
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
 from structlog.testing import capture_logs
 from typing_extensions import override
 
+from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.model import (
     HelmConfig,
     HelmRepoConfig,
@@ -20,10 +21,12 @@ from kpops.utils.colorify import magentaify
 @pytest.mark.usefixtures("mock_env")
 class TestHelmApp:
     @pytest.fixture()
-    def helm_mock(self, mocker: MockerFixture) -> AsyncMock:
-        return mocker.patch(
-            "kpops.components.base_components.helm_app.Helm", return_value=AsyncMock()
-        ).return_value
+    def helm_mock(self, mocker: MockerFixture) -> MagicMock:
+        helm_mock = mocker.MagicMock(Helm)
+        mocker.patch(
+            "kpops.components.base_components.helm_app.Helm", return_value=helm_mock
+        )
+        return helm_mock
 
     @pytest.fixture()
     def app_values(self) -> HelmAppValues:

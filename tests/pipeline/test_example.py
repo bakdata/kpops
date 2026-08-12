@@ -16,7 +16,8 @@ EXAMPLES_PATH = Path("examples").absolute()
 @pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache", "clear_kpops_config")
 class TestExample:
     @pytest.fixture(scope="class", autouse=True)
-    def cd(self) -> Generator[None]:
+    @classmethod
+    def cd(cls) -> Generator[None]:
         cwd = Path.cwd().absolute()
         os.chdir(EXAMPLES_PATH)
         yield
@@ -38,13 +39,6 @@ class TestExample:
             pytest.param("word-count"),
             pytest.param(
                 "atm-fraud",
-                marks=(
-                    # NOTE: remove after pipeline has been updated to streams-bootstrap v3
-                    # depends on https://github.com/bakdata/pipeline-atm-fraud/issues/4
-                    pytest.mark.filterwarnings(
-                        "ignore:.*StreamsBootstrapV2|(Producer|Streams)AppV2.*:DeprecationWarning"
-                    )
-                ),
             ),
         ],
     )

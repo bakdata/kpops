@@ -41,7 +41,7 @@ class ObjectMeta(CamelCaseConfigModel):
     ) -> dict[str, Any]:
         result = default_serialize_handler(self)
         return {
-            by_alias(self, name): value
+            by_alias(self.__class__, name): value
             for name, value in result.items()
             if name in self.model_fields_set
         }
@@ -70,7 +70,7 @@ class KubernetesManifest(CamelCaseConfigModel):
         include = self._required | self.model_fields_set
         result = default_serialize_handler(self)
         return {
-            by_alias(self, name): value
+            by_alias(self.__class__, name): value
             for name, value in result.items()
             if name in include
         }

@@ -13,7 +13,6 @@ from kpops.components.streams_bootstrap_v2 import StreamsBootstrapV2
 from kpops.components.streams_bootstrap_v2.base import StreamsBootstrapV2Values
 
 
-@pytest.mark.filterwarnings("ignore:.*StreamsBootstrapV2.*:DeprecationWarning")
 @pytest.mark.usefixtures("mock_env")
 class TestStreamsBootstrap:
     def test_default_configs(self) -> None:

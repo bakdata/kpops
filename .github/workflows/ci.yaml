@@ -77,7 +77,7 @@ jobs:
         os:
           - ubuntu-24.04
           - windows-2022
-        python-version: ["3.11", "3.12"]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
         is-draft-pr:
           - ${{ github.event.pull_request.draft }}
         exclude:

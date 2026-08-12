@@ -45,13 +45,13 @@ def to_dot(s: str) -> str:
     return s.replace("_", ".")
 
 
-def by_alias(model: BaseModel | type[BaseModel], field_name: str) -> str:
+def by_alias(model_cls: type[BaseModel], field_name: str) -> str:
     """Return field alias if exists else field name.
 
+    :param model_cls: Model that owns the field
     :param field_name: Name of the field to get alias of
-    :param model: Model that owns the field
     """
-    field_info = model.model_fields.get(field_name)
+    field_info = model_cls.model_fields.get(field_name)
     if not field_info:
         return field_name
     return field_info.alias or field_info.serialization_alias or field_name
@@ -98,16 +98,18 @@ def exclude_by_name(
     }
 
 
-def exclude_defaults(model: BaseModel, dumped_model: dict[str, _V]) -> dict[str, _V]:
+def exclude_defaults(
+    model_cls: type[BaseModel], dumped_model: dict[str, _V]
+) -> dict[str, _V]:
     """Strip all key-value pairs with default values.
 
-    :param model: Model
+    :param model_cls: Model
     :param dumped_model: Dumped model
     :return: Dumped model without defaults
     """
     default_fields = {
         field_name: field_info.default
-        for field_name, field_info in model.model_fields.items()
+        for field_name, field_info in model_cls.model_fields.items()
     }
     return {
         field_name: field_value
@@ -123,14 +125,14 @@ def exclude_defaults(model: BaseModel, dumped_model: dict[str, _V]) -> dict[str,
 ModelFields: TypeAlias = dict[str, "FieldInfo | ModelFields"]
 
 
-def collect_fields(model: type[BaseModel]) -> ModelFields:
+def collect_fields(model_cls: type[BaseModel]) -> ModelFields:
     """Collect and return a ``dict`` of all fields in a settings class.
 
-    :param model: settings class
+    :param model_cls: settings class
     :return: ``dict`` of all fields in a settings class
     """
     seen_fields: ModelFields = {}
-    for field_name, field_info in model.model_fields.items():
+    for field_name, field_info in model_cls.model_fields.items():
         if field_info.annotation and issubclass_patched(field_info.annotation):
             seen_fields[field_name] = collect_fields(field_info.annotation)
         else:
@@ -180,15 +182,15 @@ def find_defining_class(
 
 class DescConfigModel(BaseModel):
     @staticmethod
-    def json_schema_extra(schema: dict[str, Any], model: type[BaseModel]) -> None:
-        schema["description"] = describe_object(model.__doc__)
-        for field_name, field_info in model.model_fields.items():
+    def json_schema_extra(schema: dict[str, Any], model_cls: type[BaseModel]) -> None:
+        schema["description"] = describe_object(model_cls.__doc__)
+        for field_name, field_info in model_cls.model_fields.items():
             if field_info.description:
                 continue  # skip, manually assigned description takes precedence
             if any(isinstance(m, SkipJsonSchema) for m in field_info.metadata):  # pyright: ignore[reportArgumentType]
                 continue
-            field_alias = by_alias(model, field_name)
-            defining_class = find_defining_class(model, field_name)
+            field_alias = by_alias(model_cls, field_name)
+            defining_class = find_defining_class(model_cls, field_name)
             if not defining_class:
                 continue
             description = describe_attr(
