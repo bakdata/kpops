@@ -1531,6 +1531,30 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Reset Kafka Connector offsets using the Kafka Connect API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defaultsyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      defaults.yaml
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pipelineyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      pipeline.yaml
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1924,6 +1948,30 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Reset Kafka Connector offsets using the Kafka Connect API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defaultsyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      defaults.yaml
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pipelineyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      pipeline.yaml
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1965,34 +2013,44 @@
 <h1 id="migrate-from-v10-to-v11">Migrate from V10 to V11<a class="headerlink" href="#migrate-from-v10-to-v11" title="Permanent link">&para;</a></h1>
 <h2 id="reset-kafka-connector-offsets-using-the-kafka-connect-api"><a href="https://github.com/bakdata/kpops/pull/646">Reset Kafka Connector offsets using the Kafka Connect API</a><a class="headerlink" href="#reset-kafka-connector-offsets-using-the-kafka-connect-api" title="Permanent link">&para;</a></h2>
 <p>KPOps now uses the Kafka Connect API to reset connector offsets. The custom Kafka Connect resetter has been removed.</p>
-<p>The <code>offset_topic</code> configuration can be removed:</p>
+<p>If you configured the Kafka Connect resetter in <code>defaults.yaml</code> or in a pipeline, the following options can be removed:</p>
+<h4 id="defaultsyaml">defaults.yaml<a class="headerlink" href="#defaultsyaml" title="Permanent link">&para;</a></h4>
 <div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
-<span class="normal"><a href="#__codelineno-0-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="w"> </span>kafka-source-connector:
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="gd">-  offset_topic: kafka-connect-offsets</span>
+<span class="normal"><a href="#__codelineno-0-2">2</a></span>
+<span class="normal"><a href="#__codelineno-0-3">3</a></span>
+<span class="normal"><a href="#__codelineno-0-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="w"> </span>kafka-connector:
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="gd">-  resetter_namespace: kafka-connect</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="gd">-  resetter_values:</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="gd">-    imageTag: &quot;1.2.3&quot;</span>
+</span></code></pre></div></td></tr></table></div>
+<h4 id="pipelineyaml">pipeline.yaml<a class="headerlink" href="#pipelineyaml" title="Permanent link">&para;</a></h4>
+<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
+<span class="normal"><a href="#__codelineno-1-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="w"> </span>kafka-source-connector:
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="gd">-  offset_topic: kafka-connect-offsets</span>
 </span></code></pre></div></td></tr></table></div>
 <h2 id="improve-logging-and-error-handling"><a href="https://github.com/bakdata/kpops/pull/657">Improve logging and error handling</a><a class="headerlink" href="#improve-logging-and-error-handling" title="Permanent link">&para;</a></h2>
 <p>KPOps now provides structured logs and concise error messages with additional context. No configuration changes are required.</p>
-<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1"> 1</a></span>
-<span class="normal"><a href="#__codelineno-1-2"> 2</a></span>
-<span class="normal"><a href="#__codelineno-1-3"> 3</a></span>
-<span class="normal"><a href="#__codelineno-1-4"> 4</a></span>
-<span class="normal"><a href="#__codelineno-1-5"> 5</a></span>
-<span class="normal"><a href="#__codelineno-1-6"> 6</a></span>
-<span class="normal"><a href="#__codelineno-1-7"> 7</a></span>
-<span class="normal"><a href="#__codelineno-1-8"> 8</a></span>
-<span class="normal"><a href="#__codelineno-1-9"> 9</a></span>
-<span class="normal"><a href="#__codelineno-1-10">10</a></span>
-<span class="normal"><a href="#__codelineno-1-11">11</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a>$ kpops deploy word-count --dry-run
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2"></a>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3"></a># Before: a verbose traceback with little context
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4"></a>Traceback (most recent call last):
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5"></a>  ...
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6"></a>httpx.ConnectError: [Errno 61] Connection refused
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7"></a>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8"></a># Now: a concise structured error with the affected service and URL
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9"></a>[info     ] Picked up pipeline pipeline=word-count
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10"></a>[info     ] Deploy component_name=data-producer
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11"></a>[error    ] [Kafka REST Proxy] [Errno 61] Connection refused url=http://localhost:8082/
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-2-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-2-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-2-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-2-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-2-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-2-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-2-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-2-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-2-10">10</a></span>
+<span class="normal"><a href="#__codelineno-2-11">11</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1"></a>$ kpops deploy word-count --dry-run
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2"></a>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3"></a># Before: a verbose traceback with little context
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4"></a>Traceback (most recent call last):
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5"></a>  ...
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6"></a>httpx.ConnectError: [Errno 61] Connection refused
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7"></a>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8"></a># Now: a concise structured error with the affected service and URL
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9"></a>[info     ] Picked up pipeline pipeline=word-count
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10"></a>[info     ] Deploy component_name=data-producer
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11"></a>[error    ] [Kafka REST Proxy] [Errno 61] Connection refused url=http://localhost:8082/
 </span></code></pre></div></td></tr></table></div>
 <h2 id="support-python-313-and-314"><a href="https://github.com/bakdata/kpops/pull/663">Support Python 3.13 and 3.14</a><a class="headerlink" href="#support-python-313-and-314" title="Permanent link">&para;</a></h2>
 <p>KPOps v11 now supports the current stable releases of Python. Support for 3.12 and 3.11 remains for now.</p>
