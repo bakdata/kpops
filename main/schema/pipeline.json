@@ -245,6 +245,7 @@
                 "files": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -361,6 +362,7 @@
                 "livenessProbe": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -459,6 +461,7 @@
                 "readinessProbe": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -485,6 +488,7 @@
                     "anyOf": [
                         {
                             "items": {
+                                "additionalProperties": true,
                                 "type": "object"
                             },
                             "type": "array"
@@ -500,6 +504,7 @@
                 "secretRefs": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -592,6 +597,7 @@
                 "config": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -2299,6 +2305,7 @@
                 "files": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -2397,6 +2404,7 @@
                 "livenessProbe": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -2471,6 +2479,7 @@
                 "readinessProbe": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -2522,6 +2531,7 @@
                     "anyOf": [
                         {
                             "items": {
+                                "additionalProperties": true,
                                 "type": "object"
                             },
                             "type": "array"
@@ -2537,6 +2547,7 @@
                 "secretRefs": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -3505,6 +3516,7 @@
                 "files": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -3623,6 +3635,7 @@
                 "livenessProbe": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -3721,6 +3734,7 @@
                 "readinessProbe": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -3747,6 +3761,7 @@
                     "anyOf": [
                         {
                             "items": {
+                                "additionalProperties": true,
                                 "type": "object"
                             },
                             "type": "array"
@@ -3762,6 +3777,7 @@
                 "secretRefs": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -4102,6 +4118,7 @@
                     "anyOf": [
                         {
                             "items": {
+                                "additionalProperties": true,
                                 "type": "object"
                             },
                             "type": "array"
@@ -4230,6 +4247,7 @@
                 "scalingModifiers": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -4260,6 +4278,7 @@
                     "anyOf": [
                         {
                             "items": {
+                                "additionalProperties": true,
                                 "type": "object"
                             },
                             "type": "array"
@@ -4302,6 +4321,7 @@
                 "config": {
                     "anyOf": [
                         {
+                            "additionalProperties": true,
                             "type": "object"
                         },
                         {
@@ -4587,6 +4607,7 @@
                     "type": "string"
                 },
                 "config": {
+                    "additionalProperties": true,
                     "default": {},
                     "description": "Configuration",
                     "title": "Config",
