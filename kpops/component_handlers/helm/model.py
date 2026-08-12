@@ -6,7 +6,7 @@ from typing import ClassVar
 from pydantic import ConfigDict, Field
 from typing_extensions import override
 
-from kpops.component_handlers.helm_wrapper.exception import ParseError
+from kpops.component_handlers.helm.exception import ParseError
 from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.utils.pydantic import (
     DescConfigModel,

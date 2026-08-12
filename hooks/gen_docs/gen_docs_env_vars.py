@@ -19,7 +19,7 @@ from typer.models import ArgumentInfo, OptionInfo
 from hooks import ROOT
 from hooks.gen_docs import IterableStrEnum
 from kpops.cli import main
-from kpops.component_handlers.helm_wrapper.model import HelmConfig
+from kpops.component_handlers.helm.model import HelmConfig
 from kpops.config import KpopsConfig
 from kpops.utils.dict_ops import generate_substitution
 from kpops.utils.docstring import describe_attr

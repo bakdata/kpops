@@ -4,8 +4,8 @@ import pytest
 import structlog
 from structlog.testing import capture_logs
 
-from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
-from kpops.component_handlers.helm_wrapper.model import HelmDiffConfig, HelmTemplate
+from kpops.component_handlers.helm.helm_diff import HelmDiff
+from kpops.component_handlers.helm.model import HelmDiffConfig, HelmTemplate
 from kpops.manifests.kubernetes import KubernetesManifest, ObjectMeta
 from kpops.utils.dict_differ import Change
 

@@ -10,7 +10,7 @@ import typer
 import yaml
 from dictdiffer import diff, patch
 
-from kpops.component_handlers.helm_wrapper.model import KeyPath
+from kpops.component_handlers.helm.model import KeyPath
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator, Sequence

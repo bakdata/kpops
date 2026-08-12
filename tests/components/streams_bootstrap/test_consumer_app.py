@@ -15,11 +15,11 @@ from pydantic import ValidationError
 from pytest_mock import MockerFixture
 from structlog.testing import capture_logs
 
-from kpops.component_handlers.helm_wrapper.helm import Helm
-from kpops.component_handlers.helm_wrapper.model import (
+from kpops.component_handlers.helm.helm import Helm
+from kpops.component_handlers.helm.model import (
     HelmUpgradeInstallFlags,
 )
-from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
+from kpops.component_handlers.helm.utils import create_helm_release_name
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
 from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.models.to_section import (

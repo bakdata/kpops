@@ -2,8 +2,8 @@ from abc import ABC
 
 from typing_extensions import override
 
-from kpops.component_handlers.helm_wrapper.model import HelmFlags
-from kpops.component_handlers.helm_wrapper.utils import (
+from kpops.component_handlers.helm.model import HelmFlags
+from kpops.component_handlers.helm.utils import (
     create_helm_name_override,
     create_helm_release_name,
 )

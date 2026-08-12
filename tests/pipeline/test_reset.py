@@ -23,7 +23,7 @@ class TestReset:
     @pytest.fixture(autouse=True)
     def helm_mock(self, mocker: MockerFixture) -> AsyncMock:
         return mocker.patch(
-            "kpops.component_handlers.helm_wrapper.helm.Helm",
+            "kpops.component_handlers.helm.helm.Helm",
             return_value=AsyncMock(),
         )
 

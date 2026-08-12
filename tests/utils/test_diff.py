@@ -2,7 +2,7 @@ from typing import Any
 
 import pytest
 
-from kpops.component_handlers.helm_wrapper.model import KeyPath
+from kpops.component_handlers.helm.model import KeyPath
 from kpops.utils.dict_differ import Change, Diff, DiffType, render_diff
 
 
