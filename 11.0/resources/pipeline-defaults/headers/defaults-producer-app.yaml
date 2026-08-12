@@ -1,0 +1,5 @@
+# Producer app component that configures a streams-bootstrap producer app.
+#
+# Child of: KafkaApp
+# More documentation on ProducerApp: https://github.com/bakdata/streams-bootstrap
+producer-app:
