@@ -2,6 +2,50 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.0.0](https://github.com/bakdata/kpops/tree/11.0.0) - 2026-08-12
+### What's changed
+
+* refactor(pipeline): replace networkx with rustworkx by @disrupted in [#518](https://github.com/bakdata/kpops/pull/518)
+
+* ci: update uv by @disrupted in [#649](https://github.com/bakdata/kpops/pull/649)
+
+* ci: pass repository variables as action inputs by @disrupted in [#650](https://github.com/bakdata/kpops/pull/650)
+
+* chore(dev): report missing Python type annotations by @disrupted in [#651](https://github.com/bakdata/kpops/pull/651)
+
+* feat(kafka-connect): reset connector using REST API, remove custom resetter by @disrupted in [#646](https://github.com/bakdata/kpops/pull/646)
+
+* refactor: replace httpx with httpx2 by @disrupted in [#654](https://github.com/bakdata/kpops/pull/654)
+
+* refactor(kafka-connect): improve request logging and dry-run handling by @disrupted in [#652](https://github.com/bakdata/kpops/pull/652)
+
+* refactor: rename Proxy wrapper to Kafka REST by @disrupted in [#655](https://github.com/bakdata/kpops/pull/655)
+
+* chore: update Ruff & BasedPyright by @disrupted in [#656](https://github.com/bakdata/kpops/pull/656)
+
+* feat: unify error handling and logging by @disrupted in [#657](https://github.com/bakdata/kpops/pull/657)
+
+* fix(helm): specify repo to update with Helm 4 by @disrupted in [#658](https://github.com/bakdata/kpops/pull/658)
+
+* feat(streams-bootstrap): Add volumeAttributesClassName to PersistenceConfig by @Copilot in [#662](https://github.com/bakdata/kpops/pull/662)
+
+* feat(streams-bootstrap): add KEDA triggers and scaling modifiers by @raphala in [#659](https://github.com/bakdata/kpops/pull/659)
+
+* build: add official support for Python 3.13 & 3.14 by @disrupted in [#663](https://github.com/bakdata/kpops/pull/663)
+
+* refactor(helm): rename client wrapper consistently by @disrupted in [#664](https://github.com/bakdata/kpops/pull/664)
+
+* chore: add tobbber as codeowner by @disrupted in [#666](https://github.com/bakdata/kpops/pull/666)
+
+* docs: create migration guide for v11 by @disrupted in [#665](https://github.com/bakdata/kpops/pull/665)
+
+
+### New Contributors
+* @raphala made their first contribution in [#659](https://github.com/bakdata/kpops/pull/659)
+* @Copilot made their first contribution in [#662](https://github.com/bakdata/kpops/pull/662)
+
+**Full Changelog**: https://github.com/bakdata/kpops/compare/10.9.0...11.0.0
+
 ## [10.9.0](https://github.com/bakdata/kpops/tree/10.9.0) - 2026-06-02
 ### What's changed
 
