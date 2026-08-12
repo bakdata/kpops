@@ -49,8 +49,8 @@ def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture) -> None:
     connector_handler_mock.from_kpops_config.return_value = connector_handler
 
     topic_handler_mock = mocker.patch(f"{HANDLER_MODULE}.TopicHandler")
-    wrapper = mocker.patch(f"{HANDLER_MODULE}.KafkaRest")
-    topic_handler = TopicHandler(wrapper)
+    kafka_rest = mocker.patch(f"{HANDLER_MODULE}.KafkaRest")
+    topic_handler = TopicHandler(kafka_rest)
     topic_handler_mock.return_value = topic_handler
 
     expected = ComponentHandlers(
@@ -87,8 +87,8 @@ def test_set_up_handlers_with_schema_handler(mocker: MockerFixture) -> None:
     connector_handler_mock.from_kpops_config.return_value = connector_handler
 
     topic_handler_mock = mocker.patch(f"{HANDLER_MODULE}.TopicHandler")
-    wrapper = mocker.patch(f"{HANDLER_MODULE}.KafkaRest")
-    topic_handler = TopicHandler(wrapper)
+    kafka_rest = mocker.patch(f"{HANDLER_MODULE}.KafkaRest")
+    topic_handler = TopicHandler(kafka_rest)
     topic_handler_mock.return_value = topic_handler
 
     expected = ComponentHandlers(

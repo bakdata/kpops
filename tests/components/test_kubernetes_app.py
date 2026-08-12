@@ -1,9 +1,9 @@
 import pytest
 
-from kpops.component_handlers.helm_wrapper.model import (
+from kpops.component_handlers.helm.model import (
     HelmRepoConfig,
 )
-from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
+from kpops.component_handlers.helm.utils import create_helm_release_name
 from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
     KubernetesAppValues,

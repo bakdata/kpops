@@ -5,8 +5,8 @@ from pytest_mock import MockerFixture
 from structlog.testing import capture_logs
 from typing_extensions import override
 
-from kpops.component_handlers.helm_wrapper.helm import Helm
-from kpops.component_handlers.helm_wrapper.model import (
+from kpops.component_handlers.helm.helm import Helm
+from kpops.component_handlers.helm.model import (
     HelmConfig,
     HelmRepoConfig,
     HelmUpgradeInstallFlags,
@@ -49,7 +49,7 @@ class TestHelmApp:
             repo_config=repo_config,
         )
 
-    async def test_should_lazy_load_helm_wrapper_and_not_repo_add(
+    async def test_should_lazy_load_helm_and_not_repo_add(
         self,
         helm_app: HelmApp,
         mocker: MockerFixture,
@@ -79,7 +79,7 @@ class TestHelmApp:
             HelmUpgradeInstallFlags(),
         )
 
-    async def test_should_lazy_load_helm_wrapper_and_call_repo_add_when_implemented(
+    async def test_should_lazy_load_helm_and_call_repo_add_when_implemented(
         self,
         helm_mock: MagicMock,
         mocker: MockerFixture,

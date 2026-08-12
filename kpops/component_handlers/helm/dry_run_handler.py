@@ -2,8 +2,8 @@ from typing import final
 
 import structlog
 
-from kpops.component_handlers.helm_wrapper.helm import Helm
-from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
+from kpops.component_handlers.helm.helm import Helm
+from kpops.component_handlers.helm.helm_diff import HelmDiff
 
 
 @final

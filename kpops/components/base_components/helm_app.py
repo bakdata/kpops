@@ -8,17 +8,17 @@ import structlog
 from pydantic import Field, computed_field
 from typing_extensions import override
 
-from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
-from kpops.component_handlers.helm_wrapper.helm import Helm
-from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
-from kpops.component_handlers.helm_wrapper.model import (
+from kpops.component_handlers.helm.dry_run_handler import DryRunHandler
+from kpops.component_handlers.helm.helm import Helm
+from kpops.component_handlers.helm.helm_diff import HelmDiff
+from kpops.component_handlers.helm.model import (
     HelmDiffConfig,
     HelmFlags,
     HelmRepoConfig,
     HelmTemplateFlags,
     HelmUpgradeInstallFlags,
 )
-from kpops.component_handlers.helm_wrapper.utils import (
+from kpops.component_handlers.helm.utils import (
     create_helm_name_override,
     create_helm_release_name,
 )

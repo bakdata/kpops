@@ -6,8 +6,8 @@ import structlog
 from pytest_mock import MockerFixture
 from structlog.testing import capture_logs
 
-from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
-from kpops.component_handlers.helm_wrapper.model import HelmTemplate
+from kpops.component_handlers.helm.dry_run_handler import DryRunHandler
+from kpops.component_handlers.helm.model import HelmTemplate
 from kpops.manifests.kubernetes import KubernetesManifest
 
 log = structlog.get_logger("TestLogger")
@@ -17,13 +17,13 @@ class TestDryRunHandler:
     @pytest.fixture()
     def helm_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
-            "kpops.component_handlers.helm_wrapper.dry_run_handler.Helm"
+            "kpops.component_handlers.helm.dry_run_handler.Helm"
         ).return_value
 
     @pytest.fixture()
     def helm_diff_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
-            "kpops.component_handlers.helm_wrapper.dry_run_handler.HelmDiff"
+            "kpops.component_handlers.helm.dry_run_handler.HelmDiff"
         ).return_value
 
     def test_should_print_helm_diff_when_release_is_new(
@@ -44,7 +44,7 @@ class TestDryRunHandler:
             ]
         )
         mock_load_manifest = mocker.patch(
-            "kpops.component_handlers.helm_wrapper.dry_run_handler.Helm.load_manifest",
+            "kpops.component_handlers.helm.dry_run_handler.Helm.load_manifest",
             return_value=new_release,
         )
 
@@ -90,7 +90,7 @@ class TestDryRunHandler:
             ]
         )
         mock_load_manifest = mocker.patch(
-            "kpops.component_handlers.helm_wrapper.dry_run_handler.Helm.load_manifest",
+            "kpops.component_handlers.helm.dry_run_handler.Helm.load_manifest",
             return_value=iter(new_release),
         )
 

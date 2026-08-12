@@ -1,4 +1,4 @@
-from kpops.component_handlers.helm_wrapper.utils import (
+from kpops.component_handlers.helm.utils import (
     create_helm_release_name,
 )
 

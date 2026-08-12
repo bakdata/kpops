@@ -8,7 +8,7 @@ import structlog
 from pydantic import AliasChoices, ConfigDict, Field
 from typing_extensions import deprecated
 
-from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
+from kpops.component_handlers.helm.model import HelmRepoConfig
 from kpops.components.base_components import KafkaApp
 from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
 from kpops.components.common.kubernetes_model import Affinity, Toleration

@@ -9,13 +9,13 @@ import pytest
 from pytest_mock import MockerFixture
 from structlog.testing import capture_logs
 
-from kpops.component_handlers.helm_wrapper.exception import (
+from kpops.component_handlers.helm.exception import (
     HelmError,
     ParseError,
     ReleaseNotFoundException,
 )
-from kpops.component_handlers.helm_wrapper.helm import Helm
-from kpops.component_handlers.helm_wrapper.model import (
+from kpops.component_handlers.helm.helm import Helm
+from kpops.component_handlers.helm.model import (
     HelmConfig,
     HelmTemplate,
     HelmTemplateFlags,
@@ -27,7 +27,7 @@ from kpops.components.common.app_type import AppType
 from kpops.manifests.kubernetes import KubernetesManifest
 
 
-class TestHelmWrapper:
+class TestHelm:
     @pytest.fixture(autouse=True)
     def temp_file_mock(self, mocker: MockerFixture) -> MagicMock:
         temp_file_mock = mocker.patch("tempfile.NamedTemporaryFile")
