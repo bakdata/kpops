@@ -2013,15 +2013,17 @@
 <h1 id="migrate-from-v10-to-v11">Migrate from V10 to V11<a class="headerlink" href="#migrate-from-v10-to-v11" title="Permanent link">&para;</a></h1>
 <h2 id="reset-kafka-connector-offsets-using-the-kafka-connect-api"><a href="https://github.com/bakdata/kpops/pull/646">Reset Kafka Connector offsets using the Kafka Connect API</a><a class="headerlink" href="#reset-kafka-connector-offsets-using-the-kafka-connect-api" title="Permanent link">&para;</a></h2>
 <p>KPOps now uses the Kafka Connect API to reset connector offsets. The custom Kafka Connect resetter has been removed.</p>
-<p>If you configured the Kafka Connect resetter in <code>defaults.yaml</code> or in a pipeline, the following options can be removed:</p>
+<p>If you configured the Kafka Connect resetter in <code>defaults.yaml</code> or in a pipeline, the following options can be removed.</p>
 <h4 id="defaultsyaml">defaults.yaml<a class="headerlink" href="#defaultsyaml" title="Permanent link">&para;</a></h4>
 <div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
 <span class="normal"><a href="#__codelineno-0-2">2</a></span>
 <span class="normal"><a href="#__codelineno-0-3">3</a></span>
-<span class="normal"><a href="#__codelineno-0-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="w"> </span>kafka-connector:
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="gd">-  resetter_namespace: kafka-connect</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="gd">-  resetter_values:</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="gd">-    imageTag: &quot;1.2.3&quot;</span>
+<span class="normal"><a href="#__codelineno-0-4">4</a></span>
+<span class="normal"><a href="#__codelineno-0-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="w"> </span>kafka-connector:
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="gd">-  version: &quot;1.0.4&quot;</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="gd">-  resetter_namespace: kafka-connect</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="gd">-  resetter_values:</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="gd">-    imageTag: &quot;1.2.3&quot;</span>
 </span></code></pre></div></td></tr></table></div>
 <h4 id="pipelineyaml">pipeline.yaml<a class="headerlink" href="#pipelineyaml" title="Permanent link">&para;</a></h4>
 <div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
