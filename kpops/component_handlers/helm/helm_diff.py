@@ -3,7 +3,7 @@ from typing import final
 
 import structlog
 
-from kpops.component_handlers.helm_wrapper.model import HelmDiffConfig, HelmTemplate
+from kpops.component_handlers.helm.model import HelmDiffConfig, HelmTemplate
 from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.utils.dict_differ import Change, render_diff
 

@@ -6,11 +6,11 @@ import pytest
 from pydantic import ValidationError
 from pytest_mock import MockerFixture
 
-from kpops.component_handlers.helm_wrapper.model import (
+from kpops.component_handlers.helm.model import (
     HelmRepoConfig,
     HelmUpgradeInstallFlags,
 )
-from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
+from kpops.component_handlers.helm.utils import create_helm_release_name
 from kpops.components.common.kubernetes_model import (
     NodeAffinity,
     NodeSelectorTerm,

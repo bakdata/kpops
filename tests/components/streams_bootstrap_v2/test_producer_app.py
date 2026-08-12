@@ -5,10 +5,10 @@ from pytest_mock import MockerFixture
 from structlog.testing import capture_logs
 
 from kpops.component_handlers import get_handlers
-from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
-from kpops.component_handlers.helm_wrapper.helm import Helm
-from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
-from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
+from kpops.component_handlers.helm.dry_run_handler import DryRunHandler
+from kpops.component_handlers.helm.helm import Helm
+from kpops.component_handlers.helm.model import HelmUpgradeInstallFlags
+from kpops.component_handlers.helm.utils import create_helm_release_name
 from kpops.components.common.topic import (
     KafkaTopic,
     OutputTopicTypes,

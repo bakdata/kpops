@@ -13,12 +13,12 @@ import structlog
 import yaml
 from cachetools import cached
 
-from kpops.component_handlers.helm_wrapper import HELM
-from kpops.component_handlers.helm_wrapper.exception import (
+from kpops.component_handlers.helm import HELM
+from kpops.component_handlers.helm.exception import (
     HelmError,
     ReleaseNotFoundException,
 )
-from kpops.component_handlers.helm_wrapper.model import (
+from kpops.component_handlers.helm.model import (
     HelmChart,
     HelmConfig,
     HelmTemplate,
