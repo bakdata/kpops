@@ -23,7 +23,7 @@ def test_create_config(tmp_path: Path) -> None:
     assert len(opt_conf.read_text()) > len(req_conf.read_text())
 
 
-@pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache", "clear_kpops_config")
+@pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache", "clear_config")
 def test_init_project_exclude_optional(tmp_path: Path, snapshot: Snapshot) -> None:
     req_path = tmp_path / "req"
     req_path.mkdir()

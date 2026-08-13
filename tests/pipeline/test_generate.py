@@ -29,7 +29,7 @@ RESOURCE_PATH = Path(__file__).parent / "resources"
 
 
 @pytest.mark.usefixtures(
-    "mock_env", "load_yaml_file_clear_cache", "custom_components", "clear_kpops_config"
+    "mock_env", "load_yaml_file_clear_cache", "custom_components", "clear_config"
 )
 class TestGenerate:
     def test_python_api(self) -> None:

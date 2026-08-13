@@ -64,9 +64,7 @@ def custom_components() -> Iterator[None]:
 
 
 @pytest.fixture(scope="module")
-def clear_kpops_config() -> Iterator[None]:
-    from kpops.config import KpopsConfig
-
+def clear_config() -> Iterator[None]:
     KpopsConfig._instance = None
     yield
 
