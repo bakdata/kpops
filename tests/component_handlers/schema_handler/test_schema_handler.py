@@ -215,7 +215,7 @@ async def test_should_log_debug_when_submit_schema_that_exists_and_registered_un
     assert {
         "event": "Schema was already submitted. Therefore, the specified schema must be compatible.",
         "subject": "topic-X-value",
-        "version": registered_version.schema,  # pyright: ignore[reportUnknownMemberType]
+        "version": registered_version.schema,
         "log_level": "debug",
     } in cap_logs
 

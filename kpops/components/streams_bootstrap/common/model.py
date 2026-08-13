@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from enum import StrEnum
+from enum import auto
 from typing import Any, ClassVar, Self
 
 import pydantic
@@ -8,6 +8,7 @@ from pydantic import ConfigDict, Field
 
 from kpops.components.common.kubernetes_model import ImagePullPolicy, Resources
 from kpops.components.common.topic import KafkaTopic
+from kpops.utils.enum import UpperStrEnum
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
     DescConfigModel,
@@ -29,10 +30,10 @@ def serialize_labeled_input_topics(
     }
 
 
-class JmxRuleType(StrEnum):
-    GAUGE = "GAUGE"
-    COUNTER = "COUNTER"
-    UNTYPED = "UNTYPED"
+class JmxRuleType(UpperStrEnum):
+    GAUGE = auto()
+    COUNTER = auto()
+    UNTYPED = auto()
 
 
 class JMXRule(SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigModel):

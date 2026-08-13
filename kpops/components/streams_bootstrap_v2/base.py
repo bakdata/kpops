@@ -115,7 +115,7 @@ class StreamsBootstrapV2(KafkaApp, HelmApp, ABC):
     """
 
     values: StreamsBootstrapV2Values
-    repo_config: SkipGenerate[HelmRepoConfig] = STREAMS_BOOTSTRAP_HELM_REPO  # pyright: ignore[reportIncompatibleVariableOverride]
+    repo_config: SkipGenerate[HelmRepoConfig] = STREAMS_BOOTSTRAP_HELM_REPO
     version: str | None = STREAMS_BOOTSTRAP_VERSION
 
     @pydantic.model_validator(mode="after")

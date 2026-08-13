@@ -57,7 +57,7 @@ class TestKafkaConnector:
 
         connector = KafkaConnector(
             name=CONNECTOR_NAME,
-            config={"connector.class": CONNECTOR_CLASS},  # pyright: ignore[reportArgumentType], gets enriched
+            config={"connector.class": CONNECTOR_CLASS},  # gets enriched
         )
         assert connector.config.name == CONNECTOR_FULL_NAME
 
@@ -69,7 +69,10 @@ class TestKafkaConnector:
         ):
             KafkaConnector(
                 name=CONNECTOR_NAME,
-                config={"connector.class": CONNECTOR_CLASS, "name": "different-name"},  # pyright: ignore[reportArgumentType], gets enriched
+                config={
+                    "connector.class": CONNECTOR_CLASS,
+                    "name": "different-name",
+                },  # gets enriched
             )
 
         with pytest.raises(
@@ -80,5 +83,8 @@ class TestKafkaConnector:
         ):
             KafkaConnector(
                 name=CONNECTOR_NAME,
-                config={"connector.class": CONNECTOR_CLASS, "name": ""},  # pyright: ignore[reportArgumentType], gets enriched
+                config={
+                    "connector.class": CONNECTOR_CLASS,
+                    "name": "",
+                },  # gets enriched
             )

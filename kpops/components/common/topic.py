@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
-from enum import StrEnum
+from enum import StrEnum, auto
 from typing import Annotated, Any, ClassVar
 
 import pydantic
@@ -17,8 +17,8 @@ class OutputTopicTypes(StrEnum):
     - ERROR: error topic
     """
 
-    OUTPUT = "output"
-    ERROR = "error"
+    OUTPUT = auto()
+    ERROR = auto()
 
 
 class TopicConfig(DescConfigModel):

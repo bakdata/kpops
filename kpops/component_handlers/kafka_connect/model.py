@@ -14,6 +14,7 @@ from pydantic.json_schema import SkipJsonSchema
 from typing_extensions import override
 
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
+from kpops.utils.enum import UpperStrEnum
 from kpops.utils.pydantic import (
     DescConfigModel,
     by_alias,
@@ -34,9 +35,9 @@ class KafkaConnectorConfig(DescConfigModel):
 
     @override
     @staticmethod
-    def json_schema_extra(schema: dict[str, Any], model: type[BaseModel]) -> None:
+    def json_schema_extra(schema: dict[str, Any], model_cls: type[BaseModel]) -> None:
         super(KafkaConnectorConfig, KafkaConnectorConfig).json_schema_extra(
-            schema, model
+            schema, model_cls
         )
         schema["additional_properties"] = {
             "type": {
@@ -95,13 +96,6 @@ class KafkaConnectorConfig(DescConfigModel):
         }
 
 
-class UpperStrEnum(StrEnum):
-    @override
-    @staticmethod
-    def _generate_next_value_(name: str, *args: Any, **kwargs: Any) -> str:
-        return name.upper()
-
-
 class ConnectorCurrentState(UpperStrEnum):
     RUNNING = auto()
     PAUSED = auto()
@@ -144,8 +138,8 @@ class ConnectorTaskStatus(BaseModel):
 
 
 class KafkaConnectorType(StrEnum):
-    SINK = "sink"
-    SOURCE = "source"
+    SINK = auto()
+    SOURCE = auto()
 
 
 class ConnectorStatusResponse(BaseModel):
