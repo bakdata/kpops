@@ -6,9 +6,9 @@ from pytest_mock import MockerFixture
 from structlog.contextvars import merge_contextvars
 from structlog.testing import capture_logs
 
-from kpops.api import _run_component
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.core.exception import KpopsException
+from kpops.pipeline import _run_component
 from kpops.utils.logging import bound_service_context
 
 

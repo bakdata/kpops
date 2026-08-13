@@ -7,6 +7,8 @@ from unittest import mock
 
 import pytest
 
+from kpops.component_handlers import ComponentHandlers
+from kpops.config import KpopsConfig, TopicNameConfig, set_config
 from kpops.utils.environment import ENV, Environment
 from kpops.utils.yaml import load_yaml_file
 
@@ -67,6 +69,49 @@ def clear_kpops_config() -> Iterator[None]:
 
     KpopsConfig._instance = None
     yield
+
+
+@pytest.fixture(scope="module")
+def pipeline_base_dir() -> Path:
+    """Return the base directory used by the ``config`` fixture.
+
+    Override this fixture in a more specific ``conftest.py`` to point
+    ``KpopsConfig.pipeline_base_dir`` elsewhere.
+    """
+    return Path()
+
+
+@pytest.fixture(scope="module")
+def config(pipeline_base_dir: Path) -> KpopsConfig:
+    """Provide a ready-to-use ``KpopsConfig`` for tests that construct components directly.
+
+    Not autouse: opt in explicitly via ``usefixtures`` or a local autouse
+    wrapper fixture where needed.
+    """
+    config = KpopsConfig(
+        topic_name_config=TopicNameConfig(
+            default_error_topic_name="${component.type}-error-topic",
+            default_output_topic_name="${component.type}-output-topic",
+        ),
+        kafka_brokers="broker:9092",
+        pipeline_base_dir=pipeline_base_dir,
+    )
+    set_config(config)
+    return config
+
+
+@pytest.fixture(scope="module")
+def handlers() -> ComponentHandlers:
+    """Provide ``ComponentHandlers`` with mocked handlers.
+
+    Not autouse: opt in explicitly via ``usefixtures`` or a local autouse
+    wrapper fixture where needed.
+    """
+    return ComponentHandlers(
+        schema_handler=mock.AsyncMock(),
+        connector_handler=mock.AsyncMock(),
+        topic_handler=mock.AsyncMock(),
+    )
 
 
 KUBECONFIG = """

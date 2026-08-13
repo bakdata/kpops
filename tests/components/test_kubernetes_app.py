@@ -8,7 +8,6 @@ from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
     KubernetesAppValues,
 )
-from kpops.config import KpopsConfig
 
 HELM_RELEASE_NAME = create_helm_release_name("${pipeline.name}-test-kubernetes-app")
 
@@ -17,12 +16,8 @@ class KubernetesTestValues(KubernetesAppValues):
     foo: str
 
 
-@pytest.mark.usefixtures("mock_env", "clear_kpops_config")
+@pytest.mark.usefixtures("mock_env")
 class TestKubernetesApp:
-    @pytest.fixture(autouse=True)
-    def config(self) -> KpopsConfig:
-        return KpopsConfig.create(None, verbose=False)
-
     @pytest.fixture()
     def app_values(self) -> KubernetesTestValues:
         return KubernetesTestValues(foo="foo")
