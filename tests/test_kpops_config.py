@@ -73,7 +73,7 @@ def test_kpops_config_with_different_invalid_urls() -> None:
         )
 
 
-@pytest.mark.usefixtures("clear_kpops_config")
+@pytest.mark.usefixtures("clear_config")
 def test_global_kpops_config_not_initialized_error() -> None:
     with pytest.raises(
         RuntimeError,

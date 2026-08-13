@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-from collections.abc import Iterator
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -14,33 +13,20 @@ from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.kafka_rest import KafkaRest
 from kpops.config import KpopsConfig
-from kpops.core.exception import KpopsException
 from kpops.core.operation import OperationMode
 from kpops.core.registry import Registry
-from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.pipeline import (
     Pipeline,
     PipelineGenerator,
 )
 from kpops.utils.cli_commands import init_project
-from kpops.utils.logging import log, log_action, log_kpops_exception
+from kpops.utils.logging import log
 
 if TYPE_CHECKING:
-    from collections.abc import Awaitable
+    from collections.abc import Iterator
 
-    from kpops.components.base_components.pipeline_component import PipelineComponent
     from kpops.config import KpopsConfig
-
-
-async def _run_component(
-    action: str, component: PipelineComponent, operation: Awaitable[None]
-) -> None:
-    log_action(action, component)
-    try:
-        await operation
-    except KpopsException as e:
-        log_kpops_exception(e)
-        raise
+    from kpops.manifests.kubernetes import KubernetesManifest
 
 
 def generate(
@@ -106,9 +92,7 @@ def manifest_deploy(
         verbose=verbose,
         operation_mode=operation_mode,
     )
-    for component in pipeline.components:
-        resource = component.manifest_deploy()
-        yield resource
+    yield from pipeline.manifest_deploy()
 
 
 def manifest_destroy(
@@ -131,9 +115,7 @@ def manifest_destroy(
         verbose=verbose,
         operation_mode=operation_mode,
     )
-    for component in pipeline.components:
-        resource = component.manifest_destroy()
-        yield resource
+    yield from pipeline.manifest_destroy()
 
 
 def manifest_reset(
@@ -156,9 +138,7 @@ def manifest_reset(
         verbose=verbose,
         operation_mode=operation_mode,
     )
-    for component in pipeline.components:
-        resource = component.manifest_reset()
-        yield resource
+    yield from pipeline.manifest_reset()
 
 
 def manifest_clean(
@@ -181,9 +161,7 @@ def manifest_clean(
         verbose=verbose,
         operation_mode=operation_mode,
     )
-    for component in pipeline.components:
-        resource = component.manifest_clean()
-        yield resource
+    yield from pipeline.manifest_clean()
 
 
 def deploy(
@@ -218,19 +196,7 @@ def deploy(
         environment=environment,
         verbose=verbose,
     )
-
-    async def deploy_runner(component: PipelineComponent) -> None:
-        await _run_component("Deploy", component, component.deploy(dry_run))
-
-    async def async_deploy() -> None:
-        if parallel:
-            pipeline_tasks = pipeline.build_execution_graph(deploy_runner)
-            await pipeline_tasks
-        else:
-            for component in pipeline.components:
-                await deploy_runner(component)
-
-    asyncio.run(async_deploy())
+    asyncio.run(pipeline.deploy(dry_run, parallel))
 
 
 def destroy(
@@ -265,21 +231,7 @@ def destroy(
         environment=environment,
         verbose=verbose,
     )
-
-    async def destroy_runner(component: PipelineComponent) -> None:
-        await _run_component("Destroy", component, component.destroy(dry_run))
-
-    async def async_destroy() -> None:
-        if parallel:
-            pipeline_tasks = pipeline.build_execution_graph(
-                destroy_runner, reverse=True
-            )
-            await pipeline_tasks
-        else:
-            for component in reversed(pipeline.components):
-                await destroy_runner(component)
-
-    asyncio.run(async_destroy())
+    asyncio.run(pipeline.destroy(dry_run, parallel))
 
 
 def reset(
@@ -314,19 +266,7 @@ def reset(
         environment=environment,
         verbose=verbose,
     )
-
-    async def reset_runner(component: PipelineComponent) -> None:
-        await _run_component("Reset", component, component.reset(dry_run))
-
-    async def async_reset() -> None:
-        if parallel:
-            pipeline_tasks = pipeline.build_execution_graph(reset_runner, reverse=True)
-            await pipeline_tasks
-        else:
-            for component in reversed(pipeline.components):
-                await reset_runner(component)
-
-    asyncio.run(async_reset())
+    asyncio.run(pipeline.reset(dry_run, parallel))
 
 
 def clean(
@@ -361,19 +301,7 @@ def clean(
         environment=environment,
         verbose=verbose,
     )
-
-    async def clean_runner(component: PipelineComponent) -> None:
-        await _run_component("Clean", component, component.clean(dry_run))
-
-    async def async_clean() -> None:
-        if parallel:
-            pipeline_tasks = pipeline.build_execution_graph(clean_runner, reverse=True)
-            await pipeline_tasks
-        else:
-            for component in reversed(pipeline.components):
-                await clean_runner(component)
-
-    asyncio.run(async_clean())
+    asyncio.run(pipeline.clean(dry_run, parallel))
 
 
 def init(

@@ -1,6 +1,0 @@
-- type: producer-app
-
-- type: streams-app
-
-- type: helm-app
-  values: {}

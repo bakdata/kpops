@@ -15,10 +15,11 @@ from pydantic import (
 
 from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.core.exception import ParsingException, ValidationError
+from kpops.core.exception import KpopsException, ParsingException, ValidationError
 from kpops.core.registry import Registry
 from kpops.utils.dict_ops import update_nested_pair
 from kpops.utils.environment import ENV, PIPELINE_PATH
+from kpops.utils.logging import log_action, log_kpops_exception
 from kpops.utils.yaml import CustomSafeDumper, load_yaml_file
 
 if TYPE_CHECKING:
@@ -26,10 +27,22 @@ if TYPE_CHECKING:
     from pathlib import Path
 
     from kpops.config import KpopsConfig
+    from kpops.manifests.kubernetes import KubernetesManifest
 
 log = structlog.get_logger("PipelineGenerator")
 
 ComponentFilterPredicate: TypeAlias = Callable[[PipelineComponent], bool]
+
+
+async def _run_component(
+    action: str, component: PipelineComponent, operation: Awaitable[None]
+) -> None:
+    log_action(action, component)
+    try:
+        await operation
+    except KpopsException as e:
+        log_kpops_exception(e)
+        raise
 
 
 @dataclass
@@ -142,6 +155,85 @@ class Pipeline:
             sorted_layers.reverse()
 
         return run_graph_layers(sorted_layers)
+
+    async def deploy(self, dry_run: bool, parallel: bool = False) -> None:
+        """Deploy pipeline steps.
+
+        :param dry_run: Whether to dry run the command or execute it.
+        :param parallel: Enable or disable parallel execution of pipeline steps.
+        """
+        await self._run_action(
+            "Deploy",
+            lambda component: component.deploy(dry_run),
+            parallel,
+            reverse=False,
+        )
+
+    async def destroy(self, dry_run: bool, parallel: bool = False) -> None:
+        """Destroy pipeline steps.
+
+        :param dry_run: Whether to dry run the command or execute it.
+        :param parallel: Enable or disable parallel execution of pipeline steps.
+        """
+        await self._run_action(
+            "Destroy",
+            lambda component: component.destroy(dry_run),
+            parallel,
+            reverse=True,
+        )
+
+    async def reset(self, dry_run: bool, parallel: bool = False) -> None:
+        """Reset pipeline steps.
+
+        :param dry_run: Whether to dry run the command or execute it.
+        :param parallel: Enable or disable parallel execution of pipeline steps.
+        """
+        await self._run_action(
+            "Reset", lambda component: component.reset(dry_run), parallel, reverse=True
+        )
+
+    async def clean(self, dry_run: bool, parallel: bool = False) -> None:
+        """Clean pipeline steps.
+
+        :param dry_run: Whether to dry run the command or execute it.
+        :param parallel: Enable or disable parallel execution of pipeline steps.
+        """
+        await self._run_action(
+            "Clean", lambda component: component.clean(dry_run), parallel, reverse=True
+        )
+
+    def manifest_deploy(self) -> Iterator[tuple[KubernetesManifest, ...]]:
+        for component in self.components:
+            yield component.manifest_deploy()
+
+    def manifest_destroy(self) -> Iterator[tuple[KubernetesManifest, ...]]:
+        for component in self.components:
+            yield component.manifest_destroy()
+
+    def manifest_reset(self) -> Iterator[tuple[KubernetesManifest, ...]]:
+        for component in self.components:
+            yield component.manifest_reset()
+
+    def manifest_clean(self) -> Iterator[tuple[KubernetesManifest, ...]]:
+        for component in self.components:
+            yield component.manifest_clean()
+
+    async def _run_action(
+        self,
+        action_name: str,
+        component_action: Callable[[PipelineComponent], Coroutine[Any, Any, None]],
+        parallel: bool,
+        reverse: bool,
+    ) -> None:
+        async def runner(component: PipelineComponent) -> None:
+            await _run_component(action_name, component, component_action(component))
+
+        if parallel:
+            await self.build_execution_graph(runner, reverse=reverse)
+        else:
+            components = reversed(self.components) if reverse else self.components
+            for component in components:
+                await runner(component)
 
     def __getitem__(self, component_id: str) -> PipelineComponent:
         try:

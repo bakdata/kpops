@@ -8,45 +8,43 @@ from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
     KubernetesAppValues,
 )
-from kpops.config import KpopsConfig
 
 HELM_RELEASE_NAME = create_helm_release_name("${pipeline.name}-test-kubernetes-app")
 
 
-class KubernetesTestValues(KubernetesAppValues):
+class DummyKubernetesApp(KubernetesApp): ...
+
+
+class DummyKubernetesValues(KubernetesAppValues):
     foo: str
 
 
-@pytest.mark.usefixtures("mock_env", "clear_kpops_config")
+@pytest.mark.usefixtures("mock_env")
 class TestKubernetesApp:
-    @pytest.fixture(autouse=True)
-    def config(self) -> KpopsConfig:
-        return KpopsConfig.create(None, verbose=False)
-
     @pytest.fixture()
-    def app_values(self) -> KubernetesTestValues:
-        return KubernetesTestValues(foo="foo")
+    def app_values(self) -> DummyKubernetesValues:
+        return DummyKubernetesValues(foo="foo")
 
     @pytest.fixture()
     def repo_config(self) -> HelmRepoConfig:
         return HelmRepoConfig(repository_name="test", url="https://bakdata.com")
 
     @pytest.fixture()
-    def kubernetes_app(self, app_values: KubernetesTestValues) -> KubernetesApp:
-        return KubernetesApp(
+    def kubernetes_app(self, app_values: DummyKubernetesValues) -> DummyKubernetesApp:
+        return DummyKubernetesApp(
             name="test-kubernetes-app",
             values=app_values,
             namespace="test-namespace",
         )
 
     def test_should_raise_value_error_when_name_is_not_valid(
-        self, app_values: KubernetesTestValues
+        self, app_values: DummyKubernetesValues
     ) -> None:
         with pytest.raises(
             ValueError,
             match=r"The component name .* is invalid for Kubernetes\.",
         ):
-            KubernetesApp(
+            DummyKubernetesApp(
                 name="Not-Compatible*",
                 values=app_values,
                 namespace="test-namespace",
@@ -56,13 +54,13 @@ class TestKubernetesApp:
             ValueError,
             match=r"The component name .* is invalid for Kubernetes\.",
         ):
-            KubernetesApp(
+            DummyKubernetesApp(
                 name="snake_case*",
                 values=app_values,
                 namespace="test-namespace",
             )
 
-        assert KubernetesApp(
+        assert DummyKubernetesApp(
             name="valid-name",
             values=app_values,
             namespace="test-namespace",
