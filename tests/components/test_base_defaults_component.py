@@ -251,7 +251,7 @@ class TestBaseDefaultsComponent:
         environment: str | None,
         expected_default_paths: list[Path],
     ) -> None:
-        config = KpopsConfig()  # pyright: ignore[reportCallIssue]
+        config = KpopsConfig()
         config.pipeline_base_dir = PIPELINE_BASE_DIR
         actual_default_paths = get_defaults_file_paths(
             pipeline_path,

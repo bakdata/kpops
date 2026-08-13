@@ -82,7 +82,7 @@ class HelmApp(KubernetesApp):
     diff_config: SkipGenerate[HelmDiffConfig] = HelmDiffConfig()
     version: str | None = None
     timeout: str | None = None
-    values: HelmAppValues  # pyright: ignore[reportIncompatibleVariableOverride]
+    values: HelmAppValues
 
     @cached_property
     def _helm(self) -> Helm:

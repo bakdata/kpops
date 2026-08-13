@@ -28,7 +28,7 @@ def update_nested_pair(
         if isinstance(value, Mapping):
             nested_val = original_dict.get(key, {})
             if isinstance(nested_val, dict):
-                original_dict[key] = update_nested_pair(nested_val, value)
+                original_dict[key] = update_nested_pair(nested_val, value)  # ty: ignore[invalid-assignment]
         elif key not in original_dict:
             original_dict[key] = value
     return original_dict
@@ -77,7 +77,7 @@ def flatten_mapping(
         if prefix:
             key = prefix + separator + key
         if isinstance(value, Mapping):
-            nested_mapping = flatten_mapping(value, key, separator)  # pyright: ignore[reportAssignmentType,reportUnknownArgumentType]
+            nested_mapping = flatten_mapping(value, key, separator)
             top = update_nested_pair(top, nested_mapping)
         else:
             top[key] = value

@@ -29,7 +29,7 @@ class ProducerAppValues(StreamsBootstrapValues):
     :param ttl_seconds_after_finished: See https://kubernetes.io/docs/concepts/workloads/controllers/ttlafterfinished/#ttl-after-finished-controller
     """
 
-    kafka: ProducerConfig = ProducerConfig()  # pyright: ignore[reportIncompatibleVariableOverride]
+    kafka: ProducerConfig = ProducerConfig()
     deployment: bool | None = None
     restart_policy: RestartPolicy | None = None
     schedule: str | None = None

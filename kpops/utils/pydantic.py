@@ -187,7 +187,7 @@ class DescConfigModel(BaseModel):
         for field_name, field_info in model_cls.model_fields.items():
             if field_info.description:
                 continue  # skip, manually assigned description takes precedence
-            if any(isinstance(m, SkipJsonSchema) for m in field_info.metadata):  # pyright: ignore[reportArgumentType]
+            if any(isinstance(m, SkipJsonSchema) for m in field_info.metadata):  # ty: ignore[invalid-argument-type]
                 continue
             field_alias = by_alias(model_cls, field_name)
             defining_class = find_defining_class(model_cls, field_name)

@@ -28,16 +28,16 @@ class TestKafkaTopic:
         assert model.topic is None
         assert model.model_dump()["topic"] is None
 
-        model = Model(topic="topic-name")  # pyright: ignore[reportArgumentType]
+        model = Model(topic="topic-name")  # ty: ignore[invalid-argument-type]
         assert model.topic == KafkaTopic(name="topic-name")
         assert model.model_dump()["topic"] == "topic-name"
 
         exc_msg = "Topic should be a valid KafkaTopic instance or topic name string"
-        with pytest.raises(ValueError, match=re.escape(exc_msg)):
-            Model(topic="")  # pyright: ignore[reportArgumentType]
+        with pytest.raises(pydantic.ValidationError, match=re.escape(exc_msg)):
+            Model(topic="")  # ty: ignore[invalid-argument-type]
 
-        with pytest.raises(ValueError, match=re.escape(exc_msg)):
-            Model(topic=1)  # pyright: ignore[reportArgumentType]
+        with pytest.raises(pydantic.ValidationError, match=re.escape(exc_msg)):
+            Model(topic=1)  # ty: ignore[invalid-argument-type]
 
     @pytest.mark.parametrize(
         ("input", "expected"),
