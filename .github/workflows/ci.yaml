@@ -158,7 +158,7 @@ jobs:
 
       - name: Bump version patch
         id: bump-version
-        uses: bakdata/ci-templates/actions/bump-version@1.50.4
+        uses: bakdata/ci-templates/actions/bump-version@1.82.1
         with:
           release-type: patch
 
@@ -168,7 +168,7 @@ jobs:
         run: git restore .
 
       - name: Bump version snapshot time
-        uses: bakdata/ci-templates/actions/bump-version@1.50.4
+        uses: bakdata/ci-templates/actions/bump-version@1.82.1
         with:
           release-type: patch
           new-version: ${{ steps.bump-version.outputs.release-version }}${{ steps.snapshot-time.outputs.snapshot-time }} # e.g. 9.1.1-dev20250108102827

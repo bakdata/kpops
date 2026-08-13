@@ -1,0 +1,36 @@
+[tool.bumpversion]
+current_version = "11.0.0"
+parse = """(?x)
+    (?P<major>[0-9]+)
+    \\.(?P<minor>[0-9]+)
+    \\.(?P<patch>[0-9]+)
+    (?:
+        -(?P<release>dev)
+        (?:(?P<timestamp>[0-9]+))?
+    )?
+"""
+serialize = [
+  "{major}.{minor}.{patch}-{release}{timestamp}",
+  "{major}.{minor}.{patch}-{release}",
+  "{major}.{minor}.{patch}",
+]
+
+pre_commit_hooks = [
+  "uv lock --no-refresh --upgrade-package=kpops",
+]
+
+[tool.bumpversion.parts.release]
+optional_value = "release"
+values = [
+  "dev",
+  "release",
+]
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+regex = true
+search = '''(?P<prefix>^version\s*=\s*"){current_version}(?P<suffix>")'''
+replace = '''\g<prefix>{new_version}\g<suffix>'''
+
+[[tool.bumpversion.files]]
+filename = "kpops/const/__init__.py"
