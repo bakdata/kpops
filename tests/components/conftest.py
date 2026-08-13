@@ -12,7 +12,7 @@ def pipeline_base_dir() -> Path:
     return PIPELINE_BASE_DIR
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(autouse=True, scope="module")
 def _apply_config_and_handlers(
     config: KpopsConfig, handlers: ComponentHandlers
 ) -> None:
