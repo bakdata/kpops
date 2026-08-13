@@ -72,6 +72,12 @@ def clear_kpops_config() -> Iterator[None]:
 
 
 @pytest.fixture(scope="module")
+def clear_handlers() -> Iterator[None]:
+    ComponentHandlers._instance = None
+    yield
+
+
+@pytest.fixture(scope="module")
 def pipeline_base_dir() -> Path:
     return Path()
 

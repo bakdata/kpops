@@ -30,6 +30,7 @@ def handlers() -> Generator[ComponentHandlers, None, None]:
     ComponentHandlers._instance = None
 
 
+@pytest.mark.usefixtures("clear_handlers")
 def test_global_handlers_not_initialized() -> None:
     with pytest.raises(
         RuntimeError, match="ComponentHandlers has not been initialized"
