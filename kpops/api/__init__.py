@@ -92,7 +92,7 @@ def manifest_deploy(
         verbose=verbose,
         operation_mode=operation_mode,
     )
-    return pipeline.manifest_deploy()
+    yield from pipeline.manifest_deploy()
 
 
 def manifest_destroy(
@@ -115,7 +115,7 @@ def manifest_destroy(
         verbose=verbose,
         operation_mode=operation_mode,
     )
-    return pipeline.manifest_destroy()
+    yield from pipeline.manifest_destroy()
 
 
 def manifest_reset(
@@ -138,7 +138,7 @@ def manifest_reset(
         verbose=verbose,
         operation_mode=operation_mode,
     )
-    return pipeline.manifest_reset()
+    yield from pipeline.manifest_reset()
 
 
 def manifest_clean(
@@ -161,7 +161,7 @@ def manifest_clean(
         verbose=verbose,
         operation_mode=operation_mode,
     )
-    return pipeline.manifest_clean()
+    yield from pipeline.manifest_clean()
 
 
 def deploy(
