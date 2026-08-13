@@ -73,21 +73,11 @@ def clear_kpops_config() -> Iterator[None]:
 
 @pytest.fixture(scope="module")
 def pipeline_base_dir() -> Path:
-    """Return the base directory used by the ``config`` fixture.
-
-    Override this fixture in a more specific ``conftest.py`` to point
-    ``KpopsConfig.pipeline_base_dir`` elsewhere.
-    """
     return Path()
 
 
 @pytest.fixture(scope="module")
 def config(pipeline_base_dir: Path) -> KpopsConfig:
-    """Provide a ready-to-use ``KpopsConfig`` for tests that construct components directly.
-
-    Not autouse: opt in explicitly via ``usefixtures`` or a local autouse
-    wrapper fixture where needed.
-    """
     config = KpopsConfig(
         topic_name_config=TopicNameConfig(
             default_error_topic_name="${component.type}-error-topic",
@@ -102,11 +92,6 @@ def config(pipeline_base_dir: Path) -> KpopsConfig:
 
 @pytest.fixture(scope="module")
 def handlers() -> ComponentHandlers:
-    """Provide ``ComponentHandlers`` with mocked handlers.
-
-    Not autouse: opt in explicitly via ``usefixtures`` or a local autouse
-    wrapper fixture where needed.
-    """
     return ComponentHandlers(
         schema_handler=mock.AsyncMock(),
         connector_handler=mock.AsyncMock(),
