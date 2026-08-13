@@ -123,6 +123,7 @@ output-format = "grouped"
 show-fixes = true
 target-version = "py311"
 extend-exclude = ["tests/*snapshots/*"]
+namespace-packages = ["kpops"]
 
 [tool.ruff.lint]
 ignore = [
