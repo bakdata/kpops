@@ -183,9 +183,7 @@ class KpopsConfig(BaseSettings):
             YamlConfigSettingsSource.config_dir = config_dir
         if environment:
             YamlConfigSettingsSource.environment = environment
-        cls._instance = KpopsConfig(
-            _env_file=dotenv  # pyright: ignore[reportCallIssue]
-        )
+        cls._instance = KpopsConfig(_env_file=dotenv)
         if operation_mode:
             cls._instance.operation_mode = operation_mode
         return cls._instance

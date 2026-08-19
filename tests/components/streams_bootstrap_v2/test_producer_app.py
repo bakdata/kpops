@@ -1,3 +1,4 @@
+# ty: ignore[deprecated]
 from unittest.mock import ANY, MagicMock
 
 import pytest

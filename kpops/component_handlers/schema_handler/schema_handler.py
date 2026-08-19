@@ -4,6 +4,7 @@ import json
 from functools import cached_property
 from typing import TYPE_CHECKING, final
 
+import httpx
 import structlog
 from schema_registry.client import AsyncSchemaRegistryClient
 from schema_registry.client.schema import AvroSchema
@@ -29,7 +30,7 @@ class SchemaHandler:
     def __init__(self, kpops_config: KpopsConfig) -> None:
         self.schema_registry_client = AsyncSchemaRegistryClient(
             str(kpops_config.schema_registry.url),
-            timeout=kpops_config.schema_registry.timeout,  # pyright: ignore[reportArgumentType]
+            timeout=httpx.Timeout(kpops_config.schema_registry.timeout),
         )
 
     @cached_property
@@ -38,7 +39,7 @@ class SchemaHandler:
             schema_provider_class = find_class(
                 Registry.iter_component_modules(), base=SchemaProvider
             )
-            return schema_provider_class()  # pyright: ignore[reportAbstractUsage]
+            return schema_provider_class()
         except ClassNotFoundError as e:
             msg = f"No schema provider found. Please implement the abstract method in {SchemaProvider.__module__}.{SchemaProvider.__name__}."
             raise ValueError(msg) from e
@@ -127,9 +128,7 @@ class SchemaHandler:
                     )
                 )
         else:
-            await self.schema_registry_client.register(  # pyright: ignore[reportUnknownMemberType]
-                subject=subject, schema=schema
-            )
+            await self.schema_registry_client.register(subject=subject, schema=schema)
             log.info(
                 "Schema submitted.",
                 subject=subject,
@@ -137,7 +136,7 @@ class SchemaHandler:
             )
 
     async def __subject_exists(self, subject: str) -> bool:
-        versions: list[SchemaVersion] = await self.schema_registry_client.get_versions(  # pyright: ignore[reportUnknownMemberType]
+        versions: list[SchemaVersion] = await self.schema_registry_client.get_versions(
             subject
         )
         return len(versions) > 0
@@ -145,11 +144,11 @@ class SchemaHandler:
     async def __check_compatibility(
         self, schema: Schema, schema_class: str, subject: str
     ) -> None:
-        registered_version = await self.schema_registry_client.check_version(  # pyright: ignore[reportUnknownMemberType]
+        registered_version = await self.schema_registry_client.check_version(
             subject, schema
         )
         if registered_version is None:
-            if not await self.schema_registry_client.test_compatibility(  # pyright: ignore[reportUnknownMemberType]
+            if not await self.schema_registry_client.test_compatibility(
                 subject=subject, schema=schema
             ):
                 schema_str = (
@@ -163,7 +162,7 @@ class SchemaHandler:
             log.debug(
                 "Schema was already submitted. Therefore, the specified schema must be compatible.",
                 subject=subject,
-                version=registered_version.schema,  # pyright: ignore[reportUnknownMemberType]
+                version=registered_version.schema,
             )
 
         log.info(
@@ -180,7 +179,7 @@ class SchemaHandler:
         else:
             version_list: list[
                 SchemaVersion
-            ] = await self.schema_registry_client.delete_subject(subject)  # pyright: ignore[reportUnknownMemberType]
+            ] = await self.schema_registry_client.delete_subject(subject)
             log.info(
                 "Deleted subject.",
                 subject=subject,

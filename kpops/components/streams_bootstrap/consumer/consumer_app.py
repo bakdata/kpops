@@ -23,7 +23,7 @@ log = structlog.get_logger("ConsumerApp")
 
 
 class ConsumerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
-    values: ConsumerAppValues  # pyright: ignore[reportIncompatibleVariableOverride]
+    values: ConsumerAppValues
 
     @property
     @override
@@ -85,8 +85,8 @@ class ConsumerApp(StreamsBootstrap):
     :param values: streams-bootstrap Helm values
     """
 
-    values: ConsumerAppValues  # pyright: ignore[reportIncompatibleVariableOverride]
-    to: None = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
+    values: ConsumerAppValues
+    to: None = Field(
         default=None,
         alias="to",
         title="To",

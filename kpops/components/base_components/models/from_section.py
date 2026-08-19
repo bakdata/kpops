@@ -1,4 +1,4 @@
-from enum import StrEnum
+from enum import StrEnum, auto
 from typing import Any, ClassVar, NewType
 
 from pydantic import ConfigDict, model_validator
@@ -14,8 +14,8 @@ class InputTopicTypes(StrEnum):
     - PATTERN: extra-topic-pattern or input-topic-pattern
     """
 
-    INPUT = "input"
-    PATTERN = "pattern"
+    INPUT = auto()
+    PATTERN = auto()
 
 
 class FromTopic(DescConfigModel):

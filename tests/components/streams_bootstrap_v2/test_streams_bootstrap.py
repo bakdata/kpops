@@ -1,3 +1,4 @@
+# ty: ignore[deprecated]
 import re
 
 import pytest
@@ -9,7 +10,9 @@ from kpops.component_handlers.helm.model import (
     HelmUpgradeInstallFlags,
 )
 from kpops.component_handlers.helm.utils import create_helm_release_name
-from kpops.components.streams_bootstrap_v2 import StreamsBootstrapV2
+from kpops.components.streams_bootstrap_v2 import (
+    StreamsBootstrapV2,
+)
 from kpops.components.streams_bootstrap_v2.base import StreamsBootstrapV2Values
 
 

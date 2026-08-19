@@ -11,15 +11,17 @@ from kpops.components.common.topic import (
     TopicConfig,
 )
 from kpops.components.streams_bootstrap.base import StreamsBootstrapCleaner
-from kpops.components.streams_bootstrap_v2.base import StreamsBootstrapV2
+from kpops.components.streams_bootstrap_v2.base import (
+    StreamsBootstrapV2,  # ty: ignore[deprecated]
+)
 from kpops.components.streams_bootstrap_v2.producer.model import ProducerAppV2Values
 from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
 
 log = structlog.get_logger("ProducerAppV2")
 
 
-class ProducerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrapV2):  # pyright: ignore[reportIncompatibleVariableOverride]
-    values: ProducerAppV2Values  # pyright: ignore[reportIncompatibleVariableOverride]
+class ProducerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrapV2):  # ty: ignore[deprecated]
+    values: ProducerAppV2Values
 
     @property
     @override
@@ -30,7 +32,7 @@ class ProducerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrapV2):  # pyrigh
 
 
 @deprecated("ProducerAppV2 component is deprecated, use ProducerApp instead.")
-class ProducerAppV2(StreamsBootstrapV2):
+class ProducerAppV2(StreamsBootstrapV2):  # ty: ignore[deprecated]
     """Producer component.
 
     This producer holds configuration to use as values for the streams-bootstrap
@@ -42,8 +44,8 @@ class ProducerAppV2(StreamsBootstrapV2):
     :param from_: Producer doesn't support FromSection, defaults to None
     """
 
-    values: ProducerAppV2Values  # pyright: ignore[reportIncompatibleVariableOverride]
-    from_: None = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
+    values: ProducerAppV2Values
+    from_: None = Field(
         default=None,
         alias="from",
         title="From",

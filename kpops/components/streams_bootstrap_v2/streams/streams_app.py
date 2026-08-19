@@ -9,7 +9,9 @@ from kpops.components.base_components.helm_app import HelmApp
 from kpops.components.common.app_type import AppType
 from kpops.components.common.topic import KafkaTopic
 from kpops.components.streams_bootstrap.base import StreamsBootstrapCleaner
-from kpops.components.streams_bootstrap_v2.base import StreamsBootstrapV2
+from kpops.components.streams_bootstrap_v2.base import (
+    StreamsBootstrapV2,  # ty: ignore[deprecated]
+)
 from kpops.components.streams_bootstrap_v2.streams.model import (
     StreamsAppV2Values,
 )
@@ -18,10 +20,10 @@ from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
 log = structlog.get_logger("StreamsAppV2")
 
 
-class StreamsAppCleaner(StreamsBootstrapCleaner, StreamsBootstrapV2):
-    from_: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
-    to: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
-    values: StreamsAppV2Values  # pyright: ignore[reportIncompatibleVariableOverride]
+class StreamsAppCleaner(StreamsBootstrapCleaner, StreamsBootstrapV2):  # ty: ignore[deprecated]
+    from_: None = None
+    to: None = None
+    values: StreamsAppV2Values
 
     @property
     @override
@@ -48,13 +50,13 @@ class StreamsAppCleaner(StreamsBootstrapCleaner, StreamsBootstrapV2):
 
 
 @deprecated("StreamsAppV2 component is deprecated, use StreamsApp instead.")
-class StreamsAppV2(StreamsBootstrapV2):
+class StreamsAppV2(StreamsBootstrapV2):  # ty: ignore[deprecated]
     """StreamsAppV2 component that configures a streams-bootstrap-v2 app.
 
     :param values: streams-bootstrap-v2 Helm values
     """
 
-    values: StreamsAppV2Values  # pyright: ignore[reportIncompatibleVariableOverride]
+    values: StreamsAppV2Values
 
     @cached_property
     def _cleaner(self) -> StreamsAppCleaner:

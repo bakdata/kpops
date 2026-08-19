@@ -4,6 +4,6 @@ import enum
 
 
 class OperationMode(enum.StrEnum):
-    ARGO = "argo"
-    MANIFEST = "manifest"
-    MANAGED = "managed"
+    ARGO = enum.auto()
+    MANIFEST = enum.auto()
+    MANAGED = enum.auto()
