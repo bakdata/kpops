@@ -52,7 +52,7 @@ dev = [
   "pytest-snapshot>=0.9.0",
   "pytest-timeout>=2.3.1",
   "ruff>=0.16.0",
-  "ty>=0.0.73",
+  "ty>=0.0.74",
 ]
 docs = [
   "mdx-truly-sane-lists>=1.3",
