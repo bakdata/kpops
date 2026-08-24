@@ -330,7 +330,7 @@ def _create_pipeline(
     """Create pipeline.
 
     :param pipeline_path: Path to pipeline definition yaml file.
-    :param config: KPOps Config.
+    :param kpops_config: KPOps Config.
     :param environment: The environment to generate and deploy the pipeline to.
     :return: Created `Pipeline` object.
     """
