@@ -266,7 +266,7 @@ def fill_csv_pipeline_config(target: Path) -> None:
     ):
         assert isinstance(field_info, FieldInfo)
         with suppress(KeyError):  # In case the prefix is ever removed from KpopsConfig
-            env_var_name = KpopsConfig.model_config["env_prefix"] + env_var_name  # pyright: ignore[reportTypedDictNotRequiredAccess]
+            env_var_name = KpopsConfig.model_config["env_prefix"] + env_var_name
         field_name = concatted_field_name.rsplit(".", 1)[-1]
         field_description: str = (
             field_info.description

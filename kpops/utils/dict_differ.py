@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import Mapping, MutableMapping
 from dataclasses import dataclass
 from difflib import Differ
-from enum import StrEnum
+from enum import StrEnum, auto
 from typing import TYPE_CHECKING, Any, Generic, NamedTuple, TypeVar, cast
 
 import typer
@@ -19,9 +19,9 @@ differ = Differ()
 
 
 class DiffType(StrEnum):
-    ADD = "add"
-    CHANGE = "change"
-    REMOVE = "remove"
+    ADD = auto()
+    CHANGE = auto()
+    REMOVE = auto()
 
     @staticmethod
     def from_str(label: str) -> DiffType:
@@ -50,7 +50,7 @@ class Change(NamedTuple, Generic[_O, _N]):
             case DiffType.CHANGE:
                 change = cast(tuple[_O, _N], change)
                 return Change(*change)
-        msg = f"{type} is not part of {DiffType}"  # pyright: ignore[reportUnreachable]
+        msg = f"{type} is not part of {DiffType}"
         raise ValueError(msg)
 
 
@@ -65,13 +65,13 @@ class Diff(Generic[_O, _N]):
         d1: dict[str, Any], d2: dict[str, Any], ignore: set[str] | None = None
     ) -> Iterator[Diff[Any, Any]]:
         for diff_type, keys, changes in diff(d1, d2, ignore=ignore):
-            diff_type = DiffType.from_str(diff_type)  # pyright: ignore[reportUnknownArgumentType]
+            diff_type = DiffType.from_str(diff_type)
             if not isinstance(changes_tmp := changes, list):
                 changes_tmp: list[tuple[str, Any]] = [("", changes)]
             for key, change in changes_tmp:
                 yield Diff(
                     diff_type,
-                    Diff.__find_changed_key(keys, key),  # pyright: ignore[reportUnknownArgumentType]
+                    Diff.__find_changed_key(keys, key),
                     Change.factory(diff_type, change),
                 )
 

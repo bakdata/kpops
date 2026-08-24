@@ -20,7 +20,9 @@ from kpops.manifests.strimzi.kafka_topic import StrimziKafkaTopic
 from kpops.utils.pydantic import SkipGenerate
 
 if TYPE_CHECKING:
-    from kpops.components.streams_bootstrap_v2.base import StreamsBootstrapV2
+    from kpops.components.streams_bootstrap_v2.base import (
+        StreamsBootstrapV2,  # ty: ignore[deprecated]
+    )
 
 STREAMS_BOOTSTRAP_HELM_REPO = HelmRepoConfig(
     repository_name="bakdata-streams-bootstrap",
@@ -43,9 +45,9 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
     :param version: Helm chart version, defaults to "3.6.1"
     """
 
-    values: StreamsBootstrapValues  # pyright: ignore[reportIncompatibleVariableOverride]
-    repo_config: SkipGenerate[HelmRepoConfig] = STREAMS_BOOTSTRAP_HELM_REPO  # pyright: ignore[reportIncompatibleVariableOverride]
-    version: str = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
+    values: StreamsBootstrapValues
+    repo_config: SkipGenerate[HelmRepoConfig] = STREAMS_BOOTSTRAP_HELM_REPO
+    version: str = Field(
         default=STREAMS_BOOTSTRAP_VERSION,
         pattern=STREAMS_BOOTSTRAP_VERSION_PATTERN,
     )
@@ -101,11 +103,11 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
 class StreamsBootstrapCleaner(Cleaner, ABC):
     """Helm app for resetting and cleaning a streams-bootstrap app."""
 
-    from_: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
-    to: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
+    from_: None = None
+    to: None = None
 
     @classmethod
-    def from_parent(cls, parent: StreamsBootstrap | StreamsBootstrapV2) -> Self:
+    def from_parent(cls, parent: StreamsBootstrap | StreamsBootstrapV2) -> Self:  # ty: ignore[deprecated]
         parent_kwargs = parent.model_dump(
             by_alias=True,
             exclude_none=True,

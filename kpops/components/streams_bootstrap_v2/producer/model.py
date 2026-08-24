@@ -18,6 +18,6 @@ class ProducerAppV2Values(StreamsBootstrapV2Values):
     :param streams: Kafka Streams settings
     """
 
-    streams: ProducerStreamsConfig  # pyright: ignore[reportIncompatibleVariableOverride]
+    streams: ProducerStreamsConfig
 
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
