@@ -137,6 +137,7 @@ nav:
               - Migrate from v8 to v9: user/migration-guide/v8-v9.md
               - Migrate from v9 to v10: user/migration-guide/v9-v10.md
               - Migrate from v10 to v11: user/migration-guide/v10-v11.md
+              - Migrate from v11 to v12: user/migration-guide/v11-v12.md
           - CLI usage: user/references/cli-commands.md
           - Editor integration: user/references/editor-integration.md
           - CI integration:
