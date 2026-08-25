@@ -11,7 +11,7 @@
   namespace: ${NAMESPACE}
   values:
     image: bakdata/kpops-demo-sentence-producer
-    imageTag: 2.0.0
+    imageTag: 2.1.0
     kafka:
       bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       outputTopic: word-count-data-producer-topic
@@ -43,7 +43,7 @@
   namespace: ${NAMESPACE}
   values:
     image: bakdata/kpops-demo-word-count-app
-    imageTag: 2.0.0
+    imageTag: 2.1.0
     kafka:
       bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       outputTopic: word-count-word-count-app-topic
