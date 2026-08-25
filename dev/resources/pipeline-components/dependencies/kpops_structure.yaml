@@ -79,18 +79,6 @@ kpops_components_fields:
   - diff_config
   - version
   - timeout
-  producer-app-v2:
-  - name
-  - enabled
-  - prefix
-  - from_
-  - to
-  - namespace
-  - values
-  - repo_config
-  - diff_config
-  - version
-  - timeout
   streams-app:
   - name
   - enabled
@@ -103,31 +91,7 @@ kpops_components_fields:
   - diff_config
   - version
   - timeout
-  streams-app-v2:
-  - name
-  - enabled
-  - prefix
-  - from_
-  - to
-  - namespace
-  - values
-  - repo_config
-  - diff_config
-  - version
-  - timeout
   streams-bootstrap:
-  - name
-  - enabled
-  - prefix
-  - from_
-  - to
-  - namespace
-  - values
-  - repo_config
-  - diff_config
-  - version
-  - timeout
-  streams-bootstrap-v2:
   - name
   - enabled
   - prefix
@@ -203,16 +167,6 @@ kpops_components_inheritance_ref:
     - kubernetes-app
     - pipeline-component
     - base-defaults-component
-  producer-app-v2:
-    bases:
-    - streams-bootstrap-v2
-    parents:
-    - streams-bootstrap-v2
-    - kafka-app
-    - helm-app
-    - kubernetes-app
-    - pipeline-component
-    - base-defaults-component
   streams-app:
     bases:
     - streams-bootstrap
@@ -223,27 +177,7 @@ kpops_components_inheritance_ref:
     - kubernetes-app
     - pipeline-component
     - base-defaults-component
-  streams-app-v2:
-    bases:
-    - streams-bootstrap-v2
-    parents:
-    - streams-bootstrap-v2
-    - kafka-app
-    - helm-app
-    - kubernetes-app
-    - pipeline-component
-    - base-defaults-component
   streams-bootstrap:
-    bases:
-    - kafka-app
-    - helm-app
-    parents:
-    - kafka-app
-    - helm-app
-    - kubernetes-app
-    - pipeline-component
-    - base-defaults-component
-  streams-bootstrap-v2:
     bases:
     - kafka-app
     - helm-app
