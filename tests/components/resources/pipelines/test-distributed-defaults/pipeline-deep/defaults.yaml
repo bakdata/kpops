@@ -2,14 +2,14 @@ helm-app:
   name: ${component.type}
   namespace: namespace-to-override-it-all
 
-streams-bootstrap-v2:
-  app:
+streams-bootstrap:
+  values:
     streams:
       brokers: "${config.kafka_brokers}"
 
-producer-app-v2: {} # inherits from streams-bootstrap-v2
+producer-app: {} # inherits from streams-bootstrap
 
-streams-app-v2: # inherits from  streams-bootstrap-v2
+streams-app: # inherits from streams-bootstrap
   to:
     topics:
       ${error_topic_name}:
