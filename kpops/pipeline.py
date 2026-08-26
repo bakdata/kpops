@@ -204,21 +204,28 @@ class Pipeline:
             "Clean", lambda component: component.clean(dry_run), parallel, reverse=True
         )
 
+    def _manifest_action(
+        self,
+        component_action: Callable[[PipelineComponent], tuple[KubernetesManifest, ...]],
+    ) -> Iterator[tuple[KubernetesManifest, ...]]:
+        with structlog.contextvars.bound_contextvars(pipeline=self.name):
+            for component in self.components:
+                with structlog.contextvars.bound_contextvars(
+                    component_name=component.name
+                ):
+                    yield component_action(component)
+
     def manifest_deploy(self) -> Iterator[tuple[KubernetesManifest, ...]]:
-        for component in self.components:
-            yield component.manifest_deploy()
+        return self._manifest_action(lambda component: component.manifest_deploy())
 
     def manifest_destroy(self) -> Iterator[tuple[KubernetesManifest, ...]]:
-        for component in self.components:
-            yield component.manifest_destroy()
+        return self._manifest_action(lambda component: component.manifest_destroy())
 
     def manifest_reset(self) -> Iterator[tuple[KubernetesManifest, ...]]:
-        for component in self.components:
-            yield component.manifest_reset()
+        return self._manifest_action(lambda component: component.manifest_reset())
 
     def manifest_clean(self) -> Iterator[tuple[KubernetesManifest, ...]]:
-        for component in self.components:
-            yield component.manifest_clean()
+        return self._manifest_action(lambda component: component.manifest_clean())
 
     async def _run_action(
         self,

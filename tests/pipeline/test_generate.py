@@ -59,6 +59,7 @@ class TestGenerate:
         } in cap_logs
         assert {
             "event": "Filtered pipeline",
+            "pipeline": "resources-first-pipeline",
             "steps": ["converter"],
             "log_level": "info",
         } in cap_logs
@@ -79,6 +80,7 @@ class TestGenerate:
         } in cap_logs
         assert {
             "event": "Filtered pipeline",
+            "pipeline": "resources-first-pipeline",
             "steps": [
                 "a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name"
             ],

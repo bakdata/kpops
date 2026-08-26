@@ -1,5 +1,5 @@
 import asyncio
-from typing import cast
+from typing import Any, cast
 
 import pytest
 import structlog
@@ -165,3 +165,38 @@ async def test_pipeline_name_is_bound_for_parallel_components() -> None:
         frozenset({"pipeline": "word-count", "component_name": "component-a"}.items()),
         frozenset({"pipeline": "word-count", "component_name": "component-b"}.items()),
     }
+
+
+def test_manifest_action_binds_pipeline_and_component_name(
+    mocker: MockerFixture,
+) -> None:
+    pipeline = Pipeline(name="word-count")
+    component_a = fake_component(mocker, "component-a")
+    component_b = fake_component(mocker, "component-b")
+    pipeline.add(component_a)
+    pipeline.add(component_b)
+
+    observed: list[dict[str, Any]] = []
+
+    def mock_manifest_deploy(comp: PipelineComponent) -> tuple[()]:
+        observed.append(structlog.contextvars.get_contextvars())
+        return ()
+
+    mocker.patch.object(
+        component_a,
+        "manifest_deploy",
+        side_effect=lambda: mock_manifest_deploy(component_a),
+    )
+    mocker.patch.object(
+        component_b,
+        "manifest_deploy",
+        side_effect=lambda: mock_manifest_deploy(component_b),
+    )
+
+    list(pipeline.manifest_deploy())
+
+    assert observed == [
+        {"pipeline": "word-count", "component_name": "component-a"},
+        {"pipeline": "word-count", "component_name": "component-b"},
+    ]
+    assert structlog.contextvars.get_contextvars() == {}
