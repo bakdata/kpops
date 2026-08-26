@@ -11,17 +11,14 @@
   namespace: ${NAMESPACE}
   values:
     image: bakdata/kpops-demo-sentence-producer
-    imageTag: 2.1.0
+    imageTag: 3.0.0
     kafka:
       bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       outputTopic: word-count-data-producer-topic
     labels:
       pipeline: word-count
-    prometheus:
-      jmx:
-        enabled: false
     replicaCount: 1
-  version: 3.1.0
+  version: 7.5.0
   helm_release_name: word-count-data-producer
   helm_name_override: word-count-data-producer
 - type: streams-app
@@ -43,7 +40,7 @@
   namespace: ${NAMESPACE}
   values:
     image: bakdata/kpops-demo-word-count-app
-    imageTag: 2.1.0
+    imageTag: 3.0.0
     kafka:
       bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       outputTopic: word-count-word-count-app-topic
@@ -51,13 +48,10 @@
         - word-count-data-producer-topic
       errorTopic: word-count-word-count-app-dead-letter-topic
     statefulSet: false
-    prometheus:
-      jmx:
-        enabled: false
     replicaCount: 1
     labels:
       pipeline: word-count
-  version: 3.1.0
+  version: 7.5.0
   helm_release_name: word-count-word-count-app
   helm_name_override: word-count-word-count-app
 - type: kafka-sink-connector
