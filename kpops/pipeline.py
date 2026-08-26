@@ -320,22 +320,6 @@ class PipelineGenerator:
         init=False, default_factory=dict
     )
 
-    def parse(
-        self,
-        components: list[dict[str, Any]],
-        environment_components: list[dict[str, Any]],
-    ) -> Pipeline:
-        """Parse pipeline from sequence of component dictionaries.
-
-        :param components: List of components
-        :param environment_components: List of environment-specific components
-        :returns: Initialized pipeline object
-        """
-        self.env_components_index = create_env_components_index(environment_components)
-        self.parse_components(components)
-        self.pipeline.validate()
-        return self.pipeline
-
     def load_yaml(self, path: Path, environment: str | None) -> Pipeline:
         """Load pipeline definition from YAML file.
 
@@ -373,9 +357,25 @@ class PipelineGenerator:
                 msg = f"The pipeline definition {env_file} should contain a list of components"
                 raise TypeError(msg)
 
-        return self.parse(main_content, env_content)
+        return self._parse(main_content, env_content)
 
-    def parse_components(self, components: list[dict[str, Any]]) -> None:
+    def _parse(
+        self,
+        components: list[dict[str, Any]],
+        environment_components: list[dict[str, Any]],
+    ) -> Pipeline:
+        """Parse pipeline from sequence of component dictionaries.
+
+        :param components: List of components
+        :param environment_components: List of environment-specific components
+        :returns: Initialized pipeline object
+        """
+        self.env_components_index = create_env_components_index(environment_components)
+        self._parse_components(components)
+        self.pipeline.validate()
+        return self.pipeline
+
+    def _parse_components(self, components: list[dict[str, Any]]) -> None:
         """Instantiate, enrich and inflate a list of components.
 
         :param components: List of components
@@ -391,7 +391,7 @@ class PipelineGenerator:
                     msg = "Every component must have a type defined, this component does not have one."
                     raise ValueError(msg) from ke
                 component_class = self.registry[component_type]
-                self.apply_component(component_class, component_data)
+                self._apply_component(component_class, component_data)
             except Exception as ex:
                 if "name" in component_data:
                     msg = f"Error enriching {component_data['type']} component {component_data['name']}"
@@ -399,7 +399,7 @@ class PipelineGenerator:
                 else:
                     raise ParsingException from ex
 
-    def apply_component(
+    def _apply_component(
         self, component_class: type[PipelineComponent], component_data: dict[str, Any]
     ) -> None:
         """Instantiate, enrich and inflate pipeline component.
@@ -410,7 +410,7 @@ class PipelineGenerator:
         :param component_data: Arguments for instantiation of pipeline component
         """
         component = component_class(**component_data)
-        component = self.enrich_component_with_env(component)
+        component = self._enrich_component_with_env(component)
         # if component is disabled then we skip it
         if not component.enabled:
             return
@@ -436,7 +436,7 @@ class PipelineGenerator:
                 inflated_component.weave_from_topics(prev_component.to)
             self.pipeline.add(inflated_component)
 
-    def enrich_component_with_env(
+    def _enrich_component_with_env(
         self, component: PipelineComponent
     ) -> PipelineComponent:
         """Enrich a pipeline component with env-specific config.
