@@ -24,7 +24,7 @@ def helm_mock(mocker: MockerFixture) -> MagicMock:
 
 @pytest.fixture()
 def pipeline(helm_mock: MagicMock) -> Pipeline:
-    pipeline = Pipeline()
+    pipeline = Pipeline(name="test-pipeline")
     pipeline.add(
         ProducerApp(
             name="producer",
