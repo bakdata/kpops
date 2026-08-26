@@ -54,7 +54,7 @@ class TestGenerate:
         assert pipeline.components[0].type == "converter"
         assert {
             "event": "Picked up pipeline",
-            "pipeline": "first-pipeline",
+            "pipeline": "resources-first-pipeline",
             "log_level": "info",
         } in cap_logs
         assert {
@@ -74,7 +74,7 @@ class TestGenerate:
         assert pipeline.components[0].type == "filter"
         assert {
             "event": "Picked up pipeline",
-            "pipeline": "first-pipeline",
+            "pipeline": "resources-first-pipeline",
             "log_level": "info",
         } in cap_logs
         assert {
@@ -104,6 +104,17 @@ class TestGenerate:
         assert ENV["pipeline.name_2"] == "pipeline-1"
         kpops.generate(RESOURCE_PATH / "first-pipeline" / PIPELINE_YAML)
         assert "pipeline.name_2" not in ENV
+
+    def test_pipeline_name_matches_pipeline_name_env_var(self) -> None:
+        pipeline = kpops.generate(RESOURCE_PATH / "first-pipeline" / PIPELINE_YAML)
+        assert pipeline.name == ENV["pipeline.name"]
+
+    def test_pipeline_name_for_nested_pipeline_path(self) -> None:
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "pipeline-folders/pipeline-1/pipeline.yaml"
+        )
+        assert pipeline.name == ENV["pipeline.name"]
+        assert pipeline.name == "resources-pipeline-folders-pipeline-1"
 
     def test_load_pipeline_with_folder_path(self, snapshot: Snapshot) -> None:
         result = runner.invoke(

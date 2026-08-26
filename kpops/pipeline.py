@@ -37,18 +37,20 @@ ComponentFilterPredicate: TypeAlias = Callable[[PipelineComponent], bool]
 async def _run_component(
     action: str, component: PipelineComponent, operation: Awaitable[None]
 ) -> None:
-    log_action(action, component)
-    try:
-        await operation
-    except KpopsException as e:
-        log_kpops_exception(e)
-        raise
+    with structlog.contextvars.bound_contextvars(component_name=component.name):
+        log_action(action)
+        try:
+            await operation
+        except KpopsException as e:
+            log_kpops_exception(e)
+            raise
 
 
 @dataclass
 class Pipeline:
     """Pipeline representation."""
 
+    name: str = ""
     _component_index: dict[str, PipelineComponent] = field(default_factory=dict)
     _graph: rx.PyDiGraph[str, None] = field(default_factory=rx.PyDiGraph)
     _node_index: dict[str, int] = field(default_factory=dict)
@@ -228,12 +230,13 @@ class Pipeline:
         async def runner(component: PipelineComponent) -> None:
             await _run_component(action_name, component, component_action(component))
 
-        if parallel:
-            await self.build_execution_graph(runner, reverse=reverse)
-        else:
-            components = reversed(self.components) if reverse else self.components
-            for component in components:
-                await runner(component)
+        with structlog.contextvars.bound_contextvars(pipeline=self.name):
+            if parallel:
+                await self.build_execution_graph(runner, reverse=reverse)
+            else:
+                components = reversed(self.components) if reverse else self.components
+                for component in components:
+                    await runner(component)
 
     def __getitem__(self, component_id: str) -> PipelineComponent:
         try:
@@ -348,6 +351,7 @@ class PipelineGenerator:
         PipelineGenerator.set_pipeline_name_env_vars(
             self.config.pipeline_base_dir, path
         )
+        self.pipeline.name = ENV["pipeline.name"]
         PipelineGenerator.set_environment_name(environment)
         PipelineGenerator.set_pipeline_path(path)
 

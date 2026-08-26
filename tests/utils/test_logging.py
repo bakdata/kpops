@@ -1,3 +1,4 @@
+import re
 from typing import ClassVar
 
 import httpx2
@@ -10,7 +11,18 @@ from kpops.component_handlers.topic.exception import (
     KafkaRestProxyError,
 )
 from kpops.core.exception import KpopsException, ServiceException
-from kpops.utils.logging import bound_service_context, log_kpops_exception
+from kpops.utils.logging import (
+    _build_console_renderer,
+    _component_color,
+    bound_service_context,
+    log_kpops_exception,
+)
+
+ANSI_ESCAPE = re.compile(r"\x1b\[[0-9;]*m")
+
+
+def strip_ansi(text: str) -> str:
+    return ANSI_ESCAPE.sub("", text)
 
 
 def test_logs_and_marks_exception_as_logged() -> None:
@@ -104,3 +116,48 @@ def test_exception_context_is_logged_when_it_propagates() -> None:
     assert len(error_entries) == 1
     assert error_entries[0].get("url") == "http://kafka-rest"
     assert error_entries[0].get("topic_name") == "topic-a"
+
+
+def test_component_color_is_deterministic() -> None:
+    assert _component_color("data-producer") == _component_color("data-producer")
+
+
+def test_component_color_varies_across_component_names() -> None:
+    names = [f"component-{i}" for i in range(6)]
+    colors = {_component_color(name) for name in names}
+    assert len(colors) > 1
+
+
+def test_console_renderer_prefixes_pipeline_and_component_brackets() -> None:
+    renderer = _build_console_renderer()
+    event_dict = {
+        "event": "creating topic",
+        "level": "info",
+        "pipeline": "word-count",
+        "component_name": "data-producer",
+        "logger": "Kafka REST Proxy",
+    }
+
+    output = strip_ansi(renderer(None, "", dict(event_dict)))
+
+    assert "[word-count]" in output
+    assert "[data-producer]" in output
+    assert "[Kafka REST Proxy]" in output
+    assert (
+        output.index("[word-count]")
+        < output.index("[data-producer]")
+        < output.index("[Kafka REST Proxy]")
+        < output.index("creating topic")
+    )
+    # pipeline/component are rendered as brackets, not leaked as key=value pairs
+    assert "pipeline=" not in output
+    assert "component_name=" not in output
+
+
+def test_console_renderer_omits_pipeline_and_component_brackets_when_absent() -> None:
+    renderer = _build_console_renderer()
+    event_dict = {"event": "hello", "level": "info"}
+
+    output = strip_ansi(renderer(None, "", event_dict))
+
+    assert output.strip() == "[info     ] hello"
