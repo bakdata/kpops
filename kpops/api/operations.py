@@ -55,7 +55,7 @@ def generate(
         config, dotenv, environment, verbose, operation_mode
     )
     pipeline = _create_pipeline(pipeline_path, kpops_config, environment)
-    log.info("Picked up pipeline", pipeline=pipeline_path.parent.name)
+    log.info("Picked up pipeline", pipeline=pipeline.name)
     if steps:
         component_names = steps
         log.debug(
