@@ -2133,7 +2133,15 @@
 <span class="normal"><a href="#__codelineno-3-12">12</a></span>
 <span class="normal"><a href="#__codelineno-3-13">13</a></span>
 <span class="normal"><a href="#__codelineno-3-14">14</a></span>
-<span class="normal"><a href="#__codelineno-3-15">15</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1"></a>$ kpops deploy word-count --dry-run
+<span class="normal"><a href="#__codelineno-3-15">15</a></span>
+<span class="normal"><a href="#__codelineno-3-16">16</a></span>
+<span class="normal"><a href="#__codelineno-3-17">17</a></span>
+<span class="normal"><a href="#__codelineno-3-18">18</a></span>
+<span class="normal"><a href="#__codelineno-3-19">19</a></span>
+<span class="normal"><a href="#__codelineno-3-20">20</a></span>
+<span class="normal"><a href="#__codelineno-3-21">21</a></span>
+<span class="normal"><a href="#__codelineno-3-22">22</a></span>
+<span class="normal"><a href="#__codelineno-3-23">23</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1"></a>$ kpops deploy word-count --dry-run
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2"></a>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3"></a># Before
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4"></a>[info     ] Picked up pipeline pipeline=word-count
@@ -2142,12 +2150,20 @@
 </span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7"></a>[info     ] Deploy data-producer
 </span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8"></a>[info     ] ########################################################################################################
 </span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9"></a>[info     ]
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10"></a>[error    ] [Kafka REST Proxy] [Errno 61] Connection refused url=http://localhost:8082/
-</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11"></a>
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12"></a># Now
-</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13"></a>[info     ] [word-count] Picked up pipeline
-</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14"></a>[info     ] [word-count] [data-producer] Deploy
-</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15"></a>[error    ] [word-count] [data-producer] [Kafka REST Proxy] [Errno 61] Connection refused url=http://localhost:8082/
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10"></a>[info     ] [Kafka REST Proxy] Topic created. topic_name=word-count-data-producer-topic
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11"></a>[info     ]
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12"></a>[info     ] ########################################################################################################
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13"></a>[info     ] Deploy kafka-sink-connector
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14"></a>[info     ] ########################################################################################################
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15"></a>[info     ]
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16"></a>[error    ] [Kafka Connect] [Errno 61] Connection refused url=http://localhost:8083/
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17"></a>
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18"></a># Now
+</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19"></a>[info     ] [word-count] Picked up pipeline
+</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20"></a>[info     ] [word-count] [data-producer] Deploy
+</span><span id="__span-3-21"><a id="__codelineno-3-21" name="__codelineno-3-21"></a>[info     ] [word-count] [data-producer] [Kafka REST Proxy] Topic created. topic_name=word-count-data-producer-topic
+</span><span id="__span-3-22"><a id="__codelineno-3-22" name="__codelineno-3-22"></a>[info     ] [word-count] [kafka-sink-connector] Deploy
+</span><span id="__span-3-23"><a id="__codelineno-3-23" name="__codelineno-3-23"></a>[error    ] [word-count] [kafka-sink-connector] [Kafka Connect] [Errno 61] Connection refused url=http://localhost:8083/
 </span></code></pre></div></td></tr></table></div>
 
 
