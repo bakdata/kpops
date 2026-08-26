@@ -37,9 +37,7 @@ class TestExample:
         "pipeline_name",
         [
             pytest.param("word-count"),
-            pytest.param(
-                "atm-fraud",
-            ),
+            pytest.param("atm-fraud"),
         ],
     )
     def test_generate(self, pipeline_name: str, snapshot: Snapshot) -> None:
