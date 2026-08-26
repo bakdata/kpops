@@ -50,7 +50,7 @@ async def _run_component(
 class Pipeline:
     """Pipeline representation."""
 
-    name: str = ""
+    name: str
     _component_index: dict[str, PipelineComponent] = field(default_factory=dict)
     _graph: rx.PyDiGraph[str, None] = field(default_factory=rx.PyDiGraph)
     _node_index: dict[str, int] = field(default_factory=dict)
@@ -315,7 +315,7 @@ class PipelineGenerator:
     config: KpopsConfig
     registry: Registry
     handlers: ComponentHandlers
-    pipeline: Pipeline = field(init=False, default_factory=Pipeline)
+    pipeline: Pipeline = field(init=False)
     env_components_index: dict[str, dict[str, Any]] = field(
         init=False, default_factory=dict
     )
@@ -351,7 +351,7 @@ class PipelineGenerator:
         PipelineGenerator.set_pipeline_name_env_vars(
             self.config.pipeline_base_dir, path
         )
-        self.pipeline.name = ENV["pipeline.name"]
+        self.pipeline = Pipeline(name=ENV["pipeline.name"])
         PipelineGenerator.set_environment_name(environment)
         PipelineGenerator.set_pipeline_path(path)
 
