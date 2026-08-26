@@ -76,10 +76,7 @@ class TestConnectorHandler:
             "event": "Connector does not exist. Creating connector",
             "connector_name": CONNECTOR_NAME,
             "state": state.value if state else None,
-            "log_level": "info",
-        } in cap_logs
-        assert {
-            "event": f"\n\x1b[32m+ connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n\x1b[0m\x1b[32m+ name: {CONNECTOR_NAME}\n\x1b[0m\x1b[32m+ tasks.max: '1'\n\x1b[0m\x1b[32m+ topics: {TOPIC_NAME}\n\x1b[0m",
+            "diff": f"\x1b[32m+ connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n\x1b[0m\x1b[32m+ name: {CONNECTOR_NAME}\n\x1b[0m\x1b[32m+ tasks.max: '1'\n\x1b[0m\x1b[32m+ topics: {TOPIC_NAME}\n\x1b[0m",
             "log_level": "info",
         } in cap_logs
         assert {
@@ -145,10 +142,7 @@ class TestConnectorHandler:
             "event": "Connector does not exist. Creating connector",
             "connector_name": CONNECTOR_NAME,
             "state": None,
-            "log_level": "info",
-        } in cap_logs
-        assert {
-            "event": f"\n\x1b[32m+ connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n\x1b[0m\x1b[32m+ name: {CONNECTOR_NAME}\n\x1b[0m\x1b[32m+ tasks.max: '1'\n\x1b[0m\x1b[32m+ topics: {TOPIC_NAME}\n\x1b[0m",
+            "diff": f"\x1b[32m+ connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n\x1b[0m\x1b[32m+ name: {CONNECTOR_NAME}\n\x1b[0m\x1b[32m+ tasks.max: '1'\n\x1b[0m\x1b[32m+ topics: {TOPIC_NAME}\n\x1b[0m",
             "log_level": "info",
         } in cap_logs
         assert {
@@ -211,10 +205,7 @@ class TestConnectorHandler:
         assert {
             "event": "Updating config",
             "connector_name": CONNECTOR_NAME,
-            "log_level": "info",
-        } in cap_logs
-        assert {
-            "event": f"\n  connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n  name: {CONNECTOR_NAME}\n\x1b[31m- tasks.max: '1'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m\x1b[32m+ tasks.max: '2'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m  topics: {TOPIC_NAME}\n",
+            "diff": f"  connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n  name: {CONNECTOR_NAME}\n\x1b[31m- tasks.max: '1'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m\x1b[32m+ tasks.max: '2'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m  topics: {TOPIC_NAME}\n",
             "log_level": "info",
         } in cap_logs
         assert {
@@ -245,10 +236,7 @@ class TestConnectorHandler:
         assert {
             "event": "Updating config",
             "connector_name": CONNECTOR_NAME,
-            "log_level": "info",
-        } in cap_logs
-        assert {
-            "event": f"\n  connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n  name: {CONNECTOR_NAME}\n\x1b[31m- tasks.max: '1'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m\x1b[32m+ tasks.max: '2'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m  topics: {TOPIC_NAME}\n",
+            "diff": f"  connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n  name: {CONNECTOR_NAME}\n\x1b[31m- tasks.max: '1'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m\x1b[32m+ tasks.max: '2'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m  topics: {TOPIC_NAME}\n",
             "log_level": "info",
         } in cap_logs
         assert {
@@ -279,10 +267,7 @@ class TestConnectorHandler:
         assert {
             "event": "Updating config",
             "connector_name": CONNECTOR_NAME,
-            "log_level": "info",
-        } in cap_logs
-        assert {
-            "event": f"\n  connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n  name: {CONNECTOR_NAME}\n\x1b[31m- tasks.max: '1'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m\x1b[32m+ tasks.max: '2'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m  topics: {TOPIC_NAME}\n",
+            "diff": f"  connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n  name: {CONNECTOR_NAME}\n\x1b[31m- tasks.max: '1'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m\x1b[32m+ tasks.max: '2'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m  topics: {TOPIC_NAME}\n",
             "log_level": "info",
         } in cap_logs
         if current_state is not ConnectorCurrentState.RUNNING:
@@ -324,10 +309,7 @@ class TestConnectorHandler:
         assert {
             "event": "Updating config",
             "connector_name": CONNECTOR_NAME,
-            "log_level": "info",
-        } in cap_logs
-        assert {
-            "event": f"\n  connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n  name: {CONNECTOR_NAME}\n\x1b[31m- tasks.max: '1'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m\x1b[32m+ tasks.max: '2'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m  topics: {TOPIC_NAME}\n",
+            "diff": f"  connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n  name: {CONNECTOR_NAME}\n\x1b[31m- tasks.max: '1'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m\x1b[32m+ tasks.max: '2'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m  topics: {TOPIC_NAME}\n",
             "log_level": "info",
         } in cap_logs
         assert {
@@ -571,6 +553,7 @@ class TestConnectorHandler:
             "event": "Connector does not exist. Creating connector",
             "connector_name": CONNECTOR_NAME,
             "state": "paused",
+            "diff": "",
             "log_level": "info",
         } in cap_logs
         assert {

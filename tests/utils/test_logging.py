@@ -14,6 +14,7 @@ from kpops.core.exception import KpopsException, ServiceException
 from kpops.utils.logging import (
     _build_console_renderer,
     _component_color,
+    _render_console_line,
     bound_service_context,
     log_kpops_exception,
 )
@@ -161,3 +162,36 @@ def test_console_renderer_omits_pipeline_and_component_brackets_when_absent() ->
     output = strip_ansi(renderer(None, "", event_dict))
 
     assert output.strip() == "[info     ] hello"
+
+
+def test_render_console_line_appends_diff_after_summary_line() -> None:
+    event_dict = {
+        "event": "Config changes for topic",
+        "level": "info",
+        "topic_name": "topic-X",
+        "diff": "+ cleanup.policy: compact",
+    }
+
+    output = strip_ansi(_render_console_line(None, "", event_dict))
+    summary, _, diff = output.partition("\n")
+
+    assert "Config changes for topic" in summary
+    assert "topic_name=topic-X" in summary
+    assert diff == "+ cleanup.policy: compact"
+
+
+def test_render_console_line_without_diff_is_unaffected() -> None:
+    event_dict = {"event": "hello", "level": "info"}
+
+    output = strip_ansi(_render_console_line(None, "", event_dict))
+
+    assert "\n" not in output
+    assert output.strip() == "[info     ] hello"
+
+
+def test_render_console_line_does_not_leak_diff_into_key_value_tail() -> None:
+    event_dict = {"event": "hello", "level": "info", "diff": "some diff content"}
+
+    output = strip_ansi(_render_console_line(None, "", event_dict))
+
+    assert "diff=" not in output

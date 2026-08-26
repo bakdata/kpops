@@ -132,6 +132,17 @@ def _build_console_renderer() -> structlog.dev.ConsoleRenderer:
     )
 
 
+_console_renderer = _build_console_renderer()
+
+
+def _render_console_line(
+    logger: WrappedLogger, name: str, event_dict: EventDict
+) -> str:
+    diff: str | None = event_dict.pop("diff", None)
+    line = _console_renderer(logger, name, event_dict)
+    return f"{line}\n{diff}" if diff else line
+
+
 structlog.configure(
     processors=[
         structlog.contextvars.merge_contextvars,
@@ -155,7 +166,7 @@ _formatter = structlog.stdlib.ProcessorFormatter(
     processors=[
         structlog.stdlib.ProcessorFormatter.remove_processors_meta,
         _drop_root_logger_name,
-        _build_console_renderer(),
+        _render_console_line,
     ],
 )
 _stream_handler = logging.StreamHandler()
