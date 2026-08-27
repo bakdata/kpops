@@ -1,7 +1,3 @@
-from typing import ClassVar
-
-from pydantic import ConfigDict
-
 from kpops.components.common.topic import KafkaTopicStr
 from kpops.components.streams_bootstrap.consumer.model import (
     ConsumerAppValues,
@@ -29,5 +25,3 @@ class ConsumerProducerAppValues(ConsumerAppValues):
     """
 
     kafka: ConsumerProducerConfig = ConsumerProducerConfig()  # pyright: ignore[reportIncompatibleVariableOverride]
-
-    model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
