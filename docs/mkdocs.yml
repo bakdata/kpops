@@ -116,6 +116,7 @@ nav:
               - StreamsApp: user/core-concepts/components/streams-app.md
               - ProducerApp: user/core-concepts/components/producer-app.md
               - ConsumerApp: user/core-concepts/components/consumer-app.md
+              - ConsumerProducerApp: user/core-concepts/components/consumer-producer-app.md
               - KafkaConnector: user/core-concepts/components/kafka-connector.md
               - KafkaSinkConnector: user/core-concepts/components/kafka-sink-connector.md
               - KafkaSourceConnector: user/core-concepts/components/kafka-source-connector.md

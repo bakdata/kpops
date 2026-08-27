@@ -11,6 +11,18 @@ kpops_components_fields:
   - diff_config
   - version
   - timeout
+  consumer-producer-app:
+  - name
+  - enabled
+  - prefix
+  - from_
+  - to
+  - namespace
+  - values
+  - repo_config
+  - diff_config
+  - version
+  - timeout
   helm-app:
   - name
   - enabled
@@ -141,6 +153,16 @@ kpops_components_fields:
   - timeout
 kpops_components_inheritance_ref:
   consumer-app:
+    bases:
+    - streams-bootstrap
+    parents:
+    - streams-bootstrap
+    - kafka-app
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component
+  consumer-producer-app:
     bases:
     - streams-bootstrap
     parents:
