@@ -43,13 +43,9 @@ jobs:
         run: |
           uv run --frozen ruff check . --config pyproject.toml --no-fix ${{ matrix.format-for-github && '--output-format=github' }}
 
-      - name: Typing (basedpyright)
+      - name: Typing (ty)
         run: |
-          if [[ "${{ matrix.format-for-github }}" == "true" ]]
-          then
-            echo "::add-matcher::.github/pyright-matcher.json"
-          fi;
-          uv run --frozen basedpyright
+          uv run --frozen ty check ${{ matrix.format-for-github && '--output-format=github' }}
 
   format:
     name: Format

@@ -26,8 +26,8 @@ from kpops.manifests.strimzi.kafka_topic import StrimziKafkaTopic
 log = structlog.get_logger("ProducerApp")
 
 
-class ProducerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):  # pyright: ignore[reportIncompatibleVariableOverride]
-    values: ProducerAppValues  # pyright: ignore[reportIncompatibleVariableOverride]
+class ProducerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
+    values: ProducerAppValues
 
     @property
     @override
@@ -64,8 +64,8 @@ class ProducerApp(StreamsBootstrap):
     :param from_: Producer doesn't support FromSection, defaults to None
     """
 
-    values: ProducerAppValues  # pyright: ignore[reportIncompatibleVariableOverride]
-    from_: None = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
+    values: ProducerAppValues
+    from_: None = Field(
         default=None,
         alias="from",
         title="From",

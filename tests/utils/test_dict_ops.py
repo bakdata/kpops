@@ -24,7 +24,7 @@ class TestDictOps:
         )
         update_nested_pair_mock.return_value = expected
 
-        actual = update_nested(*dicts)  # pyright: ignore[reportArgumentType]
+        actual = update_nested(*dicts)
 
         update_nested_pair_mock.assert_has_calls(
             [

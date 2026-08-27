@@ -192,7 +192,7 @@ class StreamsAppV2Values(StreamsBootstrapV2Values):
     :param autoscaling: Kubernetes event-driven autoscaling config, defaults to None
     """
 
-    streams: StreamsConfig  # pyright: ignore[reportIncompatibleVariableOverride]
+    streams: StreamsConfig
     autoscaling: StreamsAppAutoScaling | None = None
     stateful_set: bool = False
     persistence: PersistenceConfig = PersistenceConfig()

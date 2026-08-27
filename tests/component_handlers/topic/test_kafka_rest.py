@@ -27,7 +27,7 @@ DEFAULT_HOST = "http://localhost:8082"
 class TestKafkaRest:
     @pytest_asyncio.fixture()
     async def kafka_rest(self, httpx_mock: HTTPXMock) -> KafkaRest:
-        config = KpopsConfig()  # pyright: ignore[reportCallIssue]
+        config = KpopsConfig()
         kafka_rest = KafkaRest(config.kafka_rest)
         content = await Path(
             RESOURCES_PATH / "kafka_rest_proxy_responses" / "cluster-info.json",

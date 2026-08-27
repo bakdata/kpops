@@ -23,9 +23,15 @@ from kpops.components.streams_bootstrap import (
     StreamsApp,
     StreamsBootstrap,
 )
-from kpops.components.streams_bootstrap_v2 import StreamsBootstrapV2
-from kpops.components.streams_bootstrap_v2.producer.producer_app import ProducerAppV2
-from kpops.components.streams_bootstrap_v2.streams.streams_app import StreamsAppV2
+from kpops.components.streams_bootstrap_v2 import (
+    StreamsBootstrapV2,  # ty: ignore[deprecated]
+)
+from kpops.components.streams_bootstrap_v2.producer.producer_app import (
+    ProducerAppV2,  # ty: ignore[deprecated]
+)
+from kpops.components.streams_bootstrap_v2.streams.streams_app import (
+    StreamsAppV2,  # ty: ignore[deprecated]
+)
 from kpops.core.exception import ClassNotFoundError
 from kpops.core.registry import Registry, _find_classes, _iter_namespace, find_class
 from tests.cli.resources.custom_module import CustomSchemaProvider
@@ -107,13 +113,13 @@ def test_registry() -> None:
         "kafka-source-connector": KafkaSourceConnector,
         "kubernetes-app": KubernetesApp,
         "pipeline-component": PipelineComponent,
-        "producer-app-v2": ProducerAppV2,
+        "producer-app-v2": ProducerAppV2,  # ty: ignore[deprecated]
         "producer-app": ProducerApp,
         "consumer-app": ConsumerApp,
         "consumer-producer-app": ConsumerProducerApp,
-        "streams-app-v2": StreamsAppV2,
+        "streams-app-v2": StreamsAppV2,  # ty: ignore[deprecated]
         "streams-app": StreamsApp,
-        "streams-bootstrap-v2": StreamsBootstrapV2,
+        "streams-bootstrap-v2": StreamsBootstrapV2,  # ty: ignore[deprecated]
         "streams-bootstrap": StreamsBootstrap,
     }
     for _type, _class in registry._classes.items():

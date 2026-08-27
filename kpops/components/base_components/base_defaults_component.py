@@ -48,7 +48,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
 
     model_config: ClassVar[ConfigDict] = ConfigDict(
         arbitrary_types_allowed=True,
-        ignored_types=(cached_property, cached_classproperty),  # pyright: ignore[reportArgumentType]
+        ignored_types=(cached_property, cached_classproperty),  # ty: ignore[invalid-argument-type]
     )
     enrich: SkipJsonSchema[bool] = Field(
         default=True,
@@ -83,7 +83,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
 
     @computed_field
     @cached_classproperty
-    def type(cls: type[Self]) -> str:  # pyright: ignore[reportGeneralTypeIssues]
+    def type(cls: type[Self]) -> str:  # ty: ignore[invalid-type-form]
         """Return calling component's type.
 
         :returns: Component class name in dash-case
@@ -91,7 +91,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         return to_dash(cls.__name__)
 
     @cached_classproperty
-    def parents(cls: type[Self]) -> tuple[type[BaseDefaultsComponent], ...]:  # pyright: ignore[reportGeneralTypeIssues]
+    def parents(cls: type[Self]) -> tuple[type[BaseDefaultsComponent], ...]:  # ty: ignore[invalid-type-form]
         """Get parent components.
 
         :return: All ancestor KPOps components

@@ -1,3 +1,4 @@
+# ty: ignore[deprecated]
 import re
 from collections.abc import AsyncIterator
 from pathlib import Path

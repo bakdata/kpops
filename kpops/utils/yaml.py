@@ -5,6 +5,7 @@ from typing import Any
 
 import structlog
 import yaml
+import yaml.representer
 from cachetools import cached
 from cachetools.keys import hashkey
 from rich.console import Console
