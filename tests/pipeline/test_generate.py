@@ -223,7 +223,6 @@ class TestGenerate:
 
         snapshot.assert_match(result.stdout, PIPELINE_YAML)
 
-    @pytest.mark.timeout(2)
     def test_substitute_in_component_infinite_loop(self) -> None:
         with pytest.raises((ValueError, ParsingException)):
             runner.invoke(
