@@ -73,10 +73,6 @@
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
-         <loc>https://bakdata.github.io/kpops/dev/user/core-concepts/components/consumer-producer-app/</loc>
-         <lastmod>2026-09-22</lastmod>
-    </url>
-    <url>
          <loc>https://bakdata.github.io/kpops/dev/user/core-concepts/components/helm-app/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
@@ -142,6 +138,10 @@
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/dev/user/migration-guide/v10-v11/</loc>
+         <lastmod>2026-09-22</lastmod>
+    </url>
+    <url>
+         <loc>https://bakdata.github.io/kpops/dev/user/migration-guide/v11-v12/</loc>
          <lastmod>2026-09-22</lastmod>
     </url>
     <url>
