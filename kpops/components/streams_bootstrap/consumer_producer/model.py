@@ -24,4 +24,4 @@ class ConsumerProducerAppValues(ConsumerAppValues):
     :param kafka: consumerproducer-app kafka section
     """
 
-    kafka: ConsumerProducerConfig = ConsumerProducerConfig()  # pyright: ignore[reportIncompatibleVariableOverride]
+    kafka: ConsumerProducerConfig = ConsumerProducerConfig()
