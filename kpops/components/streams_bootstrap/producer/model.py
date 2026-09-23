@@ -12,11 +12,13 @@ from kpops.core.exception import ValidationError
 
 
 class ProducerConfig(KafkaConfig):
-    """Kafka Streams settings specific to Producer."""
+    """producer-app kafka section."""
 
 
 class ProducerAppValues(StreamsBootstrapValues):
-    """Settings specific to producers.
+    """producer-app configurations.
+
+    The attributes correspond to keys and values that are used as values for the streams-bootstrap Helm chart.
 
     :param kafka: Kafka Streams settings
     :param deployment: Deploy the producer as a Kubernetes Deployment (thereby ignoring Job-related configurations)

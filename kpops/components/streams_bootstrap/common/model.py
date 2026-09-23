@@ -129,7 +129,7 @@ class StreamsAppAutoScaling(
         defaults to 0
     :param max_replicas: This setting is passed to the HPA definition that KEDA
         will create for a given resource and holds the maximum number of replicas
-        of the target resouce.
+        of the target resource.
         https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount,
         defaults to 1
     :param idle_replicas: If this property is set, KEDA will scale the resource

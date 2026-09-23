@@ -24,7 +24,7 @@ from kpops.utils.pydantic import (
 
 
 class StreamsConfig(KafkaConfig):
-    """streams-bootstrap kafka section.
+    """streams-app kafka section.
 
     :param application_id: Unique application ID for Kafka Streams. Required for auto-scaling
     :param input_topics: Input topics, defaults to []
@@ -99,9 +99,9 @@ class StreamsConfig(KafkaConfig):
 
 
 class StreamsAppValues(StreamsBootstrapValues):
-    """streams-bootstrap app configurations.
+    """streams-app configurations.
 
-    The attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.
+    The attributes correspond to keys and values that are used as values for the streams-bootstrap Helm chart.
 
     :param kafka: streams-bootstrap kafka section
     :param autoscaling: Kubernetes event-driven autoscaling config, defaults to None

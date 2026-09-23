@@ -1,4 +1,4 @@
-# StreamsApp component that configures a streams bootstrap app.
+# StreamsApp component that configures a streams-bootstrap streams-app.
 # More documentation on StreamsApp: https://github.com/bakdata/streams-bootstrap
 - type: streams-app # required
   name: streams-app # required
@@ -10,29 +10,29 @@
       ${pipeline.name}-input-topic:
         type: input # Implied when role is NOT specified
       ${pipeline.name}-extra-topic:
-        role: topic-role # Implies `type` to be extra
+        label: topic-role # Implies `type` to be extra
       ${pipeline.name}-input-pattern-topic:
-        type: pattern # Implied to be an input pattern if `role` is undefined
+        type: pattern # Implied to be an input pattern if `label` is undefined
       ${pipeline.name}-extra-pattern-topic:
-        type: pattern # Implied to be an extra pattern if `role` is defined
-        role: some-role
+        type: pattern # Implied to be an extra pattern if `label` is defined
+        label: some-role
     components: # read from specific component
       account-producer:
         type: input # Implied when role is NOT specified
       other-producer:
-        role: some-role # Implies `type` to be extra
+        label: some-role # Implies `type` to be extra
       component-as-input-pattern:
-        type: pattern # Implied to be an input pattern if `role` is undefined
+        type: pattern # Implied to be an input pattern if `label` is undefined
       component-as-extra-pattern:
-        type: pattern # Implied to be an extra pattern if `role` is defined
-        role: some-role
+        type: pattern # Implied to be an extra pattern if `label` is defined
+        label: some-role
   # Topic(s) into which the component will write output
   to:
     topics:
       ${pipeline.name}-output-topic:
         type: output # Implied when role is NOT specified
       ${pipeline.name}-extra-topic:
-        role: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
+        label: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
       ${pipeline.name}-error-topic:
         type: error
         # Currently KPOps supports Avro and JSON schemas.
@@ -90,7 +90,7 @@
       # not yet subscribed to a partition.
       offsetResetPolicy: earliest
       # This setting is passed to the HPA definition that KEDA will create for a
-      # given resource and holds the maximum number of replicas of the target resouce.
+      # given resource and holds the maximum number of replicas of the target resource.
       # https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount
       maxReplicas: 1
       # Minimum number of replicas KEDA will scale the resource down to.

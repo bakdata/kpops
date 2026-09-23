@@ -173,7 +173,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         """
 
     def set_input_topics(self) -> None:
-        """Put values of config.from into the streams config section of streams bootstrap.
+        """Put values of config.from into the streams config section of streams-bootstrap.
 
         Supports extra_input_topics (topics by label) or input_topics.
         """
@@ -199,7 +199,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
                 self.add_input_topics([kafka_topic])
 
     def set_output_topics(self) -> None:
-        """Put values of `to` section into the producer config section of streams bootstrap.
+        """Put values of `to` section into the producer config section of streams-bootstrap.
 
         Supports extra_output_topics (topics by label) or output_topics.
         """

@@ -18,6 +18,7 @@ from kpops.components.base_components.kubernetes_app import KubernetesApp
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.components.streams_bootstrap import (
     ConsumerApp,
+    ConsumerProducerApp,
     ProducerApp,
     StreamsApp,
     StreamsBootstrap,
@@ -103,6 +104,7 @@ def test_registry() -> None:
         "pipeline-component": PipelineComponent,
         "producer-app": ProducerApp,
         "consumer-app": ConsumerApp,
+        "consumer-producer-app": ConsumerProducerApp,
         "streams-app": StreamsApp,
         "streams-bootstrap": StreamsBootstrap,
     }

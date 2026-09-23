@@ -53,10 +53,7 @@ class ProducerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
 
 
 class ProducerApp(StreamsBootstrap):
-    """Producer component.
-
-    This producer holds configuration to use as values for the streams-bootstrap
-    producer Helm chart.
+    """ProducerApp component that configures a streams-bootstrap producer-app.
 
     Note that the producer does not support error topics.
 
