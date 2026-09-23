@@ -1,8 +1,8 @@
-# ConsumerApp component that configures a streams-bootstrap consumer-app.
-# More documentation on ConsumerApp:
+# ConsumerProducerApp component that configures a streams-bootstrap consumerproducer-app.
+# More documentation on ConsumerProducerApp:
 # https://github.com/bakdata/streams-bootstrap
-- type: consumer-app
-  name: consumer-app # required
+- type: consumer-producer-app
+  name: consumer-producer-app # required
   # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline.name}-
@@ -27,19 +27,36 @@
       component-as-extra-pattern:
         type: pattern # Implied to be an extra pattern if `label` is defined
         label: some-role
-  # to: # While the consumer-app does inherit from kafka-app, it does not need a
-  # `to` section, hence it does not support it.
+  # Topic(s) into which the component will write output
+  to:
+    topics:
+      ${pipeline.name}-output-topic:
+        type: output # Implied when role is NOT specified
+      ${pipeline.name}-extra-topic:
+        label: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
+      ${pipeline.name}-error-topic:
+        type: error
+        # Currently KPOps supports Avro and JSON schemas.
+        key_schema: key-schema # must implement SchemaProvider to use
+        value_schema: value-schema
+        partitions_count: 1
+        replication_factor: 1
+        configs: # https://kafka.apache.org/documentation/#topicconfigs
+          cleanup.policy: compact
+    models: # SchemaProvider is initiated with the values given here
+      model: model
   namespace: namespace # required
   # Allowed configs:
-  # https://github.com/bakdata/streams-bootstrap/tree/master/charts/consumer-app
+  # https://github.com/bakdata/streams-bootstrap/tree/master/charts/consumerproducer-app
   values: # required
-    kafka: # required, consumer-app-specific
+    kafka: # required, consumer-producer-app-specific
       bootstrapServers: ${config.kafka_brokers}
       schemaRegistryUrl: ${config.schema_registry.url}
-      groupId: consumer-group-id
+      groupId: consumer-producer-group-id
       inputTopics:
         - topic1
         - topic2
+      outputTopic: output-topic
       inputPattern: input-pattern
       labeledInputTopics:
         input_role1:
@@ -50,11 +67,16 @@
           - input_topic4
       labeledInputPatterns:
         pattern_role1: input_pattern1
+      labeledOutputTopics:
+        output_role1: output_topic1
+        output_role2: output_topic2
+      errorTopic: error-topic
       config:
-        my.consumer.config: my.value
+        my.consumer.producer.config: my.value
+      deleteOutput: false
     nameOverride: override-with-this-name # kafka-app-specific
     fullnameOverride: override-with-this-name # kafka-app-specific
-    autoscaling: # consumer-app-specific
+    autoscaling: # consumer-producer-app-specific
       enabled: false # Whether to enable auto-scaling using KEDA.
       lagThreshold: 0 # Average target value to trigger scaling actions.
       # This is the interval to check each trigger on.
@@ -77,7 +99,7 @@
       # number of replicas.
       # https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount
       idleReplicas: 0
-      topics: # List of topics used by the consumer app.
+      topics: # List of topics used by the consumer-producer app.
         - topic1
         - topic2
       # Complete list of KEDA triggers. When set, these replace all

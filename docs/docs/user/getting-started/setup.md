@@ -168,8 +168,8 @@ Pay attention to the `STATUS` row. The pods should have a status of `Running`.
 
 ## Install KPOps
 
-KPOps comes as a [PyPI package](https://pypi.org/project/kpops/){target=_blank}. You can install it with `pip`:
+KPOps comes as a [PyPI package](https://pypi.org/project/kpops/){target=_blank}. You can install it with [`uv`](https://docs.astral.sh/uv/){target=_blank}:
 
 ```shell
-pip install kpops
+uv tool install kpops
 ```

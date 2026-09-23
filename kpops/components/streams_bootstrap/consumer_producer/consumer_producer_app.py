@@ -1,7 +1,7 @@
 from functools import cached_property
 
 import structlog
-from pydantic import Field, ValidationError
+from pydantic import ValidationError
 from typing_extensions import override
 
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
@@ -12,32 +12,37 @@ from kpops.components.streams_bootstrap.base import (
     StreamsBootstrap,
     StreamsBootstrapCleaner,
 )
-from kpops.components.streams_bootstrap.consumer.model import ConsumerAppValues
+from kpops.components.streams_bootstrap.consumer_producer.model import (
+    ConsumerProducerAppValues,
+)
 from kpops.config import get_config
 from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
 from kpops.core.operation import OperationMode
 from kpops.manifests.argo import ArgoHook, enrich_annotations
 from kpops.manifests.kubernetes import KubernetesManifest
+from kpops.manifests.strimzi.kafka_topic import StrimziKafkaTopic
 
-log = structlog.get_logger("ConsumerApp")
+log = structlog.get_logger("ConsumerProducerApp")
 
 
-class ConsumerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
-    values: ConsumerAppValues
+class ConsumerProducerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
+    from_: None = None
+    to: None = None
+    values: ConsumerProducerAppValues
 
     @property
     @override
     def helm_chart(self) -> str:
-        return (
-            f"{self.repo_config.repository_name}/{AppType.CLEANUP_CONSUMER_APP.value}"
-        )
+        return f"{self.repo_config.repository_name}/{AppType.CLEANUP_CONSUMER_PRODUCER_APP.value}"
 
     @override
     async def reset(self, dry_run: bool) -> None:
+        self.values.kafka.delete_output = False
         await super().clean(dry_run)
 
     @override
     async def clean(self, dry_run: bool) -> None:
+        self.values.kafka.delete_output = True
         await super().clean(dry_run)
 
         if (
@@ -63,6 +68,7 @@ class ConsumerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
 
     @override
     def manifest_reset(self) -> tuple[KubernetesManifest, ...]:
+        self.values.kafka.delete_output = False
         values = self.to_helm_values()
 
         return self._helm.template(
@@ -79,22 +85,17 @@ class ConsumerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
         await pvc_handler.delete_pvcs(dry_run)
 
 
-class ConsumerApp(StreamsBootstrap):
-    """ConsumerApp component that configures a streams-bootstrap consumer-app.
+class ConsumerProducerApp(StreamsBootstrap):
+    """ConsumerProducerApp component that configures a streams-bootstrap consumerproducer-app.
 
     :param values: streams-bootstrap Helm values
     """
 
-    values: ConsumerAppValues
-    to: None = Field(
-        default=None,
-        alias="to",
-        title="To",
-    )
+    values: ConsumerProducerAppValues
 
     @cached_property
-    def _cleaner(self) -> ConsumerAppCleaner:
-        return ConsumerAppCleaner.from_parent(self)
+    def _cleaner(self) -> ConsumerProducerAppCleaner:
+        return ConsumerProducerAppCleaner.from_parent(self)
 
     @property
     @override
@@ -105,6 +106,16 @@ class ConsumerApp(StreamsBootstrap):
     @override
     def extra_input_topics(self) -> dict[str, list[KafkaTopic]]:
         return self.values.kafka.labeled_input_topics
+
+    @property
+    @override
+    def output_topic(self) -> KafkaTopic | None:
+        return self.values.kafka.output_topic
+
+    @property
+    @override
+    def extra_output_topics(self) -> dict[str, KafkaTopic]:
+        return self.values.kafka.labeled_output_topics
 
     @override
     def add_input_topics(self, topics: list[KafkaTopic]) -> None:
@@ -122,10 +133,24 @@ class ConsumerApp(StreamsBootstrap):
     def add_extra_input_pattern(self, label: str, topic: str) -> None:
         self.values.kafka.labeled_input_patterns[label] = topic
 
+    @override
+    def set_output_topic(self, topic: KafkaTopic) -> None:
+        self.values.kafka.output_topic = topic
+
+    @override
+    def set_error_topic(self, topic: KafkaTopic) -> None:
+        self.values.kafka.error_topic = topic
+
+    @override
+    def add_extra_output_topic(self, topic: KafkaTopic, label: str) -> None:
+        self.values.kafka.labeled_output_topics[label] = topic
+
     @property
     @override
     def helm_chart(self) -> str:
-        return f"{self.repo_config.repository_name}/{AppType.CONSUMER_APP.value}"
+        return (
+            f"{self.repo_config.repository_name}/{AppType.CONSUMER_PRODUCER_APP.value}"
+        )
 
     @override
     async def destroy(self, dry_run: bool) -> None:
@@ -170,7 +195,12 @@ class ConsumerApp(StreamsBootstrap):
 
     @override
     def manifest_reset(self) -> tuple[KubernetesManifest, ...]:
-        return self._cleaner.manifest_reset()
+        resource = self._cleaner.manifest_reset()
+        if self.to:
+            resource = resource + tuple(
+                StrimziKafkaTopic.from_topic(topic) for topic in self.to.kafka_topics
+            )
+        return resource
 
     @override
     def manifest_clean(self) -> tuple[KubernetesManifest, ...]:
