@@ -6,7 +6,7 @@ from kpops.components.streams_bootstrap.consumer.model import (
 
 
 class ConsumerProducerConfig(ConsumerConfig):
-    """consumerproducer app kafka section.
+    """consumerproducer-app kafka section.
 
     :param error_topic: Error topic, defaults to None
     :param delete_output: Whether the output topics with their associated schemas and the consumer group should be deleted during the cleanup, defaults to None
@@ -19,7 +19,7 @@ class ConsumerProducerConfig(ConsumerConfig):
 class ConsumerProducerAppValues(ConsumerAppValues):
     """consumerproducer-app configurations.
 
-    The attributes correspond to keys and values that are used as values for the streams-bootstrap helm chart.
+    The attributes correspond to keys and values that are used as values for the streams-bootstrap Helm chart.
 
     :param kafka: consumerproducer-app kafka section
     """

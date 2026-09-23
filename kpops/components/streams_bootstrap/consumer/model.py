@@ -19,7 +19,7 @@ from kpops.utils.pydantic import (
 
 
 class ConsumerConfig(KafkaConfig):
-    """consumer app kafka section.
+    """consumer-app kafka section.
 
     :param group_id: Unique consumer group ID for Kafka Streams. Required for auto-scaling.
     :param input_topics: Input topics, defaults to []
@@ -92,7 +92,7 @@ class ConsumerConfig(KafkaConfig):
 class ConsumerAppValues(StreamsBootstrapValues):
     """consumer-app configurations.
 
-    The attributes correspond to keys and values that are used as values for the streams-bootstrap helm chart.
+    The attributes correspond to keys and values that are used as values for the streams-bootstrap Helm chart.
 
     :param kafka: consumer-app kafka section
     :param autoscaling: Kubernetes event-driven autoscaling config, defaults to None
