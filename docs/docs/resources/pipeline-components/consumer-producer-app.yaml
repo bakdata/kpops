@@ -1,5 +1,4 @@
-# Holds configuration to use as values for the streams-bootstrap consumerproducer-app
-# Helm chart.
+# ConsumerProducerApp component that configures a streams-bootstrap consumerproducer-app.
 # More documentation on ConsumerProducerApp:
 # https://github.com/bakdata/streams-bootstrap
 - type: consumer-producer-app

@@ -86,7 +86,7 @@ class StreamsAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
 
 
 class StreamsApp(StreamsBootstrap):
-    """StreamsApp component that configures a streams-bootstrap app.
+    """StreamsApp component that configures a streams-bootstrap streams-app.
 
     :param values: streams-bootstrap Helm values
     """

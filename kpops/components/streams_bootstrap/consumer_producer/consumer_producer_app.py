@@ -86,7 +86,7 @@ class ConsumerProducerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
 
 
 class ConsumerProducerApp(StreamsBootstrap):
-    """ConsumerProducerApp component that configures a streams-bootstrap consumerproducer app.
+    """ConsumerProducerApp component that configures a streams-bootstrap consumerproducer-app.
 
     :param values: streams-bootstrap Helm values
     """

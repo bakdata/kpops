@@ -80,7 +80,7 @@ class ConsumerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
 
 
 class ConsumerApp(StreamsBootstrap):
-    """StreamsApp component that configures a streams-bootstrap app.
+    """ConsumerApp component that configures a streams-bootstrap consumer-app.
 
     :param values: streams-bootstrap Helm values
     """
