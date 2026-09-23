@@ -1,4 +1,4 @@
-# Holds configuration to use as values for the streams bootstrap producer-app Helm
+# Holds configuration to use as values for the streams-bootstrap producer-app Helm
 # chart.
 # More documentation on ProducerApp:
 # https://github.com/bakdata/streams-bootstrap

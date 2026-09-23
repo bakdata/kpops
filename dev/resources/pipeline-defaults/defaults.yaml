@@ -348,7 +348,7 @@ producer-app:
         output_role2: output_topic2
     nameOverride: override-with-this-name # kafka-app-specific
     fullnameOverride: override-with-this-name # kafka-app-specific
-# Streams app component that configures a streams bootstrap app.
+# Streams app component that configures a streams-bootstrap app.
 #
 # Child of: KafkaApp
 # More documentation on StreamsApp: https://github.com/bakdata/streams-bootstrap
