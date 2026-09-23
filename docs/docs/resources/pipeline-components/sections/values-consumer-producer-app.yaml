@@ -41,7 +41,7 @@
       # not yet subscribed to a partition.
       offsetResetPolicy: earliest
       # This setting is passed to the HPA definition that KEDA will create for a
-      # given resource and holds the maximum number of replicas of the target resouce.
+      # given resource and holds the maximum number of replicas of the target resource.
       # https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount
       maxReplicas: 1
       # Minimum number of replicas KEDA will scale the resource down to.

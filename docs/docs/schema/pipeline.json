@@ -3822,7 +3822,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "This setting is passed to the HPA definition that KEDA will create for a given resource and holds the maximum number of replicas of the target resouce. https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount",
+                    "description": "This setting is passed to the HPA definition that KEDA will create for a given resource and holds the maximum number of replicas of the target resource. https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount",
                     "title": "Max replica count"
                 },
                 "minReplicas": {
