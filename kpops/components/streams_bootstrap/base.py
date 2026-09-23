@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from abc import ABC
-from typing import TYPE_CHECKING, Self
+from typing import Self
 
 import pydantic
 import structlog
@@ -18,11 +18,6 @@ from kpops.config import get_config
 from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.manifests.strimzi.kafka_topic import StrimziKafkaTopic
 from kpops.utils.pydantic import SkipGenerate
-
-if TYPE_CHECKING:
-    from kpops.components.streams_bootstrap_v2.base import (
-        StreamsBootstrapV2,  # ty: ignore[deprecated]
-    )
 
 STREAMS_BOOTSTRAP_HELM_REPO = HelmRepoConfig(
     repository_name="bakdata-streams-bootstrap",
@@ -107,7 +102,7 @@ class StreamsBootstrapCleaner(Cleaner, ABC):
     to: None = None
 
     @classmethod
-    def from_parent(cls, parent: StreamsBootstrap | StreamsBootstrapV2) -> Self:  # ty: ignore[deprecated]
+    def from_parent(cls, parent: StreamsBootstrap) -> Self:
         parent_kwargs = parent.model_dump(
             by_alias=True,
             exclude_none=True,
