@@ -1,4 +1,4 @@
-# Holds configuration to use as values for the streams bootstrap consumer-app Helm
+# Holds configuration to use as values for the streams-bootstrap consumer-app Helm
 # chart.
 # More documentation on ConsumerApp:
 # https://github.com/bakdata/streams-bootstrap
@@ -109,7 +109,7 @@
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
   version: "2.12.0" # Helm chart version
-# Holds configuration to use as values for the streams bootstrap consumerproducer-app
+# Holds configuration to use as values for the streams-bootstrap consumerproducer-app
 # Helm chart.
 # More documentation on ConsumerProducerApp:
 # https://github.com/bakdata/streams-bootstrap
@@ -476,7 +476,7 @@
     image: exampleImage # Example
     debug: false # Example
     commandLine: {} # Example
-# Holds configuration to use as values for the streams bootstrap producer-app Helm
+# Holds configuration to use as values for the streams-bootstrap producer-app Helm
 # chart.
 # More documentation on ProducerApp:
 # https://github.com/bakdata/streams-bootstrap
@@ -529,7 +529,7 @@
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
   version: "2.12.0" # Helm chart version
-# StreamsApp component that configures a streams bootstrap app.
+# StreamsApp component that configures a streams-bootstrap app.
 # More documentation on StreamsApp: https://github.com/bakdata/streams-bootstrap
 - type: streams-app # required
   name: streams-app # required

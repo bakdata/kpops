@@ -101,7 +101,7 @@ class StreamsConfig(KafkaConfig):
 class StreamsAppValues(StreamsBootstrapValues):
     """streams-bootstrap app configurations.
 
-    The attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.
+    The attributes correspond to keys and values that are used as values for the streams-bootstrap helm chart.
 
     :param kafka: streams-bootstrap kafka section
     :param autoscaling: Kubernetes event-driven autoscaling config, defaults to None

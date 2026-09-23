@@ -158,7 +158,7 @@
         },
         "ConsumerAppValues": {
             "additionalProperties": true,
-            "description": "consumer-app configurations.\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
+            "description": "consumer-app configurations.\nThe attributes correspond to keys and values that are used as values for the streams-bootstrap helm chart.",
             "properties": {
                 "affinity": {
                     "anyOf": [
@@ -844,7 +844,7 @@
         },
         "ConsumerProducerAppValues": {
             "additionalProperties": true,
-            "description": "consumerproducer-app configurations.\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
+            "description": "consumerproducer-app configurations.\nThe attributes correspond to keys and values that are used as values for the streams-bootstrap helm chart.",
             "properties": {
                 "affinity": {
                     "anyOf": [
@@ -3917,7 +3917,7 @@
         },
         "StreamsAppValues": {
             "additionalProperties": true,
-            "description": "streams-bootstrap app configurations.\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
+            "description": "streams-bootstrap app configurations.\nThe attributes correspond to keys and values that are used as values for the streams-bootstrap helm chart.",
             "properties": {
                 "affinity": {
                     "anyOf": [

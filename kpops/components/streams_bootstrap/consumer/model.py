@@ -92,7 +92,7 @@ class ConsumerConfig(KafkaConfig):
 class ConsumerAppValues(StreamsBootstrapValues):
     """consumer-app configurations.
 
-    The attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.
+    The attributes correspond to keys and values that are used as values for the streams-bootstrap helm chart.
 
     :param kafka: consumer-app kafka section
     :param autoscaling: Kubernetes event-driven autoscaling config, defaults to None

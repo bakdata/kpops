@@ -69,7 +69,7 @@ class JavaOptions(CamelCaseConfigModel, DescConfigModel):
 
 
 class StreamsBootstrapValues(SerializeAsOptionalModel, HelmAppValues):
-    """Base value class for all streams bootstrap related components.
+    """Base value class for all streams-bootstrap related components.
 
     :param image: Docker image of the Kafka producer app.
     :param image_tag: Docker image tag of the streams-bootstrap app.
