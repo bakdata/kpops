@@ -158,7 +158,7 @@
         },
         "ConsumerAppValues": {
             "additionalProperties": true,
-            "description": "consumer-app configurations.\nThe attributes correspond to keys and values that are used as values for the streams-bootstrap helm chart.",
+            "description": "consumer-app configurations.\nThe attributes correspond to keys and values that are used as values for the streams-bootstrap Helm chart.",
             "properties": {
                 "affinity": {
                     "anyOf": [
@@ -586,7 +586,7 @@
         },
         "ConsumerConfig": {
             "additionalProperties": true,
-            "description": "consumer app kafka section.",
+            "description": "consumer-app kafka section.",
             "properties": {
                 "bootstrapServers": {
                     "default": "${config.kafka_brokers}",
@@ -844,7 +844,7 @@
         },
         "ConsumerProducerAppValues": {
             "additionalProperties": true,
-            "description": "consumerproducer-app configurations.\nThe attributes correspond to keys and values that are used as values for the streams-bootstrap helm chart.",
+            "description": "consumerproducer-app configurations.\nThe attributes correspond to keys and values that are used as values for the streams-bootstrap Helm chart.",
             "properties": {
                 "affinity": {
                     "anyOf": [
@@ -1274,7 +1274,7 @@
         },
         "ConsumerProducerConfig": {
             "additionalProperties": true,
-            "description": "consumerproducer app kafka section.",
+            "description": "consumerproducer-app kafka section.",
             "properties": {
                 "bootstrapServers": {
                     "default": "${config.kafka_brokers}",
@@ -2766,7 +2766,7 @@
         },
         "ProducerAppValues": {
             "additionalProperties": true,
-            "description": "Settings specific to producers.",
+            "description": "producer-app configurations.\nThe attributes correspond to keys and values that are used as values for the streams-bootstrap Helm chart.",
             "properties": {
                 "affinity": {
                     "anyOf": [
@@ -3224,7 +3224,7 @@
         },
         "ProducerConfig": {
             "additionalProperties": true,
-            "description": "Kafka Streams settings specific to Producer.",
+            "description": "producer-app kafka section.",
             "properties": {
                 "bootstrapServers": {
                     "default": "${config.kafka_brokers}",
@@ -3917,7 +3917,7 @@
         },
         "StreamsAppValues": {
             "additionalProperties": true,
-            "description": "streams-bootstrap app configurations.\nThe attributes correspond to keys and values that are used as values for the streams-bootstrap helm chart.",
+            "description": "streams-app configurations.\nThe attributes correspond to keys and values that are used as values for the streams-bootstrap Helm chart.",
             "properties": {
                 "affinity": {
                     "anyOf": [
@@ -4347,7 +4347,7 @@
         },
         "StreamsConfig": {
             "additionalProperties": true,
-            "description": "streams-bootstrap kafka section.",
+            "description": "streams-app kafka section.",
             "properties": {
                 "applicationId": {
                     "anyOf": [
