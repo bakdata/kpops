@@ -1,46 +1,19 @@
-# Holds configuration to use as values for the streams bootstrap consumer-app Helm
-# chart.
-# More documentation on ConsumerApp:
-# https://github.com/bakdata/streams-bootstrap
-- type: consumer-app
-  name: consumer-app # required
-  # Pipeline prefix that will prefix every component name. If you wish to not
-  # have any prefix you can specify an empty string.
-  prefix: ${pipeline.name}-
-  from: # Must not be null
-    topics: # read from topic
-      ${pipeline.name}-input-topic:
-        type: input # Implied when role is NOT specified
-      ${pipeline.name}-extra-topic:
-        role: topic-role # Implies `type` to be extra
-      ${pipeline.name}-input-pattern-topic:
-        type: pattern # Implied to be an input pattern if `role` is undefined
-      ${pipeline.name}-extra-pattern-topic:
-        type: pattern # Implied to be an extra pattern if `role` is defined
-        role: some-role
-    components: # read from specific component
-      account-producer:
-        type: input # Implied when role is NOT specified
-      other-producer:
-        role: some-role # Implies `type` to be extra
-      component-as-input-pattern:
-        type: pattern # Implied to be an input pattern if `role` is undefined
-      component-as-extra-pattern:
-        type: pattern # Implied to be an extra pattern if `role` is defined
-        role: some-role
-  # to: # While the consumer-app does inherit from kafka-app, it does not need a
-  # `to` section, hence it does not support it.
-  namespace: namespace # required
+# ConsumerProducer app component that configures a streams-bootstrap consumerproducer app.
+#
+# Child of: KafkaApp
+# More documentation on ConsumerProducerApp: https://github.com/bakdata/streams-bootstrap
+consumer-producer-app:
   # Allowed configs:
-  # https://github.com/bakdata/streams-bootstrap/tree/master/charts/consumer-app
+  # https://github.com/bakdata/streams-bootstrap/tree/master/charts/consumerproducer-app
   values: # required
-    kafka: # required, consumer-app-specific
+    kafka: # required, consumer-producer-app-specific
       bootstrapServers: ${config.kafka_brokers}
       schemaRegistryUrl: ${config.schema_registry.url}
-      groupId: consumer-group-id
+      groupId: consumer-producer-group-id
       inputTopics:
         - topic1
         - topic2
+      outputTopic: output-topic
       inputPattern: input-pattern
       labeledInputTopics:
         input_role1:
@@ -51,11 +24,16 @@
           - input_topic4
       labeledInputPatterns:
         pattern_role1: input_pattern1
+      labeledOutputTopics:
+        output_role1: output_topic1
+        output_role2: output_topic2
+      errorTopic: error-topic
       config:
-        my.consumer.config: my.value
+        my.consumer.producer.config: my.value
+      deleteOutput: false
     nameOverride: override-with-this-name # kafka-app-specific
     fullnameOverride: override-with-this-name # kafka-app-specific
-    autoscaling: # consumer-app-specific
+    autoscaling: # consumer-producer-app-specific
       enabled: false # Whether to enable auto-scaling using KEDA.
       lagThreshold: 0 # Average target value to trigger scaling actions.
       # This is the interval to check each trigger on.
@@ -78,7 +56,7 @@
       # number of replicas.
       # https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount
       idleReplicas: 0
-      topics: # List of topics used by the consumer app.
+      topics: # List of topics used by the consumer-producer app.
         - topic1
         - topic2
       # Complete list of KEDA triggers. When set, these replace all
@@ -98,14 +76,3 @@
       #   formula: business_hours
       #   target: "1"
       #   metricType: AverageValue
-  # Helm repository configuration (optional)
-  # If not set the helm repo add will not be called. Useful when using local Helm charts
-  repo_config:
-    repository_name: bakdata-streams-bootstrap # required
-    url: https://bakdata.github.io/streams-bootstrap/ # required
-    repo_auth_flags:
-      username: user
-      password: pass
-      ca_file: /home/user/path/to/ca-file
-      insecure_skip_tls_verify: false
-  version: "2.12.0" # Helm chart version

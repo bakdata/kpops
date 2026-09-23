@@ -1,6 +1,8 @@
 consumer-app.yaml:
 - to-consumer-app.yaml
 - values-consumer-app.yaml
+consumer-producer-app.yaml:
+- values-consumer-producer-app.yaml
 helm-app.yaml:
 - values-helm-app.yaml
 - repo_config-helm-app.yaml

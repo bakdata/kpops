@@ -6,6 +6,14 @@ consumer-app.yaml:
 - values-consumer-app.yaml
 - repo_config-helm-app.yaml
 - version-kafka-app.yaml
+consumer-producer-app.yaml:
+- prefix.yaml
+- from_.yaml
+- to.yaml
+- namespace.yaml
+- values-consumer-producer-app.yaml
+- repo_config-helm-app.yaml
+- version-kafka-app.yaml
 helm-app.yaml:
 - prefix.yaml
 - from_.yaml

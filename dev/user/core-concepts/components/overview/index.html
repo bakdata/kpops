@@ -750,6 +750,8 @@
       
         
       
+        
+      
     
     
       
@@ -931,6 +933,27 @@
   
   <span class="md-ellipsis">
     ConsumerApp
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../consumer-producer-app/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ConsumerProducerApp
   </span>
   
 
@@ -1903,6 +1926,7 @@ definition <a href="../../../../resources/pipeline-components/pipeline/"><code>p
     StreamsApp --&gt; StreamsBootstrap
     ProducerApp --&gt; StreamsBootstrap
     ConsumerApp --&gt; StreamsBootstrap
+    ConsumerProducerApp --&gt; StreamsBootstrap
     KafkaConnector --&gt; PipelineComponent
     KafkaSourceConnector --&gt; KafkaConnector
     KafkaSinkConnector --&gt; KafkaConnector
@@ -1913,6 +1937,7 @@ definition <a href="../../../../resources/pipeline-components/pipeline/"><code>p
     click StreamsApp "./../streams-app"
     click ProducerApp "./../producer-app"
     click ConsumerApp "./../consumer-app"
+    click ConsumerProducerApp "./../consumer-producer-app"
     click KafkaConnector "./../kafka-connector"
     click KafkaSourceConnector "./../kafka-source-connector"
     click KafkaSinkConnector "./../kafka-sink-connector"</code></pre>
