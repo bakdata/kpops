@@ -1,4 +1,4 @@
-# Streams app component that configures a streams bootstrap app.
+# Streams app component that configures a streams-bootstrap app.
 #
 # Child of: KafkaApp
 # More documentation on StreamsApp: https://github.com/bakdata/streams-bootstrap
@@ -48,7 +48,7 @@ streams-app:
       # not yet subscribed to a partition.
       offsetResetPolicy: earliest
       # This setting is passed to the HPA definition that KEDA will create for a
-      # given resource and holds the maximum number of replicas of the target resouce.
+      # given resource and holds the maximum number of replicas of the target resource.
       # https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount
       maxReplicas: 1
       # Minimum number of replicas KEDA will scale the resource down to.

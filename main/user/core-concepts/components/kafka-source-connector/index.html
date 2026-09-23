@@ -750,6 +750,8 @@
       
         
       
+        
+      
     
     
       
@@ -921,6 +923,27 @@
   
   <span class="md-ellipsis">
     ConsumerApp
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../consumer-producer-app/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ConsumerProducerApp
   </span>
   
 
@@ -2120,7 +2143,7 @@
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">${pipeline.name}-output-topic</span><span class="p p-Indicator">:</span>
 </span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">output</span><span class="w"> </span><span class="c1"># Implied when role is NOT specified</span>
 </span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">${pipeline.name}-extra-topic</span><span class="p p-Indicator">:</span>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="w">        </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">topic-role</span><span class="w"> </span><span class="c1"># Implies `type` to be extra; Will throw an error if `type` is defined</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="w">        </span><span class="nt">label</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">topic-role</span><span class="w"> </span><span class="c1"># Implies `type` to be extra; Will throw an error if `type` is defined</span>
 </span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">${pipeline.name}-error-topic</span><span class="p p-Indicator">:</span>
 </span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">error</span>
 </span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="w">        </span><span class="c1"># Currently KPOps supports Avro and JSON schemas.</span>
