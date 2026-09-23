@@ -1,5 +1,4 @@
-# Holds configuration to use as values for the streams-bootstrap consumer-app Helm
-# chart.
+# ConsumerApp component that configures a streams-bootstrap consumer-app.
 # More documentation on ConsumerApp:
 # https://github.com/bakdata/streams-bootstrap
 - type: consumer-app

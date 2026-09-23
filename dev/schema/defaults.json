@@ -53,7 +53,7 @@
         },
         "ConsumerApp": {
             "additionalProperties": true,
-            "description": "StreamsApp component that configures a streams-bootstrap app.",
+            "description": "ConsumerApp component that configures a streams-bootstrap consumer-app.",
             "properties": {
                 "diff_config": {
                     "$ref": "#/$defs/HelmDiffConfig",
@@ -732,7 +732,7 @@
         },
         "ConsumerProducerApp": {
             "additionalProperties": true,
-            "description": "ConsumerProducerApp component that configures a streams-bootstrap consumerproducer app.",
+            "description": "ConsumerProducerApp component that configures a streams-bootstrap consumerproducer-app.",
             "properties": {
                 "diff_config": {
                     "$ref": "#/$defs/HelmDiffConfig",
@@ -2963,7 +2963,7 @@
         },
         "ProducerApp": {
             "additionalProperties": true,
-            "description": "Producer component.\nThis producer holds configuration to use as values for the streams-bootstrap producer Helm chart. Note that the producer does not support error topics.",
+            "description": "ProducerApp component that configures a streams-bootstrap producer-app.\nNote that the producer does not support error topics.",
             "properties": {
                 "diff_config": {
                     "$ref": "#/$defs/HelmDiffConfig",
@@ -3922,7 +3922,7 @@
         },
         "StreamsApp": {
             "additionalProperties": true,
-            "description": "StreamsApp component that configures a streams-bootstrap app.",
+            "description": "StreamsApp component that configures a streams-bootstrap streams-app.",
             "properties": {
                 "diff_config": {
                     "$ref": "#/$defs/HelmDiffConfig",

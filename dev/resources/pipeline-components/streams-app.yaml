@@ -1,4 +1,4 @@
-# StreamsApp component that configures a streams-bootstrap app.
+# StreamsApp component that configures a streams-bootstrap streams-app.
 # More documentation on StreamsApp: https://github.com/bakdata/streams-bootstrap
 - type: streams-app # required
   name: streams-app # required
