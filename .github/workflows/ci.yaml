@@ -126,9 +126,9 @@ jobs:
         run: uv run --frozen
           lefthook run pre-commit --commands kpops-docs-components --force
 
-      - name: Test docs build (mkdocs)
+      - name: Test docs build (zensical)
         run: uv run --frozen --group=docs
-          mkdocs build -f docs/mkdocs.yml
+          zensical build -f docs/mkdocs.yml
 
   # TODO: extract into ci-templates
   publish-snapshot-version:

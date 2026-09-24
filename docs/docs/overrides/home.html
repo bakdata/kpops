@@ -91,8 +91,8 @@
             <div class="md-grid mdx-hero__content">
                 <h1>KPOps Documentation</h1>
 
-                {% for nav_item in nav %}
-                {% if not nav_item.active%}
+                {% for nav_item in nav.items or nav %}
+                {% if not nav_item.active %}
 
                 {% if nav_item.children %}
                     {% set url = (nav_item.children | first).url | url %}
