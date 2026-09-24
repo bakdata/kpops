@@ -185,12 +185,15 @@
         position: relative;
         min-height: 100vh;
         min-width: 100vw;
+        overflow: hidden;
     }
 
     .mdx-hero__content {
-        margin-top: 50px;
+        margin-top: 35px;
         position: relative;
         z-index: 5;
+        max-width: 44rem;
+        padding: 0 1.5rem;
     }
 
     /* Moves the search results to the front */
@@ -201,16 +204,86 @@
         position: initial;
     }
 
-    .mdx-hero__content h1 {
-        margin-bottom: 20px;
-        color: black;
-        font-weight: 700;
-        font-size: 40px;
+    .mdx-hero__badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.35rem 0.9rem;
+        background: rgba(112, 104, 173, 0.15);
+        border: 1px solid rgba(112, 104, 173, 0.35);
+        border-radius: 9999px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #2b2260;
+        letter-spacing: 0.02em;
+        margin-bottom: 1rem;
+        backdrop-filter: blur(8px);
     }
 
-    .mdx-hero__content p {
-        color: black;
-        font-size: 20px;
+    .mdx-hero__description {
+        font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+        font-weight: 600;
+        letter-spacing: -0.015em;
+        line-height: 1.45;
+        color: #1a153a;
+        margin: 0 0 1.5rem 0;
+        max-width: 36rem;
+    }
+
+    .mdx-hero__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+    }
+
+    .mdx-hero__button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        padding: 0.55rem 1.25rem;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .mdx-hero__button--primary {
+        background: #7068ad;
+        color: #ffffff !important;
+        box-shadow: 0 4px 14px rgba(112, 104, 173, 0.35);
+        border: 1px solid rgba(112, 104, 173, 0.6);
+    }
+
+    .mdx-hero__button--primary:hover {
+        background: #5d5598;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(112, 104, 173, 0.45);
+        border-color: #5d5598;
+    }
+
+    .mdx-hero__button--secondary {
+        background: rgba(255, 255, 255, 0.85);
+        color: #1a1638 !important;
+        border: 1px solid rgba(255, 255, 255, 0.95);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        backdrop-filter: blur(8px);
+    }
+
+    .mdx-hero__button--secondary:hover {
+        background: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+    }
+
+    .mdx-hero__arrow {
+        transition: transform 0.2s ease;
+    }
+
+    .mdx-hero__button--primary:hover .mdx-hero__arrow {
+        transform: translateX(3px);
     }
 
     .md-hero__image {
@@ -243,43 +316,61 @@
             <img class="md-hero__image" src="assets/images/kpops-background.svg"
                  alt="KPOps background image"/>
             <div class="md-grid mdx-hero__content">
-                <h1>KPOps Documentation</h1>
+                <div class="mdx-hero__badge">
+                    Kafka Pipeline Operations
+                </div>
+                <p class="mdx-hero__description">
+                    Deploy and manage Kafka pipelines on Kubernetes.
+                </p>
 
-                
-                
-                
-                
-
-                
+                <div class="mdx-hero__actions">
                     
-                
-
-                <a
-                    href="./user/what-is-kpops/"
-                    title="User Guide"
-                    class="md-button md-button--primary"
-                >
-                    User Guide
-                </a>
-
-                
-                
-                
-
-                
                     
-                
+                    
+                    
+                    
 
-                <a
-                    href="./developer/getting-started/"
-                    title="Developer Guide"
-                    class="md-button md-button--primary"
-                >
-                    Developer Guide
-                </a>
+                    
+                        
+                    
 
-                
-                
+                    
+                    
+
+                    <a
+                        href="./user/what-is-kpops/"
+                        title="User Guide"
+                        class="mdx-hero__button mdx-hero__button--primary"
+                    >
+                        <span>User Guide</span>
+                        
+                        <svg class="mdx-hero__arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        
+                    </a>
+
+                    
+                    
+                    
+
+                    
+                        
+                    
+
+                    
+                    
+
+                    <a
+                        href="./developer/getting-started/"
+                        title="Developer Guide"
+                        class="mdx-hero__button mdx-hero__button--secondary"
+                    >
+                        <span>Developer Guide</span>
+                        
+                    </a>
+
+                    
+                    
+                </div>
             </div>
         </div>
     </div>
