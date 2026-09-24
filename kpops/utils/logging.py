@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import contextlib
 import logging
+import os
 import zlib
 from collections.abc import Generator
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 import structlog
+import typer
 
 from kpops.core.exception import KpopsException, ServiceException
 
@@ -25,22 +27,22 @@ def _drop_root_logger_name(
     return event_dict
 
 
-# 256-color xterm codes for component log prefixes; red is reserved for the error level.
-_COMPONENT_COLORS = (
-    "\033[38;5;39m",
-    "\033[38;5;208m",
-    "\033[38;5;135m",
-    "\033[38;5;76m",
-    "\033[38;5;220m",
-    "\033[38;5;213m",
-    "\033[38;5;80m",
-    "\033[38;5;214m",
-    "\033[38;5;105m",
-    "\033[38;5;156m",
-    "\033[38;5;111m",
-    "\033[38;5;45m",
-    "\033[38;5;178m",
-    "\033[38;5;120m",
+# Standard 16-color ANSI codes
+# red reserved for the error level
+_COMPONENT_COLOR_NAMES = (
+    typer.colors.BLUE,
+    typer.colors.BRIGHT_BLUE,
+    typer.colors.CYAN,
+    typer.colors.BRIGHT_CYAN,
+    typer.colors.GREEN,
+    typer.colors.BRIGHT_GREEN,
+    typer.colors.YELLOW,
+    typer.colors.BRIGHT_YELLOW,
+    typer.colors.MAGENTA,
+    typer.colors.BRIGHT_MAGENTA,
+)
+_COMPONENT_COLORS = tuple(
+    typer.style("", fg=name, reset=False) for name in _COMPONENT_COLOR_NAMES
 )
 
 
@@ -67,13 +69,19 @@ class _ComponentNameColumnFormatter:
         return f"[{self.bright_style}{_component_color(name)}{name}{self.reset_style}]"
 
 
+def _colors_enabled() -> bool:
+    if os.environ.get("NO_COLOR"):
+        return False
+    return structlog.dev.ConsoleRenderer().colors
+
+
 def _build_console_renderer() -> structlog.dev.ConsoleRenderer:
     """Build a ConsoleRenderer with the logger name before the event message.
 
     The default column order renders `[level] event  [logger] key=value...`;
     we want `[level] [pipeline] [component] [logger] event  key=value...` instead.
     """
-    colors = structlog.dev.ConsoleRenderer().colors
+    colors = _colors_enabled()
     styles = structlog.dev.ConsoleRenderer.get_default_column_styles(colors)
     level_styles = structlog.dev.ConsoleRenderer.get_default_level_styles(colors)
 
