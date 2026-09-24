@@ -91,8 +91,7 @@ class KafkaConnectHandler:
                 connector.config.model_dump(), connector_config.model_dump()
             )
         ):
-            log.info("Updating config", connector_name=connector_name)
-            log.info("\n" + diff)
+            log.info("Updating config", connector_name=connector_name, diff=diff)
 
         await self._kafka_connect.update_connector_config(
             connector_config, dry_run=dry_run
@@ -120,9 +119,8 @@ class KafkaConnectHandler:
                 "Connector does not exist. Creating connector",
                 connector_name=connector_name,
                 state=state.value if state else None,
+                diff=diff,
             )
-            if diff:
-                log.info("\n" + diff)
 
         await self._kafka_connect.create_connector(
             connector_config, state, dry_run=dry_run

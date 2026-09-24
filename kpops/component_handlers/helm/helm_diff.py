@@ -58,4 +58,10 @@ class HelmDiff:
                 change.new_value.model_dump() if change.new_value else {},
                 ignore=self.config.ignore,
             ):
-                logger.info("\n" + diff)
+                manifest = change.new_value or change.old_value
+                logger.info(
+                    "Helm diff",
+                    kind=manifest.kind if manifest else None,
+                    name=manifest.metadata.name if manifest else None,
+                    diff=diff,
+                )

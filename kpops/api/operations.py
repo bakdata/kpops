@@ -4,6 +4,8 @@ import asyncio
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import structlog
+
 from kpops.api.options import FilterType
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
@@ -55,20 +57,21 @@ def generate(
         config, dotenv, environment, verbose, operation_mode
     )
     pipeline = _create_pipeline(pipeline_path, kpops_config, environment)
-    log.info("Picked up pipeline", pipeline=pipeline_path.parent.name)
-    if steps:
-        component_names = steps
-        log.debug(
-            "KPOPS_PIPELINE_STEPS is defined",
-            steps=component_names,
-            filter_type=filter_type.value,
-        )
+    with structlog.contextvars.bound_contextvars(pipeline=pipeline.name):
+        log.info("Picked up pipeline")
+        if steps:
+            component_names = steps
+            log.debug(
+                "KPOPS_PIPELINE_STEPS is defined",
+                steps=component_names,
+                filter_type=filter_type.value,
+            )
 
-        predicate = filter_type.create_default_step_names_filter_predicate(
-            component_names
-        )
-        pipeline.filter(predicate)
-        log.info("Filtered pipeline", steps=pipeline.step_names)
+            predicate = filter_type.create_default_step_names_filter_predicate(
+                component_names
+            )
+            pipeline.filter(predicate)
+            log.info("Filtered pipeline", steps=pipeline.step_names)
     return pipeline
 
 

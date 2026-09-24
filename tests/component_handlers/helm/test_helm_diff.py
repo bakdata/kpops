@@ -187,8 +187,10 @@ class TestHelmDiff:
                 ],
             )
         assert {
-            "event": (
-                "\n"
+            "event": "Helm diff",
+            "kind": "Deployment",
+            "name": None,
+            "diff": (
                 "\x1b[32m+ apiVersion: v1\n"
                 "\x1b[0m\x1b[32m+ kind: Deployment\n"
                 "\x1b[0m\x1b[32m+ metadata:\n"

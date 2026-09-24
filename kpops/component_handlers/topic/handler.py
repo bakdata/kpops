@@ -76,8 +76,7 @@ class TopicHandler:
                 topic_config_in_cluster, topic.config.configs
             )
             if diff := render_diff(in_cluster_config, new_config):
-                log.info("Config changes for topic", topic_name=topic_name)
-                log.info("\n" + diff)
+                log.info("Config changes for topic", topic_name=topic_name, diff=diff)
 
             log.info("Topic already exists in cluster.", topic_name=topic_name)
 

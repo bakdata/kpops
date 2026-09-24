@@ -37,18 +37,20 @@ ComponentFilterPredicate: TypeAlias = Callable[[PipelineComponent], bool]
 async def _run_component(
     action: str, component: PipelineComponent, operation: Awaitable[None]
 ) -> None:
-    log_action(action, component)
-    try:
-        await operation
-    except KpopsException as e:
-        log_kpops_exception(e)
-        raise
+    with structlog.contextvars.bound_contextvars(component_name=component.name):
+        log_action(action)
+        try:
+            await operation
+        except KpopsException as e:
+            log_kpops_exception(e)
+            raise
 
 
 @dataclass
 class Pipeline:
     """Pipeline representation."""
 
+    name: str
     _component_index: dict[str, PipelineComponent] = field(default_factory=dict)
     _graph: rx.PyDiGraph[str, None] = field(default_factory=rx.PyDiGraph)
     _node_index: dict[str, int] = field(default_factory=dict)
@@ -202,21 +204,28 @@ class Pipeline:
             "Clean", lambda component: component.clean(dry_run), parallel, reverse=True
         )
 
+    def _manifest_action(
+        self,
+        component_action: Callable[[PipelineComponent], tuple[KubernetesManifest, ...]],
+    ) -> Iterator[tuple[KubernetesManifest, ...]]:
+        with structlog.contextvars.bound_contextvars(pipeline=self.name):
+            for component in self.components:
+                with structlog.contextvars.bound_contextvars(
+                    component_name=component.name
+                ):
+                    yield component_action(component)
+
     def manifest_deploy(self) -> Iterator[tuple[KubernetesManifest, ...]]:
-        for component in self.components:
-            yield component.manifest_deploy()
+        return self._manifest_action(lambda component: component.manifest_deploy())
 
     def manifest_destroy(self) -> Iterator[tuple[KubernetesManifest, ...]]:
-        for component in self.components:
-            yield component.manifest_destroy()
+        return self._manifest_action(lambda component: component.manifest_destroy())
 
     def manifest_reset(self) -> Iterator[tuple[KubernetesManifest, ...]]:
-        for component in self.components:
-            yield component.manifest_reset()
+        return self._manifest_action(lambda component: component.manifest_reset())
 
     def manifest_clean(self) -> Iterator[tuple[KubernetesManifest, ...]]:
-        for component in self.components:
-            yield component.manifest_clean()
+        return self._manifest_action(lambda component: component.manifest_clean())
 
     async def _run_action(
         self,
@@ -228,12 +237,13 @@ class Pipeline:
         async def runner(component: PipelineComponent) -> None:
             await _run_component(action_name, component, component_action(component))
 
-        if parallel:
-            await self.build_execution_graph(runner, reverse=reverse)
-        else:
-            components = reversed(self.components) if reverse else self.components
-            for component in components:
-                await runner(component)
+        with structlog.contextvars.bound_contextvars(pipeline=self.name):
+            if parallel:
+                await self.build_execution_graph(runner, reverse=reverse)
+            else:
+                components = reversed(self.components) if reverse else self.components
+                for component in components:
+                    await runner(component)
 
     def __getitem__(self, component_id: str) -> PipelineComponent:
         try:
@@ -312,26 +322,10 @@ class PipelineGenerator:
     config: KpopsConfig
     registry: Registry
     handlers: ComponentHandlers
-    pipeline: Pipeline = field(init=False, default_factory=Pipeline)
+    pipeline: Pipeline = field(init=False)
     env_components_index: dict[str, dict[str, Any]] = field(
         init=False, default_factory=dict
     )
-
-    def parse(
-        self,
-        components: list[dict[str, Any]],
-        environment_components: list[dict[str, Any]],
-    ) -> Pipeline:
-        """Parse pipeline from sequence of component dictionaries.
-
-        :param components: List of components
-        :param environment_components: List of environment-specific components
-        :returns: Initialized pipeline object
-        """
-        self.env_components_index = create_env_components_index(environment_components)
-        self.parse_components(components)
-        self.pipeline.validate()
-        return self.pipeline
 
     def load_yaml(self, path: Path, environment: str | None) -> Pipeline:
         """Load pipeline definition from YAML file.
@@ -348,6 +342,7 @@ class PipelineGenerator:
         PipelineGenerator.set_pipeline_name_env_vars(
             self.config.pipeline_base_dir, path
         )
+        self.pipeline = Pipeline(name=ENV["pipeline.name"])
         PipelineGenerator.set_environment_name(environment)
         PipelineGenerator.set_pipeline_path(path)
 
@@ -369,9 +364,25 @@ class PipelineGenerator:
                 msg = f"The pipeline definition {env_file} should contain a list of components"
                 raise TypeError(msg)
 
-        return self.parse(main_content, env_content)
+        return self._parse(main_content, env_content)
 
-    def parse_components(self, components: list[dict[str, Any]]) -> None:
+    def _parse(
+        self,
+        components: list[dict[str, Any]],
+        environment_components: list[dict[str, Any]],
+    ) -> Pipeline:
+        """Parse pipeline from sequence of component dictionaries.
+
+        :param components: List of components
+        :param environment_components: List of environment-specific components
+        :returns: Initialized pipeline object
+        """
+        self.env_components_index = create_env_components_index(environment_components)
+        self._parse_components(components)
+        self.pipeline.validate()
+        return self.pipeline
+
+    def _parse_components(self, components: list[dict[str, Any]]) -> None:
         """Instantiate, enrich and inflate a list of components.
 
         :param components: List of components
@@ -387,7 +398,7 @@ class PipelineGenerator:
                     msg = "Every component must have a type defined, this component does not have one."
                     raise ValueError(msg) from ke
                 component_class = self.registry[component_type]
-                self.apply_component(component_class, component_data)
+                self._apply_component(component_class, component_data)
             except Exception as ex:
                 if "name" in component_data:
                     msg = f"Error enriching {component_data['type']} component {component_data['name']}"
@@ -395,7 +406,7 @@ class PipelineGenerator:
                 else:
                     raise ParsingException from ex
 
-    def apply_component(
+    def _apply_component(
         self, component_class: type[PipelineComponent], component_data: dict[str, Any]
     ) -> None:
         """Instantiate, enrich and inflate pipeline component.
@@ -406,7 +417,7 @@ class PipelineGenerator:
         :param component_data: Arguments for instantiation of pipeline component
         """
         component = component_class(**component_data)
-        component = self.enrich_component_with_env(component)
+        component = self._enrich_component_with_env(component)
         # if component is disabled then we skip it
         if not component.enabled:
             return
@@ -432,7 +443,7 @@ class PipelineGenerator:
                 inflated_component.weave_from_topics(prev_component.to)
             self.pipeline.add(inflated_component)
 
-    def enrich_component_with_env(
+    def _enrich_component_with_env(
         self, component: PipelineComponent
     ) -> PipelineComponent:
         """Enrich a pipeline component with env-specific config.

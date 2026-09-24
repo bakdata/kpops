@@ -30,7 +30,7 @@ test_component_3.name = "example3"
 class TestPipeline:
     @pytest.fixture(autouse=True)
     def pipeline(self) -> Pipeline:
-        pipeline = Pipeline()
+        pipeline = Pipeline(name="test-pipeline")
         pipeline.add(test_component_1)
         pipeline.add(test_component_2)
         pipeline.add(test_component_3)
