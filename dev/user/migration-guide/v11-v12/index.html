@@ -1890,6 +1890,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#prefix-logs-with-pipeline-and-component-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Prefix logs with pipeline and component name
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2418,6 +2429,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#prefix-logs-with-pipeline-and-component-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Prefix logs with pipeline and component name
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2489,6 +2511,54 @@
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="gd">- class MyStreamsApp(StreamsAppV2):</span>
 </span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="gi">+ class MyStreamsApp(StreamsApp):</span>
 </span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6"></a><span class="w"> </span>     ...
+</span></code></pre></div></td></tr></table></div>
+<h2 id="prefix-logs-with-pipeline-and-component-name">Prefix logs with pipeline and component name<a class="headerlink" href="#prefix-logs-with-pipeline-and-component-name" title="Permanent link">&para;</a></h2>
+<p>Every log line emitted while deploying, destroying, resetting or cleaning a pipeline is now prefixed with the pipeline and component it belongs to. Each component is assigned a distinct color, making it easy to follow a component's logs even when steps run concurrently with <code>--parallel</code>. No configuration changes are required.</p>
+<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-3-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-3-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-3-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-3-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-3-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-3-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-3-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-3-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-3-10">10</a></span>
+<span class="normal"><a href="#__codelineno-3-11">11</a></span>
+<span class="normal"><a href="#__codelineno-3-12">12</a></span>
+<span class="normal"><a href="#__codelineno-3-13">13</a></span>
+<span class="normal"><a href="#__codelineno-3-14">14</a></span>
+<span class="normal"><a href="#__codelineno-3-15">15</a></span>
+<span class="normal"><a href="#__codelineno-3-16">16</a></span>
+<span class="normal"><a href="#__codelineno-3-17">17</a></span>
+<span class="normal"><a href="#__codelineno-3-18">18</a></span>
+<span class="normal"><a href="#__codelineno-3-19">19</a></span>
+<span class="normal"><a href="#__codelineno-3-20">20</a></span>
+<span class="normal"><a href="#__codelineno-3-21">21</a></span>
+<span class="normal"><a href="#__codelineno-3-22">22</a></span>
+<span class="normal"><a href="#__codelineno-3-23">23</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1"></a>$ kpops deploy word-count --dry-run
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2"></a>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3"></a># Before
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4"></a>[info     ] Picked up pipeline pipeline=word-count
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5"></a>[info     ]
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6"></a>[info     ] ########################################################################################################
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7"></a>[info     ] Deploy data-producer
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8"></a>[info     ] ########################################################################################################
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9"></a>[info     ]
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10"></a>[info     ] [Kafka REST Proxy] Topic created. topic_name=word-count-data-producer-topic
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11"></a>[info     ]
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12"></a>[info     ] ########################################################################################################
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13"></a>[info     ] Deploy kafka-sink-connector
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14"></a>[info     ] ########################################################################################################
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15"></a>[info     ]
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16"></a>[error    ] [Kafka Connect] [Errno 61] Connection refused url=http://localhost:8083/
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17"></a>
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18"></a># Now
+</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19"></a>[info     ] [word-count] Picked up pipeline
+</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20"></a>[info     ] [word-count] [data-producer] Deploy
+</span><span id="__span-3-21"><a id="__codelineno-3-21" name="__codelineno-3-21"></a>[info     ] [word-count] [data-producer] [Kafka REST Proxy] Topic created. topic_name=word-count-data-producer-topic
+</span><span id="__span-3-22"><a id="__codelineno-3-22" name="__codelineno-3-22"></a>[info     ] [word-count] [kafka-sink-connector] Deploy
+</span><span id="__span-3-23"><a id="__codelineno-3-23" name="__codelineno-3-23"></a>[error    ] [word-count] [kafka-sink-connector] [Kafka Connect] [Errno 61] Connection refused url=http://localhost:8083/
 </span></code></pre></div></td></tr></table></div>
 
 
