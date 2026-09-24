@@ -54,12 +54,10 @@ class TestGenerate:
         assert pipeline.components[0].type == "converter"
         assert {
             "event": "Picked up pipeline",
-            "pipeline": "resources-first-pipeline",
             "log_level": "info",
         } in cap_logs
         assert {
             "event": "Filtered pipeline",
-            "pipeline": "resources-first-pipeline",
             "steps": ["converter"],
             "log_level": "info",
         } in cap_logs
@@ -75,12 +73,10 @@ class TestGenerate:
         assert pipeline.components[0].type == "filter"
         assert {
             "event": "Picked up pipeline",
-            "pipeline": "resources-first-pipeline",
             "log_level": "info",
         } in cap_logs
         assert {
             "event": "Filtered pipeline",
-            "pipeline": "resources-first-pipeline",
             "steps": [
                 "a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name"
             ],
