@@ -51,7 +51,7 @@ dev = [
   "pytest-rerunfailures>=14.0",
   "pytest-snapshot>=0.9.0",
   "ruff>=0.16.0",
-  "ty>=0.0.74",
+  "ty>=0.0.83",
 ]
 docs = [
   "mdx-truly-sane-lists>=1.3",
