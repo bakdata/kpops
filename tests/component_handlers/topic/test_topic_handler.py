@@ -344,10 +344,7 @@ class TestTopicHandler:
         assert {
             "event": "Config changes for topic",
             "topic_name": "topic-X",
-            "log_level": "info",
-        } in cap_logs
-        assert {
-            "event": "\n\x1b[32m+ cleanup.policy: compact\n\x1b[0m\x1b[32m+ compression.type: gzip\n\x1b[0m",
+            "diff": "\x1b[32m+ cleanup.policy: compact\n\x1b[0m\x1b[32m+ compression.type: gzip\n\x1b[0m",
             "log_level": "info",
         } in cap_logs
         assert {
