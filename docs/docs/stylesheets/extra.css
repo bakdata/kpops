@@ -1,9 +1,9 @@
 :root > * {
   /* The primary color of KPOps docs */
-  --md-primary-fg-color: #a599ff;
+  --md-primary-fg-color: #7068ad;
 
   /* The second color of KPOps docs */
-  --md-accent-fg-color: #b0a5ff;
+  --md-accent-fg-color: #857dbf;
 
   /* Create custom color variable to use for the buttons */
   --kpops-button-color: #7068ad;
