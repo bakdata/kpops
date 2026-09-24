@@ -54,22 +54,22 @@ You can check the cluster status with `kubectl get pods -n kube-system`. If all 
 
 1. To allow connectivity to other systems [Kafka Connect](https://docs.confluent.io/platform/current/connect/index.html#kafka-connect){target=_blank} needs to be extended with drivers. You can install a [JDBC driver](https://docs.confluent.io/kafka-connectors/jdbc/current/jdbc-drivers.html){target=_blank} for Kafka Connect by creating a new Docker image:
 
-    1. Create a `Dockerfile` with the following content:
+  1. Create a `Dockerfile` with the following content:
 
-        ```dockerfile
-        FROM confluentinc/cp-kafka-connect:7.1.3
+    ```dockerfile
+    FROM confluentinc/cp-kafka-connect:7.1.3
 
-        RUN confluent-hub install --no-prompt confluentinc/kafka-connect-jdbc:10.6.0
-        ```
+    RUN confluent-hub install --no-prompt confluentinc/kafka-connect-jdbc:10.6.0
+    ```
 
-    2. Build and push the modified image to your private Docker registry:
+  2. Build and push the modified image to your private Docker registry:
 
-        ```shell
-        docker build . --tag localhost:12345/kafka-connect-jdbc:7.1.3 && \
-        docker push localhost:12345/kafka-connect-jdbc:7.1.3
-        ```
+    ```shell
+    docker build . --tag localhost:12345/kafka-connect-jdbc:7.1.3 && \
+    docker push localhost:12345/kafka-connect-jdbc:7.1.3
+    ```
 
-    Detailed instructions on building, tagging and pushing a docker image can be found in [Docker docs](https://docs.docker.com/){target=_blank}.
+  Detailed instructions on building, tagging and pushing a docker image can be found in [Docker docs](https://docs.docker.com/){target=_blank}.
 
 2. Add Confluent's Helm chart repository and update the index:
 
