@@ -55,13 +55,10 @@ dev = [
 ]
 docs = [
   "mdx-truly-sane-lists>=1.3",
-  "mike>=1.1.2",
-  "mkdocs>=1.4.2",
-  "mkdocs-exclude-search>=0.6.5",
-  "mkdocs-glightbox>=0.3.1",
-  "mkdocs-macros-plugin>=1.0.5",
-  "mkdocs-material>=9.0.0",
-  "mkdocstrings[python]>=0.25.1",
+  # Zensical-compatible fork of mike until native versioning is available
+  "mike @ git+https://github.com/squidfunk/mike.git",
+  "mkdocstrings[python]>=1.0.0",
+  "zensical>=0.0.64",
 ]
 
 [build-system]
