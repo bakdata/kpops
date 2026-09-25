@@ -1,0 +1,2 @@
+  # from: # While the producer-app does inherit from kafka-app, it does not need a
+  # `from` section, hence it does not support it.

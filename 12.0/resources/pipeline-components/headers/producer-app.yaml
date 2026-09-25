@@ -1,0 +1,5 @@
+# ProducerApp component that configures a streams-bootstrap producer-app.
+# More documentation on ProducerApp:
+# https://github.com/bakdata/streams-bootstrap
+- type: producer-app
+  name: producer-app # required

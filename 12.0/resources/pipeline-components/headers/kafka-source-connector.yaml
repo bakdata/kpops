@@ -1,0 +1,3 @@
+# Kafka source connector
+- type: kafka-source-connector # required
+  name: kafka-source-connector # required
