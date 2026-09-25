@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.0.0](https://github.com/bakdata/kpops/tree/12.0.0) - 2026-09-25
+### What's changed
+
+* ci(bump-version): update uv.lock by @disrupted in [#668](https://github.com/bakdata/kpops/pull/668)
+
+* feat: expose operations in public Pipeline API by @disrupted in [#667](https://github.com/bakdata/kpops/pull/667)
+
+* refactor: restructure package by @disrupted in [#669](https://github.com/bakdata/kpops/pull/669)
+
+* refactor(dev): replace basedpyright with ty by @disrupted in [#670](https://github.com/bakdata/kpops/pull/670)
+
+* test: remove timeout by @disrupted in [#672](https://github.com/bakdata/kpops/pull/672)
+
+* test(cli): test CLI command dispatch to API by @disrupted in [#673](https://github.com/bakdata/kpops/pull/673)
+
+* docs: recommend installation with uv by @disrupted in [#674](https://github.com/bakdata/kpops/pull/674)
+
+* test: update kpops-examples by @disrupted in [#675](https://github.com/bakdata/kpops/pull/675)
+
+* chore(streams-bootstrap)!: remove deprecated v2 components by @disrupted in [#676](https://github.com/bakdata/kpops/pull/676)
+
+* chore: fix format of codeowners by @disrupted in [#680](https://github.com/bakdata/kpops/pull/680)
+
+* feat(streams-bootstrap): add consumer-producer app by @raphala in [#679](https://github.com/bakdata/kpops/pull/679)
+
+* feat: add log columns for pipeline and component name by @disrupted in [#678](https://github.com/bakdata/kpops/pull/678)
+
+* docs: migrate from mkdocs to zensical by @disrupted in [#682](https://github.com/bakdata/kpops/pull/682)
+
+
+**Full Changelog**: https://github.com/bakdata/kpops/compare/11.0.0...12.0.0
+
 ## [11.0.0](https://github.com/bakdata/kpops/tree/11.0.0) - 2026-08-12
 ### What's changed
 
