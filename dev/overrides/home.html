@@ -50,6 +50,7 @@
         position: initial;
     }
 
+    .md-typeset h1.mdx-hero__badge,
     .mdx-hero__badge {
         display: inline-flex;
         align-items: center;
@@ -60,9 +61,10 @@
         border-radius: 9999px;
         font-size: 0.85rem;
         font-weight: 600;
+        line-height: 1.8;
         color: #2b2260;
         letter-spacing: 0.02em;
-        margin-bottom: 1rem;
+        margin: 0 0 1rem 0;
         backdrop-filter: blur(8px);
     }
 
@@ -162,9 +164,9 @@
             <img class="md-hero__image" src="assets/images/kpops-background.svg"
                  alt="KPOps background image"/>
             <div class="md-grid mdx-hero__content">
-                <div class="mdx-hero__badge">
+                <h1 class="mdx-hero__badge">
                     Kafka Pipeline Operations
-                </div>
+                </h1>
                 <p class="mdx-hero__description">
                     Deploy and manage Kafka pipelines on Kubernetes.
                 </p>
