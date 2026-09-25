@@ -126,8 +126,6 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         connector: KafkaSourceConnector,
         mocker: MockerFixture,
     ) -> None:
-        assert get_handlers().connector_handler
-
         mock_destroy_connector = mocker.patch.object(
             get_handlers().connector_handler, "destroy_connector"
         )
@@ -264,8 +262,6 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             config=connector_config,
         )
         assert connector.to is None
-
-        assert get_handlers().connector_handler
 
         await connector.clean(dry_run=True)
 
