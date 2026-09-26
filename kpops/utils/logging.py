@@ -136,7 +136,8 @@ def _build_console_renderer() -> structlog.dev.ConsoleRenderer:
                     value_repr=str,
                 ),
             ),
-        ]
+        ],
+        exception_formatter=structlog.dev.plain_traceback,
     )
 
 
