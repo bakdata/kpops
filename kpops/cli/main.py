@@ -71,13 +71,14 @@ ConfigPath = Annotated[
 ]
 CONFIG_PATH_DEFAULT = Path()
 
-PIPELINE_STEPS: Annotated[
+PipelineSteps = Annotated[
     str | None,
     typer.Option(
         envvar=f"{ENV_PREFIX}PIPELINE_STEPS",
         help="Comma separated list of steps to apply the command on",
     ),
-] = None
+]
+PIPELINE_STEPS_DEFAULT = None
 
 
 DryRun = Annotated[
@@ -99,18 +100,19 @@ Parallel = Annotated[
 ]
 PARALLEL_DEFAULT = False
 
-FILTER_TYPE: Annotated[
+FilterTypeOption = Annotated[
     FilterType,
     typer.Option(
         case_sensitive=False,
         help="Whether the --steps option should include/exclude the steps",
     ),
-] = FilterType.INCLUDE
+]
+FILTER_TYPE_DEFAULT = FilterType.INCLUDE
 
 Verbose = Annotated[bool, typer.Option(help="Enable verbose printing")]
-VERBOSE_DEFAULT: bool = False
+VERBOSE_DEFAULT = False
 
-ENVIRONMENT: Annotated[
+Environment = Annotated[
     str | None,
     typer.Option(
         envvar=f"{ENV_PREFIX}ENVIRONMENT",
@@ -119,7 +121,8 @@ ENVIRONMENT: Annotated[
             "Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development). "
         ),
     ),
-] = None
+]
+ENVIRONMENT_DEFAULT = None
 
 OperationModeOption = Annotated[
     OperationMode,
@@ -166,9 +169,9 @@ def generate(
     pipeline_paths: PipelinePaths,
     dotenv: DotEnvPath = DOTENV_PATH_DEFAULT,
     config: ConfigPath = CONFIG_PATH_DEFAULT,
-    steps: str | None = PIPELINE_STEPS,
-    filter_type: FilterType = FILTER_TYPE,
-    environment: str | None = ENVIRONMENT,
+    steps: PipelineSteps = PIPELINE_STEPS_DEFAULT,
+    filter_type: FilterTypeOption = FILTER_TYPE_DEFAULT,
+    environment: Environment = ENVIRONMENT_DEFAULT,
     verbose: Verbose = VERBOSE_DEFAULT,
 ) -> None:
     for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
@@ -189,9 +192,9 @@ def deploy(
     pipeline_paths: PipelinePaths,
     dotenv: DotEnvPath = DOTENV_PATH_DEFAULT,
     config: ConfigPath = CONFIG_PATH_DEFAULT,
-    steps: str | None = PIPELINE_STEPS,
-    filter_type: FilterType = FILTER_TYPE,
-    environment: str | None = ENVIRONMENT,
+    steps: PipelineSteps = PIPELINE_STEPS_DEFAULT,
+    filter_type: FilterTypeOption = FILTER_TYPE_DEFAULT,
+    environment: Environment = ENVIRONMENT_DEFAULT,
     dry_run: DryRun = DRY_RUN_DEFAULT,
     verbose: Verbose = VERBOSE_DEFAULT,
     parallel: Parallel = PARALLEL_DEFAULT,
@@ -233,12 +236,12 @@ def destroy(
     pipeline_paths: PipelinePaths,
     dotenv: DotEnvPath = DOTENV_PATH_DEFAULT,
     config: ConfigPath = CONFIG_PATH_DEFAULT,
-    steps: str | None = PIPELINE_STEPS,
-    filter_type: FilterType = FILTER_TYPE,
-    environment: str | None = ENVIRONMENT,
-    dry_run: bool = DRY_RUN,
+    steps: PipelineSteps = PIPELINE_STEPS_DEFAULT,
+    filter_type: FilterTypeOption = FILTER_TYPE_DEFAULT,
+    environment: Environment = ENVIRONMENT_DEFAULT,
+    dry_run: DryRun = DRY_RUN_DEFAULT,
     verbose: Verbose = VERBOSE_DEFAULT,
-    parallel: bool = PARALLEL,
+    parallel: Parallel = PARALLEL_DEFAULT,
     operation_mode: OperationModeOption = OPERATION_MODE_DEFAULT,
 ) -> None:
     match operation_mode:
@@ -277,12 +280,12 @@ def reset(
     pipeline_paths: PipelinePaths,
     dotenv: DotEnvPath = DOTENV_PATH_DEFAULT,
     config: ConfigPath = CONFIG_PATH_DEFAULT,
-    steps: str | None = PIPELINE_STEPS,
-    filter_type: FilterType = FILTER_TYPE,
-    environment: str | None = ENVIRONMENT,
-    dry_run: bool = DRY_RUN,
+    steps: PipelineSteps = PIPELINE_STEPS_DEFAULT,
+    filter_type: FilterTypeOption = FILTER_TYPE_DEFAULT,
+    environment: Environment = ENVIRONMENT_DEFAULT,
+    dry_run: DryRun = DRY_RUN_DEFAULT,
     verbose: Verbose = VERBOSE_DEFAULT,
-    parallel: bool = PARALLEL,
+    parallel: Parallel = PARALLEL_DEFAULT,
     operation_mode: OperationModeOption = OPERATION_MODE_DEFAULT,
 ) -> None:
     match operation_mode:
@@ -321,12 +324,12 @@ def clean(
     pipeline_paths: PipelinePaths,
     dotenv: DotEnvPath = DOTENV_PATH_DEFAULT,
     config: ConfigPath = CONFIG_PATH_DEFAULT,
-    steps: str | None = PIPELINE_STEPS,
-    filter_type: FilterType = FILTER_TYPE,
-    environment: str | None = ENVIRONMENT,
-    dry_run: bool = DRY_RUN,
+    steps: PipelineSteps = PIPELINE_STEPS_DEFAULT,
+    filter_type: FilterTypeOption = FILTER_TYPE_DEFAULT,
+    environment: Environment = ENVIRONMENT_DEFAULT,
+    dry_run: DryRun = DRY_RUN_DEFAULT,
     verbose: Verbose = VERBOSE_DEFAULT,
-    parallel: bool = PARALLEL,
+    parallel: Parallel = PARALLEL_DEFAULT,
     operation_mode: OperationModeOption = OPERATION_MODE_DEFAULT,
 ) -> None:
     match operation_mode:

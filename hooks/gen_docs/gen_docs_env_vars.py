@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import csv
-import inspect
 import shutil
 from collections.abc import Callable
 from contextlib import suppress
@@ -12,10 +11,11 @@ from pathlib import Path
 from textwrap import fill
 from typing import Any, Self
 
+import click
+import typer.main
 from pydantic.fields import FieldInfo
 from pydantic_core import PydanticUndefined
 from pytablewriter import MarkdownTableWriter
-from typer.models import ArgumentInfo, OptionInfo
 
 from hooks import ROOT
 from hooks.gen_docs import IterableStrEnum
@@ -296,37 +296,46 @@ def fill_csv_cli(target: Path) -> None:
     :param target: The path to the `.csv` file. Note that it must already
         contain the column names
     """
-    annotations = inspect.get_annotations(main, eval_str=True)
-    for name, annotation in annotations.items():
-        if not name.startswith("__") and getattr(annotation, "__metadata__", None):
-            for metadata in annotation.__metadata__:
-                if isinstance(metadata, OptionInfo | ArgumentInfo) and metadata.envvar:
-                    cli_env_var_description: list[str] = [
-                        metadata.help
-                        or "No description available, please refer to the CLI Usage documentation",
-                    ]
-                    if isinstance(metadata.envvar, list):
-                        metadata_envvar = metadata.envvar[0]
-                        if len(metadata.envvar) > 1:
-                            cli_env_var_description = [
-                                *cli_env_var_description,
-                                f"The following variables are equivalent to {metadata_envvar}:",
-                                ", ".join(
-                                    [
-                                        f"`{var_name}`"
-                                        for var_name in metadata.envvar[1:]
-                                    ],
-                                ),
-                            ]
-                    else:
-                        metadata_envvar = metadata.envvar
-                    csv_append_env_var(
-                        target,
-                        metadata_envvar,
-                        getattr(main, name, None),
-                        cli_env_var_description,
-                    )
-                    break
+    params: dict[str, tuple[click.Parameter, list[str]]] = {}
+    for command in collect_cli_commands(typer.main.get_command(main.app)):
+        for param in command.params:
+            if not param.envvar:
+                continue
+            envvars = (
+                [param.envvar] if isinstance(param.envvar, str) else list(param.envvar)
+            )
+            params.setdefault(envvars[0], (param, envvars))
+
+    for envvar, (param, envvars) in sorted(params.items()):
+        cli_env_var_description: list[str] = [
+            getattr(param, "help", None)
+            or "No description available, please refer to the CLI Usage documentation",
+        ]
+        if len(envvars) > 1:
+            cli_env_var_description = [
+                *cli_env_var_description,
+                f"The following variables are equivalent to {envvar}:",
+                ", ".join([f"`{var_name}`" for var_name in envvars[1:]]),
+            ]
+        csv_append_env_var(
+            target,
+            envvar,
+            Ellipsis if param.required else param.default,
+            cli_env_var_description,
+        )
+
+
+def collect_cli_commands(command: click.Command) -> list[click.Command]:
+    """Recursively collect a Click command and all of its subcommands.
+
+    :param command: Root command, e.g. the Click representation of the Typer app
+    :return: The command itself and all nested subcommands
+    """
+    commands = [command]
+    if isinstance(command, click.Group):
+        for subcommand in command.commands.values():
+            commands.extend(collect_cli_commands(subcommand))
+    return commands
 
 
 def gen_vars(
