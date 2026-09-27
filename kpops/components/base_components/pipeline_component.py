@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from collections.abc import Iterator
+from types import NoneType
 from typing import Any, ClassVar
 
 import pydantic
@@ -171,6 +172,10 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         :param topic: Output topic
         :param label: Label that is unique to the extra output topic
         """
+
+    @classmethod
+    def supports_from_section(cls) -> bool:
+        return cls.model_fields["from_"].annotation is not NoneType
 
     def set_input_topics(self) -> None:
         """Put values of config.from into the streams config section of streams-bootstrap.

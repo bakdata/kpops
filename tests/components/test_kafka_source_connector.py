@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock
 
 import pytest
+from pydantic import ValidationError
 from pytest_mock import MockerFixture
 from typing_extensions import override
 
@@ -53,21 +54,34 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             ),
         )
 
+    def test_supports_from_section(self) -> None:
+        assert not KafkaSourceConnector.supports_from_section()
+
     def test_from_section_raises_exception(
         self,
         connector_config: KafkaConnectorConfig,
     ) -> None:
-        with pytest.raises(NotImplementedError):
+        with pytest.raises(ValidationError):
             KafkaSourceConnector(
                 name=CONNECTOR_NAME,
                 config=connector_config,
-                from_=FromSection(
+                from_=FromSection(  # ty: ignore[invalid-argument-type]
                     topics={
                         TopicName("connector-topic"): FromTopic(
                             type=InputTopicTypes.INPUT
                         ),
                     }
                 ),
+            )
+
+    def test_apply_from_inputs_raises_exception(
+        self,
+        connector: KafkaSourceConnector,
+    ) -> None:
+        with pytest.raises(NotImplementedError):
+            connector.apply_from_inputs(
+                "connector-topic",
+                FromTopic(type=InputTopicTypes.INPUT),
             )
 
     async def test_deploy_order(
