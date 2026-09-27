@@ -12,7 +12,7 @@
       ${pipeline.name}-output-topic:
         type: output # Implied when role is NOT specified
       ${pipeline.name}-extra-topic:
-        role: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
+        label: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
       ${pipeline.name}-error-topic:
         type: error
         # Currently KPOps supports Avro and JSON schemas.
@@ -27,10 +27,3 @@
   # Full documentation on connectors: https://kafka.apache.org/documentation/#connectconfigs
   config: # required
     tasks.max: 1
-  # Overriding Kafka Connect Resetter Helm values. E.g. to override the
-  # Image Tag etc.
-  resetter_values:
-    imageTag: "1.2.3"
-  # offset.storage.topic
-  # https://kafka.apache.org/documentation/#connect_running
-  offset_topic: offset_topic

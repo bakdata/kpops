@@ -1,33 +1,18 @@
-from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock
-
 import pytest
 from pytest_mock import MockerFixture
-from typer.testing import CliRunner
 
-from kpops.cli.main import app
 from kpops.components.base_components import HelmApp
 from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
 from kpops.components.streams_bootstrap.producer.producer_app import (
     ProducerAppCleaner,
 )
 from kpops.components.streams_bootstrap.streams.streams_app import StreamsAppCleaner
-
-runner = CliRunner()
-
-RESOURCE_PATH = Path(__file__).parent / "resources"
+from kpops.pipeline import Pipeline
 
 
-@pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache", "clear_kpops_config")
+@pytest.mark.usefixtures("mock_env", "config", "handlers")
 class TestReset:
-    @pytest.fixture(autouse=True)
-    def helm_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch(
-            "kpops.component_handlers.helm_wrapper.helm.Helm",
-            return_value=AsyncMock(),
-        )
-
-    def test_order(self, mocker: MockerFixture):
+    async def test_order(self, pipeline: Pipeline, mocker: MockerFixture) -> None:
         # destroy
         producer_app_mock_destroy = mocker.patch.object(ProducerApp, "destroy")
         streams_app_mock_destroy = mocker.patch.object(StreamsApp, "destroy")
@@ -45,16 +30,7 @@ class TestReset:
         async_mocker.attach_mock(producer_app_mock_reset, "producer_app_mock_reset")
         async_mocker.attach_mock(streams_app_mock_reset, "streams_app_mock_reset")
 
-        result = runner.invoke(
-            app,
-            [
-                "reset",
-                str(RESOURCE_PATH / "simple-pipeline" / "pipeline.yaml"),
-            ],
-            catch_exceptions=False,
-        )
-
-        assert result.exit_code == 0, result.stdout
+        await pipeline.reset(dry_run=True)
 
         # check called
         producer_app_mock_destroy.assert_called_once_with(True)

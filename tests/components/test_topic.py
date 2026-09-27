@@ -1,4 +1,6 @@
+import re
 from collections.abc import Iterable
+from typing import ClassVar
 
 import pydantic
 import pytest
@@ -12,30 +14,30 @@ from kpops.components.common.topic import (
 
 
 class Model(pydantic.BaseModel):
-    __test__ = False
+    __test__: ClassVar[bool] = False
     topic: KafkaTopicStr | None
 
 
 class TestKafkaTopic:
-    def test_id(self):
+    def test_id(self) -> None:
         topic = KafkaTopic(name="foo")
         assert topic.id == "topic-foo"
 
-    def test_kafka_topic_str(self):
+    def test_kafka_topic_str(self) -> None:
         model = Model(topic=None)
         assert model.topic is None
         assert model.model_dump()["topic"] is None
 
-        model = Model(topic="topic-name")  # pyright: ignore[reportArgumentType]
+        model = Model(topic="topic-name")  # ty: ignore[invalid-argument-type]
         assert model.topic == KafkaTopic(name="topic-name")
         assert model.model_dump()["topic"] == "topic-name"
 
         exc_msg = "Topic should be a valid KafkaTopic instance or topic name string"
-        with pytest.raises(ValueError, match=exc_msg):
-            Model(topic="")  # pyright: ignore[reportArgumentType]
+        with pytest.raises(pydantic.ValidationError, match=re.escape(exc_msg)):
+            Model(topic="")  # ty: ignore[invalid-argument-type]
 
-        with pytest.raises(ValueError, match=exc_msg):
-            Model(topic=1)  # pyright: ignore[reportArgumentType]
+        with pytest.raises(pydantic.ValidationError, match=re.escape(exc_msg)):
+            Model(topic=1)  # ty: ignore[invalid-argument-type]
 
     @pytest.mark.parametrize(
         ("input", "expected"),
@@ -92,5 +94,7 @@ class TestKafkaTopic:
             ),
         ],
     )
-    def test_deduplicate(self, input: Iterable[KafkaTopic], expected: list[KafkaTopic]):
+    def test_deduplicate(
+        self, input: Iterable[KafkaTopic], expected: list[KafkaTopic]
+    ) -> None:
         assert KafkaTopic.deduplicate(input) == expected

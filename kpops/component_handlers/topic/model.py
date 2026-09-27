@@ -1,7 +1,9 @@
-from enum import StrEnum
+from enum import auto
 from typing import Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict
+
+from kpops.utils.enum import UpperStrEnum
 
 
 class TopicSpec(BaseModel):
@@ -28,15 +30,15 @@ class TopicResponse(BaseModel):
     )
 
 
-class KafkaTopicConfigSource(StrEnum):
-    DYNAMIC_TOPIC_CONFIG = "DYNAMIC_TOPIC_CONFIG"
-    DEFAULT_CONFIG = "DEFAULT_CONFIG"
-    STATIC_BROKER_CONFIG = "STATIC_BROKER_CONFIG"
-    DYNAMIC_CLUSTER_LINK_CONFIG = "DYNAMIC_CLUSTER_LINK_CONFIG"
-    DYNAMIC_BROKER_LOGGER_CONFIG = "DYNAMIC_BROKER_LOGGER_CONFIG"
-    DYNAMIC_BROKER_CONFIG = "DYNAMIC_BROKER_CONFIG"
-    DYNAMIC_DEFAULT_BROKER_CONFIG = "DYNAMIC_DEFAULT_BROKER_CONFIG"
-    UNKNOWN = "UNKNOWN"
+class KafkaTopicConfigSource(UpperStrEnum):
+    DYNAMIC_TOPIC_CONFIG = auto()
+    DEFAULT_CONFIG = auto()
+    STATIC_BROKER_CONFIG = auto()
+    DYNAMIC_CLUSTER_LINK_CONFIG = auto()
+    DYNAMIC_BROKER_LOGGER_CONFIG = auto()
+    DYNAMIC_BROKER_CONFIG = auto()
+    DYNAMIC_DEFAULT_BROKER_CONFIG = auto()
+    UNKNOWN = auto()
 
 
 class KafkaTopicConfigSynonyms(BaseModel):
@@ -68,10 +70,10 @@ class TopicConfigResponse(BaseModel):
     )
 
 
-class KafkaBrokerConfigSource(StrEnum):
-    STATIC_BROKER_CONFIG = "STATIC_BROKER_CONFIG"
-    DYNAMIC_BROKER_CONFIG = "DYNAMIC_BROKER_CONFIG"
-    DEFAULT_CONFIG = "DEFAULT_CONFIG"
+class KafkaBrokerConfigSource(UpperStrEnum):
+    STATIC_BROKER_CONFIG = auto()
+    DYNAMIC_BROKER_CONFIG = auto()
+    DEFAULT_CONFIG = auto()
 
 
 class KafkaBrokerConfigSynonyms(BaseModel):

@@ -1,3 +1,19 @@
+consumer-app.yaml:
+- prefix.yaml
+- from_.yaml
+- to-consumer-app.yaml
+- namespace.yaml
+- values-consumer-app.yaml
+- repo_config-helm-app.yaml
+- version-kafka-app.yaml
+consumer-producer-app.yaml:
+- prefix.yaml
+- from_.yaml
+- to.yaml
+- namespace.yaml
+- values-consumer-producer-app.yaml
+- repo_config-helm-app.yaml
+- version-kafka-app.yaml
 helm-app.yaml:
 - prefix.yaml
 - from_.yaml
@@ -15,20 +31,16 @@ kafka-connector.yaml:
 - from_.yaml
 - to.yaml
 - config-kafka-connector.yaml
-- resetter_values.yaml
 kafka-sink-connector.yaml:
 - prefix.yaml
 - from_.yaml
 - to.yaml
 - config-kafka-connector.yaml
-- resetter_values.yaml
 kafka-source-connector.yaml:
 - prefix.yaml
 - from_-kafka-source-connector.yaml
 - to.yaml
 - config-kafka-connector.yaml
-- resetter_values.yaml
-- offset_topic-kafka-source-connector.yaml
 kubernetes-app.yaml:
 - prefix.yaml
 - from_.yaml

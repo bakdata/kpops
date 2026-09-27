@@ -15,7 +15,7 @@ def manifest_with_annotations() -> dict[str, Any]:
     return {"annotations": {"existing-annotation": "annotation-value"}}
 
 
-def test_argo_hook_enrich_empty_manifest(empty_manifest: dict[str, Any]):
+def test_argo_hook_enrich_empty_manifest(empty_manifest: dict[str, Any]) -> None:
     hook = ArgoHook.POST_DELETE
     enriched_manifest = enrich_annotations(empty_manifest, hook.key, hook.value)
     assert enriched_manifest["annotations"][hook.key] == hook.value
@@ -24,7 +24,7 @@ def test_argo_hook_enrich_empty_manifest(empty_manifest: dict[str, Any]):
 
 def test_argo_hook_enrich_existing_annotations(
     manifest_with_annotations: dict[str, Any],
-):
+) -> None:
     hook = ArgoHook.POST_DELETE
     enriched_manifest = enrich_annotations(
         manifest_with_annotations, hook.key, hook.value
@@ -33,7 +33,7 @@ def test_argo_hook_enrich_existing_annotations(
     assert enriched_manifest["annotations"]["existing-annotation"] == "annotation-value"
 
 
-def test_argo_sync_wave_enrich_empty_manifest(empty_manifest):
+def test_argo_sync_wave_enrich_empty_manifest(empty_manifest: dict[str, Any]) -> None:
     sync_wave = ArgoSyncWave(sync_wave=1)
     enriched_manifest = enrich_annotations(
         empty_manifest, sync_wave.key, sync_wave.value
@@ -44,7 +44,7 @@ def test_argo_sync_wave_enrich_empty_manifest(empty_manifest):
 
 def test_argo_sync_wave_enrich_existing_annotations(
     manifest_with_annotations: dict[str, Any],
-):
+) -> None:
     sync_wave = ArgoSyncWave(sync_wave=2)
     enriched_manifest = enrich_annotations(
         manifest_with_annotations, sync_wave.key, sync_wave.value
@@ -53,7 +53,7 @@ def test_argo_sync_wave_enrich_existing_annotations(
     assert enriched_manifest["annotations"]["existing-annotation"] == "annotation-value"
 
 
-def test_argo_sync_wave_multiple_enrichments(empty_manifest: dict[str, Any]):
+def test_argo_sync_wave_multiple_enrichments(empty_manifest: dict[str, Any]) -> None:
     sync_wave_1 = ArgoSyncWave(sync_wave=1)
     sync_wave_2 = ArgoSyncWave(sync_wave=2)
     enriched_manifest = enrich_annotations(

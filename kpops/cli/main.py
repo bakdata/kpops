@@ -1,12 +1,12 @@
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 from typing import Annotated
 
 import typer
 
 import kpops.api as kpops
-from kpops.api.logs import log
 from kpops.api.options import FilterType
 from kpops.cli.utils import (
     collect_pipeline_paths,
@@ -19,12 +19,14 @@ from kpops.const.file_type import (
     PIPELINE_YAML,
     KpopsFileType,
 )
+from kpops.core.exception import KpopsException
 from kpops.core.operation import OperationMode
 from kpops.utils.gen_schema import (
     gen_config_schema,
     gen_defaults_schema,
     gen_pipeline_schema,
 )
+from kpops.utils.logging import log, log_kpops_exception
 from kpops.utils.yaml import print_yaml
 
 app = typer.Typer(pretty_exceptions_enable=False)
@@ -152,7 +154,7 @@ def init(
             help="Whether to include non-required settings in the generated 'config.yaml'",
         ),
     ] = False,
-):
+) -> None:
     kpops.init(path, config_include_optional=config_include_optional)
 
 
@@ -168,7 +170,7 @@ def generate(
     filter_type: FilterType = FILTER_TYPE,
     environment: str | None = ENVIRONMENT,
     verbose: Verbose = VERBOSE_DEFAULT,
-):
+) -> None:
     for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
         pipeline = kpops.generate(
             pipeline_path=pipeline_file_path,
@@ -194,7 +196,7 @@ def deploy(
     verbose: Verbose = VERBOSE_DEFAULT,
     parallel: Parallel = PARALLEL_DEFAULT,
     operation_mode: OperationModeOption = OPERATION_MODE_DEFAULT,
-):
+) -> None:
     match operation_mode:
         case OperationMode.MANAGED:
             for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
@@ -238,7 +240,7 @@ def destroy(
     verbose: Verbose = VERBOSE_DEFAULT,
     parallel: bool = PARALLEL,
     operation_mode: OperationModeOption = OPERATION_MODE_DEFAULT,
-):
+) -> None:
     match operation_mode:
         case OperationMode.MANAGED:
             for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
@@ -282,7 +284,7 @@ def reset(
     verbose: Verbose = VERBOSE_DEFAULT,
     parallel: bool = PARALLEL,
     operation_mode: OperationModeOption = OPERATION_MODE_DEFAULT,
-):
+) -> None:
     match operation_mode:
         case OperationMode.MANAGED:
             for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
@@ -326,7 +328,7 @@ def clean(
     verbose: Verbose = VERBOSE_DEFAULT,
     parallel: bool = PARALLEL,
     operation_mode: OperationModeOption = OPERATION_MODE_DEFAULT,
-):
+) -> None:
     match operation_mode:
         case OperationMode.MANAGED:
             for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
@@ -377,10 +379,11 @@ def version_callback(show_version: bool) -> None:
     """
 )
 def schema(
-    scope: KpopsFileType = typer.Argument(
-        ...,
-        show_default=False,
-        help=f"""
+    scope: Annotated[
+        KpopsFileType,
+        typer.Argument(
+            show_default=False,
+            help=f"""
         Scope of the generated schema
         \n\n\n
         - {KpopsFileType.PIPELINE.value}: Schema of PipelineComponents for KPOps {PIPELINE_YAML}
@@ -388,7 +391,8 @@ def schema(
         - {KpopsFileType.DEFAULTS.value}: Schema of PipelineComponents for KPOps {DEFAULTS_YAML}
         \n\n
         - {KpopsFileType.CONFIG.value}: Schema for KPOps {CONFIG_YAML}""",
-    ),
+        ),
+    ],
 ) -> None:
     match scope:
         case KpopsFileType.PIPELINE:
@@ -401,16 +405,28 @@ def schema(
 
 @app.callback()
 def main(
-    version: bool = typer.Option(
-        False,
-        "--version",
-        "-V",
-        help="Print KPOps version",
-        callback=version_callback,
-        is_eager=True,
-    ),
-): ...
+    version: Annotated[
+        bool,
+        typer.Option(
+            "--version",
+            "-V",
+            help="Print KPOps version",
+            callback=version_callback,
+            is_eager=True,
+        ),
+    ] = False,
+) -> None: ...
+
+
+def cli() -> None:
+    """CLI entrypoint."""
+    try:
+        app()
+    except KpopsException as e:
+        if not e.logged:
+            log_kpops_exception(e)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
-    app()
+    cli()

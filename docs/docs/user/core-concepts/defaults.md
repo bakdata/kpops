@@ -10,8 +10,6 @@ KPOps has a very efficient way of dealing with repeating settings which manifest
 
 An important mechanic of KPOps is that `defaults` set for a component apply to all components that inherit from it.
 
-It is possible, although not recommended, to add settings that are specific to a component's subclass. An example would be configuring `offset_topic` under `kafka-connector` instead of `kafka-source-connector`.
-
 ### Configuration
 
 KPOps allows using multiple default values. The `defaults.yaml` (or `defaults_<env>.yaml`) files can be distributed across multiple files. These will be picked up by KPOps and get merged into a single `pipeline.yaml` file.

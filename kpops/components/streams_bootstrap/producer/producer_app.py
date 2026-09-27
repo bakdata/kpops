@@ -1,6 +1,6 @@
-import logging
 from functools import cached_property
 
+import structlog
 from pydantic import Field, ValidationError
 from typing_extensions import override
 
@@ -22,13 +22,12 @@ from kpops.core.operation import OperationMode
 from kpops.manifests.argo import ArgoHook, enrich_annotations
 from kpops.manifests.kubernetes import K8S_CRON_JOB_NAME_MAX_LEN, KubernetesManifest
 from kpops.manifests.strimzi.kafka_topic import StrimziKafkaTopic
-from kpops.utils.docstring import describe_attr
 
-log = logging.getLogger("ProducerApp")
+log = structlog.get_logger("ProducerApp")
 
 
-class ProducerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):  # pyright: ignore[reportIncompatibleVariableOverride]
-    values: ProducerAppValues  # pyright: ignore[reportIncompatibleVariableOverride]
+class ProducerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
+    values: ProducerAppValues
 
     @property
     @override
@@ -54,10 +53,7 @@ class ProducerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):  # pyright:
 
 
 class ProducerApp(StreamsBootstrap):
-    """Producer component.
-
-    This producer holds configuration to use as values for the streams-bootstrap
-    producer Helm chart.
+    """ProducerApp component that configures a streams-bootstrap producer-app.
 
     Note that the producer does not support error topics.
 
@@ -65,14 +61,11 @@ class ProducerApp(StreamsBootstrap):
     :param from_: Producer doesn't support FromSection, defaults to None
     """
 
-    values: ProducerAppValues = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
-        description=describe_attr("values", __doc__),
-    )
-    from_: None = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
+    values: ProducerAppValues
+    from_: None = Field(
         default=None,
         alias="from",
         title="From",
-        description=describe_attr("from_", __doc__),
     )
 
     @property
@@ -138,13 +131,13 @@ class ProducerApp(StreamsBootstrap):
             try:
                 self._cleaner.values = self.values.model_validate(cluster_values)
                 self._cleaner.values.name_override = name_override
+                self._cleaner.values.fullname_override = name_override
             except ValidationError as validation_error:
-                warning_msg = f"The values in the cluster are invalid with the current model. Falling back to the enriched values of {PIPELINE_YAML} and {DEFAULTS_YAML}"
-                log.warning(warning_msg)
-                debug_msg = f"Cluster values: {cluster_values}"
-                log.debug(debug_msg)
-                debug_msg = f"Validation error: {validation_error}"
-                log.debug(debug_msg)
+                log.warning(
+                    f"The values in the cluster are invalid with the current model. Falling back to the enriched values of {PIPELINE_YAML} and {DEFAULTS_YAML}"
+                )
+                log.debug("Cluster values", values=cluster_values)
+                log.debug("Validation error", error=validation_error)
 
         await super().destroy(dry_run)
 

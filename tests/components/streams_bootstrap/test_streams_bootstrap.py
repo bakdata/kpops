@@ -1,17 +1,16 @@
+import contextlib
 import re
-from contextlib import nullcontext as does_not_raise
 from typing import Any
 
 import pytest
-from _pytest.python_api import RaisesContext
 from pydantic import ValidationError
 from pytest_mock import MockerFixture
 
-from kpops.component_handlers.helm_wrapper.model import (
+from kpops.component_handlers.helm.model import (
     HelmRepoConfig,
     HelmUpgradeInstallFlags,
 )
-from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
+from kpops.component_handlers.helm.utils import create_helm_release_name
 from kpops.components.common.kubernetes_model import (
     NodeAffinity,
     NodeSelectorTerm,
@@ -24,7 +23,7 @@ from kpops.components.streams_bootstrap.model import StreamsBootstrapValues
 
 @pytest.mark.usefixtures("mock_env")
 class TestStreamsBootstrap:
-    def test_default_configs(self):
+    def test_default_configs(self) -> None:
         streams_bootstrap = StreamsBootstrap.model_validate(
             {
                 "name": "example-name",
@@ -45,7 +44,9 @@ class TestStreamsBootstrap:
         assert streams_bootstrap.namespace == "test-namespace"
         assert streams_bootstrap.values.image_tag is None
 
-    async def test_should_deploy_streams_bootstrap_app(self, mocker: MockerFixture):
+    async def test_should_deploy_streams_bootstrap_app(
+        self, mocker: MockerFixture
+    ) -> None:
         streams_bootstrap = StreamsBootstrap.model_validate(
             {
                 "name": "example-name",
@@ -84,6 +85,7 @@ class TestStreamsBootstrap:
             "test-namespace",
             {
                 "nameOverride": "${pipeline.name}-example-name",
+                "fullnameOverride": "${pipeline.name}-example-name",
                 "image": "streamsBootstrap",
                 "imageTag": "1.0.0",
                 "kafka": {
@@ -94,7 +96,7 @@ class TestStreamsBootstrap:
             HelmUpgradeInstallFlags(version="3.2.1"),
         )
 
-    async def test_should_raise_validation_error_for_invalid_image_tag(self):
+    async def test_should_raise_validation_error_for_invalid_image_tag(self) -> None:
         with pytest.raises(
             ValidationError,
             match=re.escape(
@@ -111,7 +113,28 @@ class TestStreamsBootstrap:
                 }
             )
 
-    async def test_should_raise_validation_error_for_invalid_helm_chart_version(self):
+    async def test_should_not_raise_validation_error_for_helm_chart_version_4(
+        self,
+    ) -> None:
+        assert StreamsBootstrap.model_validate(
+            {
+                "name": "example-name",
+                "namespace": "test-namespace",
+                "values": {
+                    "image": "my-app",
+                    "imageTag": "1.0.0",
+                    "kafka": {
+                        "outputTopic": "test",
+                        "bootstrapServers": "fake-broker:9092",
+                    },
+                },
+                "version": "4.0.0",
+            },
+        )
+
+    async def test_should_raise_validation_error_for_invalid_helm_chart_version(
+        self,
+    ) -> None:
         with pytest.raises(
             ValueError,
             match=re.escape(
@@ -133,7 +156,7 @@ class TestStreamsBootstrap:
                 },
             )
 
-    def test_should_raise_validation_error_for_unsupported_attribute(self):
+    def test_should_raise_validation_error_for_unsupported_attribute(self) -> None:
         with pytest.raises(
             ValueError,
             match=re.escape(
@@ -157,88 +180,80 @@ class TestStreamsBootstrap:
     @pytest.mark.parametrize(
         ("input", "expectation"),
         [
-            pytest.param({"cpu": 1}, does_not_raise(), id="cpu int"),
-            pytest.param({"cpu": "1"}, does_not_raise(), id="cpu str without unit"),
-            pytest.param({"cpu": "10m"}, does_not_raise(), id="cpu str milli CPU"),
+            pytest.param({"cpu": 1}, None, id="cpu int"),
+            pytest.param({"cpu": "1"}, None, id="cpu str without unit"),
+            pytest.param({"cpu": "10m"}, None, id="cpu str milli CPU"),
             pytest.param(
                 {"cpu": "100foo"},
-                pytest.raises(ValidationError),
+                ValidationError,
                 id="cpu str disallow regex mismatch",
             ),
-            pytest.param(
-                {"cpu": 0}, pytest.raises(ValidationError), id="cpu int disallow 0"
-            ),
+            pytest.param({"cpu": 0}, ValidationError, id="cpu int disallow 0"),
             pytest.param(
                 {"cpu": -1},
-                pytest.raises(ValidationError),
+                ValidationError,
                 id="cpu int disallow negative",
             ),
-            pytest.param({"memory": 1}, does_not_raise(), id="memory int"),
-            pytest.param(
-                {"memory": "1"}, does_not_raise(), id="memory str without unit"
-            ),
-            pytest.param({"memory": "10G"}, does_not_raise(), id="memory str gigabyte"),
-            pytest.param({"memory": "1Gi"}, does_not_raise(), id="memory str gibibyte"),
-            pytest.param({"memory": "10M"}, does_not_raise(), id="memory str megabyte"),
-            pytest.param(
-                {"memory": "10Mi"}, does_not_raise(), id="memory str mebibyte"
-            ),
-            pytest.param(
-                {"memory": "2.5G"}, does_not_raise(), id="memory str decimal gigabyte"
-            ),
+            pytest.param({"memory": 1}, None, id="memory int"),
+            pytest.param({"memory": "1"}, None, id="memory str without unit"),
+            pytest.param({"memory": "10G"}, None, id="memory str gigabyte"),
+            pytest.param({"memory": "1Gi"}, None, id="memory str gibibyte"),
+            pytest.param({"memory": "10M"}, None, id="memory str megabyte"),
+            pytest.param({"memory": "10Mi"}, None, id="memory str mebibyte"),
+            pytest.param({"memory": "2.5G"}, None, id="memory str decimal gigabyte"),
             pytest.param(
                 {"memory": "0.599M"},
-                does_not_raise(),
+                None,
                 id="memory str decimal megabyte",
             ),
             pytest.param(
                 {"memory": 0},
-                pytest.raises(ValidationError),
+                ValidationError,
                 id="memory int disallow 0",
             ),
             pytest.param(
                 {"memory": -1},
-                pytest.raises(ValidationError),
+                ValidationError,
                 id="memory int disallow negative",
             ),
             pytest.param(
                 {"ephemeral-storage": "10G"},
-                does_not_raise(),
+                None,
                 id="ephemeral-storage str gigabyte",
             ),
             pytest.param(
                 {"ephemeral-storage": "1Gi"},
-                does_not_raise(),
+                None,
                 id="ephemeral-storage str gibibyte",
             ),
             pytest.param(
                 {"ephemeral-storage": "10M"},
-                does_not_raise(),
+                None,
                 id="ephemeral-storage str megabyte",
             ),
             pytest.param(
                 {"ephemeral-storage": "10Mi"},
-                does_not_raise(),
+                None,
                 id="ephemeral-storage str mebibyte",
             ),
             pytest.param(
                 {"ephemeral-storage": "2.5G"},
-                does_not_raise(),
+                None,
                 id="ephemeral-storage str decimal gigabyte",
             ),
             pytest.param(
                 {"ephemeral-storage": "0.599M"},
-                does_not_raise(),
+                None,
                 id="ephemeral-storage str decimal megabyte",
             ),
             pytest.param(
                 {"ephemeral-storage": 0},
-                pytest.raises(ValidationError),
+                ValidationError,
                 id="ephemeral-storage int disallow 0",
             ),
             pytest.param(
                 {"ephemeral-storage": -1},
-                pytest.raises(ValidationError),
+                ValidationError,
                 id="ephemeral-storage int disallow negative",
             ),
         ],
@@ -246,12 +261,17 @@ class TestStreamsBootstrap:
     def test_resource_definition(
         self,
         input: dict[str, Any],
-        expectation: RaisesContext[ValidationError] | does_not_raise[None],
-    ):
-        with expectation:
+        expectation: type[Exception] | None,
+    ) -> None:
+        if expectation is None:
+            context = contextlib.nullcontext()
+        else:
+            context = pytest.raises(expectation)
+
+        with context:
             assert ResourceDefinition.model_validate(input)
 
-    def test_node_affinity(self):
+    def test_node_affinity(self) -> None:
         node_affinity = NodeAffinity()
         assert node_affinity.preferred_during_scheduling_ignored_during_execution == []
         assert node_affinity.model_dump(by_alias=True) == {
@@ -271,3 +291,26 @@ class TestStreamsBootstrap:
                 }
             ],
         }
+
+    def test_secret_files_refs(self) -> None:
+        model = StreamsBootstrap.model_validate(
+            {
+                "name": "example-name",
+                "namespace": "test-namespace",
+                "values": {
+                    "image": "streamsBootstrap",
+                    "kafka": {
+                        "bootstrapServers": "localhost:9092",
+                    },
+                    "secretFilesRefs": [
+                        {
+                            "name": "foo",
+                            "volume": "bar",
+                            "mountPath": "/some/path/",
+                            "readOnly": True,
+                        }
+                    ],
+                },
+            },
+        )
+        assert model.values.secret_files_refs

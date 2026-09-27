@@ -36,9 +36,7 @@ def extract_config_fields_for_yaml(
                 else:
                     extracted_fields[key] = str(value.default)
         else:
-            extracted_fields[key] = extract_config_fields_for_yaml(
-                fields[key], required
-            )
+            extracted_fields[key] = extract_config_fields_for_yaml(value, required)
     return extracted_fields
 
 
@@ -72,7 +70,7 @@ def create_config(file_name: str, dir_path: Path, include_optional: bool) -> Non
             conf.write(yaml.safe_dump(dump))
 
 
-def init_project(path: Path, conf_incl_opt: bool):
+def init_project(path: Path, conf_incl_opt: bool) -> None:
     """Initiate a default empty project.
 
     :param path: Directory in which the project should be initiated

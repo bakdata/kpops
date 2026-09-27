@@ -2,8 +2,8 @@ from abc import ABC
 
 from typing_extensions import override
 
-from kpops.component_handlers.helm_wrapper.model import HelmFlags
-from kpops.component_handlers.helm_wrapper.utils import (
+from kpops.component_handlers.helm.model import HelmFlags
+from kpops.component_handlers.helm.utils import (
     create_helm_name_override,
     create_helm_release_name,
 )
@@ -34,9 +34,14 @@ class Cleaner(HelmApp, ABC):
     @property
     @override
     def helm_flags(self) -> HelmFlags:
+        effective_timeout = (
+            self.timeout or get_config().helm_config.timeout or HelmFlags().timeout
+        )
         return HelmFlags(
             create_namespace=get_config().create_namespace,
             version=self.version,
+            force=get_config().helm_config.force_replace,
             wait=True,
             wait_for_jobs=True,
+            timeout=effective_timeout,
         )

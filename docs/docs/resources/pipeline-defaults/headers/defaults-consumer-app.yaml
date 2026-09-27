@@ -1,0 +1,5 @@
+# Consumer app component that configures a streams-bootstrap consumer app.
+#
+# Child of: KafkaApp
+# More documentation on ConsumerApp: https://github.com/bakdata/streams-bootstrap
+consumer-app:

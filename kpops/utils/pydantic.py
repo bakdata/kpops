@@ -1,26 +1,27 @@
 import json
-import logging
 from pathlib import Path
-from typing import Annotated, Any, ClassVar
+from typing import Annotated, Any, ClassVar, TypeAlias, final
 
 import humps
+import structlog
 from pydantic import (
     BaseModel,
     BeforeValidator,
     ConfigDict,
-    Field,
     GetCoreSchemaHandler,
     SerializationInfo,
     SerializerFunctionWrapHandler,
+    WrapSerializer,
     model_serializer,
 )
 from pydantic.fields import FieldInfo
+from pydantic.json_schema import SkipJsonSchema
 from pydantic_core import PydanticUseDefault, core_schema
-from pydantic_settings import PydanticBaseSettingsSource
+from pydantic_settings import BaseSettings, PydanticBaseSettingsSource
 from typing_extensions import TypeVar, override
 
 from kpops.utils.dict_ops import update_nested_pair
-from kpops.utils.docstring import describe_object
+from kpops.utils.docstring import describe_attr, describe_object
 from kpops.utils.yaml import load_yaml_file
 
 
@@ -44,13 +45,16 @@ def to_dot(s: str) -> str:
     return s.replace("_", ".")
 
 
-def by_alias(model: BaseModel, field_name: str) -> str:
+def by_alias(model_cls: type[BaseModel], field_name: str) -> str:
     """Return field alias if exists else field name.
 
+    :param model_cls: Model that owns the field
     :param field_name: Name of the field to get alias of
-    :param model: Model that owns the field
     """
-    return model.model_fields.get(field_name, Field()).alias or field_name
+    field_info = model_cls.model_fields.get(field_name)
+    if not field_info:
+        return field_name
+    return field_info.alias or field_info.serialization_alias or field_name
 
 
 def to_str(value: Any) -> str:
@@ -94,16 +98,18 @@ def exclude_by_name(
     }
 
 
-def exclude_defaults(model: BaseModel, dumped_model: dict[str, _V]) -> dict[str, _V]:
+def exclude_defaults(
+    model_cls: type[BaseModel], dumped_model: dict[str, _V]
+) -> dict[str, _V]:
     """Strip all key-value pairs with default values.
 
-    :param model: Model
+    :param model_cls: Model
     :param dumped_model: Dumped model
     :return: Dumped model without defaults
     """
     default_fields = {
         field_name: field_info.default
-        for field_name, field_info in model.model_fields.items()
+        for field_name, field_info in model_cls.model_fields.items()
     }
     return {
         field_name: field_value
@@ -116,18 +122,21 @@ def exclude_defaults(model: BaseModel, dumped_model: dict[str, _V]) -> dict[str,
     }
 
 
-def collect_fields(model: type[BaseModel]) -> dict[str, Any]:
+ModelFields: TypeAlias = dict[str, "FieldInfo | ModelFields"]
+
+
+def collect_fields(model_cls: type[BaseModel]) -> ModelFields:
     """Collect and return a ``dict`` of all fields in a settings class.
 
-    :param model: settings class
+    :param model_cls: settings class
     :return: ``dict`` of all fields in a settings class
     """
-    seen_fields = {}
-    for field_name, field_value in model.model_fields.items():
-        if field_value.annotation and issubclass_patched(field_value.annotation):
-            seen_fields[field_name] = collect_fields(field_value.annotation)
+    seen_fields: ModelFields = {}
+    for field_name, field_info in model_cls.model_fields.items():
+        if field_info.annotation and issubclass_patched(field_info.annotation):
+            seen_fields[field_name] = collect_fields(field_info.annotation)
         else:
-            seen_fields[field_name] = field_value
+            seen_fields[field_name] = field_info
     return seen_fields
 
 
@@ -160,26 +169,54 @@ class CamelCaseConfigModel(BaseModel):
     )
 
 
+def find_defining_class(
+    class_: type[BaseModel], field_name: str
+) -> type[BaseModel] | None:
+    for base in class_.mro():
+        if not issubclass(base, BaseModel):
+            continue
+        if field_name in base.__annotations__:
+            return base
+    return None
+
+
 class DescConfigModel(BaseModel):
     @staticmethod
-    def json_schema_extra(schema: dict[str, Any], model: type[BaseModel]) -> None:
-        schema["description"] = describe_object(model.__doc__)
+    def json_schema_extra(schema: dict[str, Any], model_cls: type[BaseModel]) -> None:
+        schema["description"] = describe_object(model_cls.__doc__)
+        for field_name, field_info in model_cls.model_fields.items():
+            if field_info.description:
+                continue  # skip, manually assigned description takes precedence
+            if any(isinstance(m, SkipJsonSchema) for m in field_info.metadata):  # ty: ignore[invalid-argument-type]
+                continue
+            field_alias = by_alias(model_cls, field_name)
+            defining_class = find_defining_class(model_cls, field_name)
+            if not defining_class:
+                continue
+            description = describe_attr(
+                field_name, defining_class.__doc__
+            ) or describe_attr(field_alias, defining_class.__doc__)
+            if description:
+                if field_alias not in schema["properties"]:
+                    schema["properties"][field_alias] = {}
+                schema["properties"][field_alias]["description"] = description
 
     model_config: ClassVar[ConfigDict] = ConfigDict(
         json_schema_extra=json_schema_extra, use_enum_values=True
     )
 
 
+@final
 class YamlConfigSettingsSource(PydanticBaseSettingsSource):
     """Loads variables from a YAML file at the project's root."""
 
-    log = logging.getLogger()
+    log: structlog.stdlib.BoundLogger = structlog.get_logger()
 
-    config_dir = Path()
-    config_file_base_name = "config"
+    config_dir: Path = Path()
+    config_file_base_name: str = "config"
     environment: str | None = None
 
-    def __init__(self, settings_cls) -> None:
+    def __init__(self, settings_cls: type[BaseSettings]) -> None:
         super().__init__(settings_cls)
         default_config = self.load_config(
             self.config_dir / f"{self.config_file_base_name}.yaml"
@@ -201,9 +238,8 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
         :param file: Path to a ``config*.yaml``
         :return: Dict containing the config or empty dict if file doesn't exist
         """
-        # TODO: remove isinstance check, let Pydantic handle the validation of the file contents
-        if file.exists() and isinstance((loaded_file := load_yaml_file(file)), dict):
-            return loaded_file
+        if file.exists():
+            return load_yaml_file(file)
         return {}
 
     @override
@@ -299,3 +335,22 @@ class SerializeAsOptionalModel(BaseModel):
         if info.exclude_none:
             return exclude_by_value(result, None)
         return result
+
+
+def serialize_skip_context_generate(
+    value: _T,
+    default_serialize_handler: SerializerFunctionWrapHandler,
+    info: SerializationInfo,
+) -> _T | None:
+    if info.context == "generate":
+        return None  # HACK: serialize to None, then exclude_by_value
+        # instead use PydanticOmit once supported, custom model_serializer can be removed afterwards
+        # raise PydanticOmit  # depends on https://github.com/pydantic/pydantic/issues/6969
+    return default_serialize_handler(value)
+
+
+SkipGenerate = Annotated[
+    _T,
+    WrapSerializer(serialize_skip_context_generate),
+    "Exclude field from generate output",
+]

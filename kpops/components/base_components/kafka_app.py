@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-import logging
 from abc import ABC
 
+import structlog
 from typing_extensions import override
 
 from kpops.component_handlers import get_handlers
 from kpops.components.base_components.pipeline_component import PipelineComponent
 
-log = logging.getLogger("KafkaApp")
+log = structlog.get_logger("KafkaApp")
 
 
 class KafkaApp(PipelineComponent, ABC):

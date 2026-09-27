@@ -1,10 +1,12 @@
-from enum import StrEnum
+from enum import StrEnum, auto
 from typing import Any, ClassVar
 
 import pydantic
 from pydantic import (
     BaseModel,
     ConfigDict,
+    computed_field,
+    field_serializer,
     field_validator,
     model_serializer,
 )
@@ -12,6 +14,7 @@ from pydantic.json_schema import SkipJsonSchema
 from typing_extensions import override
 
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
+from kpops.utils.enum import UpperStrEnum
 from kpops.utils.pydantic import (
     DescConfigModel,
     by_alias,
@@ -19,11 +22,6 @@ from kpops.utils.pydantic import (
     to_dot,
     to_str,
 )
-
-
-class KafkaConnectorType(StrEnum):
-    SINK = "sink"
-    SOURCE = "source"
 
 
 class KafkaConnectorConfig(DescConfigModel):
@@ -37,9 +35,9 @@ class KafkaConnectorConfig(DescConfigModel):
 
     @override
     @staticmethod
-    def json_schema_extra(schema: dict[str, Any], model: type[BaseModel]) -> None:
+    def json_schema_extra(schema: dict[str, Any], model_cls: type[BaseModel]) -> None:
         super(KafkaConnectorConfig, KafkaConnectorConfig).json_schema_extra(
-            schema, model
+            schema, model_cls
         )
         schema["additional_properties"] = {
             "type": {
@@ -69,7 +67,7 @@ class KafkaConnectorConfig(DescConfigModel):
 
     @pydantic.field_validator("topics", mode="before")
     @classmethod
-    def deserialize_topics(cls, topics: Any) -> list[KafkaTopic] | None | Any:
+    def deserialize_topics(cls, topics: Any) -> list[KafkaTopic] | Any | None:
         if isinstance(topics, str):
             return [KafkaTopic(name=topic_name) for topic_name in topics.split(",")]
         return topics
@@ -92,7 +90,65 @@ class KafkaConnectorConfig(DescConfigModel):
         info: pydantic.SerializationInfo,
     ) -> dict[str, str]:
         result = exclude_by_value(default_serialize_handler(self), None)
-        return {by_alias(self, name): to_str(value) for name, value in result.items()}
+        return {
+            by_alias(self.__class__, name): to_str(value)
+            for name, value in result.items()
+        }
+
+
+class ConnectorCurrentState(UpperStrEnum):
+    RUNNING = auto()
+    PAUSED = auto()
+    STOPPED = auto()
+    FAILED = auto()
+
+
+class ConnectorNewState(StrEnum):
+    RUNNING = auto()
+    PAUSED = auto()
+
+    @property
+    def api_enum(self) -> ConnectorCurrentState:
+        return ConnectorCurrentState[self.name]
+
+
+class CreateConnector(BaseModel):
+    config: KafkaConnectorConfig
+    initial_state: ConnectorNewState | None = None
+
+    @computed_field
+    @property
+    def name(self) -> str:
+        return self.config.name
+
+    @field_serializer("initial_state")
+    def serialize_initial_state(self, initial_state: ConnectorNewState) -> str:
+        return initial_state.api_enum.value
+
+
+class ConnectorStatus(BaseModel):
+    state: ConnectorCurrentState
+    worker_id: str
+
+
+class ConnectorTaskStatus(BaseModel):
+    id: int
+    state: ConnectorCurrentState
+    worker_id: str
+
+
+class KafkaConnectorType(StrEnum):
+    SINK = auto()
+    SOURCE = auto()
+
+
+class ConnectorStatusResponse(BaseModel):
+    name: str
+    connector: ConnectorStatus
+    tasks: list[ConnectorTaskStatus]
+    type: KafkaConnectorType
+
+    model_config: ClassVar[ConfigDict] = ConfigDict(extra="forbid")
 
 
 class ConnectorTask(BaseModel):
@@ -100,11 +156,11 @@ class ConnectorTask(BaseModel):
     task: int
 
 
-class KafkaConnectResponse(BaseModel):
+class ConnectorResponse(BaseModel):
     name: str
-    config: dict[str, str]
+    config: KafkaConnectorConfig
     tasks: list[ConnectorTask]
-    type: str | None = None
+    type: KafkaConnectorType
 
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="forbid")
 

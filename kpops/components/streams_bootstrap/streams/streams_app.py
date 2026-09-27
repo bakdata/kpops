@@ -1,7 +1,7 @@
-import logging
 from functools import cached_property
 
-from pydantic import Field, ValidationError
+import structlog
+from pydantic import ValidationError
 from typing_extensions import override
 
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
@@ -21,15 +21,14 @@ from kpops.core.operation import OperationMode
 from kpops.manifests.argo import ArgoHook, enrich_annotations
 from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.manifests.strimzi.kafka_topic import StrimziKafkaTopic
-from kpops.utils.docstring import describe_attr
 
-log = logging.getLogger("StreamsApp")
+log = structlog.get_logger("StreamsApp")
 
 
 class StreamsAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
-    from_: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
-    to: None = None  # pyright: ignore[reportIncompatibleVariableOverride]
-    values: StreamsAppValues  # pyright: ignore[reportIncompatibleVariableOverride]
+    from_: None = None
+    to: None = None
+    values: StreamsAppValues
 
     @property
     @override
@@ -87,14 +86,12 @@ class StreamsAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
 
 
 class StreamsApp(StreamsBootstrap):
-    """StreamsApp component that configures a streams-bootstrap app.
+    """StreamsApp component that configures a streams-bootstrap streams-app.
 
     :param values: streams-bootstrap Helm values
     """
 
-    values: StreamsAppValues = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
-        description=describe_attr("values", __doc__),
-    )
+    values: StreamsAppValues
 
     @cached_property
     def _cleaner(self) -> StreamsAppCleaner:
@@ -164,13 +161,13 @@ class StreamsApp(StreamsBootstrap):
             try:
                 self._cleaner.values = self.values.model_validate(cluster_values)
                 self._cleaner.values.name_override = name_override
+                self._cleaner.values.fullname_override = name_override
             except ValidationError as validation_error:
-                warning_msg = f"The values in the cluster are invalid with the current model. Falling back to the enriched values of {PIPELINE_YAML} and {DEFAULTS_YAML}"
-                log.warning(warning_msg)
-                debug_msg = f"Cluster values: {cluster_values}"
-                log.debug(debug_msg)
-                debug_msg = f"Validation error: {validation_error}"
-                log.debug(debug_msg)
+                log.warning(
+                    f"The values in the cluster are invalid with the current model. Falling back to the enriched values of {PIPELINE_YAML} and {DEFAULTS_YAML}"
+                )
+                log.debug("Cluster values", values=cluster_values)
+                log.debug("Validation error", error=validation_error)
 
         await super().destroy(dry_run)
 

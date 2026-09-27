@@ -1,0 +1,5 @@
+# ConsumerProducerApp component that configures a streams-bootstrap consumerproducer-app.
+# More documentation on ConsumerProducerApp:
+# https://github.com/bakdata/streams-bootstrap
+- type: consumer-producer-app
+  name: consumer-producer-app # required

@@ -2,14 +2,14 @@ site_name: KPOps
 site_url: https://bakdata.github.io/kpops/
 repo_name: KPOps
 repo_url: https://github.com/bakdata/kpops/
-remote_branch: gh-pages
-copyright: Copyright &copy; 2023 bakdata
+copyright: Copyright &copy; 2026 bakdata
 
 extra_css:
   - stylesheets/extra.css
 
 theme:
   name: "material"
+  variant: modern
   custom_dir: docs/overrides
   language: "en"
   font:
@@ -33,9 +33,6 @@ theme:
 plugins:
   - macros
   - search
-  - exclude-search:
-      exclude:
-        - resources/*
   - glightbox
   - mkdocstrings:
       handlers:
@@ -49,10 +46,8 @@ plugins:
             show_signature_annotations: true
             docstring_section_style: spacy
             show_root_heading: true
-            # The options below are not yet publicly available,
-            # but would be a nice addition when released.
-            #show_inheritance_diagram: true # https://mkdocstrings.github.io/python/usage/configuration/general/?h=show_inheri#show_inheritance_diagram
-            #modernize_annotations: true # https://mkdocstrings.github.io/python/usage/configuration/signatures/#modernize_annotations
+            show_inheritance_diagram: true
+            modernize_annotations: true
 
 extra:
   version:
@@ -71,7 +66,6 @@ markdown_extensions:
       linenums: true
       pygments_lang_class: true
   - pymdownx.inlinehilite
-  - pymdownx.superfences
   - pymdownx.keys
   - pymdownx.details
   - pymdownx.snippets:
@@ -81,12 +75,13 @@ markdown_extensions:
   - pymdownx.caret
   - pymdownx.mark
   - pymdownx.tilde
+  - mdx_truly_sane_lists
   - md_in_html
   - pymdownx.tabbed:
       alternate_style: true
   - pymdownx.emoji:
-      emoji_index: !!python/name:material.extensions.emoji.twemoji
-      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+      emoji_index: !!python/name:zensical.extensions.emoji.twemoji
+      emoji_generator: !!python/name:zensical.extensions.emoji.to_svg
   - pymdownx.superfences:
       preserve_tabs: true
       custom_fences:
@@ -95,8 +90,7 @@ markdown_extensions:
           format: !!python/name:pymdownx.superfences.fence_code_format
 
 nav:
-  - Home:
-      KPOps Documentation: index.md
+  - Home: index.md
   - User Guide:
       - What is KPOps: user/what-is-kpops.md
       - Changelog: user/changelog.md
@@ -114,6 +108,8 @@ nav:
               - StreamsBootstrap: user/core-concepts/components/streams-bootstrap.md
               - StreamsApp: user/core-concepts/components/streams-app.md
               - ProducerApp: user/core-concepts/components/producer-app.md
+              - ConsumerApp: user/core-concepts/components/consumer-app.md
+              - ConsumerProducerApp: user/core-concepts/components/consumer-producer-app.md
               - KafkaConnector: user/core-concepts/components/kafka-connector.md
               - KafkaSinkConnector: user/core-concepts/components/kafka-sink-connector.md
               - KafkaSourceConnector: user/core-concepts/components/kafka-source-connector.md
@@ -134,6 +130,8 @@ nav:
               - Migrate from v7 to v8: user/migration-guide/v7-v8.md
               - Migrate from v8 to v9: user/migration-guide/v8-v9.md
               - Migrate from v9 to v10: user/migration-guide/v9-v10.md
+              - Migrate from v10 to v11: user/migration-guide/v10-v11.md
+              - Migrate from v11 to v12: user/migration-guide/v11-v12.md
           - CLI usage: user/references/cli-commands.md
           - Editor integration: user/references/editor-integration.md
           - CI integration:

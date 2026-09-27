@@ -11,10 +11,10 @@ PREFIX = "example-prefix-"
 
 
 class TestComponentFactory(ModelFactory[PipelineComponent]):
-    to = ToSection()
-    from_ = FromSection()
-    enrich = False
-    validate = False
+    to: ToSection = ToSection()
+    from_: FromSection = FromSection()
+    enrich: bool = False
+    validate: bool = False
 
 
 run_validation = False
@@ -30,13 +30,13 @@ test_component_3.name = "example3"
 class TestPipeline:
     @pytest.fixture(autouse=True)
     def pipeline(self) -> Pipeline:
-        pipeline = Pipeline()
+        pipeline = Pipeline(name="test-pipeline")
         pipeline.add(test_component_1)
         pipeline.add(test_component_2)
         pipeline.add(test_component_3)
         return pipeline
 
-    def test_filter_include(self, pipeline: Pipeline):
+    def test_filter_include(self, pipeline: Pipeline) -> None:
         predicate = FilterType.INCLUDE.create_default_step_names_filter_predicate(
             {"example2", "example3"}
         )
@@ -45,12 +45,12 @@ class TestPipeline:
         assert test_component_2 in pipeline.components
         assert test_component_3 in pipeline.components
 
-    def test_filter_include_empty(self, pipeline: Pipeline):
+    def test_filter_include_empty(self, pipeline: Pipeline) -> None:
         predicate = FilterType.INCLUDE.create_default_step_names_filter_predicate(set())
         pipeline.filter(predicate)
         assert len(pipeline.components) == 0
 
-    def test_filter_exclude(self, pipeline: Pipeline):
+    def test_filter_exclude(self, pipeline: Pipeline) -> None:
         predicate = FilterType.EXCLUDE.create_default_step_names_filter_predicate(
             {"example2", "example3"}
         )
@@ -58,7 +58,7 @@ class TestPipeline:
         assert len(pipeline.components) == 1
         assert test_component_1 in pipeline.components
 
-    def test_filter_exclude_empty(self, pipeline: Pipeline):
+    def test_filter_exclude_empty(self, pipeline: Pipeline) -> None:
         predicate = FilterType.EXCLUDE.create_default_step_names_filter_predicate(set())
         pipeline.filter(predicate)
         assert len(pipeline.components) == 3

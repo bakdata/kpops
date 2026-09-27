@@ -11,29 +11,29 @@ kafka-app:
       ${pipeline.name}-input-topic:
         type: input # Implied when role is NOT specified
       ${pipeline.name}-extra-topic:
-        role: topic-role # Implies `type` to be extra
+        label: topic-role # Implies `type` to be extra
       ${pipeline.name}-input-pattern-topic:
-        type: pattern # Implied to be an input pattern if `role` is undefined
+        type: pattern # Implied to be an input pattern if `label` is undefined
       ${pipeline.name}-extra-pattern-topic:
-        type: pattern # Implied to be an extra pattern if `role` is defined
-        role: some-role
+        type: pattern # Implied to be an extra pattern if `label` is defined
+        label: some-role
     components: # read from specific component
       account-producer:
         type: input # Implied when role is NOT specified
       other-producer:
-        role: some-role # Implies `type` to be extra
+        label: some-role # Implies `type` to be extra
       component-as-input-pattern:
-        type: pattern # Implied to be an input pattern if `role` is undefined
+        type: pattern # Implied to be an input pattern if `label` is undefined
       component-as-extra-pattern:
-        type: pattern # Implied to be an extra pattern if `role` is defined
-        role: some-role
+        type: pattern # Implied to be an extra pattern if `label` is defined
+        label: some-role
   # Topic(s) into which the component will write output
   to:
     topics:
       ${pipeline.name}-output-topic:
         type: output # Implied when role is NOT specified
       ${pipeline.name}-extra-topic:
-        role: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
+        label: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
       ${pipeline.name}-error-topic:
         type: error
         # Currently KPOps supports Avro and JSON schemas.

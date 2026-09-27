@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from enum import StrEnum
+from enum import StrEnum, auto
 
 FILE_EXTENSION = ".yaml"
 
@@ -14,9 +14,9 @@ class KpopsFileType(StrEnum):
         CONFIG (str): Represents a config YAML file type.
     """
 
-    PIPELINE = "pipeline"
-    DEFAULTS = "defaults"
-    CONFIG = "config"
+    PIPELINE = auto()
+    DEFAULTS = auto()
+    CONFIG = auto()
 
     def as_yaml_file(self, prefix: str = "", suffix: str = "") -> str:
         """Generate a YAML file name based on the enum value with optional prefix and suffix.

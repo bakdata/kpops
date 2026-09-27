@@ -1,0 +1,1 @@
+KAFKA_REST_PROXY = "Kafka REST Proxy"

@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import json
-import logging
 from functools import cached_property
 from typing import TYPE_CHECKING, final
 
+import httpx
+import structlog
 from schema_registry.client import AsyncSchemaRegistryClient
 from schema_registry.client.schema import AvroSchema
 from schema_registry.client.utils import SchemaVersion
@@ -15,13 +16,13 @@ from kpops.component_handlers.schema_handler.schema_provider import (
 )
 from kpops.core.exception import ClassNotFoundError
 from kpops.core.registry import Registry, find_class
-from kpops.utils.colorify import greenify, magentaify, yellowify
+from kpops.utils.colorify import greenify, magentaify
 
 if TYPE_CHECKING:
     from kpops.components.base_components.models.to_section import ToSection
     from kpops.config import KpopsConfig
 
-log = logging.getLogger("SchemaHandler")
+log = structlog.get_logger("SchemaHandler")
 
 
 @final
@@ -29,7 +30,7 @@ class SchemaHandler:
     def __init__(self, kpops_config: KpopsConfig) -> None:
         self.schema_registry_client = AsyncSchemaRegistryClient(
             str(kpops_config.schema_registry.url),
-            timeout=kpops_config.schema_registry.timeout,  # pyright: ignore[reportArgumentType]
+            timeout=httpx.Timeout(kpops_config.schema_registry.timeout),
         )
 
     @cached_property
@@ -38,7 +39,7 @@ class SchemaHandler:
             schema_provider_class = find_class(
                 Registry.iter_component_modules(), base=SchemaProvider
             )
-            return schema_provider_class()  # pyright: ignore[reportAbstractUsage]
+            return schema_provider_class()
         except ClassNotFoundError as e:
             msg = f"No schema provider found. Please implement the abstract method in {SchemaProvider.__module__}.{SchemaProvider.__name__}."
             raise ValueError(msg) from e
@@ -49,10 +50,8 @@ class SchemaHandler:
             return cls(config)
         if not config.schema_registry.enabled and config.schema_registry.url:
             log.warning(
-                yellowify(
-                    f"The property schema_registry.enabled is set to False but the URL is set to {config.schema_registry.url}."
-                    f"\nIf you want to use the schema handler make sure to enable it."
-                )
+                "The property schema_registry.enabled is set to False but the URL is set. If you want to use the schema handler make sure to enable it.",
+                url=str(config.schema_registry.url),
             )
         return None
 
@@ -118,7 +117,7 @@ class SchemaHandler:
         schema: Schema,
         schema_class: str,
         dry_run: bool,
-    ):
+    ) -> None:
         if dry_run:
             if await self.__subject_exists(subject):
                 await self.__check_compatibility(schema, schema_class, subject)
@@ -129,15 +128,15 @@ class SchemaHandler:
                     )
                 )
         else:
-            await self.schema_registry_client.register(  # pyright: ignore[reportUnknownMemberType]
-                subject=subject, schema=schema
-            )
+            await self.schema_registry_client.register(subject=subject, schema=schema)
             log.info(
-                f"Schema Submission: schema submitted for {subject} with model {schema_class}."
+                "Schema submitted.",
+                subject=subject,
+                model=schema_class,
             )
 
     async def __subject_exists(self, subject: str) -> bool:
-        versions: list[SchemaVersion] = await self.schema_registry_client.get_versions(  # pyright: ignore[reportUnknownMemberType]
+        versions: list[SchemaVersion] = await self.schema_registry_client.get_versions(
             subject
         )
         return len(versions) > 0
@@ -145,11 +144,11 @@ class SchemaHandler:
     async def __check_compatibility(
         self, schema: Schema, schema_class: str, subject: str
     ) -> None:
-        registered_version = await self.schema_registry_client.check_version(  # pyright: ignore[reportUnknownMemberType]
+        registered_version = await self.schema_registry_client.check_version(
             subject, schema
         )
         if registered_version is None:
-            if not await self.schema_registry_client.test_compatibility(  # pyright: ignore[reportUnknownMemberType]
+            if not await self.schema_registry_client.test_compatibility(
                 subject=subject, schema=schema
             ):
                 schema_str = (
@@ -161,20 +160,28 @@ class SchemaHandler:
                 raise Exception(msg)
         else:
             log.debug(
-                f"Schema Submission: schema was already submitted for the subject {subject} as version {registered_version.schema}. Therefore, the specified schema must be compatible."  # pyright: ignore[reportUnknownMemberType]
+                "Schema was already submitted. Therefore, the specified schema must be compatible.",
+                subject=subject,
+                version=registered_version.schema,
             )
 
         log.info(
-            f"Schema Submission: compatible schema for {subject} with model {schema_class}."
+            "Compatible schema found.",
+            subject=subject,
+            model=schema_class,
         )
 
     async def __delete_subject(self, subject: str, dry_run: bool) -> None:
         if dry_run:
-            log.info(magentaify(f"Schema Deletion: will delete subject {subject}."))
+            log.info(
+                magentaify("Schema Deletion: will delete subject."), subject=subject
+            )
         else:
             version_list: list[
                 SchemaVersion
-            ] = await self.schema_registry_client.delete_subject(subject)  # pyright: ignore[reportUnknownMemberType]
+            ] = await self.schema_registry_client.delete_subject(subject)
             log.info(
-                f"Schema Deletion: deleted {len(version_list)} versions for subject {subject}."
+                "Deleted subject.",
+                subject=subject,
+                versions=len(version_list),
             )

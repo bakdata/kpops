@@ -1,7 +1,8 @@
 import hashlib
-import logging
 
-log = logging.getLogger("K8sUtils")
+import structlog
+
+log = structlog.get_logger("K8sUtils")
 
 
 def trim(max_len: int, name: str, suffix: str) -> str:
@@ -21,8 +22,11 @@ def trim(max_len: int, name: str, suffix: str) -> str:
         exact_name = name[: max_len - len(suffix)]
         hash_name = hashlib.sha1(name.encode()).hexdigest()
         new_name = exact_name[:-6] + "-" + hash_name[:5] + suffix
-        log.critical(
-            f"Kubernetes identifier '{name}' exceeds character limit. Truncating and hashing to {max_len} characters: \n {name} --> {new_name}"
+        log.warning(
+            "Kubernetes identifier exceeds character limit. Truncating and hashing.",
+            identifier=name,
+            truncated=new_name,
+            limit=max_len,
         )
         return new_name
     return name

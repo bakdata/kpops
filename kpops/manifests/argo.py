@@ -14,7 +14,7 @@ def enrich_annotations(
     return helm_values
 
 
-class ArgoHook(str, enum.Enum):
+class ArgoHook(enum.StrEnum):
     POST_DELETE = "PostDelete"
 
     @property

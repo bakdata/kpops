@@ -1,9 +1,10 @@
 import re
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
 
+from kpops.component_handlers.helm.helm import Helm
 from kpops.component_handlers.kafka_connect.model import KafkaConnectorConfig
 from kpops.components.base_components.kafka_connector import (
     KafkaConnector,
@@ -19,18 +20,17 @@ CONNECTOR_CLEAN_RELEASE_NAME = (
     "${pipeline.name}-" + "test-connector-with-long-612f3-clean"
 )
 CONNECTOR_CLASS = "com.bakdata.connect.TestConnector"
-RESETTER_NAMESPACE = "test-namespace"
 
 
 @pytest.mark.usefixtures("mock_env")
 class TestKafkaConnector:
     @pytest.fixture(autouse=True)
     def helm_mock(self, mocker: MockerFixture) -> MagicMock:
-        async_mock = AsyncMock()
-        return mocker.patch(
-            "kpops.components.base_components.helm_app.Helm",
-            return_value=async_mock,
-        ).return_value
+        helm_mock = mocker.MagicMock(Helm)
+        mocker.patch(
+            "kpops.components.base_components.helm_app.Helm", return_value=helm_mock
+        )
+        return helm_mock
 
     @pytest.fixture()
     def dry_run_handler_mock(self, mocker: MockerFixture) -> MagicMock:
@@ -50,16 +50,14 @@ class TestKafkaConnector:
         return KafkaConnector(  # HACK: not supposed to be instantiated, because ABC
             name=CONNECTOR_NAME,
             config=connector_config,
-            resetter_namespace=RESETTER_NAMESPACE,
         )
 
-    def test_connector_config_name_override(self, connector: KafkaConnector):
+    def test_connector_config_name_override(self, connector: KafkaConnector) -> None:
         assert connector.config.name == CONNECTOR_FULL_NAME
 
         connector = KafkaConnector(
             name=CONNECTOR_NAME,
-            config={"connector.class": CONNECTOR_CLASS},  # pyright: ignore[reportArgumentType], gets enriched
-            resetter_namespace=RESETTER_NAMESPACE,
+            config={"connector.class": CONNECTOR_CLASS},  # gets enriched
         )
         assert connector.config.name == CONNECTOR_FULL_NAME
 
@@ -71,7 +69,10 @@ class TestKafkaConnector:
         ):
             KafkaConnector(
                 name=CONNECTOR_NAME,
-                config={"connector.class": CONNECTOR_CLASS, "name": "different-name"},  # pyright: ignore[reportArgumentType], gets enriched
+                config={
+                    "connector.class": CONNECTOR_CLASS,
+                    "name": "different-name",
+                },  # gets enriched
             )
 
         with pytest.raises(
@@ -82,5 +83,8 @@ class TestKafkaConnector:
         ):
             KafkaConnector(
                 name=CONNECTOR_NAME,
-                config={"connector.class": CONNECTOR_CLASS, "name": ""},  # pyright: ignore[reportArgumentType], gets enriched
+                config={
+                    "connector.class": CONNECTOR_CLASS,
+                    "name": "",
+                },  # gets enriched
             )

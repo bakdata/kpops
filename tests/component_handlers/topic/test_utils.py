@@ -117,7 +117,7 @@ kafka_rest_proxy_response = {
 }
 
 
-def test_parse_and_compare_topic_configs():
+def test_parse_and_compare_topic_configs() -> None:
     topic_config_response = TopicConfigResponse.model_validate(
         kafka_rest_proxy_response
     )
@@ -138,7 +138,7 @@ def test_parse_and_compare_topic_configs():
     )
 
 
-def test_compare_single_config_correctly():
+def test_compare_single_config_correctly() -> None:
     topic_config_response = TopicConfigResponse.model_validate(
         kafka_rest_proxy_response
     )
@@ -154,7 +154,7 @@ def test_compare_single_config_correctly():
     )
 
 
-def test_get_effective_config():
+def test_get_effective_config() -> None:
     topic_config_response = BrokerConfigResponse.model_validate(
         {
             "kind": "KafkaBrokerConfigList",

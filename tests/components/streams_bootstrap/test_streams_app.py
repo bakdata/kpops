@@ -1,23 +1,26 @@
-import logging
+import re
 from collections.abc import AsyncIterator
 from pathlib import Path
 from unittest.mock import ANY, MagicMock
 
 import pytest
+import structlog
 from lightkube.models.core_v1 import (
     PersistentVolumeClaim,
     PersistentVolumeClaimSpec,
     PersistentVolumeClaimStatus,
 )
 from lightkube.models.meta_v1 import ObjectMeta
+from pydantic import ValidationError
 from pytest_mock import MockerFixture
+from structlog.testing import capture_logs
 
 from kpops.component_handlers import get_handlers
-from kpops.component_handlers.helm_wrapper.helm import Helm
-from kpops.component_handlers.helm_wrapper.model import (
+from kpops.component_handlers.helm.helm import Helm
+from kpops.component_handlers.helm.model import (
     HelmUpgradeInstallFlags,
 )
-from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
+from kpops.component_handlers.helm.utils import create_helm_release_name
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
 from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.models.to_section import (
@@ -29,7 +32,8 @@ from kpops.components.common.topic import (
     TopicConfig,
 )
 from kpops.components.streams_bootstrap import StreamsApp
-from kpops.components.streams_bootstrap.streams.model import (
+from kpops.components.streams_bootstrap.common.model import (
+    PersistenceConfig,
     StreamsAppAutoScaling,
 )
 from kpops.components.streams_bootstrap.streams.streams_app import (
@@ -38,26 +42,28 @@ from kpops.components.streams_bootstrap.streams.streams_app import (
 
 RESOURCES_PATH = Path(__file__).parent / "resources"
 
+NAMESPACE = "test-namespace"
+PREFIX = "${pipeline.name}-"
 STREAMS_APP_NAME = "test-streams-app-with-long-name-0123456789abcdefghijklmnop"
-STREAMS_APP_FULL_NAME = "${pipeline.name}-" + STREAMS_APP_NAME
+STREAMS_APP_FULL_NAME = PREFIX + STREAMS_APP_NAME
 STREAMS_APP_HELM_NAME_OVERRIDE = (
-    "${pipeline.name}-" + "test-streams-app-with-long-name-01234567-a35c6"
+    PREFIX + "test-streams-app-with-long-name-01234567-a35c6"
 )
 STREAMS_APP_RELEASE_NAME = create_helm_release_name(STREAMS_APP_FULL_NAME)
 STREAMS_APP_CLEAN_FULL_NAME = STREAMS_APP_FULL_NAME + "-clean"
 STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE = (
-    "${pipeline.name}-" + "test-streams-app-with-long-name-01-c98c5-clean"
+    PREFIX + "test-streams-app-with-long-name-01-c98c5-clean"
 )
 STREAMS_APP_CLEAN_RELEASE_NAME = create_helm_release_name(
     STREAMS_APP_CLEAN_FULL_NAME, "-clean"
 )
 
-log = logging.getLogger("TestStreamsApp")
+log = structlog.get_logger("TestStreamsApp")
 
 
 @pytest.mark.usefixtures("mock_env")
 class TestStreamsApp:
-    def test_release_name(self):
+    def test_release_name(self) -> None:
         assert STREAMS_APP_CLEAN_RELEASE_NAME.endswith("-clean")
 
     @pytest.fixture()
@@ -65,7 +71,7 @@ class TestStreamsApp:
         return StreamsApp.model_validate(
             {
                 "name": STREAMS_APP_NAME,
-                "namespace": "test-namespace",
+                "namespace": NAMESPACE,
                 "values": {
                     "image": "streamsApp",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
@@ -85,11 +91,15 @@ class TestStreamsApp:
         return StreamsApp.model_validate(
             {
                 "name": STREAMS_APP_NAME,
-                "namespace": "test-namespace",
+                "namespace": NAMESPACE,
                 "values": {
                     "image": "streamsApp",
                     "statefulSet": True,
-                    "persistence": {"enabled": True, "size": "5Gi"},
+                    "persistence": {
+                        "enabled": True,
+                        "size": "5Gi",
+                        "storageClass": "foo",
+                    },
                     "kafka": {
                         "bootstrapServers": "fake-broker:9092",
                     },
@@ -114,12 +124,12 @@ class TestStreamsApp:
     def empty_helm_get_values(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch.object(Helm, "get_values", return_value=None)
 
-    def test_cleaner(self, streams_app: StreamsApp):
+    def test_cleaner(self, streams_app: StreamsApp) -> None:
         cleaner = streams_app._cleaner
         assert isinstance(cleaner, StreamsAppCleaner)
         assert not hasattr(cleaner, "_cleaner")
 
-    def test_cleaner_inheritance(self, streams_app: StreamsApp):
+    def test_cleaner_inheritance(self, streams_app: StreamsApp) -> None:
         streams_app.values.kafka.application_id = "test-application-id"
         streams_app.values.autoscaling = StreamsAppAutoScaling(
             enabled=True,
@@ -128,23 +138,27 @@ class TestStreamsApp:
         )
         assert streams_app._cleaner.values == streams_app.values
 
-    def test_cleaner_helm_release_name(self, streams_app: StreamsApp):
+    def test_cleaner_helm_release_name(self, streams_app: StreamsApp) -> None:
         assert (
             streams_app._cleaner.helm_release_name
             == "${pipeline.name}-test-streams-app-with-lo-c98c5-clean"
         )
 
-    def test_cleaner_helm_name_override(self, streams_app: StreamsApp):
+    def test_cleaner_helm_name_override(self, streams_app: StreamsApp) -> None:
         assert (
             streams_app._cleaner.to_helm_values()["nameOverride"]
             == STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE
         )
+        assert (
+            streams_app._cleaner.to_helm_values()["fullnameOverride"]
+            == STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE
+        )
 
-    def test_set_topics(self):
+    def test_set_topics(self) -> None:
         streams_app = StreamsApp.model_validate(
             {
                 "name": STREAMS_APP_NAME,
-                "namespace": "test-namespace",
+                "namespace": NAMESPACE,
                 "values": {
                     "image": "streamsApp",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
@@ -187,11 +201,11 @@ class TestStreamsApp:
         assert "inputPattern" in kafka_config
         assert "labeledInputPatterns" in kafka_config
 
-    def test_no_empty_input_topic(self):
+    def test_no_empty_input_topic(self) -> None:
         streams_app = StreamsApp.model_validate(
             {
                 "name": STREAMS_APP_NAME,
-                "namespace": "test-namespace",
+                "namespace": NAMESPACE,
                 "values": {
                     "image": "streamsApp",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
@@ -215,7 +229,7 @@ class TestStreamsApp:
         assert "inputPattern" in streams_config
         assert "extraInputPatterns" not in streams_config
 
-    def test_should_validate(self):
+    def test_should_validate(self) -> None:
         # An exception should be raised when both label and type are defined and type is input
         with pytest.raises(
             ValueError, match="Define label only if `type` is `pattern` or `None`"
@@ -223,7 +237,7 @@ class TestStreamsApp:
             assert StreamsApp.model_validate(
                 {
                     "name": STREAMS_APP_NAME,
-                    "namespace": "test-namespace",
+                    "namespace": NAMESPACE,
                     "values": {
                         "kafka": {"bootstrapServers": "fake-broker:9092"},
                     },
@@ -245,7 +259,7 @@ class TestStreamsApp:
             assert StreamsApp.model_validate(
                 {
                     "name": STREAMS_APP_NAME,
-                    "namespace": "test-namespace",
+                    "namespace": NAMESPACE,
                     "values": {
                         "kafka": {"bootstrapServers": "fake-broker:9092"},
                     },
@@ -260,11 +274,11 @@ class TestStreamsApp:
                 },
             )
 
-    def test_set_streams_output_from_to(self):
+    def test_set_streams_output_from_to(self) -> None:
         streams_app = StreamsApp.model_validate(
             {
                 "name": STREAMS_APP_NAME,
-                "namespace": "test-namespace",
+                "namespace": NAMESPACE,
                 "values": {
                     "image": "streamsApp",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
@@ -300,11 +314,11 @@ class TestStreamsApp:
             name="streams-app-error-topic"
         )
 
-    def test_weave_inputs_from_prev_component(self):
+    def test_weave_inputs_from_prev_component(self) -> None:
         streams_app = StreamsApp.model_validate(
             {
                 "name": STREAMS_APP_NAME,
-                "namespace": "test-namespace",
+                "namespace": NAMESPACE,
                 "values": {
                     "image": "streamsApp",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
@@ -337,11 +351,13 @@ class TestStreamsApp:
             KafkaTopic(name="a"),
         ]
 
-    async def test_deploy_order_when_dry_run_is_false(self, mocker: MockerFixture):
+    async def test_deploy_order_when_dry_run_is_false(
+        self, mocker: MockerFixture
+    ) -> None:
         streams_app = StreamsApp.model_validate(
             {
                 "name": STREAMS_APP_NAME,
-                "namespace": "test-namespace",
+                "namespace": NAMESPACE,
                 "values": {
                     "image": "streamsApp",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
@@ -420,9 +436,10 @@ class TestStreamsApp:
                 STREAMS_APP_RELEASE_NAME,
                 "bakdata-streams-bootstrap/streams-app",
                 dry_run,
-                "test-namespace",
+                NAMESPACE,
                 {
                     "nameOverride": STREAMS_APP_HELM_NAME_OVERRIDE,
+                    "fullnameOverride": STREAMS_APP_HELM_NAME_OVERRIDE,
                     "image": "streamsApp",
                     "kafka": {
                         "bootstrapServers": "fake-broker:9092",
@@ -453,13 +470,13 @@ class TestStreamsApp:
         self,
         streams_app: StreamsApp,
         mocker: MockerFixture,
-    ):
+    ) -> None:
         mock_helm_uninstall = mocker.patch.object(streams_app._helm, "uninstall")
 
         await streams_app.destroy(dry_run=True)
 
         mock_helm_uninstall.assert_called_once_with(
-            "test-namespace", STREAMS_APP_RELEASE_NAME, True
+            NAMESPACE, STREAMS_APP_RELEASE_NAME, True
         )
 
     async def test_reset_when_dry_run_is_false(
@@ -467,139 +484,108 @@ class TestStreamsApp:
         streams_app: StreamsApp,
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
-    ):
-        # actual component
-        mock_helm_uninstall_streams_app = mocker.patch.object(
-            streams_app._helm, "uninstall"
-        )
-
-        cleaner = streams_app._cleaner
-        assert isinstance(cleaner, StreamsAppCleaner)
-
-        mock_helm_upgrade_install = mocker.patch.object(
-            cleaner._helm, "upgrade_install"
-        )
-        mock_helm_uninstall = mocker.patch.object(cleaner._helm, "uninstall")
-
+    ) -> None:
         mock = mocker.MagicMock()
-        mock.attach_mock(
-            mock_helm_uninstall_streams_app, "mock_helm_uninstall_streams_app"
-        )
+        mock_helm_upgrade_install = mocker.patch.object(Helm, "upgrade_install")
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
+        mock_helm_uninstall = mocker.patch.object(Helm, "uninstall")
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
 
         dry_run = False
         await streams_app.reset(dry_run=dry_run)
 
-        mock.assert_has_calls(
-            [
-                mocker.call.mock_helm_uninstall_streams_app(
-                    "test-namespace", STREAMS_APP_RELEASE_NAME, dry_run
-                ),
-                ANY,  # __bool__
-                ANY,  # __str__
-                mocker.call.helm_uninstall(
-                    "test-namespace",
-                    STREAMS_APP_CLEAN_RELEASE_NAME,
-                    dry_run,
-                ),
-                ANY,  # __bool__  # FIXME: why is this in the call stack?
-                ANY,  # __str__
-                mocker.call.helm_upgrade_install(
-                    STREAMS_APP_CLEAN_RELEASE_NAME,
-                    "bakdata-streams-bootstrap/streams-app-cleanup-job",
-                    dry_run,
-                    "test-namespace",
-                    {
-                        "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
-                        "image": "streamsApp",
-                        "kafka": {
-                            "bootstrapServers": "fake-broker:9092",
-                            "outputTopic": "streams-app-output-topic",
-                            "deleteOutput": False,
-                        },
+        assert mock.mock_calls == [
+            mocker.call.helm_uninstall(NAMESPACE, STREAMS_APP_RELEASE_NAME, dry_run),
+            ANY,  # __bool__
+            ANY,  # __str__
+            mocker.call.helm_uninstall(
+                NAMESPACE,
+                STREAMS_APP_CLEAN_RELEASE_NAME,
+                dry_run,
+            ),
+            ANY,  # __bool__  # FIXME: why is this in the call stack?
+            ANY,  # __str__
+            mocker.call.helm_upgrade_install(
+                STREAMS_APP_CLEAN_RELEASE_NAME,
+                "bakdata-streams-bootstrap/streams-app-cleanup-job",
+                dry_run,
+                NAMESPACE,
+                {
+                    "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                    "fullnameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                    "image": "streamsApp",
+                    "kafka": {
+                        "bootstrapServers": "fake-broker:9092",
+                        "outputTopic": "streams-app-output-topic",
+                        "deleteOutput": False,
                     },
-                    HelmUpgradeInstallFlags(
-                        version="3.6.1", wait=True, wait_for_jobs=True
-                    ),
-                ),
-                mocker.call.helm_uninstall(
-                    "test-namespace",
-                    STREAMS_APP_CLEAN_RELEASE_NAME,
-                    dry_run,
-                ),
-            ]
-        )
+                },
+                HelmUpgradeInstallFlags(version="3.6.1", wait=True, wait_for_jobs=True),
+            ),
+            mocker.call.helm_uninstall(
+                NAMESPACE,
+                STREAMS_APP_CLEAN_RELEASE_NAME,
+                dry_run,
+            ),
+            ANY,  # __bool__
+            ANY,  # __str__
+        ]
 
     async def test_should_clean_streams_app_and_deploy_clean_up_job_and_delete_clean_up(
         self,
         streams_app: StreamsApp,
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
-    ):
-        # actual component
-        mock_helm_uninstall_streams_app = mocker.patch.object(
-            streams_app._helm, "uninstall"
-        )
-
-        mock_helm_upgrade_install = mocker.patch.object(
-            streams_app._cleaner._helm, "upgrade_install"
-        )
-        mock_helm_uninstall = mocker.patch.object(
-            streams_app._cleaner._helm, "uninstall"
-        )
-
+    ) -> None:
         mock = mocker.MagicMock()
-        mock.attach_mock(mock_helm_uninstall_streams_app, "helm_uninstall_streams_app")
+        mock_helm_upgrade_install = mocker.patch.object(Helm, "upgrade_install")
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
+        mock_helm_uninstall = mocker.patch.object(Helm, "uninstall")
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
 
         dry_run = False
         await streams_app.clean(dry_run=dry_run)
 
-        mock.assert_has_calls(
-            [
-                mocker.call.helm_uninstall_streams_app(
-                    "test-namespace", STREAMS_APP_RELEASE_NAME, dry_run
-                ),
-                ANY,  # __bool__
-                ANY,  # __str__
-                mocker.call.helm_uninstall(
-                    "test-namespace",
-                    STREAMS_APP_CLEAN_RELEASE_NAME,
-                    dry_run,
-                ),
-                ANY,  # __bool__
-                ANY,  # __str__
-                mocker.call.helm_upgrade_install(
-                    STREAMS_APP_CLEAN_RELEASE_NAME,
-                    "bakdata-streams-bootstrap/streams-app-cleanup-job",
-                    dry_run,
-                    "test-namespace",
-                    {
-                        "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
-                        "image": "streamsApp",
-                        "kafka": {
-                            "bootstrapServers": "fake-broker:9092",
-                            "outputTopic": "streams-app-output-topic",
-                            "deleteOutput": True,
-                        },
+        assert mock.mock_calls == [
+            mocker.call.helm_uninstall(NAMESPACE, STREAMS_APP_RELEASE_NAME, dry_run),
+            ANY,  # __bool__
+            ANY,  # __str__
+            mocker.call.helm_uninstall(
+                NAMESPACE,
+                STREAMS_APP_CLEAN_RELEASE_NAME,
+                dry_run,
+            ),
+            ANY,  # __bool__
+            ANY,  # __str__
+            mocker.call.helm_upgrade_install(
+                STREAMS_APP_CLEAN_RELEASE_NAME,
+                "bakdata-streams-bootstrap/streams-app-cleanup-job",
+                dry_run,
+                NAMESPACE,
+                {
+                    "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                    "fullnameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                    "image": "streamsApp",
+                    "kafka": {
+                        "bootstrapServers": "fake-broker:9092",
+                        "outputTopic": "streams-app-output-topic",
+                        "deleteOutput": True,
                     },
-                    HelmUpgradeInstallFlags(
-                        version="3.6.1", wait=True, wait_for_jobs=True
-                    ),
-                ),
-                mocker.call.helm_uninstall(
-                    "test-namespace",
-                    STREAMS_APP_CLEAN_RELEASE_NAME,
-                    dry_run,
-                ),
-            ]
-        )
+                },
+                HelmUpgradeInstallFlags(version="3.6.1", wait=True, wait_for_jobs=True),
+            ),
+            mocker.call.helm_uninstall(
+                NAMESPACE,
+                STREAMS_APP_CLEAN_RELEASE_NAME,
+                dry_run,
+            ),
+            ANY,  # __bool__
+            ANY,  # __str__
+        ]
 
     async def test_should_deploy_clean_up_job_with_values_in_cluster_when_reset(
         self, mocker: MockerFixture
-    ):
+    ) -> None:
         image_tag_in_cluster = "1.1.1"
         mocker.patch.object(
             Helm,
@@ -608,6 +594,7 @@ class TestStreamsApp:
                 "image": "registry/streams-app",
                 "imageTag": image_tag_in_cluster,
                 "nameOverride": STREAMS_APP_NAME,
+                "fullnameOverride": STREAMS_APP_NAME,
                 "replicaCount": 1,
                 "persistence": {"enabled": False, "size": "1Gi"},
                 "statefulSet": False,
@@ -622,7 +609,7 @@ class TestStreamsApp:
         streams_app = StreamsApp.model_validate(
             {
                 "name": STREAMS_APP_NAME,
-                "namespace": "test-namespace",
+                "namespace": NAMESPACE,
                 "values": {
                     "image": "registry/streams-app",
                     "imageTag": "2.2.2",
@@ -658,10 +645,11 @@ class TestStreamsApp:
             STREAMS_APP_CLEAN_RELEASE_NAME,
             "bakdata-streams-bootstrap/streams-app-cleanup-job",
             dry_run,
-            "test-namespace",
+            NAMESPACE,
             {
                 "image": "registry/streams-app",
                 "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                "fullnameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
                 "imageTag": image_tag_in_cluster,
                 "persistence": {"size": "1Gi"},
                 "replicaCount": 1,
@@ -678,7 +666,7 @@ class TestStreamsApp:
 
     async def test_should_deploy_clean_up_job_with_values_in_cluster_when_clean(
         self, mocker: MockerFixture
-    ):
+    ) -> None:
         image_tag_in_cluster = "1.1.1"
         mocker.patch.object(
             Helm,
@@ -687,6 +675,7 @@ class TestStreamsApp:
                 "image": "registry/streams-app",
                 "imageTag": image_tag_in_cluster,
                 "nameOverride": STREAMS_APP_NAME,
+                "fullnameOverride": STREAMS_APP_NAME,
                 "replicaCount": 1,
                 "persistence": {"enabled": False, "size": "1Gi"},
                 "statefulSet": False,
@@ -701,7 +690,7 @@ class TestStreamsApp:
         streams_app = StreamsApp.model_validate(
             {
                 "name": STREAMS_APP_NAME,
-                "namespace": "test-namespace",
+                "namespace": NAMESPACE,
                 "values": {
                     "image": "registry/streams-app",
                     "imageTag": "2.2.2",
@@ -737,10 +726,11 @@ class TestStreamsApp:
             STREAMS_APP_CLEAN_RELEASE_NAME,
             "bakdata-streams-bootstrap/streams-app-cleanup-job",
             dry_run,
-            "test-namespace",
+            NAMESPACE,
             {
                 "image": "registry/streams-app",
                 "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                "fullnameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
                 "imageTag": image_tag_in_cluster,
                 "persistence": {"size": "1Gi"},
                 "replicaCount": 1,
@@ -755,11 +745,11 @@ class TestStreamsApp:
             HelmUpgradeInstallFlags(version="3.6.1", wait=True, wait_for_jobs=True),
         )
 
-    async def test_get_input_output_topics(self):
+    async def test_get_input_output_topics(self) -> None:
         streams_app = StreamsApp.model_validate(
             {
                 "name": "my-app",
-                "namespace": "test-namespace",
+                "namespace": NAMESPACE,
                 "values": {
                     "image": "registry/streams-app",
                     "kafka": {"bootstrapServers": "fake-broker:9092"},
@@ -813,6 +803,147 @@ class TestStreamsApp:
             KafkaTopic(name="topic-extra3"),
             KafkaTopic(name="topic-extra"),
         ]
+
+    def test_raise_validation_error_when_persistence_enabled_and_size_not_set(
+        self, stateful_streams_app: StreamsApp
+    ) -> None:
+        with pytest.raises(
+            ValidationError,
+            match=re.escape(
+                "If app.persistence.enabled is set to true, the field app.persistence.size needs to be set."
+            ),
+        ):
+            stateful_streams_app.values.persistence = PersistenceConfig(enabled=True)
+
+    def test_generate(self, stateful_streams_app: StreamsApp) -> None:
+        assert stateful_streams_app.generate() == {
+            "helm_name_override": STREAMS_APP_HELM_NAME_OVERRIDE,
+            "helm_release_name": STREAMS_APP_RELEASE_NAME,
+            "name": STREAMS_APP_NAME,
+            "enabled": True,
+            "namespace": NAMESPACE,
+            "prefix": PREFIX,
+            "to": {
+                "models": {},
+                "topics": {
+                    "streams-app-output-topic": {
+                        "configs": {},
+                        "partitions_count": 10,
+                        "type": "output",
+                    }
+                },
+            },
+            "type": "streams-app",
+            "values": {
+                "image": "streamsApp",
+                "kafka": {
+                    "bootstrapServers": "fake-broker:9092",
+                    "outputTopic": "streams-app-output-topic",
+                },
+                "persistence": {"enabled": True, "size": "5Gi", "storageClass": "foo"},
+                "statefulSet": True,
+            },
+            "version": "3.6.1",
+        }
+
+    def test_generate_with_autoscaling_triggers(self, streams_app: StreamsApp) -> None:
+        streams_app.values.autoscaling = StreamsAppAutoScaling(
+            enabled=True,
+            triggers=[
+                {
+                    "type": "cron",
+                    "name": "business_hours",
+                    "metadata": {
+                        "timezone": "Europe/Berlin",
+                        "start": "0 8 * * 1-5",
+                        "end": "0 18 * * 1-5",
+                        "desiredReplicas": "2",
+                    },
+                }
+            ],
+        )
+        assert streams_app.generate()["values"]["autoscaling"] == {
+            "enabled": True,
+            "triggers": [
+                {
+                    "type": "cron",
+                    "name": "business_hours",
+                    "metadata": {
+                        "timezone": "Europe/Berlin",
+                        "start": "0 8 * * 1-5",
+                        "end": "0 18 * * 1-5",
+                        "desiredReplicas": "2",
+                    },
+                }
+            ],
+        }
+
+    def test_generate_with_autoscaling_scaling_modifiers(
+        self, streams_app: StreamsApp
+    ) -> None:
+        streams_app.values.autoscaling = StreamsAppAutoScaling(
+            enabled=True,
+            triggers=[{"type": "cron", "name": "business_hours", "metadata": {}}],
+            scaling_modifiers={
+                "formula": "business_hours",
+                "target": "1",
+                "metricType": "AverageValue",
+            },
+        )
+        assert streams_app.generate()["values"]["autoscaling"]["scalingModifiers"] == {
+            "formula": "business_hours",
+            "target": "1",
+            "metricType": "AverageValue",
+        }
+
+    def test_generate_with_autoscaling_additional_triggers(
+        self, streams_app: StreamsApp
+    ) -> None:
+        streams_app.values.autoscaling = StreamsAppAutoScaling(
+            enabled=True,
+            lag_threshold=100,
+            additional_triggers=[
+                {
+                    "type": "cpu",
+                    "metricType": "Utilization",
+                    "metadata": {"value": "80"},
+                }
+            ],
+        )
+        assert streams_app.generate()["values"]["autoscaling"] == {
+            "enabled": True,
+            "lagThreshold": 100,
+            "additionalTriggers": [
+                {
+                    "type": "cpu",
+                    "metricType": "Utilization",
+                    "metadata": {"value": "80"},
+                }
+            ],
+        }
+
+    def test_generate_without_autoscaling_triggers(
+        self, streams_app: StreamsApp
+    ) -> None:
+        streams_app.values.autoscaling = StreamsAppAutoScaling(
+            enabled=True, lag_threshold=100
+        )
+        assert streams_app.generate()["values"]["autoscaling"] == {
+            "enabled": True,
+            "lagThreshold": 100,
+        }
+
+    def test_generate_with_volume_attributes_class_name(
+        self, stateful_streams_app: StreamsApp
+    ) -> None:
+        stateful_streams_app.values.persistence = PersistenceConfig(
+            enabled=True, size="5Gi", volume_attributes_class_name="my-vac"
+        )
+        assert stateful_streams_app.generate()["values"]["persistence"] == {
+            "enabled": True,
+            "size": "5Gi",
+            "volumeAttributesClassName": "my-vac",
+        }
 
     @pytest.fixture()
     def pvc1(self) -> PersistentVolumeClaim:
@@ -868,74 +999,61 @@ class TestStreamsApp:
         empty_helm_get_values: MockerFixture,
         mock_list_pvcs: MagicMock,
         mocker: MockerFixture,
-    ):
-        # actual component
-        mock_helm_uninstall_streams_app = mocker.patch.object(
-            stateful_streams_app._helm, "uninstall"
-        )
-        cleaner = stateful_streams_app._cleaner
-        assert isinstance(cleaner, StreamsAppCleaner)
-
-        mock_helm_upgrade_install = mocker.patch.object(
-            cleaner._helm, "upgrade_install"
-        )
-        mock_helm_uninstall = mocker.patch.object(cleaner._helm, "uninstall")
-
-        mock_delete_pvcs = mocker.patch.object(PVCHandler, "delete_pvcs")
-
+    ) -> None:
         mock = MagicMock()
-        mock.attach_mock(mock_helm_uninstall_streams_app, "helm_uninstall_streams_app")
+        mock_helm_upgrade_install = mocker.patch.object(Helm, "upgrade_install")
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
+        mock_helm_uninstall = mocker.patch.object(Helm, "uninstall")
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
+        mock_delete_pvcs = mocker.patch.object(PVCHandler, "delete_pvcs")
         mock.attach_mock(mock_delete_pvcs, "delete_pvcs")
 
         dry_run = False
         await stateful_streams_app.clean(dry_run=dry_run)
 
-        mock.assert_has_calls(
-            [
-                mocker.call.helm_uninstall_streams_app(
-                    "test-namespace", STREAMS_APP_RELEASE_NAME, dry_run
-                ),
-                ANY,  # __bool__
-                ANY,  # __str__
-                mocker.call.helm_uninstall(
-                    "test-namespace",
-                    STREAMS_APP_CLEAN_RELEASE_NAME,
-                    dry_run,
-                ),
-                ANY,  # __bool__
-                ANY,  # __str__
-                mocker.call.helm_upgrade_install(
-                    STREAMS_APP_CLEAN_RELEASE_NAME,
-                    "bakdata-streams-bootstrap/streams-app-cleanup-job",
-                    dry_run,
-                    "test-namespace",
-                    {
-                        "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
-                        "image": "streamsApp",
-                        "kafka": {
-                            "bootstrapServers": "fake-broker:9092",
-                            "outputTopic": "streams-app-output-topic",
-                            "deleteOutput": True,
-                        },
-                        "statefulSet": True,
-                        "persistence": {"enabled": True, "size": "5Gi"},
+        assert mock.mock_calls == [
+            mocker.call.helm_uninstall(NAMESPACE, STREAMS_APP_RELEASE_NAME, dry_run),
+            ANY,  # __bool__
+            ANY,  # __str__
+            mocker.call.helm_uninstall(
+                NAMESPACE,
+                STREAMS_APP_CLEAN_RELEASE_NAME,
+                dry_run,
+            ),
+            ANY,  # __bool__
+            ANY,  # __str__
+            mocker.call.helm_upgrade_install(
+                STREAMS_APP_CLEAN_RELEASE_NAME,
+                "bakdata-streams-bootstrap/streams-app-cleanup-job",
+                dry_run,
+                NAMESPACE,
+                {
+                    "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                    "fullnameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                    "image": "streamsApp",
+                    "kafka": {
+                        "bootstrapServers": "fake-broker:9092",
+                        "outputTopic": "streams-app-output-topic",
+                        "deleteOutput": True,
                     },
-                    HelmUpgradeInstallFlags(
-                        version="3.6.1", wait=True, wait_for_jobs=True
-                    ),
-                ),
-                mocker.call.helm_uninstall(
-                    "test-namespace",
-                    STREAMS_APP_CLEAN_RELEASE_NAME,
-                    dry_run,
-                ),
-                ANY,  # __bool__
-                ANY,  # __str__
-                mocker.call.delete_pvcs(False),
-            ]
-        )
+                    "statefulSet": True,
+                    "persistence": {
+                        "enabled": True,
+                        "size": "5Gi",
+                        "storageClass": "foo",
+                    },
+                },
+                HelmUpgradeInstallFlags(version="3.6.1", wait=True, wait_for_jobs=True),
+            ),
+            mocker.call.helm_uninstall(
+                NAMESPACE,
+                STREAMS_APP_CLEAN_RELEASE_NAME,
+                dry_run,
+            ),
+            ANY,  # __bool__
+            ANY,  # __str__
+            mocker.call.delete_pvcs(False),
+        ]
 
     @pytest.mark.usefixtures("kubeconfig")
     async def test_stateful_clean_with_dry_run_true(
@@ -944,9 +1062,7 @@ class TestStreamsApp:
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
         mock_list_pvcs: MagicMock,
-        caplog: pytest.LogCaptureFixture,
-    ):
-        caplog.set_level(logging.DEBUG)
+    ) -> None:
         # actual component
         mocker.patch.object(stateful_streams_app, "destroy")
 
@@ -957,21 +1073,22 @@ class TestStreamsApp:
         mocker.patch.object(cleaner, "deploy")
 
         dry_run = True
-        await stateful_streams_app.clean(dry_run=dry_run)
+        with capture_logs() as cap_logs:
+            await stateful_streams_app.clean(dry_run=dry_run)
 
         mock_list_pvcs.assert_called_once()
-        assert (
-            f"Deleting in namespace 'test-namespace' StatefulSet '{STREAMS_APP_FULL_NAME}' PVCs ['test-pvc1', 'test-pvc2', 'test-pvc3']"
-            in caplog.text
-        )
+        assert {
+            "event": "Deleting PVCs.",
+            "app_name": STREAMS_APP_FULL_NAME,
+            "namespace": "test-namespace",
+            "pvc_names": ["test-pvc1", "test-pvc2", "test-pvc3"],
+            "log_level": "debug",
+        } in cap_logs
 
     async def test_clean_should_fall_back_to_local_values_when_validation_of_cluster_values_fails(
         self,
         mocker: MockerFixture,
-        caplog: pytest.LogCaptureFixture,
-    ):
-        caplog.set_level(logging.WARNING)
-
+    ) -> None:
         # invalid model
         mocker.patch.object(
             Helm,
@@ -980,6 +1097,7 @@ class TestStreamsApp:
                 "image": "registry/producer-app",
                 "imageTag": "1.1.1",
                 "nameOverride": STREAMS_APP_NAME,
+                "fullnameOverride": STREAMS_APP_NAME,
                 "streams": {
                     "brokers": "fake-broker:9092",
                     "inputTopics": ["test-input-topic"],
@@ -992,7 +1110,7 @@ class TestStreamsApp:
         streams_app = StreamsApp.model_validate(
             {
                 "name": STREAMS_APP_NAME,
-                "namespace": "test-namespace",
+                "namespace": NAMESPACE,
                 "values": {
                     "image": "registry/streams-app",
                     "imageTag": "2.2.2",
@@ -1022,21 +1140,23 @@ class TestStreamsApp:
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
 
         dry_run = False
-        await streams_app.clean(dry_run=dry_run)
+        with capture_logs() as cap_logs:
+            await streams_app.clean(dry_run=dry_run)
 
-        assert (
-            "The values in the cluster are invalid with the current model. Falling back to the enriched values of pipeline.yaml and defaults.yaml"
-            in caplog.text
-        )
+        assert {
+            "event": "The values in the cluster are invalid with the current model. Falling back to the enriched values of pipeline.yaml and defaults.yaml",
+            "log_level": "warning",
+        } in cap_logs
 
         mock_helm_upgrade_install.assert_called_once_with(
             STREAMS_APP_CLEAN_RELEASE_NAME,
             "bakdata-streams-bootstrap/streams-app-cleanup-job",
             dry_run,
-            "test-namespace",
+            NAMESPACE,
             {
                 "image": "registry/streams-app",
                 "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                "fullnameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
                 "imageTag": "2.2.2",
                 "kafka": {
                     "bootstrapServers": "fake-broker:9092",

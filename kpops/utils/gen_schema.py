@@ -3,11 +3,11 @@
 
 import inspect
 import json
-import logging
 from abc import ABC
 from collections.abc import Sequence
 from typing import Annotated, Any, Literal, Union
 
+import structlog
 from pydantic import (
     BaseModel,
     Field,
@@ -33,7 +33,7 @@ from kpops.core.registry import Registry
 class MultiComponentGenerateJsonSchema(GenerateJsonSchema): ...
 
 
-log = logging.getLogger("")
+log = structlog.get_logger("")
 
 registry = Registry()
 registry.discover_components()
@@ -58,7 +58,10 @@ def _is_valid_component(
     if not allow_abstract and (
         inspect.isabstract(component) or ABC in component.__bases__
     ):
-        log.warning(f"SKIPPED {component.__name__}, component is abstract.")
+        log.warning(
+            "Component is abstract. Skipping schema generation.",
+            component=component.__name__,
+        )
         return False
     return True
 
@@ -71,14 +74,14 @@ def gen_pipeline_schema() -> None:
     # re-assign component type as Literal to work as discriminator
     for component in components:
         component.model_fields["type"] = FieldInfo(
-            annotation=Literal[component.type],  # pyright: ignore[reportArgumentType]
+            annotation=Literal[component.type],  # ty: ignore[invalid-type-form]
             default=component.type,
         )
-        core_schema: DefinitionsSchema = component.__pydantic_core_schema__  # pyright: ignore[reportAssignmentType]
+        core_schema: DefinitionsSchema = component.__pydantic_core_schema__  # ty: ignore[invalid-assignment]
         schema = core_schema
-        while "schema" in schema:
-            schema = schema["schema"]
-        model_schema: ModelFieldsSchema = schema  # pyright: ignore[reportAssignmentType]
+        while "schema" in schema:  # ty: ignore[unsupported-operator]
+            schema = schema["schema"]  # ty: ignore[not-subscriptable]
+        model_schema: ModelFieldsSchema = schema  # ty: ignore[invalid-assignment]
         model_schema["fields"]["type"] = ModelField(
             type="model-field",
             schema=LiteralSchema(
@@ -87,15 +90,13 @@ def gen_pipeline_schema() -> None:
             ),
         )
 
-    PipelineComponents = Union[tuple(components)]  # pyright: ignore[reportInvalidTypeArguments,reportGeneralTypeIssues]
+    PipelineComponents = Union[tuple(components)]
     AnnotatedPipelineComponents = Annotated[
-        PipelineComponents, Field(discriminator="type")
+        PipelineComponents, Field(discriminator="type")  # ty: ignore[invalid-type-form]
     ]
 
     class PipelineSchema(RootModel[Sequence[AnnotatedPipelineComponents]]):
-        root: Sequence[
-            AnnotatedPipelineComponents  # pyright: ignore[reportInvalidTypeForm]
-        ]
+        root: Sequence[AnnotatedPipelineComponents]
 
     print_schema(PipelineSchema)
 

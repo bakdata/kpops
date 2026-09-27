@@ -1,13 +1,14 @@
 import json
-import logging
-from unittest import mock
-from unittest.mock import AsyncMock, MagicMock
+import re
+from unittest.mock import AsyncMock
 
 import pytest
+import structlog
 from pydantic import AnyHttpUrl, TypeAdapter
 from pytest_mock import MockerFixture
 from schema_registry.client.schema import AvroSchema
 from schema_registry.client.utils import SchemaVersion
+from structlog.testing import capture_logs
 
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.schema_handler.schema_provider import SchemaProvider
@@ -17,31 +18,10 @@ from kpops.components.base_components.models.to_section import (
 )
 from kpops.components.common.topic import OutputTopicTypes, TopicConfig
 from kpops.config import KpopsConfig, SchemaRegistryConfig
-from kpops.utils.colorify import greenify, magentaify, yellowify
+from kpops.utils.colorify import greenify, magentaify
 from tests.pipeline.test_components.components import TestSchemaProvider
 
-log = logging.getLogger("SchemaHandler")
-
-
-@pytest.fixture(autouse=True)
-def log_info_mock(mocker: MockerFixture) -> MagicMock:
-    return mocker.patch(
-        "kpops.component_handlers.schema_handler.schema_handler.log.info"
-    )
-
-
-@pytest.fixture(autouse=True)
-def log_debug_mock(mocker: MockerFixture) -> MagicMock:
-    return mocker.patch(
-        "kpops.component_handlers.schema_handler.schema_handler.log.debug"
-    )
-
-
-@pytest.fixture(autouse=True)
-def log_warning_mock(mocker: MockerFixture) -> MagicMock:
-    return mocker.patch(
-        "kpops.component_handlers.schema_handler.schema_handler.log.warning"
-    )
+log = structlog.get_logger("SchemaHandler")
 
 
 @pytest.fixture(autouse=True)
@@ -58,8 +38,8 @@ def topic_config() -> TopicConfig:
     return TopicConfig(
         type=OutputTopicTypes.OUTPUT,
         # pyright has no way of validating these aliased Pydantic fields because we're also using the allow_population_by_field_name setting
-        key_schema=None,  # pyright: ignore[reportGeneralTypeIssues]
-        value_schema="com.bakdata.kpops.test.SchemaHandlerTest",  # pyright: ignore[reportGeneralTypeIssues]
+        key_schema=None,
+        value_schema="com.bakdata.kpops.test.SchemaHandlerTest",
     )
 
 
@@ -74,12 +54,12 @@ def kpops_config() -> KpopsConfig:
         kafka_brokers="broker:9092",
         schema_registry=SchemaRegistryConfig(
             enabled=True,
-            url=TypeAdapter(AnyHttpUrl).validate_python("http://mock:8081"),  # pyright: ignore[reportCallIssue,reportArgumentType]
+            url=TypeAdapter(AnyHttpUrl).validate_python("http://mock:8081"),
         ),
     )
 
 
-def test_load_schema_handler(kpops_config: KpopsConfig):
+def test_load_schema_handler(kpops_config: KpopsConfig) -> None:
     assert isinstance(SchemaHandler.load_schema_handler(kpops_config), SchemaHandler)
 
     config_disable = kpops_config.model_copy()
@@ -89,7 +69,7 @@ def test_load_schema_handler(kpops_config: KpopsConfig):
 
 
 @pytest.mark.usefixtures("custom_components")
-def test_should_lazy_load_schema_provider(kpops_config: KpopsConfig):
+def test_should_lazy_load_schema_provider(kpops_config: KpopsConfig) -> None:
     schema_handler = SchemaHandler.load_schema_handler(kpops_config)
 
     assert schema_handler is not None
@@ -106,14 +86,16 @@ def test_should_lazy_load_schema_provider(kpops_config: KpopsConfig):
 
 def test_should_raise_value_error_if_schema_provider_class_not_found(
     kpops_config: KpopsConfig,
-):
+) -> None:
     schema_handler = SchemaHandler(kpops_config)
 
     with pytest.raises(
         ValueError,
-        match="No schema provider found. "
-        "Please implement the abstract method in "
-        f"{SchemaProvider.__module__}.{SchemaProvider.__name__}.",
+        match=re.escape(
+            "No schema provider found. "
+            "Please implement the abstract method in "
+            f"{SchemaProvider.__module__}.{SchemaProvider.__name__}."
+        ),
     ):
         schema_handler.schema_provider.provide_schema(
             "com.bakdata.kpops.test.SchemaHandlerTest", {}
@@ -123,19 +105,22 @@ def test_should_raise_value_error_if_schema_provider_class_not_found(
 @pytest.mark.usefixtures("custom_components")
 async def test_should_log_info_when_submit_schemas_that_not_exists_and_dry_run_true(
     to_section: ToSection,
-    log_info_mock: MagicMock,
     schema_registry_mock: AsyncMock,
     kpops_config: KpopsConfig,
-):
+) -> None:
     schema_handler = SchemaHandler(kpops_config)
 
     schema_registry_mock.get_versions.return_value = []
 
-    await schema_handler.submit_schemas(to_section, True)
+    with capture_logs() as cap_logs:
+        await schema_handler.submit_schemas(to_section, True)
 
-    log_info_mock.assert_called_once_with(
-        greenify("Schema Submission: The subject topic-X-value will be submitted.")
-    )
+    assert {
+        "event": greenify(
+            "Schema Submission: The subject topic-X-value will be submitted."
+        ),
+        "log_level": "info",
+    } in cap_logs
     schema_registry_mock.register.assert_not_called()
 
 
@@ -143,21 +128,24 @@ async def test_should_log_info_when_submit_schemas_that_not_exists_and_dry_run_t
 async def test_should_log_info_when_submit_schemas_that_exists_and_dry_run_true(
     topic_config: TopicConfig,
     to_section: ToSection,
-    log_info_mock: MagicMock,
     schema_registry_mock: AsyncMock,
     kpops_config: KpopsConfig,
-):
+) -> None:
     schema_handler = SchemaHandler(kpops_config)
 
     schema_registry_mock.get_versions.return_value = [1, 2, 3]
     schema_registry_mock.check_version.return_value = None
     schema_registry_mock.test_compatibility.return_value = True
 
-    await schema_handler.submit_schemas(to_section, True)
+    with capture_logs() as cap_logs:
+        await schema_handler.submit_schemas(to_section, True)
 
-    log_info_mock.assert_called_once_with(
-        f"Schema Submission: compatible schema for topic-X-value with model {topic_config.value_schema}."
-    )
+    assert {
+        "event": "Compatible schema found.",
+        "subject": "topic-X-value",
+        "model": topic_config.value_schema,
+        "log_level": "info",
+    } in cap_logs
     schema_registry_mock.register.assert_not_called()
 
 
@@ -167,7 +155,7 @@ async def test_should_raise_exception_when_submit_schema_that_exists_and_not_com
     to_section: ToSection,
     schema_registry_mock: AsyncMock,
     kpops_config: KpopsConfig,
-):
+) -> None:
     schema_provider = TestSchemaProvider()
     schema_handler = SchemaHandler(kpops_config)
     schema_class = "com.bakdata.kpops.test.SchemaHandlerTest"
@@ -202,11 +190,9 @@ async def test_should_raise_exception_when_submit_schema_that_exists_and_not_com
 async def test_should_log_debug_when_submit_schema_that_exists_and_registered_under_version_and_dry_run_true(
     topic_config: TopicConfig,
     to_section: ToSection,
-    log_info_mock: MagicMock,
-    log_debug_mock: MagicMock,
     schema_registry_mock: AsyncMock,
     kpops_config: KpopsConfig,
-):
+) -> None:
     schema_provider = TestSchemaProvider()
     schema_handler = SchemaHandler(kpops_config)
     schema_class = "com.bakdata.kpops.test.SchemaHandlerTest"
@@ -216,19 +202,22 @@ async def test_should_log_debug_when_submit_schema_that_exists_and_registered_un
     schema_registry_mock.get_versions.return_value = [1]
     schema_registry_mock.check_version.return_value = registered_version
 
-    await schema_handler.submit_schemas(to_section, True)
+    with capture_logs() as cap_logs:
+        await schema_handler.submit_schemas(to_section, True)
 
-    assert log_info_mock.mock_calls == [
-        mock.call(
-            f"Schema Submission: compatible schema for topic-X-value with model {topic_config.value_schema}."
-        ),
-    ]
+    assert {
+        "event": "Compatible schema found.",
+        "subject": "topic-X-value",
+        "model": topic_config.value_schema,
+        "log_level": "info",
+    } in cap_logs
 
-    assert log_debug_mock.mock_calls == [
-        mock.call(
-            f"Schema Submission: schema was already submitted for the subject topic-X-value as version {registered_version.schema}. Therefore, the specified schema must be compatible."
-        ),
-    ]
+    assert {
+        "event": "Schema was already submitted. Therefore, the specified schema must be compatible.",
+        "subject": "topic-X-value",
+        "version": registered_version.schema,
+        "log_level": "debug",
+    } in cap_logs
 
     schema_registry_mock.register.assert_not_called()
 
@@ -237,10 +226,9 @@ async def test_should_log_debug_when_submit_schema_that_exists_and_registered_un
 async def test_should_submit_non_existing_schema_when_not_dry(
     topic_config: TopicConfig,
     to_section: ToSection,
-    log_info_mock: MagicMock,
     schema_registry_mock: AsyncMock,
     kpops_config: KpopsConfig,
-):
+) -> None:
     schema_provider = TestSchemaProvider()
     schema_class = "com.bakdata.kpops.test.SchemaHandlerTest"
     schema = schema_provider.provide_schema(schema_class, {})
@@ -248,12 +236,16 @@ async def test_should_submit_non_existing_schema_when_not_dry(
 
     schema_registry_mock.get_versions.return_value = []
 
-    await schema_handler.submit_schemas(to_section, False)
+    with capture_logs() as cap_logs:
+        await schema_handler.submit_schemas(to_section, False)
 
     subject = "topic-X-value"
-    log_info_mock.assert_called_once_with(
-        f"Schema Submission: schema submitted for {subject} with model {topic_config.value_schema}."
-    )
+    assert {
+        "event": "Schema submitted.",
+        "subject": subject,
+        "model": topic_config.value_schema,
+        "log_level": "info",
+    } in cap_logs
 
     schema_registry_mock.get_versions.assert_not_called()
     schema_registry_mock.register.assert_called_once_with(
@@ -263,19 +255,21 @@ async def test_should_submit_non_existing_schema_when_not_dry(
 
 async def test_should_log_correct_message_when_delete_schemas_and_in_dry_run(
     to_section: ToSection,
-    log_info_mock: MagicMock,
     schema_registry_mock: AsyncMock,
     kpops_config: KpopsConfig,
-):
+) -> None:
     schema_handler = SchemaHandler(kpops_config)
 
     schema_registry_mock.get_versions.return_value = []
 
-    await schema_handler.delete_schemas(to_section, True)
+    with capture_logs() as cap_logs:
+        await schema_handler.delete_schemas(to_section, True)
 
-    log_info_mock.assert_called_once_with(
-        magentaify("Schema Deletion: will delete subject topic-X-value.")
-    )
+    assert {
+        "event": magentaify("Schema Deletion: will delete subject."),
+        "subject": "topic-X-value",
+        "log_level": "info",
+    } in cap_logs
 
     schema_registry_mock.delete_subject.assert_not_called()
 
@@ -284,7 +278,7 @@ async def test_should_delete_schemas_when_not_in_dry_run(
     to_section: ToSection,
     schema_registry_mock: AsyncMock,
     kpops_config: KpopsConfig,
-):
+) -> None:
     schema_handler = SchemaHandler(kpops_config)
 
     schema_registry_mock.get_versions.return_value = []
@@ -295,15 +289,14 @@ async def test_should_delete_schemas_when_not_in_dry_run(
 
 
 def test_should_log_warning_if_schema_handler_is_not_enabled_but_url_is_set(
-    log_warning_mock: MagicMock,
     kpops_config: KpopsConfig,
-):
+) -> None:
     kpops_config.schema_registry.enabled = False
-    SchemaHandler.load_schema_handler(kpops_config)
+    with capture_logs() as cap_logs:
+        SchemaHandler.load_schema_handler(kpops_config)
 
-    log_warning_mock.assert_called_once_with(
-        yellowify(
-            f"The property schema_registry.enabled is set to False but the URL is set to {kpops_config.schema_registry.url}."
-            f"\nIf you want to use the schema handler make sure to enable it."
-        )
-    )
+    assert {
+        "event": "The property schema_registry.enabled is set to False but the URL is set. If you want to use the schema handler make sure to enable it.",
+        "url": str(kpops_config.schema_registry.url),
+        "log_level": "warning",
+    } in cap_logs

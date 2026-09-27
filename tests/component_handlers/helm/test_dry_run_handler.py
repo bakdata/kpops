@@ -1,0 +1,112 @@
+from pathlib import Path
+from unittest.mock import MagicMock
+
+import pytest
+import structlog
+from pytest_mock import MockerFixture
+from structlog.testing import capture_logs
+
+from kpops.component_handlers.helm.dry_run_handler import DryRunHandler
+from kpops.component_handlers.helm.model import HelmTemplate
+from kpops.manifests.kubernetes import KubernetesManifest
+
+log = structlog.get_logger("TestLogger")
+
+
+class TestDryRunHandler:
+    @pytest.fixture()
+    def helm_mock(self, mocker: MockerFixture) -> MagicMock:
+        return mocker.patch(
+            "kpops.component_handlers.helm.dry_run_handler.Helm"
+        ).return_value
+
+    @pytest.fixture()
+    def helm_diff_mock(self, mocker: MockerFixture) -> MagicMock:
+        return mocker.patch(
+            "kpops.component_handlers.helm.dry_run_handler.HelmDiff"
+        ).return_value
+
+    def test_should_print_helm_diff_when_release_is_new(
+        self,
+        helm_mock: MagicMock,
+        helm_diff_mock: MagicMock,
+        mocker: MockerFixture,
+    ) -> None:
+        helm_mock.get_manifest.return_value = iter(())
+        new_release = iter(
+            [
+                HelmTemplate(
+                    Path("path.yaml"),
+                    KubernetesManifest.model_validate(
+                        {"apiVersion": "v1", "kind": "Deployment", "metadata": {}}
+                    ),
+                )
+            ]
+        )
+        mock_load_manifest = mocker.patch(
+            "kpops.component_handlers.helm.dry_run_handler.Helm.load_manifest",
+            return_value=new_release,
+        )
+
+        dry_run_handler = DryRunHandler(helm_mock, helm_diff_mock, "test-namespace")
+        with capture_logs() as cap_logs:
+            dry_run_handler.print_helm_diff("A test stdout", "a-release-name", log)
+
+        helm_mock.get_manifest.assert_called_once_with(
+            "a-release-name", "test-namespace"
+        )
+        assert {
+            "event": "Helm release does not exist",
+            "release": "a-release-name",
+            "log_level": "info",
+        } in cap_logs
+        mock_load_manifest.assert_called_once_with("A test stdout")
+        helm_diff_mock.log_helm_diff.assert_called_once_with(log, [], new_release)
+
+    def test_should_print_helm_diff_when_release_exists(
+        self,
+        helm_mock: MagicMock,
+        helm_diff_mock: MagicMock,
+        mocker: MockerFixture,
+    ) -> None:
+        current_release = [
+            HelmTemplate(
+                Path("path.yaml"),
+                KubernetesManifest.model_validate(
+                    {"apiVersion": "v1", "kind": "Deployment", "metadata": {}}
+                ),
+            )
+        ]
+
+        helm_mock.get_manifest.return_value = iter(current_release)
+        new_release = iter(
+            [
+                HelmTemplate(
+                    Path("path.yaml"),
+                    KubernetesManifest.model_validate(
+                        {"apiVersion": "v1", "kind": "Deployment", "metadata": {}}
+                    ),
+                )
+            ]
+        )
+        mock_load_manifest = mocker.patch(
+            "kpops.component_handlers.helm.dry_run_handler.Helm.load_manifest",
+            return_value=iter(new_release),
+        )
+
+        dry_run_handler = DryRunHandler(helm_mock, helm_diff_mock, "test-namespace")
+        with capture_logs() as cap_logs:
+            dry_run_handler.print_helm_diff("A test stdout", "a-release-name", log)
+
+        helm_mock.get_manifest.assert_called_once_with(
+            "a-release-name", "test-namespace"
+        )
+        assert {
+            "event": "Helm release already exists",
+            "release": "a-release-name",
+            "log_level": "info",
+        } in cap_logs
+        mock_load_manifest.assert_called_once_with("A test stdout")
+        helm_diff_mock.log_helm_diff.assert_called_once_with(
+            log, current_release, new_release
+        )

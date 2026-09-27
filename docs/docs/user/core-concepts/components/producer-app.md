@@ -24,7 +24,7 @@ Configures a [streams-bootstrap](https://github.com/bakdata/streams-bootstrap){t
 
 #### deploy
 
-In addition to [KubernetesApp's `deploy`](kubernetes-app.md#deploy):
+In addition to [StreamsBootstrap's `deploy`](streams-bootstrap.md#deploy):
 
 - Create topics if provided (optional)
 - Submit Avro schemas to the registry if provided (optional)

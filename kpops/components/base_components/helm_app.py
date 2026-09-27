@@ -1,24 +1,24 @@
 from __future__ import annotations
 
-import logging
 from functools import cached_property
 from typing import Annotated, Any
 
 import pydantic
-from pydantic import Field, model_serializer
+import structlog
+from pydantic import Field, computed_field
 from typing_extensions import override
 
-from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
-from kpops.component_handlers.helm_wrapper.helm import Helm
-from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
-from kpops.component_handlers.helm_wrapper.model import (
+from kpops.component_handlers.helm.dry_run_handler import DryRunHandler
+from kpops.component_handlers.helm.helm import Helm
+from kpops.component_handlers.helm.helm_diff import HelmDiff
+from kpops.component_handlers.helm.model import (
     HelmDiffConfig,
     HelmFlags,
     HelmRepoConfig,
     HelmTemplateFlags,
     HelmUpgradeInstallFlags,
 )
-from kpops.component_handlers.helm_wrapper.utils import (
+from kpops.component_handlers.helm.utils import (
     create_helm_name_override,
     create_helm_release_name,
 )
@@ -31,24 +31,29 @@ from kpops.core.operation import OperationMode
 from kpops.manifests.argo import ArgoSyncWave, enrich_annotations
 from kpops.manifests.kubernetes import K8S_LABEL_MAX_LEN, KubernetesManifest
 from kpops.utils.colorify import magentaify
-from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import exclude_by_name
+from kpops.utils.pydantic import SkipGenerate
 
-log = logging.getLogger("HelmApp")
+log = structlog.get_logger("HelmApp")
 
 
 class HelmAppValues(KubernetesAppValues):
     """Helm app values.
 
     :param name_override: Helm chart name override, assigned automatically
+    :param fullname_override: Helm chart fullname override, assigned automatically
     """
 
     name_override: (
         Annotated[str, pydantic.StringConstraints(max_length=K8S_LABEL_MAX_LEN)] | None
     ) = Field(
         default=None,
-        title="Nameoverride",
-        description=describe_attr("name_override", __doc__),
+        title="NameOverride",
+    )
+    fullname_override: (
+        Annotated[str, pydantic.StringConstraints(max_length=K8S_LABEL_MAX_LEN)] | None
+    ) = Field(
+        default=None,
+        title="FullnameOverride",
     )
 
     # TODO(Ivan Yordanov): Replace with a function decorated with `@model_serializer`
@@ -70,23 +75,14 @@ class HelmApp(KubernetesApp):
     :param diff_config: Helm diff config
     :param version: Helm chart version, defaults to None
     :param values: Helm app values
+    :param timeout: Timeout for Helm operations to finish
     """
 
-    repo_config: HelmRepoConfig | None = Field(
-        default=None,
-        description=describe_attr("repo_config", __doc__),
-    )
-    diff_config: HelmDiffConfig = Field(
-        default=HelmDiffConfig(),
-        description=describe_attr("diff_config", __doc__),
-    )
-    version: str | None = Field(
-        default=None,
-        description=describe_attr("version", __doc__),
-    )
-    values: HelmAppValues = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
-        description=describe_attr("values", __doc__),
-    )
+    repo_config: SkipGenerate[HelmRepoConfig | None] = None
+    diff_config: SkipGenerate[HelmDiffConfig] = HelmDiffConfig()
+    version: str | None = None
+    timeout: str | None = None
+    values: HelmAppValues
 
     @cached_property
     def _helm(self) -> Helm:
@@ -109,11 +105,13 @@ class HelmApp(KubernetesApp):
     def _dry_run_handler(self) -> DryRunHandler:
         return DryRunHandler(self._helm, self._helm_diff, self.namespace)
 
+    @computed_field  # NOTE: we want to see them in the generate output
     @property
     def helm_release_name(self) -> str:
         """The name for the Helm release."""
         return create_helm_release_name(self.full_name)
 
+    @computed_field  # NOTE: we want to see them in the generate output
     @property
     def helm_name_override(self) -> str:
         """Helm chart name override."""
@@ -133,10 +131,15 @@ class HelmApp(KubernetesApp):
         auth_flags = (
             self.repo_config.repo_auth_flags.model_dump() if self.repo_config else {}
         )
+        effective_timeout = (
+            self.timeout or get_config().helm_config.timeout or HelmFlags().timeout
+        )
         return HelmFlags(
             **auth_flags,
             version=self.version,
             create_namespace=get_config().create_namespace,
+            force=get_config().helm_config.force_replace,
+            timeout=effective_timeout,
         )
 
     @property
@@ -196,8 +199,11 @@ class HelmApp(KubernetesApp):
 
         :returns: The values to be used by Helm
         """
+        name_override = self.helm_name_override
         if self.values.name_override is None:
-            self.values.name_override = self.helm_name_override
+            self.values.name_override = name_override
+        if self.values.fullname_override is None:
+            self.values.fullname_override = name_override
         return self.values.model_dump()
 
     def print_helm_diff(self, stdout: str) -> None:
@@ -209,25 +215,8 @@ class HelmApp(KubernetesApp):
             self._helm.get_manifest(self.helm_release_name, self.namespace)
         )
         if current_release:
-            log.info(f"Helm release {self.helm_release_name} already exists")
+            log.info("Helm release already exists", release=self.helm_release_name)
         else:
-            log.info(f"Helm release {self.helm_release_name} does not exist")
+            log.info("Helm release does not exist", release=self.helm_release_name)
         new_release = Helm.load_manifest(stdout)
         self._helm_diff.log_helm_diff(log, current_release, new_release)
-
-    # TODO: move to PipelineComponent as generic serialize handler for generate context
-    @model_serializer(mode="wrap", when_used="always")
-    def serialize_model(
-        self,
-        default_serialize_handler: pydantic.SerializerFunctionWrapHandler,
-        info: pydantic.SerializationInfo,
-    ) -> dict[str, Any]:
-        # TODO: refactor with Annotated SkipGenerate
-        exclude_generate = {
-            "repo_config",
-            "diff_config",
-        }
-        return exclude_by_name(
-            default_serialize_handler(self),
-            *exclude_generate if info.context == "generate" else {},
-        )

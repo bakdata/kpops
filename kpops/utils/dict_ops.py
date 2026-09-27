@@ -2,7 +2,7 @@ import re
 from collections import ChainMap as _ChainMap
 from collections.abc import Mapping
 from string import Template
-from typing import Any, TypeVar
+from typing import Any, ClassVar, TypeVar
 
 from typing_extensions import override
 
@@ -28,7 +28,7 @@ def update_nested_pair(
         if isinstance(value, Mapping):
             nested_val = original_dict.get(key, {})
             if isinstance(nested_val, dict):
-                original_dict[key] = update_nested_pair(nested_val, value)
+                original_dict[key] = update_nested_pair(nested_val, value)  # ty: ignore[invalid-assignment]
         elif key not in original_dict:
             original_dict[key] = value
     return original_dict
@@ -77,7 +77,7 @@ def flatten_mapping(
         if prefix:
             key = prefix + separator + key
         if isinstance(value, Mapping):
-            nested_mapping = flatten_mapping(value, key, separator)  # pyright: ignore[reportAssignmentType,reportUnknownArgumentType]
+            nested_mapping = flatten_mapping(value, key, separator)
             top = update_nested_pair(top, nested_mapping)
         else:
             top[key] = value
@@ -114,17 +114,19 @@ _sentinel_dict = {}
 class ImprovedTemplate(Template):
     """Introduces the dot as an allowed character in placeholders."""
 
-    idpattern = r"(?a:[_a-z][_.a-z0-9]*)"
+    idpattern: ClassVar[str] = r"(?a:[_a-z][_.a-z0-9]*)"
 
     @override
-    def safe_substitute(self, mapping=_sentinel_dict, /, **kws) -> str:
+    def safe_substitute(
+        self, mapping: Mapping[str, object] = _sentinel_dict, /, **kws: Any
+    ) -> str:
         if mapping is _sentinel_dict:
             mapping = kws
         elif kws:
-            mapping = _ChainMap(kws, mapping)
+            mapping = _ChainMap(kws, dict(mapping))
 
         # Helper function for .sub()
-        def convert(mo: re.Match[str]):
+        def convert(mo: re.Match[str]) -> str:
             named = mo.group("named") or mo.group("braced")
             if named is not None:
                 try:

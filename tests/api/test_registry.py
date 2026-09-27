@@ -17,13 +17,12 @@ from kpops.components.base_components.kafka_connector import (
 from kpops.components.base_components.kubernetes_app import KubernetesApp
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.components.streams_bootstrap import (
+    ConsumerApp,
+    ConsumerProducerApp,
     ProducerApp,
     StreamsApp,
     StreamsBootstrap,
 )
-from kpops.components.streams_bootstrap_v2 import StreamsBootstrapV2
-from kpops.components.streams_bootstrap_v2.producer.producer_app import ProducerAppV2
-from kpops.components.streams_bootstrap_v2.streams.streams_app import StreamsAppV2
 from kpops.core.exception import ClassNotFoundError
 from kpops.core.registry import Registry, _find_classes, _iter_namespace, find_class
 from tests.cli.resources.custom_module import CustomSchemaProvider
@@ -42,32 +41,30 @@ class Unrelated:
 MODULE = SubComponent.__module__
 
 
-def test_namespace():
+def test_namespace() -> None:
     """Ensure namespace package according to PEP 420."""
     assert not Path("kpops/__init__.py").exists()
     assert not Path("kpops/components/__init__.py").exists()
 
 
 @pytest.mark.usefixtures("custom_components")
-def test_iter_namespace():
+def test_iter_namespace() -> None:
     components_module = importlib.import_module("kpops.components")
     assert [module.__name__ for module in _iter_namespace(components_module)] == [
         "kpops.components.base_components",
         "kpops.components.common",
         "kpops.components.streams_bootstrap",
-        "kpops.components.streams_bootstrap_v2",
         "kpops.components.test_components",
     ]
 
 
 @pytest.mark.usefixtures("custom_components")
-def test_iter_component_modules():
+def test_iter_component_modules() -> None:
     assert [module.__name__ for module in Registry.iter_component_modules()] == [
         "kpops.components",
         "kpops.components.base_components",
         "kpops.components.common",
         "kpops.components.streams_bootstrap",
-        "kpops.components.streams_bootstrap_v2",
         "kpops.components.test_components",
     ]
 
@@ -77,7 +74,7 @@ def module() -> ModuleType:
     return importlib.import_module(MODULE)
 
 
-def test_find_classes(module: ModuleType):
+def test_find_classes(module: ModuleType) -> None:
     gen = _find_classes([module], PipelineComponent)
     assert next(gen) is SubComponent
     assert next(gen) is SubSubComponent
@@ -85,7 +82,7 @@ def test_find_classes(module: ModuleType):
         next(gen)
 
 
-def test_find_class(module: ModuleType):
+def test_find_class(module: ModuleType) -> None:
     assert find_class([module], base=SubComponent) is SubComponent
     assert find_class([module], base=PipelineComponent) is SubComponent
     assert find_class([module], base=SchemaProvider) is CustomSchemaProvider
@@ -93,7 +90,7 @@ def test_find_class(module: ModuleType):
         find_class([module], base=dict)
 
 
-def test_registry():
+def test_registry() -> None:
     registry = Registry()
     assert registry._classes == {}
     registry.discover_components()
@@ -105,11 +102,10 @@ def test_registry():
         "kafka-source-connector": KafkaSourceConnector,
         "kubernetes-app": KubernetesApp,
         "pipeline-component": PipelineComponent,
-        "producer-app-v2": ProducerAppV2,
         "producer-app": ProducerApp,
-        "streams-app-v2": StreamsAppV2,
+        "consumer-app": ConsumerApp,
+        "consumer-producer-app": ConsumerProducerApp,
         "streams-app": StreamsApp,
-        "streams-bootstrap-v2": StreamsBootstrapV2,
         "streams-bootstrap": StreamsBootstrap,
     }
     for _type, _class in registry._classes.items():

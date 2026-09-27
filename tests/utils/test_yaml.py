@@ -29,7 +29,9 @@ from kpops.utils.yaml import print_yaml, substitute_nested
         ),
     ],
 )
-def test_substitute_nested(input: str, substitution: dict[str, str], expected: str):
+def test_substitute_nested(
+    input: str, substitution: dict[str, str], expected: str
+) -> None:
     assert substitute_nested(input, **substitution) == expected
 
 
@@ -76,7 +78,7 @@ def test_print_yaml(
     capsys: pytest.CaptureFixture[str],
     data: Mapping[str, Any] | str,
     expected_stdout: str,
-):
+) -> None:
     print_yaml(data)
     captured = capsys.readouterr()
     assert captured.out == expected_stdout

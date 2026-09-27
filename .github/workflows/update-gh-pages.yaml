@@ -12,13 +12,15 @@ jobs:
     name: Update docs
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0 # Fetch all tags; Required for doc versioning
 
       - name: Update gh-pages
         uses: ./.github/actions/update-docs
         with:
+          python-version: ${{ vars.PYTHON_VERSION }}
+          uv-version: ${{ vars.UV_VERSION }}
           username: ${{ secrets.GH_USERNAME }}
           email: ${{ secrets.GH_EMAIL }}
           token: ${{ secrets.GH_TOKEN }}

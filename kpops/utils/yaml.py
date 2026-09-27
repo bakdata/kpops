@@ -1,18 +1,20 @@
 import json
-import logging
 from collections.abc import Hashable, Mapping
 from pathlib import Path
 from typing import Any
 
+import structlog
 import yaml
+import yaml.representer
 from cachetools import cached
 from cachetools.keys import hashkey
 from rich.console import Console
 from rich.syntax import Syntax
+from typing_extensions import override
 
 from kpops.utils.dict_ops import ImprovedTemplate
 
-log = logging.getLogger("Yaml")
+log = structlog.get_logger("Yaml")
 
 
 def generate_hashkey(
@@ -27,7 +29,7 @@ def generate_hashkey(
 def load_yaml_file(
     file_path: Path, *, substitution: Mapping[str, Any] | None = None
 ) -> Any:
-    log.debug(f"Picked up: {file_path.resolve().relative_to(Path.cwd())}")
+    log.debug("Picked up YAML file", path=file_path.resolve().relative_to(Path.cwd()))
     return yaml.safe_load(substitute(file_path.read_text(), substitution))
 
 
@@ -48,7 +50,7 @@ def substitute(input: str, substitution: Mapping[str, Any] | None = None) -> str
     return ImprovedTemplate(input).safe_substitute(**prepare_substitution(substitution))
 
 
-def _diff_substituted_str(s1: str, s2: str):
+def _diff_substituted_str(s1: str, s2: str) -> None:
     """Compare 2 strings, raise exception if not equal.
 
     :param s1: String to compare
@@ -124,7 +126,8 @@ yaml.representer.SafeRepresenter.add_representer(str, multiline_str_representer)
 
 
 class CustomSafeDumper(yaml.SafeDumper):
-    def increase_indent(self, flow: bool = False, indentless: bool = False):
+    @override
+    def increase_indent(self, flow: bool = False, indentless: bool = False) -> None:
         return super().increase_indent(flow, False)
 
 

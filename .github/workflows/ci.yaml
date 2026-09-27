@@ -12,9 +12,6 @@ defaults:
   run:
     shell: bash
 
-env:
-  UV_VERSION: "0.5.14"
-
 jobs:
   lint:
     name: Lint
@@ -31,13 +28,13 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ matrix.python-version }}
-          version: ${{ env.UV_VERSION }}
+          version: ${{ vars.UV_VERSION }}
 
       - name: Check uv.lock
         run: uv lock --check
@@ -46,25 +43,21 @@ jobs:
         run: |
           uv run --frozen ruff check . --config pyproject.toml --no-fix ${{ matrix.format-for-github && '--output-format=github' }}
 
-      - name: Typing (basedpyright)
+      - name: Typing (ty)
         run: |
-          if [[ "${{ matrix.format-for-github }}" == "true" ]]
-          then
-            echo "::add-matcher::.github/pyright-matcher.json"
-          fi;
-          uv run --frozen basedpyright
+          uv run --frozen ty check ${{ matrix.format-for-github && '--output-format=github' }}
 
   format:
     name: Format
     runs-on: [ubuntu-24.04]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v7
         with:
-          python-version: "3.11"
-          version: ${{ env.UV_VERSION }}
+          python-version: ${{ vars.PYTHON_VERSION }}
+          version: ${{ vars.UV_VERSION }}
 
       - name: ruff
         run: uv run --frozen ruff format --check
@@ -80,7 +73,7 @@ jobs:
         os:
           - ubuntu-24.04
           - windows-2022
-        python-version: ["3.11", "3.12"]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
         is-draft-pr:
           - ${{ github.event.pull_request.draft }}
         exclude:
@@ -90,15 +83,15 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ matrix.python-version }}
-          version: ${{ env.UV_VERSION }}
+          version: ${{ vars.UV_VERSION }}
 
       - name: Test
         run: uv run --frozen pytest tests
@@ -108,13 +101,13 @@ jobs:
     runs-on: [ubuntu-24.04]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v7
         with:
           python-version: "3.12"
-          version: ${{ env.UV_VERSION }}
+          version: ${{ vars.UV_VERSION }}
 
       - name: Generate schema (kpops schema)
         run: |
@@ -133,9 +126,9 @@ jobs:
         run: uv run --frozen
           lefthook run pre-commit --commands kpops-docs-components --force
 
-      - name: Test docs build (mkdocs)
+      - name: Test docs build (zensical)
         run: uv run --frozen --group=docs
-          mkdocs build -f docs/mkdocs.yml
+          zensical build -f docs/mkdocs.yml
 
   # TODO: extract into ci-templates
   publish-snapshot-version:
@@ -145,13 +138,13 @@ jobs:
     permissions:
       id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v7
         with:
-          python-version: "3.11"
-          version: ${{ env.UV_VERSION }}
+          python-version: ${{ vars.PYTHON_VERSION }}
+          version: ${{ vars.UV_VERSION }}
 
       - name: Generate snapshot time
         id: snapshot-time
@@ -161,7 +154,7 @@ jobs:
 
       - name: Bump version patch
         id: bump-version
-        uses: bakdata/ci-templates/actions/bump-version@1.50.4
+        uses: bakdata/ci-templates/actions/bump-version@1.82.1
         with:
           release-type: patch
 
@@ -171,7 +164,7 @@ jobs:
         run: git restore .
 
       - name: Bump version snapshot time
-        uses: bakdata/ci-templates/actions/bump-version@1.50.4
+        uses: bakdata/ci-templates/actions/bump-version@1.82.1
         with:
           release-type: patch
           new-version: ${{ steps.bump-version.outputs.release-version }}${{ steps.snapshot-time.outputs.snapshot-time }} # e.g. 9.1.1-dev20250108102827
@@ -190,11 +183,13 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs: [lint, format, test, docs]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Publish docs from main branch
         uses: ./.github/actions/update-docs
         with:
+          python-version: ${{ vars.PYTHON_VERSION }}
+          uv-version: ${{ vars.UV_VERSION }}
           username: ${{ secrets.GH_USERNAME }}
           email: ${{ secrets.GH_EMAIL }}
           token: ${{ secrets.GH_TOKEN }}
@@ -206,14 +201,14 @@ jobs:
     if: ${{ github.event_name == 'pull_request' }}
     needs: [lint, format, test, docs]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.head_ref }}
 
       # Checks to see if any files in the PR match one of the listed file types.
       # This will return true if there's a file in docs folder that was added, deleted, or modified in the PR.
       - name: Check if files in docs folder have changed
-        uses: dorny/paths-filter@v3
+        uses: dorny/paths-filter@v4
         id: docs-changes
         with:
           filters: |
@@ -224,6 +219,8 @@ jobs:
         if: steps.docs-changes.outputs.docs == 'true'
         uses: ./.github/actions/update-docs
         with:
+          python-version: ${{ vars.PYTHON_VERSION }}
+          uv-version: ${{ vars.UV_VERSION }}
           username: ${{ secrets.GH_USERNAME }}
           email: ${{ secrets.GH_EMAIL }}
           token: ${{ secrets.GH_TOKEN }}

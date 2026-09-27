@@ -1,11 +1,11 @@
-import logging
 from collections.abc import AsyncIterable
 from typing import final
 
+import structlog
 from lightkube.core.async_client import AsyncClient
 from lightkube.resources.core_v1 import PersistentVolumeClaim
 
-log = logging.getLogger("PVC_handler")
+log = structlog.get_logger("PVCHandler")
 
 
 @final
@@ -16,7 +16,9 @@ class PVCHandler:
         self._client = AsyncClient(namespace=namespace)
 
     async def list_pvcs(self) -> AsyncIterable[PersistentVolumeClaim]:
-        return self._client.list(PersistentVolumeClaim, labels={"app": self.app_name})  # pyright: ignore[reportUnknownMemberType]
+        return self._client.list(
+            PersistentVolumeClaim, labels={"app.kubernetes.io/name": self.app_name}
+        )
 
     async def delete_pvcs(self, dry_run: bool) -> None:
         pvc_names: list[str] = [
@@ -26,11 +28,16 @@ class PVCHandler:
         ]
         if not pvc_names:
             log.warning(
-                f"No PVCs found for app '{self.app_name}', in namespace '{self.namespace}'"
+                "No PVCs found.",
+                app_name=self.app_name,
+                namespace=self.namespace,
             )
             return
         log.debug(
-            f"Deleting in namespace '{self.namespace}' StatefulSet '{self.app_name}' PVCs {pvc_names}"
+            "Deleting PVCs.",
+            app_name=self.app_name,
+            namespace=self.namespace,
+            pvc_names=pvc_names,
         )
         if dry_run:
             return

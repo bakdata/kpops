@@ -4,7 +4,7 @@ from unittest import mock
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.api import _setup_handlers
+from kpops.api.operations import _setup_handlers
 from kpops.component_handlers import ComponentHandlers, get_handlers
 from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
     KafkaConnectHandler,
@@ -14,7 +14,7 @@ from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.config import KpopsConfig, SchemaRegistryConfig
 from tests.cli.resources.custom_module import CustomSchemaProvider
 
-HANDLER_MODULE = "kpops.api"
+HANDLER_MODULE = "kpops.api.operations"
 
 MODULE = CustomSchemaProvider.__module__
 
@@ -30,27 +30,28 @@ def handlers() -> Generator[ComponentHandlers, None, None]:
     ComponentHandlers._instance = None
 
 
-def test_global_handlers_not_initialized():
+@pytest.mark.usefixtures("clear_handlers")
+def test_global_handlers_not_initialized() -> None:
     with pytest.raises(
         RuntimeError, match="ComponentHandlers has not been initialized"
     ):
         get_handlers()
 
 
-def test_create_global_handlers(handlers: ComponentHandlers):
+def test_create_global_handlers(handlers: ComponentHandlers) -> None:
     assert get_handlers() == handlers
 
 
 @pytest.mark.usefixtures("handlers")
-def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
+def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture) -> None:
     config = KpopsConfig(kafka_brokers="broker:9092")
     connector_handler_mock = mocker.patch(f"{HANDLER_MODULE}.KafkaConnectHandler")
     connector_handler = KafkaConnectHandler.from_kpops_config(config)
     connector_handler_mock.from_kpops_config.return_value = connector_handler
 
     topic_handler_mock = mocker.patch(f"{HANDLER_MODULE}.TopicHandler")
-    wrapper = mocker.patch(f"{HANDLER_MODULE}.ProxyWrapper")
-    topic_handler = TopicHandler(wrapper)
+    kafka_rest = mocker.patch(f"{HANDLER_MODULE}.KafkaRest")
+    topic_handler = TopicHandler(kafka_rest)
     topic_handler_mock.return_value = topic_handler
 
     expected = ComponentHandlers(
@@ -73,7 +74,7 @@ def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
 
 
 @pytest.mark.usefixtures("handlers")
-def test_set_up_handlers_with_schema_handler(mocker: MockerFixture):
+def test_set_up_handlers_with_schema_handler(mocker: MockerFixture) -> None:
     config = KpopsConfig(
         schema_registry=SchemaRegistryConfig(enabled=True),
         kafka_brokers="broker:9092",
@@ -87,8 +88,8 @@ def test_set_up_handlers_with_schema_handler(mocker: MockerFixture):
     connector_handler_mock.from_kpops_config.return_value = connector_handler
 
     topic_handler_mock = mocker.patch(f"{HANDLER_MODULE}.TopicHandler")
-    wrapper = mocker.patch(f"{HANDLER_MODULE}.ProxyWrapper")
-    topic_handler = TopicHandler(wrapper)
+    kafka_rest = mocker.patch(f"{HANDLER_MODULE}.KafkaRest")
+    topic_handler = TopicHandler(kafka_rest)
     topic_handler_mock.return_value = topic_handler
 
     expected = ComponentHandlers(

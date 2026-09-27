@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from enum import StrEnum
+from enum import StrEnum, auto
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -9,8 +9,8 @@ if TYPE_CHECKING:
 
 
 class FilterType(StrEnum):
-    INCLUDE = "include"
-    EXCLUDE = "exclude"
+    INCLUDE = auto()
+    EXCLUDE = auto()
 
     @staticmethod
     def is_in_steps(component: PipelineComponent, component_names: set[str]) -> bool:

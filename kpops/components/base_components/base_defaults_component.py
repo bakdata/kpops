@@ -1,16 +1,15 @@
 from __future__ import annotations
 
 import json
-import logging
 from abc import ABC
-from collections.abc import Hashable, Sequence
+from collections.abc import Generator, Hashable, Sequence
 from dataclasses import asdict
 from functools import cached_property
 from pathlib import Path
 from typing import Any, ClassVar, Self, TypeVar, cast
 
 import pydantic
-import typer
+import structlog
 from pydantic import (
     AliasChoices,
     ConfigDict,
@@ -28,13 +27,12 @@ from kpops.utils.dict_ops import (
     update_nested,
     update_nested_pair,
 )
-from kpops.utils.docstring import describe_attr
 from kpops.utils.environment import ENV, PIPELINE_PATH
 from kpops.utils.pydantic import DescConfigModel, issubclass_patched, to_dash
 from kpops.utils.types import JsonType
 from kpops.utils.yaml import load_yaml_file, substitute_nested
 
-log = logging.getLogger("BaseDefaultsComponent")
+log = structlog.get_logger("BaseDefaultsComponent")
 
 
 class BaseDefaultsComponent(DescConfigModel, ABC):
@@ -50,17 +48,15 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
 
     model_config: ClassVar[ConfigDict] = ConfigDict(
         arbitrary_types_allowed=True,
-        ignored_types=(cached_property, cached_classproperty),  # pyright: ignore[reportArgumentType]
+        ignored_types=(cached_property, cached_classproperty),  # ty: ignore[invalid-argument-type]
     )
     enrich: SkipJsonSchema[bool] = Field(
         default=True,
-        description=describe_attr("enrich", __doc__),
         exclude=True,
     )
     validate_: SkipJsonSchema[bool] = Field(
         validation_alias=AliasChoices("validate", "validate_"),
         default=False,
-        description=describe_attr("validate", __doc__),
         exclude=True,
     )
 
@@ -87,7 +83,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
 
     @computed_field
     @cached_classproperty
-    def type(cls: type[Self]) -> str:  # pyright: ignore[reportGeneralTypeIssues]
+    def type(cls: type[Self]) -> str:  # ty: ignore[invalid-type-form]
         """Return calling component's type.
 
         :returns: Component class name in dash-case
@@ -95,13 +91,13 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         return to_dash(cls.__name__)
 
     @cached_classproperty
-    def parents(cls: type[Self]) -> tuple[type[BaseDefaultsComponent], ...]:  # pyright: ignore[reportGeneralTypeIssues]
+    def parents(cls: type[Self]) -> tuple[type[BaseDefaultsComponent], ...]:  # ty: ignore[invalid-type-form]
         """Get parent components.
 
         :return: All ancestor KPOps components
         """
 
-        def gen_parents():
+        def gen_parents() -> Generator[type[BaseDefaultsComponent]]:
             for base in cls.mro():
                 # skip class itself and non-component ancestors
                 if base is cls or not issubclass_patched(base, BaseDefaultsComponent):
@@ -168,10 +164,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
             pipeline_path, config, ENV.get("environment")
         )
         defaults = cls.load_defaults(*defaults_file_paths_)
-        log.debug(
-            typer.style("Enriching component of type ", bold=False)
-            + typer.style(cls.type, bold=True, underline=True)
-        )
+        log.debug("Enriching component", type=cls.type)
         return update_nested_pair(kwargs, defaults)
 
     @classmethod
@@ -222,7 +215,9 @@ def defaults_from_yaml(path: Path, key: str) -> dict[str, Any]:
         return {}
     default_path = path.relative_to(Path.cwd())
     log.debug(
-        f"Found defaults for component type {typer.style(key, bold=True, fg=typer.colors.MAGENTA)} in {default_path}"
+        "Found defaults for component type",
+        type=key,
+        default_path=default_path,
     )
     return value
 

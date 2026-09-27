@@ -44,7 +44,7 @@ class ShouldInflate(StreamsApp):
                 if topic_config.type == OutputTopicTypes.OUTPUT:
                     kafka_connector = KafkaSinkConnector(
                         name=f"{self.name}-inflated-sink-connector",
-                        config={  # pyright: ignore[reportArgumentType], required `connector.class` comes from defaults during enrichment
+                        config={  # required `connector.class` comes from defaults during enrichment
                             "topics": topic_name,
                             "transforms.changeTopic.replacement": f"{topic_name}-index-v1",
                         },
@@ -60,7 +60,7 @@ class ShouldInflate(StreamsApp):
                         ),
                     )
                     inflate_steps.append(kafka_connector)
-                    streams_app = StreamsApp(  # pyright: ignore[reportCallIssue]
+                    streams_app = StreamsApp(
                         name=f"{self.name}-inflated-streams-app",
                         to=ToSection(
                             topics={
@@ -69,7 +69,7 @@ class ShouldInflate(StreamsApp):
                                 ): TopicConfig(type=OutputTopicTypes.OUTPUT)
                             }
                         ).model_dump(),
-                    )
+                    )  # ty: ignore[missing-argument]
                     inflate_steps.append(streams_app)
 
         return inflate_steps
@@ -95,6 +95,6 @@ class SimpleInflateConnectors(StreamsApp):
     def inflate(self) -> list[PipelineComponent]:
         connector = KafkaSinkConnector(
             name="inflated-connector-name",
-            config={},  # pyright: ignore[reportArgumentType]
+            config={},
         )
         return [self, connector]

@@ -4,7 +4,14 @@ from abc import ABC
 from collections.abc import Iterator
 from typing import Any, ClassVar
 
-from pydantic import AliasChoices, ConfigDict, Field
+import pydantic
+from pydantic import (
+    AliasChoices,
+    ConfigDict,
+    Field,
+    SerializationInfo,
+    SerializerFunctionWrapHandler,
+)
 
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
@@ -23,7 +30,7 @@ from kpops.components.common.topic import (
     TopicConfig,
 )
 from kpops.manifests.kubernetes import KubernetesManifest
-from kpops.utils.docstring import describe_attr
+from kpops.utils.pydantic import exclude_by_name, exclude_by_value
 
 
 class PipelineComponent(BaseDefaultsComponent, ABC):
@@ -39,24 +46,40 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         defaults to None
     """
 
-    name: str = Field(description=describe_attr("name", __doc__))
-    prefix: str = Field(
-        default="${pipeline.name}-",
-        description=describe_attr("prefix", __doc__),
+    name: str
+    enabled: bool = Field(
+        default=True,
+        title="Enabled",
+        description="Whether the component is enabled and should be included in the pipeline",
     )
+    prefix: str = "${pipeline.name}-"
     from_: FromSection | None = Field(
         default=None,
         serialization_alias="from",
         validation_alias=AliasChoices("from", "from_"),
         title="From",
-        description=describe_attr("from_", __doc__),
     )
-    to: ToSection | None = Field(
-        default=None,
-        description=describe_attr("to", __doc__),
+    to: ToSection | None = None
+
+    model_config: ClassVar[ConfigDict] = ConfigDict(
+        extra="allow", use_enum_values=False
     )
 
-    model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
+    @pydantic.model_serializer(mode="wrap", when_used="always")
+    def sort_model(
+        self,
+        default_serialize_handler: SerializerFunctionWrapHandler,
+        info: SerializationInfo,
+    ) -> dict[str, Any]:
+        result = default_serialize_handler(self)
+        if info.context != "generate":
+            return result
+        ordered_fields = {"type": self.type, "name": self.name}
+        result = exclude_by_name(result, *ordered_fields.keys())
+        # NOTE: from SerializeAsOptionalModel
+        if info.exclude_none:
+            result = exclude_by_value(result, None)
+        return {**ordered_fields, **result}
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
@@ -150,7 +173,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         """
 
     def set_input_topics(self) -> None:
-        """Put values of config.from into the streams config section of streams bootstrap.
+        """Put values of config.from into the streams config section of streams-bootstrap.
 
         Supports extra_input_topics (topics by label) or input_topics.
         """
@@ -176,7 +199,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
                 self.add_input_topics([kafka_topic])
 
     def set_output_topics(self) -> None:
-        """Put values of `to` section into the producer config section of streams bootstrap.
+        """Put values of `to` section into the producer config section of streams-bootstrap.
 
         Supports extra_output_topics (topics by label) or output_topics.
         """
