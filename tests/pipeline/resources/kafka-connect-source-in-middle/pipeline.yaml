@@ -1,0 +1,30 @@
+- type: streams-app
+  name: first-app
+  from:
+    topics:
+      example-topic:
+        type: input
+  values:
+    image: fake-image
+  to:
+    topics:
+      example-output:
+        type: output
+
+- type: kafka-source-connector
+  name: test-source-connector
+  config:
+    connector.class: com.bakdata.connect.TestConnector
+  to:
+    topics:
+      source-output:
+        type: output
+
+- type: streams-app
+  name: second-app
+  values:
+    image: fake-image
+  to:
+    topics:
+      final-output:
+        type: output

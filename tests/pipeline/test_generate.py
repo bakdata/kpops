@@ -306,6 +306,22 @@ class TestGenerate:
 
         snapshot.assert_match(result.stdout, PIPELINE_YAML)
 
+    def test_kafka_connect_source_in_middle_of_pipeline(
+        self, snapshot: Snapshot
+    ) -> None:
+        """Kafka source connector in middle of pipeline does not weave from previous component."""
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                str(RESOURCE_PATH / "kafka-connect-source-in-middle" / PIPELINE_YAML),
+            ],
+            catch_exceptions=False,
+        )
+
+        assert result.exit_code == 0, result.stdout
+        snapshot.assert_match(result.stdout, PIPELINE_YAML)
+
     def test_read_from_component(self, snapshot: Snapshot) -> None:
         result = runner.invoke(
             app,
