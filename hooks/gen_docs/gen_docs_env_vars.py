@@ -11,11 +11,12 @@ from pathlib import Path
 from textwrap import fill
 from typing import Any, Self
 
-import click
+import typer._click as click
 import typer.main
 from pydantic.fields import FieldInfo
 from pydantic_core import PydanticUndefined
 from pytablewriter import MarkdownTableWriter
+from typer.core import TyperGroup
 
 from hooks import ROOT
 from hooks.gen_docs import IterableStrEnum
@@ -332,7 +333,7 @@ def collect_cli_commands(command: click.Command) -> list[click.Command]:
     :return: The command itself and all nested subcommands
     """
     commands = [command]
-    if isinstance(command, click.Group):
+    if isinstance(command, TyperGroup):
         for subcommand in command.commands.values():
             commands.extend(collect_cli_commands(subcommand))
     return commands
