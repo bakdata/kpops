@@ -1,0 +1,83 @@
+- type: streams-app
+  name: first-app
+  enabled: true
+  prefix: resources-kafka-connect-source-in-middle-
+  from:
+    topics:
+      example-topic:
+        type: input
+    components: {}
+  to:
+    topics:
+      example-output:
+        type: output
+        configs: {}
+      resources-kafka-connect-source-in-middle-first-app-error:
+        type: error
+        value_schema: com.bakdata.kafka.DeadLetter
+        partitions_count: 1
+        configs:
+          cleanup.policy: compact,delete
+    models: {}
+  namespace: example-namespace
+  values:
+    image: fake-image
+    kafka:
+      bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      schemaRegistryUrl: http://localhost:8081/
+      outputTopic: example-output
+      inputTopics:
+        - example-topic
+      errorTopic: resources-kafka-connect-source-in-middle-first-app-error
+      config:
+        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+    statefulSet: false
+  version: 3.6.1
+  helm_release_name: resources-kafka-connect-source-in-middle-first-app
+  helm_name_override: resources-kafka-connect-source-in-middle-first-app
+- type: kafka-source-connector
+  name: test-source-connector
+  enabled: true
+  prefix: resources-kafka-connect-source-in-middle-
+  to:
+    topics:
+      source-output:
+        type: output
+        configs: {}
+    models: {}
+  config:
+    connector.class: com.bakdata.connect.TestConnector
+    name: resources-kafka-connect-source-in-middle-test-source-connector
+- type: streams-app
+  name: second-app
+  enabled: true
+  prefix: resources-kafka-connect-source-in-middle-
+  to:
+    topics:
+      final-output:
+        type: output
+        configs: {}
+      resources-kafka-connect-source-in-middle-second-app-error:
+        type: error
+        value_schema: com.bakdata.kafka.DeadLetter
+        partitions_count: 1
+        configs:
+          cleanup.policy: compact,delete
+    models: {}
+  namespace: example-namespace
+  values:
+    image: fake-image
+    kafka:
+      bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      schemaRegistryUrl: http://localhost:8081/
+      outputTopic: final-output
+      inputTopics:
+        - source-output
+      errorTopic: resources-kafka-connect-source-in-middle-second-app-error
+      config:
+        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+    statefulSet: false
+  version: 3.6.1
+  helm_release_name: resources-kafka-connect-source-in-middle-second-app
+  helm_name_override: resources-kafka-connect-source-in-middle-second-app
+

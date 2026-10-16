@@ -4,7 +4,7 @@ from abc import ABC
 from typing import Any, NoReturn
 
 import structlog
-from pydantic import PrivateAttr, ValidationInfo, field_validator
+from pydantic import AliasChoices, Field, PrivateAttr, ValidationInfo, field_validator
 from typing_extensions import override
 
 from kpops.component_handlers import get_handlers
@@ -93,6 +93,12 @@ class KafkaConnector(PipelineComponent, ABC):
 class KafkaSourceConnector(KafkaConnector):
     """Kafka source connector model."""
 
+    from_: None = Field(
+        default=None,
+        serialization_alias="from",
+        validation_alias=AliasChoices("from", "from_"),
+        title="From",
+    )
     _connector_type: KafkaConnectorType = PrivateAttr(KafkaConnectorType.SOURCE)
 
     @override
