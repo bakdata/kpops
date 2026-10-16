@@ -1,3 +1,4 @@
+import csv
 from pathlib import Path
 from typing import Any
 
@@ -7,6 +8,7 @@ from hooks.gen_docs.gen_docs_env_vars import (
     EnvVarAttrs,
     append_csv_to_dotenv_file,
     csv_append_env_var,
+    fill_csv_cli,
     write_csv_to_md_file,
     write_title_to_dotenv_file,
 )
@@ -66,6 +68,21 @@ class TestEnvDocGen:
                 t.read().replace("\r\n", "\n").replace("\r", "\n")
                 == expected_outcome + "\n"
             )
+
+    def test_fill_csv_cli(self, tmp_path: Path) -> None:
+        target = tmp_path / "target.csv"
+        fill_csv_cli(target)
+        with target.open(newline="") as t:
+            rows = list(csv.reader(t))
+        assert [row[:3] for row in rows] == [
+            ["KPOPS_CONFIG_PATH", ".", "False"],
+            ["KPOPS_DOTENV_PATH", "", "False"],
+            ["KPOPS_ENVIRONMENT", "", "False"],
+            ["KPOPS_OPERATION_MODE", "managed", "False"],
+            ["KPOPS_PIPELINE_PATHS", "", "True"],
+            ["KPOPS_PIPELINE_STEPS", "", "False"],
+        ]
+        assert all(row[3] for row in rows)
 
     def test_write_title_to_dotenv_file(self, tmp_path: Path) -> None:
         target = tmp_path / "target.ENV"
