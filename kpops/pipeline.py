@@ -437,7 +437,7 @@ class PipelineGenerator:
                     inflated_component.weave_from_topics(
                         resolved_from_component.to, from_topic
                     )
-            elif self.pipeline:
+            elif self.pipeline and inflated_component.supports_from_section():
                 # read from previous component
                 prev_component = self.pipeline.last
                 inflated_component.weave_from_topics(prev_component.to)

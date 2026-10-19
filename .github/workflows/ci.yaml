@@ -6,6 +6,8 @@ on:
   push:
     branches:
       - main
+  merge_group:
+    types: [checks_requested]
   workflow_dispatch:
 
 defaults:
@@ -63,19 +65,18 @@ jobs:
         run: uv run --frozen ruff format --check
 
       - name: dprint
-        uses: dprint/check@v2.2
+        uses: dprint/check@v2.5
 
   test:
     name: Test
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - ubuntu-24.04
-          - windows-2022
-        python-version: ["3.11", "3.12", "3.13", "3.14"]
+        # reduced matrix for merge queue to avoid repeated full run
+        os: ${{ fromJSON(github.event_name == 'merge_group' && '["ubuntu-24.04"]' || '["ubuntu-24.04", "windows-2022"]') }}
+        python-version: ${{ fromJSON(github.event_name == 'merge_group' && '["3.14"]' || '["3.11", "3.12", "3.13", "3.14"]') }}
         is-draft-pr:
-          - ${{ github.event.pull_request.draft }}
+          - ${{ github.event.pull_request.draft == true }}
         exclude:
           # skip Windows jobs on draft PRs because they are slow
           - os: windows-2022
@@ -133,10 +134,22 @@ jobs:
         run: uv run --frozen --group=docs
           zensical build -f docs/mkdocs.yml
 
+  # composite job as required status check for branch protection & merge queue
+  ci-success:
+    name: CI success
+    needs: [lint, format, test, docs]
+    if: ${{ always() }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Fail if any required job failed or was cancelled
+        if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped') }}
+        run: exit 1
+
   # TODO: extract into ci-templates
   publish-snapshot-version:
     name: Publish snapshot to TestPyPI
     needs: [lint, format, test, docs]
+    if: ${{ github.event_name != 'merge_group' }}
     runs-on: ubuntu-24.04
     permissions:
       id-token: write

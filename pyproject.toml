@@ -33,7 +33,7 @@ dependencies = [
   "rich>=12.4.4",
   "rustworkx>=0.18.0",
   "structlog>=26.1.0",
-  "typer>=0.12.5",
+  "typer>=0.27.2",
 ]
 
 [project.scripts]
@@ -45,12 +45,12 @@ dev = [
   "polyfactory>=2.13.0",
   "pytablewriter[from]>=1.0.0",
   "pytest>=9.0.0",
-  "pytest-asyncio>=0.23.8",
+  "pytest-asyncio>=1.4.0",
   "pytest-mock>=3.14.0",
   "pytest-rerunfailures>=14.0",
   "pytest-snapshot>=0.9.0",
   "ruff>=0.16.0",
-  "ty>=0.0.74",
+  "ty>=0.0.85",
 ]
 docs = [
   "mdx-truly-sane-lists>=1.3",

@@ -52,6 +52,9 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             ),
         )
 
+    def test_supports_from_section(self) -> None:
+        assert KafkaSinkConnector.supports_from_section()
+
     def test_connector_config_parsing(
         self, connector_config: KafkaConnectorConfig
     ) -> None:
