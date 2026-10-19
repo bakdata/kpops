@@ -12,6 +12,8 @@ updates:
       ci-templates:
         patterns:
           - "bakdata/ci-templates*"
+    commit-message:
+      prefix: ci
 
   - package-ecosystem: "uv"
     directory: "/"
@@ -24,3 +26,6 @@ updates:
         update-types:
           - "minor"
           - "patch"
+    commit-message:
+      prefix: build
+      include: scope
