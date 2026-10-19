@@ -324,15 +324,15 @@ ws = [
 
 [[package]]
 name = "httpx2-pytest"
-version = "1.0.1"
+version = "2.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx2" },
     { name = "pytest" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/1c/c9/bc6405b80e0d8a2b0e155aa9976864a79a96fef5478c564cc0d89d23cb86/httpx2_pytest-1.0.1.tar.gz", hash = "sha256:e5d36bbac673bae6e11d3520e74bd360c3e392b56270efcb95f1d5369cbd1ec1", size = 59136, upload-time = "2026-05-22T15:02:54.982Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/fe/2e/66762cb820f4857a8038181ee4deb679905dbd5a1447a7e82993e1c5ddc0/httpx2_pytest-2.0.0.tar.gz", hash = "sha256:0f7e3777be96016bb070c12a64f99e0f1d9437b5b374c7ca331bc95a398cd946", size = 60492, upload-time = "2026-09-04T09:09:57.791Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/46/ef/e9b6fb576f1f518f68e9f9cce9776870452ae2b8cfbba53b4127701b9a55/httpx2_pytest-1.0.1-py3-none-any.whl", hash = "sha256:09ff3365101508c5b311301c6ee8e1a96dbb676028b19e00da66199d2e759a99", size = 20975, upload-time = "2026-05-22T15:02:54.007Z" },
+    { url = "https://files.pythonhosted.org/packages/42/77/f100314adb8bc833bd224616e269c8a5feb196b0baa9f7d634d2f36c4e1e/httpx2_pytest-2.0.0-py3-none-any.whl", hash = "sha256:b8a63711bc40edc163c22268800d50e21c4266bb9571240bcd0cbfaf69c33cf6", size = 21304, upload-time = "2026-09-04T09:09:56.392Z" },
 ]
 
 [[package]]
