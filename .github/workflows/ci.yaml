@@ -6,6 +6,8 @@ on:
   push:
     branches:
       - main
+  merge_group:
+    types: [checks_requested]
   workflow_dispatch:
 
 defaults:
@@ -134,6 +136,7 @@ jobs:
   publish-snapshot-version:
     name: Publish snapshot to TestPyPI
     needs: [lint, format, test, docs]
+    if: ${{ github.event_name != 'merge_group' }}
     runs-on: ubuntu-24.04
     permissions:
       id-token: write
