@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.11"
 
 [[package]]
@@ -461,7 +461,7 @@ dev = [
     { name = "polyfactory", specifier = ">=2.13.0" },
     { name = "pytablewriter", extras = ["from"], specifier = ">=1.0.0" },
     { name = "pytest", specifier = ">=9.0.0" },
-    { name = "pytest-asyncio", specifier = ">=0.23.8" },
+    { name = "pytest-asyncio", specifier = ">=1.4.0" },
     { name = "pytest-mock", specifier = ">=3.14.0" },
     { name = "pytest-rerunfailures", specifier = ">=14.0" },
     { name = "pytest-snapshot", specifier = ">=0.9.0" },
