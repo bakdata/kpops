@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.11"
 
 [[package]]
@@ -460,7 +460,7 @@ requires-dist = [
     { name = "rich", specifier = ">=12.4.4" },
     { name = "rustworkx", specifier = ">=0.18.0" },
     { name = "structlog", specifier = ">=26.1.0" },
-    { name = "typer", specifier = ">=0.12.5" },
+    { name = "typer", specifier = ">=0.27.2" },
 ]
 
 [package.metadata.requires-dev]
