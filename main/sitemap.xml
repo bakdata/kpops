@@ -4,46 +4,49 @@
         <loc>https://bakdata.github.io/kpops/main/</loc>
       </url>
       <url>
-        <loc>https://bakdata.github.io/kpops/main/user/what-is-kpops/</loc>
+        <loc>https://bakdata.github.io/kpops/main/developer/api/</loc>
+      </url>
+      <url>
+        <loc>https://bakdata.github.io/kpops/main/developer/auto-generation/</loc>
+      </url>
+      <url>
+        <loc>https://bakdata.github.io/kpops/main/developer/contributing/</loc>
+      </url>
+      <url>
+        <loc>https://bakdata.github.io/kpops/main/developer/getting-started/</loc>
+      </url>
+      <url>
+        <loc>https://bakdata.github.io/kpops/main/resources/architecture/components-hierarchy/</loc>
+      </url>
+      <url>
+        <loc>https://bakdata.github.io/kpops/main/resources/examples/defaults/</loc>
+      </url>
+      <url>
+        <loc>https://bakdata.github.io/kpops/main/resources/examples/pipeline/</loc>
+      </url>
+      <url>
+        <loc>https://bakdata.github.io/kpops/main/resources/pipeline-components/pipeline/</loc>
+      </url>
+      <url>
+        <loc>https://bakdata.github.io/kpops/main/resources/pipeline-defaults/defaults/</loc>
+      </url>
+      <url>
+        <loc>https://bakdata.github.io/kpops/main/resources/variables/cli_env_vars/</loc>
+      </url>
+      <url>
+        <loc>https://bakdata.github.io/kpops/main/resources/variables/config_env_vars/</loc>
       </url>
       <url>
         <loc>https://bakdata.github.io/kpops/main/user/changelog/</loc>
-      </url>
-      <url>
-        <loc>https://bakdata.github.io/kpops/main/user/getting-started/setup/</loc>
-      </url>
-      <url>
-        <loc>https://bakdata.github.io/kpops/main/user/getting-started/quick-start/</loc>
-      </url>
-      <url>
-        <loc>https://bakdata.github.io/kpops/main/user/getting-started/teardown/</loc>
-      </url>
-      <url>
-        <loc>https://bakdata.github.io/kpops/main/user/examples/atm-fraud-pipeline/</loc>
-      </url>
-      <url>
-        <loc>https://bakdata.github.io/kpops/main/user/core-concepts/components/overview/</loc>
-      </url>
-      <url>
-        <loc>https://bakdata.github.io/kpops/main/user/core-concepts/components/kubernetes-app/</loc>
-      </url>
-      <url>
-        <loc>https://bakdata.github.io/kpops/main/user/core-concepts/components/helm-app/</loc>
-      </url>
-      <url>
-        <loc>https://bakdata.github.io/kpops/main/user/core-concepts/components/streams-bootstrap/</loc>
-      </url>
-      <url>
-        <loc>https://bakdata.github.io/kpops/main/user/core-concepts/components/streams-app/</loc>
-      </url>
-      <url>
-        <loc>https://bakdata.github.io/kpops/main/user/core-concepts/components/producer-app/</loc>
       </url>
       <url>
         <loc>https://bakdata.github.io/kpops/main/user/core-concepts/components/consumer-app/</loc>
       </url>
       <url>
         <loc>https://bakdata.github.io/kpops/main/user/core-concepts/components/consumer-producer-app/</loc>
+      </url>
+      <url>
+        <loc>https://bakdata.github.io/kpops/main/user/core-concepts/components/helm-app/</loc>
       </url>
       <url>
         <loc>https://bakdata.github.io/kpops/main/user/core-concepts/components/kafka-connector/</loc>
@@ -53,6 +56,21 @@
       </url>
       <url>
         <loc>https://bakdata.github.io/kpops/main/user/core-concepts/components/kafka-source-connector/</loc>
+      </url>
+      <url>
+        <loc>https://bakdata.github.io/kpops/main/user/core-concepts/components/kubernetes-app/</loc>
+      </url>
+      <url>
+        <loc>https://bakdata.github.io/kpops/main/user/core-concepts/components/overview/</loc>
+      </url>
+      <url>
+        <loc>https://bakdata.github.io/kpops/main/user/core-concepts/components/producer-app/</loc>
+      </url>
+      <url>
+        <loc>https://bakdata.github.io/kpops/main/user/core-concepts/components/streams-app/</loc>
+      </url>
+      <url>
+        <loc>https://bakdata.github.io/kpops/main/user/core-concepts/components/streams-bootstrap/</loc>
       </url>
       <url>
         <loc>https://bakdata.github.io/kpops/main/user/core-concepts/config/</loc>
@@ -70,7 +88,25 @@
         <loc>https://bakdata.github.io/kpops/main/user/core-concepts/variables/substitution/</loc>
       </url>
       <url>
+        <loc>https://bakdata.github.io/kpops/main/user/examples/atm-fraud-pipeline/</loc>
+      </url>
+      <url>
+        <loc>https://bakdata.github.io/kpops/main/user/getting-started/quick-start/</loc>
+      </url>
+      <url>
+        <loc>https://bakdata.github.io/kpops/main/user/getting-started/setup/</loc>
+      </url>
+      <url>
+        <loc>https://bakdata.github.io/kpops/main/user/getting-started/teardown/</loc>
+      </url>
+      <url>
         <loc>https://bakdata.github.io/kpops/main/user/migration-guide/v1-v2/</loc>
+      </url>
+      <url>
+        <loc>https://bakdata.github.io/kpops/main/user/migration-guide/v10-v11/</loc>
+      </url>
+      <url>
+        <loc>https://bakdata.github.io/kpops/main/user/migration-guide/v11-v12/</loc>
       </url>
       <url>
         <loc>https://bakdata.github.io/kpops/main/user/migration-guide/v2-v3/</loc>
@@ -97,10 +133,7 @@
         <loc>https://bakdata.github.io/kpops/main/user/migration-guide/v9-v10/</loc>
       </url>
       <url>
-        <loc>https://bakdata.github.io/kpops/main/user/migration-guide/v10-v11/</loc>
-      </url>
-      <url>
-        <loc>https://bakdata.github.io/kpops/main/user/migration-guide/v11-v12/</loc>
+        <loc>https://bakdata.github.io/kpops/main/user/references/ci-integration/github-actions/</loc>
       </url>
       <url>
         <loc>https://bakdata.github.io/kpops/main/user/references/cli-commands/</loc>
@@ -109,18 +142,6 @@
         <loc>https://bakdata.github.io/kpops/main/user/references/editor-integration/</loc>
       </url>
       <url>
-        <loc>https://bakdata.github.io/kpops/main/user/references/ci-integration/github-actions/</loc>
-      </url>
-      <url>
-        <loc>https://bakdata.github.io/kpops/main/developer/getting-started/</loc>
-      </url>
-      <url>
-        <loc>https://bakdata.github.io/kpops/main/developer/api/</loc>
-      </url>
-      <url>
-        <loc>https://bakdata.github.io/kpops/main/developer/contributing/</loc>
-      </url>
-      <url>
-        <loc>https://bakdata.github.io/kpops/main/developer/auto-generation/</loc>
+        <loc>https://bakdata.github.io/kpops/main/user/what-is-kpops/</loc>
       </url>
 </urlset>
