@@ -21,11 +21,23 @@ updates:
       interval: "monthly"
     cooldown:
       default-days: 7
+    versioning-strategy: "increase-if-necessary"
     groups:
-      minor-and-patch:
+      production:
+        dependency-type: "production"
+        # 0.x.y versions can introduce breaking changes in minor bumps, so we review them individually
+        exclude-patterns:
+          - "dictdiffer"
+          - "rustworkx"
         update-types:
           - "minor"
           - "patch"
-    commit-message:
-      prefix: build
-      include: scope
+      development:
+        dependency-type: "development"
+        exclude-patterns:
+          - "pytest-snapshot"
+          - "ruff"
+          - "ty"
+        update-types:
+          - "minor"
+          - "patch"
