@@ -93,6 +93,9 @@ class TestProducerApp:
     def empty_helm_get_values(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch.object(Helm, "get_values", return_value=None)
 
+    def test_supports_from_section(self) -> None:
+        assert not ProducerApp.supports_from_section()
+
     def test_helm_name_override(self, producer_app: ProducerApp) -> None:
         assert len(producer_app.helm_name_override) == 63
         assert producer_app.helm_name_override == PRODUCER_APP_HELM_NAME_OVERRIDE

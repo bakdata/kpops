@@ -2303,17 +2303,9 @@
                     "type": "boolean"
                 },
                 "from": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/FromSection"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
                     "default": null,
-                    "description": "Topic(s) and/or components from which the component will read input",
-                    "title": "From"
+                    "title": "From",
+                    "type": "null"
                 },
                 "name": {
                     "description": "Component name",
