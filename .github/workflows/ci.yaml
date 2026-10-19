@@ -6,6 +6,8 @@ on:
   push:
     branches:
       - main
+  merge_group:
+    types: [checks_requested]
   workflow_dispatch:
 
 defaults:
@@ -28,7 +30,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -51,7 +53,7 @@ jobs:
     name: Format
     runs-on: [ubuntu-24.04]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -63,19 +65,18 @@ jobs:
         run: uv run --frozen ruff format --check
 
       - name: dprint
-        uses: dprint/check@v2.2
+        uses: dprint/check@v2.5
 
   test:
     name: Test
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - ubuntu-24.04
-          - windows-2022
-        python-version: ["3.11", "3.12", "3.13", "3.14"]
+        # reduced matrix for merge queue to avoid repeated full run
+        os: ${{ fromJSON(github.event_name == 'merge_group' && '["ubuntu-24.04"]' || '["ubuntu-24.04", "windows-2022"]') }}
+        python-version: ${{ fromJSON(github.event_name == 'merge_group' && '["3.14"]' || '["3.11", "3.12", "3.13", "3.14"]') }}
         is-draft-pr:
-          - ${{ github.event.pull_request.draft }}
+          - ${{ github.event.pull_request.draft == true }}
         exclude:
           # skip Windows jobs on draft PRs because they are slow
           - os: windows-2022
@@ -83,7 +84,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           submodules: true
 
@@ -101,7 +102,7 @@ jobs:
     runs-on: [ubuntu-24.04]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -130,15 +131,27 @@ jobs:
         run: uv run --frozen --group=docs
           zensical build -f docs/mkdocs.yml
 
+  # composite job as required status check for branch protection & merge queue
+  ci-success:
+    name: CI success
+    needs: [lint, format, test, docs]
+    if: ${{ always() }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Fail if any required job failed or was cancelled
+        if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped') }}
+        run: exit 1
+
   # TODO: extract into ci-templates
   publish-snapshot-version:
     name: Publish snapshot to TestPyPI
     needs: [lint, format, test, docs]
+    if: ${{ github.event_name != 'merge_group' }}
     runs-on: ubuntu-24.04
     permissions:
       id-token: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -154,7 +167,7 @@ jobs:
 
       - name: Bump version patch
         id: bump-version
-        uses: bakdata/ci-templates/actions/bump-version@1.82.1
+        uses: bakdata/ci-templates/actions/bump-version@6a97ae255090bdd725bfbb21d0eb05d46a9abd59 # https://github.com/bakdata/ci-templates/releases/tag/1.83.0
         with:
           release-type: patch
 
@@ -164,7 +177,7 @@ jobs:
         run: git restore .
 
       - name: Bump version snapshot time
-        uses: bakdata/ci-templates/actions/bump-version@1.82.1
+        uses: bakdata/ci-templates/actions/bump-version@6a97ae255090bdd725bfbb21d0eb05d46a9abd59 # https://github.com/bakdata/ci-templates/releases/tag/1.83.0
         with:
           release-type: patch
           new-version: ${{ steps.bump-version.outputs.release-version }}${{ steps.snapshot-time.outputs.snapshot-time }} # e.g. 9.1.1-dev20250108102827
@@ -183,7 +196,7 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs: [lint, format, test, docs]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Publish docs from main branch
         uses: ./.github/actions/update-docs
@@ -201,7 +214,7 @@ jobs:
     if: ${{ github.event_name == 'pull_request' }}
     needs: [lint, format, test, docs]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.head_ref }}
 
