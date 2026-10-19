@@ -97,11 +97,11 @@ class TestKafkaConnect:
 
     async def test_create_connector_request(
         self,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
         kafka_connect: KafkaConnect,
         connector_config: KafkaConnectorConfig,
     ) -> None:
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="POST",
             url=f"{DEFAULT_HOST}/connectors",
             status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
@@ -109,7 +109,7 @@ class TestKafkaConnect:
         with pytest.raises(KafkaConnectError):
             await kafka_connect.create_connector(connector_config)
 
-        request = httpx_mock.get_requests()[0]
+        request = httpx2_mock.get_requests()[0]
         assert json.loads(request.content) == {
             "name": CONNECTOR_NAME,
             "config": connector_config.model_dump(),
@@ -117,11 +117,11 @@ class TestKafkaConnect:
 
     async def test_create_connector_request_with_initial_state(
         self,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
         kafka_connect: KafkaConnect,
         connector_config: KafkaConnectorConfig,
     ) -> None:
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="POST",
             url=f"{DEFAULT_HOST}/connectors",
             status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
@@ -130,7 +130,7 @@ class TestKafkaConnect:
             await kafka_connect.create_connector(
                 connector_config, ConnectorNewState.RUNNING
             )
-        request = httpx_mock.get_requests()[0]
+        request = httpx2_mock.get_requests()[0]
         assert json.loads(request.content) == {
             "name": CONNECTOR_NAME,
             "config": connector_config.model_dump(),
@@ -140,11 +140,11 @@ class TestKafkaConnect:
     async def test_create_connector(
         self,
         kafka_connect: KafkaConnect,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
         connector_config: KafkaConnectorConfig,
         connector_response: dict[str, Any],
     ) -> None:
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="POST",
             url=f"{DEFAULT_HOST}/connectors",
             headers=HEADERS,
@@ -159,19 +159,19 @@ class TestKafkaConnect:
     async def test_create_connector_retry(
         self,
         kafka_connect: KafkaConnect,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
         connector_response: dict[str, Any],
         connector_config: KafkaConnectorConfig,
     ) -> None:
         ENDPOINT = f"{DEFAULT_HOST}/connectors"
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="POST",
             url=ENDPOINT,
             headers=HEADERS,
             status_code=httpx2.codes.CONFLICT,
             json={},
         )
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="POST",
             url=ENDPOINT,
             headers=HEADERS,
@@ -195,10 +195,10 @@ class TestKafkaConnect:
     async def test_get_connector(
         self,
         kafka_connect: KafkaConnect,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
         connector_response: dict[str, Any],
     ) -> None:
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="GET",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
             headers=HEADERS,
@@ -210,9 +210,9 @@ class TestKafkaConnect:
     async def test_get_connector_not_found(
         self,
         kafka_connect: KafkaConnect,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
     ) -> None:
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="GET",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
             headers=HEADERS,
@@ -226,18 +226,18 @@ class TestKafkaConnect:
     async def test_get_connector_retry(
         self,
         kafka_connect: KafkaConnect,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
         connector_response: dict[str, Any],
     ) -> None:
         ENDPOINT = f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}"
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="GET",
             url=ENDPOINT,
             headers=HEADERS,
             status_code=httpx2.codes.CONFLICT,
             json={},
         )
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="GET",
             url=ENDPOINT,
             headers=HEADERS,
@@ -263,7 +263,7 @@ class TestKafkaConnect:
     async def test_get_connector_status(
         self,
         kafka_connect: KafkaConnect,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
         api_state: str,
         enum_state: ConnectorCurrentState,
     ) -> None:
@@ -276,7 +276,7 @@ class TestKafkaConnect:
             "tasks": [],
             "type": "sink",
         }
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="GET",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/status",
             headers=HEADERS,
@@ -296,9 +296,9 @@ class TestKafkaConnect:
     async def test_pause_connector(
         self,
         kafka_connect: KafkaConnect,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
     ) -> None:
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/pause",
             status_code=httpx2.codes.ACCEPTED,
@@ -312,9 +312,9 @@ class TestKafkaConnect:
         } in cap_logs
 
     async def test_pause_error(
-        self, kafka_connect: KafkaConnect, httpx_mock: HTTPXMock
+        self, kafka_connect: KafkaConnect, httpx2_mock: HTTPXMock
     ) -> None:
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/pause",
             status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
@@ -325,9 +325,9 @@ class TestKafkaConnect:
     async def test_resume_connector(
         self,
         kafka_connect: KafkaConnect,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
     ) -> None:
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/resume",
             status_code=httpx2.codes.ACCEPTED,
@@ -341,9 +341,9 @@ class TestKafkaConnect:
         } in cap_logs
 
     async def test_resume_connector_error(
-        self, kafka_connect: KafkaConnect, httpx_mock: HTTPXMock
+        self, kafka_connect: KafkaConnect, httpx2_mock: HTTPXMock
     ) -> None:
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/resume",
             status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
@@ -354,9 +354,9 @@ class TestKafkaConnect:
     async def test_stop_connector(
         self,
         kafka_connect: KafkaConnect,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
     ) -> None:
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/stop",
             status_code=httpx2.codes.NO_CONTENT,
@@ -370,9 +370,9 @@ class TestKafkaConnect:
         } in cap_logs
 
     async def test_stop_connector_error(
-        self, kafka_connect: KafkaConnect, httpx_mock: HTTPXMock
+        self, kafka_connect: KafkaConnect, httpx2_mock: HTTPXMock
     ) -> None:
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/stop",
             status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
@@ -382,11 +382,11 @@ class TestKafkaConnect:
 
     async def test_update_connector_request(
         self,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
         kafka_connect: KafkaConnect,
         connector_config: KafkaConnectorConfig,
     ) -> None:
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/config",
             status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
@@ -394,17 +394,17 @@ class TestKafkaConnect:
         )
         with pytest.raises(KafkaConnectError):
             await kafka_connect.update_connector_config(connector_config)
-        request = httpx_mock.get_requests()[0]
+        request = httpx2_mock.get_requests()[0]
         assert json.loads(request.content) == connector_config.model_dump()
 
     async def test_update_connector(
         self,
         kafka_connect: KafkaConnect,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
         connector_config: KafkaConnectorConfig,
         connector_response: dict[str, Any],
     ) -> None:
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/config",
             headers=HEADERS,
@@ -425,11 +425,11 @@ class TestKafkaConnect:
     async def test_update_create_connector(
         self,
         kafka_connect: KafkaConnect,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
         connector_config: KafkaConnectorConfig,
         connector_response: dict[str, Any],
     ) -> None:
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/config",
             headers=HEADERS,
@@ -451,19 +451,19 @@ class TestKafkaConnect:
     async def test_update_connector_retry(
         self,
         kafka_connect: KafkaConnect,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
         connector_response: dict[str, Any],
         connector_config: KafkaConnectorConfig,
     ) -> None:
         ENDPOINT = f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/config"
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="PUT",
             url=ENDPOINT,
             headers=HEADERS,
             status_code=httpx2.codes.CONFLICT,
             json={},
         )
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="PUT",
             url=ENDPOINT,
             headers=HEADERS,
@@ -486,9 +486,9 @@ class TestKafkaConnect:
     async def test_delete_connector(
         self,
         kafka_connect: KafkaConnect,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
     ) -> None:
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="DELETE",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
             status_code=httpx2.codes.NO_CONTENT,
@@ -504,9 +504,9 @@ class TestKafkaConnect:
     async def test_delete_connector_not_found(
         self,
         kafka_connect: KafkaConnect,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
     ) -> None:
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="DELETE",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}",
             headers=HEADERS,
@@ -523,17 +523,17 @@ class TestKafkaConnect:
     async def test_delete_connector_retry(
         self,
         kafka_connect: KafkaConnect,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
     ) -> None:
         ENDPOINT = f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}"
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="DELETE",
             url=ENDPOINT,
             headers=HEADERS,
             status_code=httpx2.codes.CONFLICT,
             json={},
         )
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="DELETE",
             url=ENDPOINT,
             status_code=httpx2.codes.NO_CONTENT,
@@ -555,9 +555,9 @@ class TestKafkaConnect:
     async def test_reset_offset(
         self,
         kafka_connect: KafkaConnect,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
     ) -> None:
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="DELETE",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/offsets",
             status_code=httpx2.codes.NO_CONTENT,
@@ -573,9 +573,9 @@ class TestKafkaConnect:
     async def test_reset_offset_not_found(
         self,
         kafka_connect: KafkaConnect,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
     ) -> None:
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="DELETE",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/offsets",
             headers=HEADERS,
@@ -586,9 +586,9 @@ class TestKafkaConnect:
             await kafka_connect.reset_offset(CONNECTOR_NAME)
 
     async def test_reset_offset_error(
-        self, kafka_connect: KafkaConnect, httpx_mock: HTTPXMock
+        self, kafka_connect: KafkaConnect, httpx2_mock: HTTPXMock
     ) -> None:
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="DELETE",
             url=f"{DEFAULT_HOST}/connectors/{CONNECTOR_NAME}/offsets",
             status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
@@ -597,9 +597,9 @@ class TestKafkaConnect:
             await kafka_connect.reset_offset(CONNECTOR_NAME)
 
     async def test_should_raise_connection_error_when_service_unreachable(
-        self, kafka_connect: KafkaConnect, httpx_mock: HTTPXMock
+        self, kafka_connect: KafkaConnect, httpx2_mock: HTTPXMock
     ) -> None:
-        httpx_mock.add_exception(httpx2.ConnectError("Connection refused"))
+        httpx2_mock.add_exception(httpx2.ConnectError("Connection refused"))
 
         with pytest.raises(KafkaConnectConnectionError, match="Connection refused"):
             await kafka_connect.get_connector(CONNECTOR_NAME)
@@ -635,27 +635,27 @@ class TestKafkaConnect:
 
     async def test_validate_connector_config_request(
         self,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
         kafka_connect: KafkaConnect,
         file_stream_connector_config: KafkaConnectorConfig,
     ) -> None:
         endpoint = (
             f"/connector-plugins/{file_stream_connector_config.name}/config/validate"
         )
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}{endpoint}",
             status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
         )
         with pytest.raises(KafkaConnectError):
             await kafka_connect.validate_connector_config(file_stream_connector_config)
-        request = httpx_mock.get_requests()[0]
+        request = httpx2_mock.get_requests()[0]
         assert json.loads(request.content) == file_stream_connector_config.model_dump()
 
     async def test_validate_connector_config(
         self,
         kafka_connect: KafkaConnect,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
         file_stream_connector_config: KafkaConnectorConfig,
     ) -> None:
         content = await Path(
@@ -663,7 +663,7 @@ class TestKafkaConnect:
         ).read_text()
         actual_response = json.loads(content)
 
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="PUT",
             url=f"{DEFAULT_HOST}/connector-plugins/{file_stream_connector_config.name}/config/validate",
             headers=HEADERS,
@@ -681,11 +681,11 @@ class TestKafkaConnect:
     async def test_request_and_response_event_hooks_log_debug(
         self,
         kafka_connect: KafkaConnect,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
         connector_config: KafkaConnectorConfig,
         connector_response: dict[str, Any],
     ) -> None:
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="POST",
             url=f"{DEFAULT_HOST}/connectors",
             headers=HEADERS,
@@ -751,7 +751,7 @@ class TestKafkaConnect:
     async def test_dry_run_does_not_send_request(
         self,
         kafka_connect: KafkaConnect,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
         connector_config: KafkaConnectorConfig,
         method_name: str,
         arg_is_config: bool,
@@ -766,7 +766,7 @@ class TestKafkaConnect:
 
         assert result is None
         # no actual HTTP request was made
-        assert httpx_mock.get_requests() == []
+        assert httpx2_mock.get_requests() == []
 
         debug_events = [e["event"] for e in cap_logs if e["log_level"] == "debug"]
         assert debug_events[0] == f"{http_method} {DEFAULT_HOST}{endpoint}"
