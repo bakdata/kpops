@@ -1,0 +1,46 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    cooldown:
+      default-days: 7
+      exclude:
+        - "bakdata/ci-templates*"
+    groups:
+      ci-templates:
+        patterns:
+          - "bakdata/ci-templates*"
+    commit-message:
+      prefix: ci
+
+  - package-ecosystem: "uv"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    cooldown:
+      default-days: 7
+    versioning-strategy: "increase-if-necessary"
+    groups:
+      production:
+        dependency-type: "production"
+        # 0.x.y versions can introduce breaking changes in minor bumps, so we review them individually
+        exclude-patterns:
+          - "dictdiffer"
+          - "rustworkx"
+        update-types:
+          - "minor"
+          - "patch"
+      development:
+        dependency-type: "development"
+        exclude-patterns:
+          - "pytest-snapshot"
+          - "ruff"
+          - "ty"
+        update-types:
+          - "minor"
+          - "patch"
+    commit-message:
+      prefix: chore
+      include: scope
