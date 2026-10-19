@@ -21,6 +21,7 @@ updates:
       interval: "monthly"
     cooldown:
       default-days: 7
+    open-pull-requests-limit: 10
     versioning-strategy: "increase-if-necessary"
     groups:
       production:
