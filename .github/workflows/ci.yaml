@@ -107,8 +107,14 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v7
         with:
-          python-version: "3.12"
+          python-version: "3.14"
           version: ${{ vars.UV_VERSION }}
+
+      - name: Install lefthook
+        uses: jdx/mise-action@v5
+        with:
+          version: "2026.10.5"
+          install_args: "lefthook"
 
       - name: Generate schema (kpops schema)
         run: |
@@ -117,15 +123,15 @@ jobs:
 
       - name: Generate CLI Usage docs (typer-cli)
         run: uv run --frozen
-          lefthook run pre-commit --commands kpops-docs-cli --force
+          lefthook run pre-commit --command kpops-docs-cli --force
 
       - name: Generate Environment variable docs
         run: uv run --frozen
-          lefthook run pre-commit --commands kpops-docs-env-vars --force
+          lefthook run pre-commit --command kpops-docs-env-vars --force
 
       - name: Generate pipeline definitions
         run: uv run --frozen
-          lefthook run pre-commit --commands kpops-docs-components --force
+          lefthook run pre-commit --command kpops-docs-components --force
 
       - name: Test docs build (zensical)
         run: uv run --frozen --group=docs
