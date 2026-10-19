@@ -42,7 +42,6 @@ kpops = "kpops.cli.main:cli"
 [dependency-groups]
 dev = [
   "httpx2-pytest>=1.0.1",
-  "lefthook>=1.10.4",
   "polyfactory>=2.13.0",
   "pytablewriter[from]>=1.0.0",
   "pytest>=9.0.0",
