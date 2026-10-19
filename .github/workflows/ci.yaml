@@ -122,13 +122,13 @@ jobs:
           git diff --quiet HEAD -- docs/docs/schema
 
       - name: Generate CLI Usage docs (typer-cli)
-        run: lefthook run pre-commit --commands kpops-docs-cli --force
+        run: lefthook run pre-commit --command kpops-docs-cli --force
 
       - name: Generate Environment variable docs
-        run: lefthook run pre-commit --commands kpops-docs-env-vars --force
+        run: lefthook run pre-commit --command kpops-docs-env-vars --force
 
       - name: Generate pipeline definitions
-        run: lefthook run pre-commit --commands kpops-docs-components --force
+        run: lefthook run pre-commit --command kpops-docs-components --force
 
       - name: Test docs build (zensical)
         run: uv run --frozen --group=docs
