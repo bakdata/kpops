@@ -17,7 +17,9 @@ With a couple of easy commands in the shell, and a [`pipeline.yaml`](#example) o
 
 <figure markdown>
   ![atm-fraud-pipeline](../images/word-count-pipeline_streams-explorer.png)
-  <figcaption>An overview of <a href="../getting-started/quick-start">Word-count pipeline</a> shown in <a href="https://github.com/bakdata/streams-explorer#streams-explorer" target="_blank">Streams Explorer</a></figcaption>
+  <figcaption>
+    An overview of <a href="../getting-started/quick-start">Word-count pipeline</a> shown in <a href="https://github.com/bakdata/streams-explorer#streams-explorer" target="_blank">Streams Explorer</a>
+  </figcaption>
 </figure>
 
 ```yaml title="Word-count pipeline.yaml"

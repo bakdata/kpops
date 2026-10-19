@@ -105,7 +105,9 @@ You should be able to see pipeline shown in the image below:
 
 <figure markdown>
   ![word-count-pipeline](../../images/word-count-pipeline_streams-explorer.png)
-  <figcaption>An overview of Word-count pipeline shown in Streams Explorer</figcaption>
+  <figcaption>
+    An overview of Word-count pipeline shown in Streams Explorer
+  </figcaption>
 </figure>
 
 <!-- dprint-ignore-start -->

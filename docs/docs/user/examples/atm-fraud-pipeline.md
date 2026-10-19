@@ -109,7 +109,9 @@ You should be able to see pipeline shown in the image below:
 
 <figure markdown>
   ![atm-fraud-pipeline](../../images/atm-fraud-pipeline_streams-explorer.png)
-  <figcaption>An overview of ATM fraud pipeline shown in Streams Explorer</figcaption>
+  <figcaption>
+    An overview of ATM fraud pipeline shown in Streams Explorer
+  </figcaption>
 </figure>
 
 <!-- dprint-ignore-start -->
