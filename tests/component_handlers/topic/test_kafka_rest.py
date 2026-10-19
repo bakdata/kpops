@@ -26,7 +26,7 @@ DEFAULT_HOST = "http://localhost:8082"
 
 class TestKafkaRest:
     @pytest_asyncio.fixture()
-    async def kafka_rest(self, httpx_mock: HTTPXMock) -> KafkaRest:
+    async def kafka_rest(self, httpx2_mock: HTTPXMock) -> KafkaRest:
         config = KpopsConfig()
         kafka_rest = KafkaRest(config.kafka_rest)
         content = await Path(
@@ -34,7 +34,7 @@ class TestKafkaRest:
         ).read_text()
         cluster_response = json.loads(content)
 
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="GET",
             url=f"{DEFAULT_HOST}/v3/clusters",
             json=cluster_response,
@@ -45,7 +45,7 @@ class TestKafkaRest:
         return kafka_rest
 
     async def test_should_create_topic_with_all_topic_configuration(
-        self, kafka_rest: KafkaRest, httpx_mock: HTTPXMock
+        self, kafka_rest: KafkaRest, httpx2_mock: HTTPXMock
     ) -> None:
         topic_spec = {
             "topic_name": "topic-X",
@@ -56,7 +56,7 @@ class TestKafkaRest:
                 {"name": "compression.type", "value": "gzip"},
             ],
         }
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="POST",
             url=f"{DEFAULT_HOST}/v3/clusters/{kafka_rest.cluster_id}/topics",
             status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
@@ -67,14 +67,14 @@ class TestKafkaRest:
                 topic_spec=TopicSpec.model_validate(topic_spec)
             )
 
-        request = httpx_mock.get_requests()[-1]
+        request = httpx2_mock.get_requests()[-1]
         assert json.loads(request.content) == topic_spec
 
     async def test_should_create_topic_with_no_configuration(
-        self, kafka_rest: KafkaRest, httpx_mock: HTTPXMock
+        self, kafka_rest: KafkaRest, httpx2_mock: HTTPXMock
     ) -> None:
         topic_spec: dict[str, Any] = {"topic_name": "topic-X"}
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="POST",
             url=f"{DEFAULT_HOST}/v3/clusters/{kafka_rest.cluster_id}/topics",
             status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
@@ -85,14 +85,14 @@ class TestKafkaRest:
                 topic_spec=TopicSpec.model_validate(topic_spec)
             )
 
-        request = httpx_mock.get_requests()[-1]
+        request = httpx2_mock.get_requests()[-1]
         assert json.loads(request.content) == topic_spec
 
     async def test_should_call_get_topic(
-        self, kafka_rest: KafkaRest, httpx_mock: HTTPXMock
+        self, kafka_rest: KafkaRest, httpx2_mock: HTTPXMock
     ) -> None:
         topic_name = "topic-X"
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="GET",
             url=f"{DEFAULT_HOST}/v3/clusters/{kafka_rest.cluster_id}/topics/{topic_name}",
             status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
@@ -102,10 +102,10 @@ class TestKafkaRest:
             await kafka_rest.get_topic(topic_name=topic_name)
 
     async def test_should_call_batch_alter_topic_config(
-        self, kafka_rest: KafkaRest, httpx_mock: HTTPXMock
+        self, kafka_rest: KafkaRest, httpx2_mock: HTTPXMock
     ) -> None:
         topic_name = "topic-X"
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="POST",
             url=f"{DEFAULT_HOST}/v3/clusters/cluster-1/topics/{topic_name}/configs:alter",
             status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
@@ -120,7 +120,7 @@ class TestKafkaRest:
                 ],
             )
 
-        request = httpx_mock.get_requests()[-1]
+        request = httpx2_mock.get_requests()[-1]
         assert json.loads(request.content) == {
             "data": [
                 {"name": "cleanup.policy", "operation": "DELETE"},
@@ -129,10 +129,10 @@ class TestKafkaRest:
         }
 
     async def test_should_call_delete_topic(
-        self, kafka_rest: KafkaRest, httpx_mock: HTTPXMock
+        self, kafka_rest: KafkaRest, httpx2_mock: HTTPXMock
     ) -> None:
         topic_name = "topic-X"
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="DELETE",
             url=f"{DEFAULT_HOST}/v3/clusters/{kafka_rest.cluster_id}/topics/{topic_name}",
             status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
@@ -142,9 +142,9 @@ class TestKafkaRest:
             await kafka_rest.delete_topic(topic_name=topic_name)
 
     async def test_should_call_get_broker_config(
-        self, kafka_rest: KafkaRest, httpx_mock: HTTPXMock
+        self, kafka_rest: KafkaRest, httpx2_mock: HTTPXMock
     ) -> None:
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="GET",
             url=f"{DEFAULT_HOST}/v3/clusters/{kafka_rest.cluster_id}/brokers/-/configs",
             status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
@@ -154,9 +154,9 @@ class TestKafkaRest:
             await kafka_rest.get_broker_config()
 
     async def test_should_raise_connection_error_when_service_unreachable(
-        self, kafka_rest: KafkaRest, httpx_mock: HTTPXMock
+        self, kafka_rest: KafkaRest, httpx2_mock: HTTPXMock
     ) -> None:
-        httpx_mock.add_exception(httpx2.ConnectError("Connection refused"))
+        httpx2_mock.add_exception(httpx2.ConnectError("Connection refused"))
 
         with pytest.raises(KafkaRestProxyConnectionError, match="Connection refused"):
             await kafka_rest.get_broker_config()
@@ -182,7 +182,7 @@ class TestKafkaRest:
     async def test_should_log_topic_creation(
         self,
         kafka_rest: KafkaRest,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
     ) -> None:
         topic_spec = {
             "topic_name": "topic-X",
@@ -194,7 +194,7 @@ class TestKafkaRest:
             ],
         }
 
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="POST",
             url=f"{DEFAULT_HOST}/v3/clusters/cluster-1/topics",
             json=topic_spec,
@@ -214,11 +214,11 @@ class TestKafkaRest:
     async def test_should_log_topic_deletion(
         self,
         kafka_rest: KafkaRest,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
     ) -> None:
         topic_name = "topic-X"
 
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="DELETE",
             url=f"{DEFAULT_HOST}/v3/clusters/cluster-1/topics/{topic_name}",
             headers=HEADERS,
@@ -235,7 +235,7 @@ class TestKafkaRest:
     async def test_should_get_topic(
         self,
         kafka_rest: KafkaRest,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
     ) -> None:
         res = {
             "kind": "KafkaTopic",
@@ -256,7 +256,7 @@ class TestKafkaRest:
 
         topic_name = "topic-X"
 
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="GET",
             url=f"{DEFAULT_HOST}/v3/clusters/cluster-1/topics/{topic_name}",
             headers=HEADERS,
@@ -277,11 +277,11 @@ class TestKafkaRest:
     async def test_should_rais_topic_not_found_exception_get_topic(
         self,
         kafka_rest: KafkaRest,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
     ) -> None:
         topic_name = "topic-X"
 
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="GET",
             url=f"{DEFAULT_HOST}/v3/clusters/cluster-1/topics/{topic_name}",
             headers=HEADERS,
@@ -302,12 +302,12 @@ class TestKafkaRest:
     async def test_should_log_reset_default_topic_config_when_deleted(
         self,
         kafka_rest: KafkaRest,
-        httpx_mock: HTTPXMock,
+        httpx2_mock: HTTPXMock,
     ) -> None:
         topic_name = "topic-X"
         config_name = "cleanup.policy"
 
-        httpx_mock.add_response(
+        httpx2_mock.add_response(
             method="POST",
             url=f"{DEFAULT_HOST}/v3/clusters/cluster-1/topics/{topic_name}/configs:alter",
             headers=HEADERS,
