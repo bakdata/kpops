@@ -49,7 +49,7 @@ def cache_key(
 @final
 class Helm:
     _instance: Self | None = None
-    _repo_cache: ClassVar[dict[Hashable, Any]] = {}
+    _repo_cache: ClassVar[dict[Hashable, None]] = {}
 
     def __new__(cls, *args: Any, **kwargs: Any) -> Self:
         """Return singleton instance."""
