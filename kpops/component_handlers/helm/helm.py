@@ -7,11 +7,11 @@ import tempfile
 from collections.abc import Hashable
 from functools import cached_property
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Self, final
+from typing import TYPE_CHECKING, Any, ClassVar, Self, final
 
 import structlog
 import yaml
-from cachetools import cached
+from cachetools import cachedmethod
 
 from kpops.component_handlers.helm import HELM
 from kpops.component_handlers.helm.exception import (
@@ -49,6 +49,7 @@ def cache_key(
 @final
 class Helm:
     _instance: Self | None = None
+    _repo_cache: ClassVar[dict[Hashable, Any]] = {}
 
     def __new__(cls, *args: Any, **kwargs: Any) -> Self:
         """Return singleton instance."""
@@ -64,7 +65,7 @@ class Helm:
             msg = f"The supported Helm version is 3.x.x|4.x.x. The current Helm version is {self.version.major}.{self.version.minor}.{self.version.patch}"
             raise RuntimeError(msg)
 
-    @cached(cache={}, key=cache_key)
+    @cachedmethod(lambda _: Helm._repo_cache, key=cache_key)
     def add_repo(
         self,
         repository_name: str,
