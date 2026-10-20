@@ -14,7 +14,6 @@ from kpops.components.base_components.pipeline_component import (
 )
 from kpops.core.registry import Registry
 from kpops.utils.colorify import redify, yellowify
-from kpops.utils.pydantic import issubclass_patched
 from kpops.utils.yaml import load_yaml_file
 
 registry = Registry()
@@ -51,12 +50,9 @@ KPOPS_COMPONENTS_SECTIONS = {
 KPOPS_COMPONENTS_INHERITANCE_REF = {
     component.type: {
         "bases": [
-            cast(
-                type[PipelineComponent],
-                base,
-            ).type
+            base.type
             for base in component.__bases__
-            if issubclass_patched(base, PipelineComponent)
+            if issubclass(base, PipelineComponent)
         ],
         "parents": [
             cast(

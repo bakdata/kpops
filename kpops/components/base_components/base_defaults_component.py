@@ -28,7 +28,7 @@ from kpops.utils.dict_ops import (
     update_nested_pair,
 )
 from kpops.utils.environment import ENV, PIPELINE_PATH
-from kpops.utils.pydantic import DescConfigModel, issubclass_patched, to_dash
+from kpops.utils.pydantic import DescConfigModel, to_dash
 from kpops.utils.types import JsonType
 from kpops.utils.yaml import load_yaml_file, substitute_nested
 
@@ -100,7 +100,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         def gen_parents() -> Generator[type[BaseDefaultsComponent]]:
             for base in cls.mro():
                 # skip class itself and non-component ancestors
-                if base is cls or not issubclass_patched(base, BaseDefaultsComponent):
+                if base is cls or not issubclass(base, BaseDefaultsComponent):
                     continue
                 yield base
 
