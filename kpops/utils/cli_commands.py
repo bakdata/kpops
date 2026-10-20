@@ -10,7 +10,7 @@ from kpops.config import KpopsConfig
 from kpops.const.file_type import KpopsFileType
 from kpops.utils.docstring import describe_object
 from kpops.utils.json import is_jsonable
-from kpops.utils.pydantic import collect_fields, issubclass_patched
+from kpops.utils.pydantic import collect_fields
 
 
 def extract_config_fields_for_yaml(
@@ -31,7 +31,7 @@ def extract_config_fields_for_yaml(
             elif not (required or value.default in [PydanticUndefined, Ellipsis]):
                 if is_jsonable(value.default):
                     extracted_fields[key] = value.default
-                elif issubclass_patched(value.default, BaseModel):
+                elif isinstance(value.default, BaseModel):
                     extracted_fields[key] = value.default.model_dump(mode="json")
                 else:
                     extracted_fields[key] = str(value.default)

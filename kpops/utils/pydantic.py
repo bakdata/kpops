@@ -133,33 +133,12 @@ def collect_fields(model_cls: type[BaseModel]) -> ModelFields:
     """
     seen_fields: ModelFields = {}
     for field_name, field_info in model_cls.model_fields.items():
-        if field_info.annotation and issubclass_patched(field_info.annotation):
-            seen_fields[field_name] = collect_fields(field_info.annotation)
+        annotation = field_info.annotation
+        if isinstance(annotation, type) and issubclass(annotation, BaseModel):
+            seen_fields[field_name] = collect_fields(annotation)
         else:
             seen_fields[field_name] = field_info
     return seen_fields
-
-
-def issubclass_patched(
-    __cls: type, __class_or_tuple: type | tuple[type, ...] = BaseModel
-) -> bool:
-    """Pydantic breaks ``issubclass``.
-
-    .. code-block:: python
-        issubclass(set[str], set)  # True
-        issubclass(BaseSettings, BaseModel)  # True
-        issubclass(set[str], BaseModel)  # raises Exception
-
-    :param __cls: class to check
-    :param __class_or_tuple: class(es) to check against, defaults to ``BaseModel``
-    :return: Whether 'cls' is derived from another class or is the same class.
-    """
-    try:
-        return issubclass(__cls, __class_or_tuple)
-    except TypeError as e:
-        if str(e) == "issubclass() arg 1 must be a class":
-            return False
-        raise
 
 
 class CamelCaseConfigModel(BaseModel):
