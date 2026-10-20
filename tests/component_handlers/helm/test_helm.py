@@ -62,7 +62,7 @@ class TestHelm:
         helm = Helm._instance
         if not helm:
             return
-        helm.add_repo.cache_clear()
+        Helm._repo_cache.clear()
         if hasattr(helm, "version"):
             del helm.version
 
