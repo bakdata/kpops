@@ -2,6 +2,69 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.0.1](https://github.com/bakdata/kpops/tree/12.0.1) - 2026-10-20
+### What's changed
+
+* Pin workflows to SHA and configure Dependabot for GitHub Actions by @philipp94831 in [#686](https://github.com/bakdata/kpops/pull/686)
+
+* build(deps): bump actions/checkout from 6 to 7 by @dependabot[bot] in [#687](https://github.com/bakdata/kpops/pull/687)
+
+* build(deps): bump azure/setup-helm from 3 to 5 by @dependabot[bot] in [#689](https://github.com/bakdata/kpops/pull/689)
+
+* ci: enable merge queues by @disrupted in [#693](https://github.com/bakdata/kpops/pull/693)
+
+* build(deps): bump dprint/check from 2.2 to 2.5 by @dependabot[bot] in [#691](https://github.com/bakdata/kpops/pull/691)
+
+* build(deps): bump actions/setup-python from 4 to 7 by @dependabot[bot] in [#690](https://github.com/bakdata/kpops/pull/690)
+
+* build(deps): bump actions/add-to-project from 0.4.0 to 2.0.0 by @dependabot[bot] in [#688](https://github.com/bakdata/kpops/pull/688)
+
+* ci: enable dependabot for uv by @disrupted in [#694](https://github.com/bakdata/kpops/pull/694)
+
+* chore(deps-dev): bump the development group with 2 updates by @dependabot[bot] in [#696](https://github.com/bakdata/kpops/pull/696)
+
+* chore(deps): bump dictdiffer from 0.9.0 to 0.10.0 by @dependabot[bot] in [#697](https://github.com/bakdata/kpops/pull/697)
+
+* chore(deps): bump rustworkx from 0.18.0 to 0.18.1 by @dependabot[bot] in [#699](https://github.com/bakdata/kpops/pull/699)
+
+* chore(dev): update ty by @disrupted in [#681](https://github.com/bakdata/kpops/pull/681)
+
+* fix(log): disable rich tracebacks by @disrupted in [#685](https://github.com/bakdata/kpops/pull/685)
+
+* refactor(cli): update typer and use annotated types by @disrupted in [#684](https://github.com/bakdata/kpops/pull/684)
+
+* fix(pipeline): disable from section for source connector by @disrupted in [#683](https://github.com/bakdata/kpops/pull/683)
+
+* ci(dependabot): increase limit for uv PRs by @disrupted in [#700](https://github.com/bakdata/kpops/pull/700)
+
+* chore(deps-dev): bump ty from 0.0.85 to 0.0.86 by @dependabot[bot] in [#705](https://github.com/bakdata/kpops/pull/705)
+
+* chore(deps-dev): bump ruff from 0.16.0 to 0.17.0 by @dependabot[bot] in [#704](https://github.com/bakdata/kpops/pull/704)
+
+* chore(deps-dev): bump polyfactory from 2.18.1 to 3.3.0 by @dependabot[bot] in [#703](https://github.com/bakdata/kpops/pull/703)
+
+* chore(deps-dev): bump httpx2-pytest from 1.0.1 to 2.0.0 by @dependabot[bot] in [#706](https://github.com/bakdata/kpops/pull/706)
+
+* chore(deps): remove unused dependency pytest-rerunfailures by @disrupted in [#707](https://github.com/bakdata/kpops/pull/707)
+
+* chore(dev): install dependencies using mise by @disrupted in [#692](https://github.com/bakdata/kpops/pull/692)
+
+* chore(deps): bump the production group across 1 directory with 6 updates by @dependabot[bot] in [#695](https://github.com/bakdata/kpops/pull/695)
+
+* refactor(helm): align repo cache with recommended cachetools usage by @disrupted in [#708](https://github.com/bakdata/kpops/pull/708)
+
+* chore(deps): bump cachetools from 5.5.0 to 7.2.1 by @dependabot[bot] in [#698](https://github.com/bakdata/kpops/pull/698)
+
+* chore(deps): bump rich from 13.9.4 to 15.0.0 by @dependabot[bot] in [#710](https://github.com/bakdata/kpops/pull/710)
+
+* chore(deps-dev): bump zensical from 0.0.69 to 0.0.70 in the development group by @dependabot[bot] in [#709](https://github.com/bakdata/kpops/pull/709)
+
+
+### New Contributors
+* @dependabot[bot] made their first contribution in [#709](https://github.com/bakdata/kpops/pull/709)
+
+**Full Changelog**: https://github.com/bakdata/kpops/compare/12.0.0...12.0.1
+
 ## [12.0.0](https://github.com/bakdata/kpops/tree/12.0.0) - 2026-09-25
 ### What's changed
 
