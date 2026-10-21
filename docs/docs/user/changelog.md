@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.0.3](https://github.com/bakdata/kpops/tree/12.0.3) - 2026-10-21
+### What's changed
+
+* ci: use .tool-versions as source of truth for uv and Python by @disrupted in [#712](https://github.com/bakdata/kpops/pull/712)
+
+
+**Full Changelog**: https://github.com/bakdata/kpops/compare/12.0.2...12.0.3
+
 ## [12.0.2](https://github.com/bakdata/kpops/tree/12.0.2) - 2026-10-21
 ### What's changed
 

@@ -1,6 +1,6 @@
 [project]
 name = "kpops"
-version = "12.0.2"
+version = "12.0.3"
 description = "KPOps is a tool to deploy Kafka pipelines to Kubernetes"
 readme = "README.md"
 requires-python = ">=3.11"
