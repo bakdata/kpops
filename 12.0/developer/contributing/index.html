@@ -11,6 +11,7 @@
         <link rel="canonical" href="https://bakdata.github.io/kpops/12.0/developer/contributing/">
       
       
+      
         <link rel="prev" href="../api/">
       
       
@@ -21,7 +22,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="zensical-0.0.64">
+      <meta name="generator" content="zensical-0.0.70">
     
     
       
@@ -32,7 +33,7 @@
       
         
       
-      <link rel="stylesheet" href="../../assets/stylesheets/modern/main.40d3fdbb.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/modern/main.e442bf79.min.css">
       
       
 
@@ -67,14 +68,11 @@
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
-    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <label class="md-overlay" for="__drawer" aria-hidden="true"></label>
     <div data-md-component="skip">
-      
-        
-        <a href="#how-to-contribute" class="md-skip">
-          Skip to content
-        </a>
-      
+      <a href="#__skip" class="md-skip">
+        Skip to content
+      </a>
     </div>
     <div data-md-component="announce">
       
@@ -2121,6 +2119,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#development-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Development setup
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Development setup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#git" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
@@ -2130,15 +2140,9 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#style" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Style
-      </span>
-    </span>
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2294,6 +2298,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#development-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Development setup
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Development setup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#git" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
@@ -2303,15 +2319,9 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#style" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Style
-      </span>
-    </span>
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2327,8 +2337,10 @@
             <div class="md-content" data-md-component="content">
               
               <article class="md-content__inner md-typeset">
+                <a id="__skip" tabindex="-1"></a>
                 
                   
+
   
   
 
@@ -2336,15 +2348,18 @@
 <h1 id="how-to-contribute">How to contribute<a class="headerlink" href="#how-to-contribute" title="Permanent link">&para;</a></h1>
 <p><strong>Welcome!</strong> We are glad to have you visit our contributing guide!</p>
 <p>If you find any bugs or have suggestions for improvements, please open an <a href="https://github.com/bakdata/kpops/issues/new">issue</a> and optionally a <a href="https://github.com/bakdata/kpops/compare">pull request (PR)</a>. In the case of a PR, we would appreciate it if you preface it with an issue outlining your goal and means of achieving it.</p>
+<h2 id="development-setup">Development setup<a class="headerlink" href="#development-setup" title="Permanent link">&para;</a></h2>
+<p>Install the dependencies using <a href="https://mise.jdx.dev/">mise-en-place</a>.</p>
+<div class="language-sh highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a>mise<span class="w"> </span>install
+</span></code></pre></div></td></tr></table></div>
+<p>It will also install git commit hooks which are used for linting, type checking and to create the documentation.</p>
 <h3 id="git">git<a class="headerlink" href="#git" title="Permanent link">&para;</a></h3>
 <p>We are using <a href="https://git-scm.com/book/en/v2/Git-Tools-Submodules">git submodules</a> to import the <a href="https://github.com/bakdata/kpops-examples">KPOps examples</a> repository. You need to fetch the repository locally on your machine. To do so use this command:</p>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
-<span class="normal"><a href="#__codelineno-0-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a>git<span class="w"> </span>submodule<span class="w"> </span>init
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a>git<span class="w"> </span>submodule<span class="w"> </span>update<span class="w"> </span>--recursive
+<div class="language-sh highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
+<span class="normal"><a href="#__codelineno-1-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a>git<span class="w"> </span>submodule<span class="w"> </span>init
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2"></a>git<span class="w"> </span>submodule<span class="w"> </span>update<span class="w"> </span>--recursive
 </span></code></pre></div></td></tr></table></div>
 <p>This will fetch the resources under the <code>examples</code> folder.</p>
-<h2 id="style">Style<a class="headerlink" href="#style" title="Permanent link">&para;</a></h2>
-<p>We advise that you stick to our Git hooks for code linting, formatting, and auto-generation of documentation. After you install them using <code>lefthook install</code> they're triggered automatically during <code>git</code> operations, such as commit or checkout. Additionally, you can manually invoke them with <code>lefthook run pre-commit --all-files</code>. Please also install the <a href="https://dprint.dev/"><code>dprint</code></a> formatter.</p>
 
 
 
@@ -2398,7 +2413,7 @@
 </footer>
       
     </div>
-    <div class="md-dialog" data-md-component="dialog">
+    <div class="md-dialog" data-md-component="dialog" role="status" aria-atomic="true">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
@@ -2410,10 +2425,10 @@
       
         
         
-      <script id="__config" type="application/json">{"annotate":null,"base":"../..","features":["navigation.sections","navigation.tabs","navigation.indexes","navigation.top","navigation.tracking","toc.follow","search.highlight","search.share","search.suggest","content.tooltips","content.code.copy","content.code.select","content.code.annotate"],"redirect":null,"search":"../../assets/javascripts/workers/search.7d14d953.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":{"provider":"mike"}}</script>
+      <script id="__config" type="application/json">{"annotate":null,"base":"../..","features":["navigation.sections","navigation.tabs","navigation.indexes","navigation.top","navigation.tracking","toc.follow","search.highlight","search.share","search.suggest","content.tooltips","content.code.copy","content.code.select","content.code.annotate"],"redirect":null,"search":"../../assets/javascripts/workers/search.c47bb847.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","clipboard.error":"Could not copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":{"provider":"mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.c04ba553.min.js"></script>
+      <script src="../../assets/javascripts/bundle.a2388154.min.js"></script>
       
     
   </body>
