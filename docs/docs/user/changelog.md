@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.0.2](https://github.com/bakdata/kpops/tree/12.0.2) - 2026-10-21
+### What's changed
+
+* chore(deps): bump certifi from 2024.12.14 to 2026.10.19 by @dependabot[bot] in [#713](https://github.com/bakdata/kpops/pull/713)
+
+* chore(deps): bump setuptools from 75.7.0 to 83.0.0 by @dependabot[bot] in [#715](https://github.com/bakdata/kpops/pull/715)
+
+* chore(deps): bump soupsieve from 2.6 to 2.9 by @dependabot[bot] in [#714](https://github.com/bakdata/kpops/pull/714)
+
+
+**Full Changelog**: https://github.com/bakdata/kpops/compare/12.0.1...12.0.2
+
 ## [12.0.1](https://github.com/bakdata/kpops/tree/12.0.1) - 2026-10-20
 ### What's changed
 
