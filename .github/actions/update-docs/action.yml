@@ -4,12 +4,6 @@ description: |
   It then pushes the <major>.<minor> as the latest alias to the documentation branch with mike.
 
 inputs:
-  python-version:
-    description: "The Python version for the uv virtual environment."
-    required: true
-  uv-version:
-    description: "The uv version to be installed."
-    required: true
   username:
     description: "GitHub username"
     required: true
@@ -31,10 +25,9 @@ runs:
   using: "composite"
   steps:
     - name: Install uv
-      uses: astral-sh/setup-uv@v7
+      uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
       with:
-        python-version: ${{ inputs.python-version }}
-        version: ${{ inputs.uv-version }}
+        version-file: .tool-versions
 
     - name: Update gh-pages branch
       shell: bash

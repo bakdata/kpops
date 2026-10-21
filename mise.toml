@@ -1,5 +1,4 @@
 [tools]
-uv = "0.13.4"
 dprint = "0.63.0"
 lefthook = "2.2.2"
 
