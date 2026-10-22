@@ -1,6 +1,6 @@
 # Auto generation
 
-Auto generation happens mostly with Git hooks. You can find the [`lefthook`](https://evilmartians.github.io/lefthook/) configuration [here](https://github.com/bakdata/kpops/blob/main/lefthook.yaml). These pre-commit hooks call different [Python scripts](https://github.com/bakdata/kpops/tree/main/hooks) to auto generate code for the documentation.
+Auto generation happens mostly with Git hooks. You can find the [`hk`](https://hk.jdx.dev) configuration [here](https://github.com/bakdata/kpops/blob/main/hk.pkl). These pre-commit hooks call different [Python scripts](https://github.com/bakdata/kpops/tree/main/hooks) to auto generate code for the documentation.
 
 ## Generation scripts and their respective files
 
@@ -30,7 +30,7 @@ User input
 Generated
 
 - `pipeline-components/dependencies/*`
-  Cached information about KPOps components
+  Generated information about KPOps components
   - `pipeline_component_dependencies.yaml` -- Specifies per component which files in the `sections` dir should be used for the `pipeline.yaml` generation.
   - `defaults_pipeline_component_dependencies.yaml` -- Specifies per component which files in the `sections` dir should be used for the `defaults.yaml` generation.
   - `kpops_structure.yaml` -- Specifies the inheritance hierarchy of the components and what sections exist in each component.

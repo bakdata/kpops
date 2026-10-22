@@ -108,13 +108,13 @@ jobs:
         with:
           version-file: .tool-versions
 
-      - name: Install lefthook
+      - name: Install hk
         uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
         env:
           MISE_NO_HOOKS: "1"
         with:
           version: "2026.10.5"
-          install_args: "lefthook"
+          install_args: "hk"
 
       - name: Generate schema (kpops schema)
         run: |
@@ -123,15 +123,15 @@ jobs:
 
       - name: Generate CLI Usage docs (typer-cli)
         run: uv run --frozen
-          lefthook run pre-commit --command kpops-docs-cli --force
+          hk fix --all --step kpops-docs-cli
 
       - name: Generate Environment variable docs
         run: uv run --frozen
-          lefthook run pre-commit --command kpops-docs-env-vars --force
+          hk fix --all --step kpops-docs-env-vars
 
       - name: Generate pipeline definitions
         run: uv run --frozen
-          lefthook run pre-commit --command kpops-docs-components --force
+          hk fix --all --step kpops-docs-components
 
       - name: Test docs build (zensical)
         run: uv run --frozen --group=docs

@@ -1,0 +1,82 @@
+amends "package://github.com/jdx/hk/releases/download/v2.8.0/hk@2.8.0#/Config.pkl"
+
+import "package://github.com/jdx/hk/releases/download/v2.8.0/hk@2.8.0#/Builtins.pkl"
+
+// Generators import the whole package but their globs are narrower, so hk's locks
+// don't cover all inputs: wait for ruff explicitly. `stomp` (read locks) lets them
+// run in parallel, as their outputs are disjoint.
+local class Generator extends Step {
+  stomp = true
+  depends = "ruff-format"
+}
+
+local py = "python -m"
+
+local linters = new Mapping<String, Step> {
+  ["uv-lock"] {
+    glob = List("pyproject.toml", "uv.lock")
+    check = "uv lock --check"
+  }
+  ["ruff-check"] = Builtins.ruff
+  ["ruff-format"] = (Builtins.ruff_format) {
+    depends = "ruff-check"
+  }
+  ["ty"] = (Builtins.ty) {
+    check = "ty check"
+  }
+  ["dprint"] = (Builtins.dprint) {
+    glob = List("*.json", "*.jsonc", "*.yaml", "*.yml", "*.md", "*.toml", "*.css")
+  }
+  ["kpops-schema"] = new Generator {
+    glob = List("uv.lock", "kpops/**/*.py", "hooks/gen_schema.py")
+    fix = "\(py) hooks.gen_schema"
+    stage = List("docs/docs/schema/*.json")
+  }
+  ["kpops-docs-cli"] = new Generator {
+    glob = List("uv.lock", "kpops/cli/main.py", "hooks/gen_docs/gen_docs_cli_usage.py")
+    fix = "\(py) hooks.gen_docs.gen_docs_cli_usage"
+    stage = List("docs/docs/user/references/cli-commands.md")
+  }
+  ["kpops-docs-env-vars"] = new Generator {
+    glob = List("uv.lock", "kpops/**/*.py", "hooks/gen_docs/gen_docs_env_vars.py")
+    fix = "\(py) hooks.gen_docs.gen_docs_env_vars"
+    stage = List("docs/docs/resources/variables/*")
+  }
+  ["kpops-docs-components"] = new Generator {
+    glob =
+      List(
+        "uv.lock",
+        "hooks/gen_docs/gen_docs_components.py",
+        "docs/docs/resources/pipeline-defaults/headers/*.yaml",
+        "docs/docs/resources/pipeline-components/headers/*.yaml",
+        "docs/docs/resources/pipeline-components/sections/*.yaml",
+        "kpops/components/*.py",
+      )
+    fix = "\(py) hooks.gen_docs.gen_docs_components"
+    stage =
+      List(
+        "docs/docs/resources/pipeline-components/**",
+        "docs/docs/resources/pipeline-defaults/**",
+      )
+  }
+}
+
+steps = linters
+
+hooks {
+  ["post-checkout"] {
+    steps {
+      ["uv-sync"] {
+        step_condition = "is_branch_checkout"
+        check = "uv sync"
+      }
+    }
+  }
+  ["post-merge"] {
+    steps {
+      ["uv-sync"] {
+        check = "uv sync"
+      }
+    }
+  }
+}
