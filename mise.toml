@@ -1,9 +1,9 @@
 [tools]
 dprint = "0.63.0"
-lefthook = "2.2.2"
+hk = "2.8.0"
 
 [hooks]
-postinstall = "lefthook install"
+postinstall = "hk install --mise"
 
 [settings]
 python.uv_venv_auto = "create|source"
