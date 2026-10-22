@@ -68,14 +68,14 @@ hooks {
     steps {
       ["uv-sync"] {
         step_condition = "is_branch_checkout"
-        check = "uv sync"
+        check = "mise deps"
       }
     }
   }
   ["post-merge"] {
     steps {
       ["uv-sync"] {
-        check = "uv sync"
+        check = "mise deps"
       }
     }
   }

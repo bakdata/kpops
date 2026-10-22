@@ -6,7 +6,11 @@ hk = "2.8.0"
 postinstall = "hk install --mise"
 
 [settings]
-python.uv_venv_auto = "create|source"
+experimental = true
+python.uv_venv_auto = "source"
+
+[deps.uv]
+auto = true
 
 [tasks.serve-docs]
 description = "Serve docs"
