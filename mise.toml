@@ -7,3 +7,9 @@ postinstall = "hk install --mise"
 
 [settings]
 python.uv_venv_auto = "create|source"
+
+[tasks.serve-docs]
+description = "Serve docs"
+usage = 'arg "[port]" default="8000"'
+run = "uv run --frozen --group=docs zensical serve --config-file docs/mkdocs.yml --dev-addr localhost:${usage_port}"
+dir = "{{config_root}}"
