@@ -1,4 +1,5 @@
 import csv
+import re
 import shutil
 from pathlib import Path
 from typing import Any
@@ -271,7 +272,9 @@ class TestComponentsDocGen:
     def test_missing_template(self, docs_resources: Path) -> None:
         header = docs_resources / "pipeline-components/headers/streams-app.yaml"
         header.unlink()
-        with pytest.raises(SystemExit, match=r"headers/streams-app\.yaml"):
+        with pytest.raises(
+            SystemExit, match=re.escape(str(Path("headers/streams-app.yaml")))
+        ):
             gen_docs_components.main(docs_resources)
 
     def test_stateless_generation(self, docs_resources: Path) -> None:

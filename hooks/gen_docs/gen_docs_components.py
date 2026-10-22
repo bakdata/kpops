@@ -148,7 +148,9 @@ def check_templates(docs_resources: Path = PATH_DOCS_RESOURCES) -> None:
             if not path.exists()
         )
     if missing:
-        msg = "Missing documentation templates:\n" + "\n".join(map(str, missing))
+        msg = "Missing documentation templates:\n" + "\n".join(
+            str(path) for path in missing
+        )
         raise SystemExit(msg)
 
 
