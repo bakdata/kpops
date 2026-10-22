@@ -73,7 +73,7 @@ jobs:
       matrix:
         # reduced matrix for merge queue to avoid repeated full run
         os: ${{ fromJSON(github.event_name == 'merge_group' && '["ubuntu-24.04"]' || '["ubuntu-24.04", "windows-2022"]') }}
-        python-version: ${{ fromJSON(github.event_name == 'merge_group' && '["3.14"]' || '["3.11", "3.12", "3.13", "3.14"]') }}
+        python-version: ${{ fromJSON(github.event_name == 'merge_group' && '["3.15"]' || '["3.11", "3.12", "3.13", "3.14", "3.15"]') }}
         is-draft-pr:
           - ${{ github.event.pull_request.draft == true }}
         exclude:
