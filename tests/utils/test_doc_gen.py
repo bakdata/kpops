@@ -1,9 +1,12 @@
 import csv
+import shutil
 from pathlib import Path
 from typing import Any
 
 import pytest
 
+from hooks import ROOT
+from hooks.gen_docs import gen_docs_components
 from hooks.gen_docs.gen_docs_env_vars import (
     EnvVarAttrs,
     append_csv_to_dotenv_file,
@@ -252,3 +255,38 @@ class TestEnvDocGen:
                 "|----|-------------|--------|-----------|------------|\n"
                 "|NAME|default      |True    |description|setting_name|\n"
             )
+
+
+class TestComponentsDocGen:
+    @pytest.fixture
+    def docs_resources(self, tmp_path: Path) -> Path:
+        target = tmp_path / "resources"
+        shutil.copytree(ROOT / "docs/docs/resources", target)
+        return target
+
+    @staticmethod
+    def snapshot(path: Path) -> dict[Path, str]:
+        return {file: file.read_text() for file in path.rglob("*") if file.is_file()}
+
+    def test_missing_template(self, docs_resources: Path) -> None:
+        header = docs_resources / "pipeline-components/headers/streams-app.yaml"
+        header.unlink()
+        with pytest.raises(SystemExit, match=r"headers/streams-app\.yaml"):
+            gen_docs_components.main(docs_resources)
+
+    def test_stateless_generation(self, docs_resources: Path) -> None:
+        gen_docs_components.main(docs_resources)
+        generated = self.snapshot(docs_resources)
+        gen_docs_components.main(docs_resources)
+        assert self.snapshot(docs_resources) == generated
+
+        section = (
+            docs_resources / "pipeline-components/sections/version-streams-app.yaml"
+        )
+        section.write_text("version: 1.0.0\n")
+        gen_docs_components.main(docs_resources)
+        dependencies = (
+            docs_resources
+            / "pipeline-components/dependencies/pipeline_component_dependencies.yaml"
+        )
+        assert "version-streams-app.yaml" in dependencies.read_text()
