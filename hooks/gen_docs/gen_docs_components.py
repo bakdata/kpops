@@ -18,8 +18,6 @@ from kpops.core.registry import Registry
 registry = Registry()
 registry.discover_components()
 
-PATH_KPOPS_MAIN = ROOT / "kpops/cli/main.py"
-PATH_CLI_COMMANDS_DOC = ROOT / "docs/docs/user/references/cli-commands.md"
 PATH_DOCS_RESOURCES = ROOT / "docs/docs/resources"
 
 KPOPS_COMPONENTS = tuple(registry.components)
