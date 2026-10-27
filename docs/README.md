@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - [uv](https://docs.astral.sh/uv/)
-- [just 1.5.0+](https://github.com/casey/just)
+- [mise](https://mise.jdx.dev)
 
 ## Serve the docs
 
@@ -12,8 +12,8 @@
    git clone git@github.com:bakdata/kpops.git
    ```
 2. Change directory to `kpops`.
-3. Install the documentation dependencies and use `just` to serve the docs:
+3. Install the documentation dependencies and use `mise` to serve the docs:
    ```sh
-   just serve-docs
+   mise run serve-docs
    ```
    Go to your browser and open [http://localhost:8000/](http://localhost:8000/).
