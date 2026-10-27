@@ -18,6 +18,15 @@ from kpops.core.registry import Registry
 registry = Registry()
 registry.discover_components()
 
+
+def generic_origin(component: type[PipelineComponent]) -> type[PipelineComponent]:
+    """Map a parametrized generic component class to its unparametrized origin."""
+    origin = component.__pydantic_generic_metadata__["origin"]
+    if origin is not None and issubclass(origin, PipelineComponent):
+        return origin
+    return component
+
+
 PATH_DOCS_RESOURCES = ROOT / "docs/docs/resources"
 
 KPOPS_COMPONENTS = tuple(registry.components)
@@ -32,7 +41,7 @@ KPOPS_COMPONENTS_SECTIONS = {
 KPOPS_COMPONENTS_INHERITANCE_REF = {
     component.type: {
         "bases": [
-            base.type
+            generic_origin(base).type
             for base in component.__bases__
             if issubclass(base, PipelineComponent)
         ],

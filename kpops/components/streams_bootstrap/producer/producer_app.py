@@ -26,7 +26,9 @@ from kpops.manifests.strimzi.kafka_topic import StrimziKafkaTopic
 log = structlog.get_logger("ProducerApp")
 
 
-class ProducerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
+class ProducerAppCleaner(
+    StreamsBootstrapCleaner[ProducerAppValues], StreamsBootstrap[ProducerAppValues]
+):
     values: ProducerAppValues
 
     @property
@@ -50,7 +52,7 @@ class ProducerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
         )
 
 
-class ProducerApp(StreamsBootstrap):
+class ProducerApp(StreamsBootstrap[ProducerAppValues]):
     """ProducerApp component that configures a streams-bootstrap producer-app.
 
     Note that the producer does not support error topics.

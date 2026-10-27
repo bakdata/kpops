@@ -68,66 +68,6 @@ class JavaOptions(CamelCaseConfigModel, DescConfigModel):
     others: list[str] = []
 
 
-class StreamsBootstrapValues(SerializeAsOptionalModel, HelmAppValues):
-    """Base value class for all streams-bootstrap related components.
-
-    :param image: Docker image of the Kafka producer app.
-    :param image_tag: Docker image tag of the streams-bootstrap app.
-    :param image_pull_policy: Docker image pull policy.
-    :param image_pull_secrets: Secrets to be used for private registries.
-    :param kafka: Kafka configuration for the streams-bootstrap app.
-    :param resources: See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-    :param configuration_env_prefix: Prefix for environment variables to use that should be parsed as command line arguments.
-    :param command_line: Map of command line arguments passed to the streams app.
-    :param env: Custom environment variables.
-    :param secrets: Custom secret environment variables. Prefix with configurationEnvPrefix in order to pass secrets to command line or prefix with KAFKA_ to pass secrets to Kafka Streams configuration.
-    :param secret_refs: Inject existing secrets as environment variables. Map key is used as environment variable name. Value consists of secret name and key.
-    :param secret_files_refs: Mount existing secrets as volumes
-    :param files: Map of files to mount for the app. File will be mounted as $value.mountPath/$key. $value.content denotes file content (recommended to be used with --set-file).
-    :param pod_annotations: Map of custom annotations to attach to the pod spec.
-    :param pod_labels: Map of custom labels to attach to the pod spec.
-    :param liveness_probe: See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core
-    :param readiness_probe: See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core
-    :param affinity: Map to configure pod affinities https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity.
-    :param tolerations: Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.
-    """
-
-    image: str
-    image_tag: str | None = Field(
-        default=None,
-        pattern=IMAGE_TAG_PATTERN,
-    )
-    image_pull_policy: ImagePullPolicy | None = None
-    image_pull_secrets: SerializeAsOptional[list[dict[str, str]]] = []
-    kafka: KafkaConfig
-    resources: Resources | None = None
-    ports: SerializeAsOptional[list[PortConfig]] = []
-    service: ServiceConfig | None = None
-    configuration_env_prefix: str | None = None
-    command_line: SerializeAsOptional[dict[str, str | bool | int | float]] = {}
-    env: SerializeAsOptional[dict[str, str]] = {}
-    secrets: SerializeAsOptional[dict[str, str]] = {}
-    secret_refs: SerializeAsOptional[dict[str, Any]] = {}
-    secret_files_refs: SerializeAsOptional[list[dict[str, Any]]] = []
-    files: SerializeAsOptional[dict[str, Any]] = {}
-    java_options: JavaOptions | None = None
-    pod_annotations: SerializeAsOptional[dict[str, str]] = {}
-    pod_labels: SerializeAsOptional[dict[str, str]] = {}
-    liveness_probe: SerializeAsOptional[dict[str, Any]] = {}
-    readiness_probe: SerializeAsOptional[dict[str, Any]] = {}
-    affinity: Affinity | None = None
-    tolerations: SerializeAsOptional[list[Toleration]] = []
-
-    @pydantic.model_validator(mode="before")
-    @classmethod
-    def unsupported_attributes(cls, values: Any) -> Any:
-        for attr in ("streams",):
-            if attr in values:
-                msg = f"streams-bootstrap v3 no longer supports '{attr}' attribute."
-                raise ValueError(msg)
-        return values
-
-
 def serialize_labeled_output_topics(
     labeled_output_topics: dict[str, KafkaTopic],
 ) -> dict[str, str]:
@@ -172,3 +112,65 @@ class KafkaConfig(SerializeAsOptionalModel, CamelCaseConfigModel, DescConfigMode
                 for label, topic_name in labeled_output_topics.items()
             }
         return labeled_output_topics
+
+
+class StreamsBootstrapValues[K: KafkaConfig = KafkaConfig](
+    SerializeAsOptionalModel, HelmAppValues
+):
+    """Base value class for all streams-bootstrap related components.
+
+    :param image: Docker image of the Kafka producer app.
+    :param image_tag: Docker image tag of the streams-bootstrap app.
+    :param image_pull_policy: Docker image pull policy.
+    :param image_pull_secrets: Secrets to be used for private registries.
+    :param kafka: Kafka configuration for the streams-bootstrap app.
+    :param resources: See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+    :param configuration_env_prefix: Prefix for environment variables to use that should be parsed as command line arguments.
+    :param command_line: Map of command line arguments passed to the streams app.
+    :param env: Custom environment variables.
+    :param secrets: Custom secret environment variables. Prefix with configurationEnvPrefix in order to pass secrets to command line or prefix with KAFKA_ to pass secrets to Kafka Streams configuration.
+    :param secret_refs: Inject existing secrets as environment variables. Map key is used as environment variable name. Value consists of secret name and key.
+    :param secret_files_refs: Mount existing secrets as volumes
+    :param files: Map of files to mount for the app. File will be mounted as $value.mountPath/$key. $value.content denotes file content (recommended to be used with --set-file).
+    :param pod_annotations: Map of custom annotations to attach to the pod spec.
+    :param pod_labels: Map of custom labels to attach to the pod spec.
+    :param liveness_probe: See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core
+    :param readiness_probe: See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#probe-v1-core
+    :param affinity: Map to configure pod affinities https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity.
+    :param tolerations: Array containing taint references. When defined, pods can run on nodes, which would otherwise deny scheduling.
+    """
+
+    image: str
+    image_tag: str | None = Field(
+        default=None,
+        pattern=IMAGE_TAG_PATTERN,
+    )
+    image_pull_policy: ImagePullPolicy | None = None
+    image_pull_secrets: SerializeAsOptional[list[dict[str, str]]] = []
+    kafka: K
+    resources: Resources | None = None
+    ports: SerializeAsOptional[list[PortConfig]] = []
+    service: ServiceConfig | None = None
+    configuration_env_prefix: str | None = None
+    command_line: SerializeAsOptional[dict[str, str | bool | int | float]] = {}
+    env: SerializeAsOptional[dict[str, str]] = {}
+    secrets: SerializeAsOptional[dict[str, str]] = {}
+    secret_refs: SerializeAsOptional[dict[str, Any]] = {}
+    secret_files_refs: SerializeAsOptional[list[dict[str, Any]]] = []
+    files: SerializeAsOptional[dict[str, Any]] = {}
+    java_options: JavaOptions | None = None
+    pod_annotations: SerializeAsOptional[dict[str, str]] = {}
+    pod_labels: SerializeAsOptional[dict[str, str]] = {}
+    liveness_probe: SerializeAsOptional[dict[str, Any]] = {}
+    readiness_probe: SerializeAsOptional[dict[str, Any]] = {}
+    affinity: Affinity | None = None
+    tolerations: SerializeAsOptional[list[Toleration]] = []
+
+    @pydantic.model_validator(mode="before")
+    @classmethod
+    def unsupported_attributes(cls, values: Any) -> Any:
+        for attr in ("streams",):
+            if attr in values:
+                msg = f"streams-bootstrap v3 no longer supports '{attr}' attribute."
+                raise ValueError(msg)
+        return values

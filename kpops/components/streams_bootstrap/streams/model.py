@@ -98,7 +98,7 @@ class StreamsConfig(KafkaConfig):
         )
 
 
-class StreamsAppValues(StreamsBootstrapValues):
+class StreamsAppValues(StreamsBootstrapValues[StreamsConfig]):
     """streams-app configurations.
 
     The attributes correspond to keys and values that are used as values for the streams-bootstrap Helm chart.

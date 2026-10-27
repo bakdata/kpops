@@ -6,11 +6,11 @@ from kpops.component_handlers.helm.utils import (
     create_helm_name_override,
     create_helm_release_name,
 )
-from kpops.components.base_components.helm_app import HelmApp
+from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
 from kpops.config import get_config
 
 
-class Cleaner(HelmApp, ABC):
+class Cleaner[V: HelmAppValues = HelmAppValues](HelmApp[V], ABC):
     """Generic Helm app for cleaning or resetting."""
 
     suffix: str = "-clean"
