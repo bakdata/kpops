@@ -40,15 +40,28 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
     """
 
     values: StreamsBootstrapValues
-    repo_config: SkipGenerate[HelmRepoConfig] = STREAMS_BOOTSTRAP_HELM_REPO
-    version: str = Field(
+    repo_config: SkipGenerate[HelmRepoConfig | None] = STREAMS_BOOTSTRAP_HELM_REPO
+    version: str | None = Field(
         default=STREAMS_BOOTSTRAP_VERSION,
         pattern=STREAMS_BOOTSTRAP_VERSION_PATTERN,
     )
 
+    @property
+    @override
+    def helm_repo_config(self) -> HelmRepoConfig:
+        return self.repo_config or STREAMS_BOOTSTRAP_HELM_REPO
+
+    @property
+    def repository_name(self) -> str:
+        return self.helm_repo_config.repository_name
+
     @pydantic.field_validator("version", mode="after")
     @classmethod
-    def version_validator(cls, version: str) -> str:
+    def version_validator(cls, version: str | None) -> str:
+        if version is None:
+            msg = "The streams-bootstrap component requires a chart version."
+            raise ValueError(msg)
+
         pattern_match = COMPILED_VERSION_PATTERN.match(version)
 
         if not pattern_match:

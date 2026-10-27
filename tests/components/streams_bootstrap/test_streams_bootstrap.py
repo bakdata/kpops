@@ -9,6 +9,7 @@ from pytest_mock import MockerFixture
 from kpops.component_handlers.helm.model import (
     HelmRepoConfig,
     HelmUpgradeInstallFlags,
+    RepoAuthFlags,
 )
 from kpops.component_handlers.helm.utils import create_helm_release_name
 from kpops.components.common.kubernetes_model import (
@@ -43,6 +44,60 @@ class TestStreamsBootstrap:
         assert streams_bootstrap.version == "3.6.1"
         assert streams_bootstrap.namespace == "test-namespace"
         assert streams_bootstrap.values.image_tag is None
+
+    def test_should_add_default_helm_repo_when_repo_config_is_none(
+        self, mocker: MockerFixture
+    ) -> None:
+        helm_mock = mocker.patch(
+            "kpops.components.base_components.helm_app.Helm"
+        ).return_value
+        streams_bootstrap = StreamsBootstrap.model_validate(
+            {
+                "name": "example-name",
+                "namespace": "test-namespace",
+                "values": {
+                    "image": "streamsBootstrap",
+                    "kafka": {"bootstrapServers": "localhost:9092"},
+                },
+                "repo_config": None,
+            },
+        )
+        assert streams_bootstrap.repo_config is None
+        assert streams_bootstrap.repository_name == "bakdata-streams-bootstrap"
+
+        assert streams_bootstrap._helm is helm_mock
+        helm_mock.add_repo.assert_called_once_with(
+            "bakdata-streams-bootstrap",
+            "https://bakdata.github.io/streams-bootstrap/",
+            RepoAuthFlags(),
+        )
+
+    def test_should_add_configured_helm_repo(self, mocker: MockerFixture) -> None:
+        helm_mock = mocker.patch(
+            "kpops.components.base_components.helm_app.Helm"
+        ).return_value
+        streams_bootstrap = StreamsBootstrap.model_validate(
+            {
+                "name": "example-name",
+                "namespace": "test-namespace",
+                "values": {
+                    "image": "streamsBootstrap",
+                    "kafka": {"bootstrapServers": "localhost:9092"},
+                },
+                "repo_config": HelmRepoConfig(
+                    repository_name="custom-repo",
+                    url="https://example.com/charts/",
+                ),
+            },
+        )
+        assert streams_bootstrap.repository_name == "custom-repo"
+
+        assert streams_bootstrap._helm is helm_mock
+        helm_mock.add_repo.assert_called_once_with(
+            "custom-repo",
+            "https://example.com/charts/",
+            RepoAuthFlags(),
+        )
 
     async def test_should_deploy_streams_bootstrap_app(
         self, mocker: MockerFixture

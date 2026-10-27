@@ -33,7 +33,7 @@ class StreamsAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
     @property
     @override
     def helm_chart(self) -> str:
-        return f"{self.repo_config.repository_name}/{AppType.CLEANUP_STREAMS_APP.value}"
+        return f"{self.repository_name}/{AppType.CLEANUP_STREAMS_APP.value}"
 
     @override
     async def reset(self, dry_run: bool) -> None:
@@ -148,7 +148,7 @@ class StreamsApp(StreamsBootstrap):
     @property
     @override
     def helm_chart(self) -> str:
-        return f"{self.repo_config.repository_name}/{AppType.STREAMS_APP.value}"
+        return f"{self.repository_name}/{AppType.STREAMS_APP.value}"
 
     @override
     async def destroy(self, dry_run: bool) -> None:

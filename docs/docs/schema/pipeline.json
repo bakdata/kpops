@@ -98,7 +98,14 @@
                     "type": "string"
                 },
                 "repo_config": {
-                    "$ref": "#/$defs/HelmRepoConfig",
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/HelmRepoConfig"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "default": {
                         "repo_auth_flags": {
                             "ca_file": null,
@@ -140,11 +147,18 @@
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
+                    "anyOf": [
+                        {
+                            "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "default": "3.6.1",
                     "description": "Helm chart version",
-                    "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
-                    "title": "Version",
-                    "type": "string"
+                    "title": "Version"
                 }
             },
             "required": [
@@ -777,7 +791,14 @@
                     "type": "string"
                 },
                 "repo_config": {
-                    "$ref": "#/$defs/HelmRepoConfig",
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/HelmRepoConfig"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "default": {
                         "repo_auth_flags": {
                             "ca_file": null,
@@ -826,11 +847,18 @@
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
+                    "anyOf": [
+                        {
+                            "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "default": "3.6.1",
                     "description": "Helm chart version",
-                    "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
-                    "title": "Version",
-                    "type": "string"
+                    "title": "Version"
                 }
             },
             "required": [
@@ -2691,7 +2719,14 @@
                     "type": "string"
                 },
                 "repo_config": {
-                    "$ref": "#/$defs/HelmRepoConfig",
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/HelmRepoConfig"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "default": {
                         "repo_auth_flags": {
                             "ca_file": null,
@@ -2740,11 +2775,18 @@
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
+                    "anyOf": [
+                        {
+                            "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "default": "3.6.1",
                     "description": "Helm chart version",
-                    "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
-                    "title": "Version",
-                    "type": "string"
+                    "title": "Version"
                 }
             },
             "required": [
@@ -3657,7 +3699,14 @@
                     "type": "string"
                 },
                 "repo_config": {
-                    "$ref": "#/$defs/HelmRepoConfig",
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/HelmRepoConfig"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "default": {
                         "repo_auth_flags": {
                             "ca_file": null,
@@ -3706,11 +3755,18 @@
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
+                    "anyOf": [
+                        {
+                            "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "default": "3.6.1",
                     "description": "Helm chart version",
-                    "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
-                    "title": "Version",
-                    "type": "string"
+                    "title": "Version"
                 }
             },
             "required": [

@@ -32,9 +32,7 @@ class ProducerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
     @property
     @override
     def helm_chart(self) -> str:
-        return (
-            f"{self.repo_config.repository_name}/{AppType.CLEANUP_PRODUCER_APP.value}"
-        )
+        return f"{self.repository_name}/{AppType.CLEANUP_PRODUCER_APP.value}"
 
     @override
     def manifest_deploy(self) -> tuple[KubernetesManifest, ...]:
@@ -113,7 +111,7 @@ class ProducerApp(StreamsBootstrap):
     @property
     @override
     def helm_chart(self) -> str:
-        return f"{self.repo_config.repository_name}/{AppType.PRODUCER_APP.value}"
+        return f"{self.repository_name}/{AppType.PRODUCER_APP.value}"
 
     @override
     async def reset(self, dry_run: bool) -> None:
