@@ -1,9 +1,9 @@
+from typing import override
 from unittest.mock import MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
 from structlog.testing import capture_logs
-from typing_extensions import override
 
 from kpops.component_handlers.helm.helm import Helm
 from kpops.component_handlers.helm.model import (

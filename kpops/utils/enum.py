@@ -1,6 +1,5 @@
 from enum import StrEnum
-
-from typing_extensions import override
+from typing import override
 
 
 class UpperStrEnum(StrEnum):

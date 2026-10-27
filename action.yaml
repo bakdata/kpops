@@ -25,9 +25,9 @@ inputs:
     required: false
     default: "false"
   python-version:
-    description: "Python version to install (Defaults to the latest stable version of Python 3.11)"
+    description: "Python version to install (Defaults to the latest stable version of Python 3.14)"
     required: false
-    default: "3.11.x"
+    default: "3.14.x"
   kpops-version:
     description: "KPOps version"
     required: false

@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Annotated, Any, ClassVar, TypeAlias, final
+from typing import Annotated, Any, ClassVar, TypeVar, final, override
 
 import humps
 import structlog
@@ -18,7 +18,6 @@ from pydantic.fields import FieldInfo
 from pydantic.json_schema import SkipJsonSchema
 from pydantic_core import PydanticUseDefault, core_schema
 from pydantic_settings import BaseSettings, PydanticBaseSettingsSource
-from typing_extensions import TypeVar, override
 
 from kpops.utils.dict_ops import update_nested_pair
 from kpops.utils.docstring import describe_attr, describe_object
@@ -63,12 +62,9 @@ def to_str(value: Any) -> str:
     return json.dumps(value)
 
 
-_V = TypeVar("_V")
-
-
-def exclude_by_value(
-    dumped_model: dict[str, _V], *excluded_values: Any
-) -> dict[str, _V]:
+def exclude_by_value[V](
+    dumped_model: dict[str, V], *excluded_values: Any
+) -> dict[str, V]:
     """Strip all key-value pairs with certain values.
 
     :param dumped_model: Dumped model
@@ -82,9 +78,9 @@ def exclude_by_value(
     }
 
 
-def exclude_by_name(
-    dumped_model: dict[str, _V], *excluded_fields: str
-) -> dict[str, _V]:
+def exclude_by_name[V](
+    dumped_model: dict[str, V], *excluded_fields: str
+) -> dict[str, V]:
     """Strip all key-value pairs with certain field names.
 
     :param dumped_model: Dumped model
@@ -98,9 +94,9 @@ def exclude_by_name(
     }
 
 
-def exclude_defaults(
-    model_cls: type[BaseModel], dumped_model: dict[str, _V]
-) -> dict[str, _V]:
+def exclude_defaults[V](
+    model_cls: type[BaseModel], dumped_model: dict[str, V]
+) -> dict[str, V]:
     """Strip all key-value pairs with default values.
 
     :param model_cls: Model
@@ -122,7 +118,7 @@ def exclude_defaults(
     }
 
 
-ModelFields: TypeAlias = dict[str, "FieldInfo | ModelFields"]
+type ModelFields = dict[str, "FieldInfo | ModelFields"]
 
 
 def collect_fields(model_cls: type[BaseModel]) -> ModelFields:
@@ -263,11 +259,11 @@ def validate_optional_to_default(value: Any | None) -> Any:
     return value
 
 
-def serialize_to_optional(
-    value: _T,
+def serialize_to_optional[T](
+    value: T,
     default_serialize_handler: SerializerFunctionWrapHandler,
     # info: SerializationInfo,
-) -> _T | None:
+) -> T | None:
     return default_serialize_handler(value) or None
     # TODO: another potential solution, depends on https://github.com/pydantic/pydantic/issues/6969
     # if not result and info.exclude_none:
@@ -316,11 +312,11 @@ class SerializeAsOptionalModel(BaseModel):
         return result
 
 
-def serialize_skip_context_generate(
-    value: _T,
+def serialize_skip_context_generate[T](
+    value: T,
     default_serialize_handler: SerializerFunctionWrapHandler,
     info: SerializationInfo,
-) -> _T | None:
+) -> T | None:
     if info.context == "generate":
         return None  # HACK: serialize to None, then exclude_by_value
         # instead use PydanticOmit once supported, custom model_serializer can be removed afterwards

@@ -22,9 +22,9 @@ jobs:
       matrix:
         os:
           - ubuntu-24.04
-        python-version: ["3.11"]
+        python-version: ["3.14"]
         include:
-          - python-version: "3.11"
+          - python-version: "3.14"
             os: ubuntu-24.04
             format-for-github: true
     runs-on: ${{ matrix.os }}
@@ -73,7 +73,7 @@ jobs:
       matrix:
         # reduced matrix for merge queue to avoid repeated full run
         os: ${{ fromJSON(github.event_name == 'merge_group' && '["ubuntu-24.04"]' || '["ubuntu-24.04", "windows-2022"]') }}
-        python-version: ${{ fromJSON(github.event_name == 'merge_group' && '["3.15"]' || '["3.11", "3.12", "3.13", "3.14", "3.15"]') }}
+        python-version: ${{ fromJSON(github.event_name == 'merge_group' && '["3.15"]' || '["3.14", "3.15"]') }}
         is-draft-pr:
           - ${{ github.event.pull_request.draft == true }}
         exclude:

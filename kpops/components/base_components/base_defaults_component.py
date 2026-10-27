@@ -6,7 +6,7 @@ from collections.abc import Generator, Hashable, Sequence
 from dataclasses import asdict
 from functools import cached_property
 from pathlib import Path
-from typing import Any, ClassVar, Self, TypeVar, cast
+from typing import Any, ClassVar, Self, cast
 
 import pydantic
 import structlog
@@ -264,10 +264,7 @@ def get_defaults_file_paths(
     return default_paths
 
 
-_T = TypeVar("_T", bound=Hashable)
-
-
-def deduplicate(seq: Sequence[_T]) -> list[_T]:
+def deduplicate[T: Hashable](seq: Sequence[T]) -> list[T]:
     """Deduplicate items of a sequence while preserving its order.
 
     :param seq: Sequence to be 'cleaned'

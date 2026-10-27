@@ -2,12 +2,11 @@ from __future__ import annotations
 
 import re
 from abc import ABC
-from typing import Self
+from typing import Self, override
 
 import pydantic
 import structlog
 from pydantic import Field
-from typing_extensions import override
 
 from kpops.component_handlers.helm.model import HelmRepoConfig
 from kpops.components.base_components import KafkaApp

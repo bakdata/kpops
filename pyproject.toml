@@ -3,7 +3,7 @@ name = "kpops"
 version = "12.0.3"
 description = "KPOps is a tool to deploy Kafka pipelines to Kubernetes"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.14"
 authors = [
   { name = "bakdata", email = "opensource@bakdata.com" },
 ]
@@ -66,6 +66,9 @@ build-backend = "hatchling.build"
 [tool.ty]
 src = { include = ["kpops", "tests", "hooks"] }
 
+[tool.ty.environment]
+python-version = "3.14"
+
 [tool.hatch.build.targets.wheel]
 packages = ["kpops"]
 
@@ -76,7 +79,7 @@ asyncio_default_fixture_loop_scope = "function"
 [tool.ruff]
 output-format = "grouped"
 show-fixes = true
-target-version = "py311"
+target-version = "py314"
 extend-exclude = ["tests/*snapshots/*"]
 namespace-packages = ["kpops"]
 
