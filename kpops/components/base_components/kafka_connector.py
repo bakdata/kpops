@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Any, NoReturn, override
+from typing import Any, override
 
 import structlog
-from pydantic import AliasChoices, Field, PrivateAttr, ValidationInfo, field_validator
+from pydantic import PrivateAttr, ValidationInfo, field_validator
 
 from kpops.component_handlers import get_handlers
 from kpops.component_handlers.kafka_connect.model import (
@@ -12,14 +12,13 @@ from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectorConfig,
     KafkaConnectorType,
 )
-from kpops.components.base_components.models.from_section import FromTopic
-from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.components.base_components.kafka_app import ConsumesTopics, ProducesTopics
 from kpops.components.common.topic import KafkaTopic
 
 log = structlog.get_logger("KafkaConnector")
 
 
-class KafkaConnector(PipelineComponent, ABC):
+class KafkaConnector(ProducesTopics, ABC):
     """Base class for all Kafka connectors.
 
     Should only be used to set defaults
@@ -52,13 +51,7 @@ class KafkaConnector(PipelineComponent, ABC):
     @override
     async def deploy(self, dry_run: bool) -> None:
         """Deploy Kafka Connector (Source/Sink). Create output topics and register schemas if configured."""
-        if self.to:
-            for topic in self.to.kafka_topics:
-                await get_handlers().topic_handler.create_topic(topic, dry_run=dry_run)
-
-            if schema_handler := get_handlers().schema_handler:
-                await schema_handler.submit_schemas(to_section=self.to, dry_run=dry_run)
-
+        await super().deploy(dry_run)
         await get_handlers().connector_handler.create_connector(
             self.config, state=self.state, dry_run=dry_run
         )
@@ -92,21 +85,10 @@ class KafkaConnector(PipelineComponent, ABC):
 class KafkaSourceConnector(KafkaConnector):
     """Kafka source connector model."""
 
-    from_: None = Field(
-        default=None,
-        serialization_alias="from",
-        validation_alias=AliasChoices("from", "from_"),
-        title="From",
-    )
     _connector_type: KafkaConnectorType = PrivateAttr(KafkaConnectorType.SOURCE)
 
-    @override
-    def apply_from_inputs(self, name: str, topic: FromTopic) -> NoReturn:
-        msg = "Kafka source connector doesn't support FromSection"
-        raise NotImplementedError(msg)
 
-
-class KafkaSinkConnector(KafkaConnector):
+class KafkaSinkConnector(ConsumesTopics, KafkaConnector):
     """Kafka sink connector model."""
 
     _connector_type: KafkaConnectorType = PrivateAttr(KafkaConnectorType.SINK)

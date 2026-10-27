@@ -9,7 +9,7 @@ import structlog
 from pydantic import Field
 
 from kpops.component_handlers.helm.model import HelmRepoConfig
-from kpops.components.base_components import KafkaApp
+from kpops.components.base_components import KafkaApp, ProducesTopics
 from kpops.components.base_components.cleaner import Cleaner
 from kpops.components.base_components.helm_app import HelmApp
 from kpops.components.streams_bootstrap.model import StreamsBootstrapValues
@@ -93,7 +93,7 @@ class StreamsBootstrap[V: StreamsBootstrapValues[Any] = StreamsBootstrapValues](
     @override
     def manifest_deploy(self) -> tuple[KubernetesManifest, ...]:
         resource = super().manifest_deploy()
-        if self.to:
+        if isinstance(self, ProducesTopics) and self.to:
             resource = resource + tuple(
                 StrimziKafkaTopic.from_topic(topic) for topic in self.to.kafka_topics
             )
@@ -102,7 +102,7 @@ class StreamsBootstrap[V: StreamsBootstrapValues[Any] = StreamsBootstrapValues](
 
     @override
     def manifest_destroy(self) -> tuple[KubernetesManifest, ...]:
-        if self.to:
+        if isinstance(self, ProducesTopics) and self.to:
             return tuple(
                 StrimziKafkaTopic.from_topic(topic) for topic in self.to.kafka_topics
             )
@@ -113,9 +113,6 @@ class StreamsBootstrapCleaner[V: StreamsBootstrapValues[Any] = StreamsBootstrapV
     Cleaner[V], ABC
 ):
     """Helm app for resetting and cleaning a streams-bootstrap app."""
-
-    from_: None = None
-    to: None = None
 
     @classmethod
     def from_parent(cls, parent: StreamsBootstrap[Any]) -> Self:

@@ -11,6 +11,7 @@ from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectorConfig,
     KafkaConnectorType,
 )
+from kpops.components.base_components import ConsumesTopics
 from kpops.components.base_components.kafka_connector import (
     KafkaSourceConnector,
 )
@@ -55,33 +56,23 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         )
 
     def test_supports_from_section(self) -> None:
-        assert not KafkaSourceConnector.supports_from_section()
+        assert not issubclass(KafkaSourceConnector, ConsumesTopics)
 
     def test_from_section_raises_exception(
         self,
         connector_config: KafkaConnectorConfig,
     ) -> None:
-        with pytest.raises(ValidationError):
+        with pytest.raises(ValidationError, match="does not support"):
             KafkaSourceConnector(
                 name=CONNECTOR_NAME,
                 config=connector_config,
-                from_=FromSection(  # ty: ignore[invalid-argument-type]
+                from_=FromSection(
                     topics={
                         TopicName("connector-topic"): FromTopic(
                             type=InputTopicTypes.INPUT
                         ),
                     }
                 ),
-            )
-
-    def test_apply_from_inputs_raises_exception(
-        self,
-        connector: KafkaSourceConnector,
-    ) -> None:
-        with pytest.raises(NotImplementedError):
-            connector.apply_from_inputs(
-                "connector-topic",
-                FromTopic(type=InputTopicTypes.INPUT),
             )
 
     async def test_deploy_order(

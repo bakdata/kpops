@@ -5,6 +5,7 @@ import structlog
 from pydantic import ValidationError
 
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
+from kpops.components.base_components import ConsumesTopics, ProducesTopics
 from kpops.components.base_components.helm_app import HelmApp
 from kpops.components.common.app_type import AppType
 from kpops.components.common.topic import KafkaTopic
@@ -29,8 +30,6 @@ class ConsumerProducerAppCleaner(
     StreamsBootstrapCleaner[ConsumerProducerAppValues],
     StreamsBootstrap[ConsumerProducerAppValues],
 ):
-    from_: None = None
-    to: None = None
     values: ConsumerProducerAppValues
 
     @property
@@ -88,7 +87,9 @@ class ConsumerProducerAppCleaner(
         await pvc_handler.delete_pvcs(dry_run)
 
 
-class ConsumerProducerApp(StreamsBootstrap[ConsumerProducerAppValues]):
+class ConsumerProducerApp(
+    ConsumesTopics, ProducesTopics, StreamsBootstrap[ConsumerProducerAppValues]
+):
     """ConsumerProducerApp component that configures a streams-bootstrap consumerproducer-app.
 
     :param values: streams-bootstrap Helm values
