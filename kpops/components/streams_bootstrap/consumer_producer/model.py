@@ -1,6 +1,6 @@
 from kpops.components.common.topic import KafkaTopicStr
 from kpops.components.streams_bootstrap.consumer.model import (
-    ConsumerAppValues,
+    BaseConsumerAppValues,
     ConsumerConfig,
 )
 
@@ -16,7 +16,7 @@ class ConsumerProducerConfig(ConsumerConfig):
     delete_output: bool | None = None
 
 
-class ConsumerProducerAppValues(ConsumerAppValues):
+class ConsumerProducerAppValues(BaseConsumerAppValues[ConsumerProducerConfig]):
     """consumerproducer-app configurations.
 
     The attributes correspond to keys and values that are used as values for the streams-bootstrap Helm chart.

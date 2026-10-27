@@ -99,8 +99,13 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
 
         def gen_parents() -> Generator[type[BaseDefaultsComponent]]:
             for base in cls.mro():
-                # skip class itself and non-component ancestors
-                if base is cls or not issubclass(base, BaseDefaultsComponent):
+                # skip class itself, non-component ancestors and
+                # pydantic's parametrized generic classes
+                if (
+                    base is cls
+                    or not issubclass(base, BaseDefaultsComponent)
+                    or base.__pydantic_generic_metadata__["origin"] is not None
+                ):
                     continue
                 yield base
 

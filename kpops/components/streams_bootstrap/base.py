@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from abc import ABC
-from typing import Self, override
+from typing import Any, Self, override
 
 import pydantic
 import structlog
@@ -30,7 +30,9 @@ COMPILED_VERSION_PATTERN = re.compile(STREAMS_BOOTSTRAP_VERSION_PATTERN)
 log = structlog.get_logger("StreamsBootstrap")
 
 
-class StreamsBootstrap(KafkaApp, HelmApp, ABC):
+class StreamsBootstrap[V: StreamsBootstrapValues[Any] = StreamsBootstrapValues](
+    KafkaApp, HelmApp[V], ABC
+):
     """Base for components with a streams-bootstrap Helm chart.
 
     :param values: streams-bootstrap Helm values
@@ -39,7 +41,7 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
     :param version: Helm chart version, defaults to "3.6.1"
     """
 
-    values: StreamsBootstrapValues
+    values: V
     repo_config: SkipGenerate[HelmRepoConfig | None] = STREAMS_BOOTSTRAP_HELM_REPO
     version: str | None = Field(
         default=STREAMS_BOOTSTRAP_VERSION,
@@ -107,14 +109,16 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
         return ()
 
 
-class StreamsBootstrapCleaner(Cleaner, ABC):
+class StreamsBootstrapCleaner[V: StreamsBootstrapValues[Any] = StreamsBootstrapValues](
+    Cleaner[V], ABC
+):
     """Helm app for resetting and cleaning a streams-bootstrap app."""
 
     from_: None = None
     to: None = None
 
     @classmethod
-    def from_parent(cls, parent: StreamsBootstrap) -> Self:
+    def from_parent(cls, parent: StreamsBootstrap[Any]) -> Self:
         parent_kwargs = parent.model_dump(
             by_alias=True,
             exclude_none=True,

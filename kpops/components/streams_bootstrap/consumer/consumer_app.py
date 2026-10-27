@@ -22,7 +22,9 @@ from kpops.manifests.kubernetes import KubernetesManifest
 log = structlog.get_logger("ConsumerApp")
 
 
-class ConsumerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
+class ConsumerAppCleaner(
+    StreamsBootstrapCleaner[ConsumerAppValues], StreamsBootstrap[ConsumerAppValues]
+):
     values: ConsumerAppValues
 
     @property
@@ -77,7 +79,7 @@ class ConsumerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
         await pvc_handler.delete_pvcs(dry_run)
 
 
-class ConsumerApp(StreamsBootstrap):
+class ConsumerApp(StreamsBootstrap[ConsumerAppValues]):
     """ConsumerApp component that configures a streams-bootstrap consumer-app.
 
     :param values: streams-bootstrap Helm values

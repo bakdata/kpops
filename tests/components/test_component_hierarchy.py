@@ -1,13 +1,25 @@
+import sys
+from typing import Any
+
 import pytest
 
 from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.components.streams_bootstrap.base import StreamsBootstrap
 from kpops.components.streams_bootstrap.consumer.consumer_app import ConsumerAppCleaner
 from kpops.components.streams_bootstrap.consumer_producer.consumer_producer_app import (
     ConsumerProducerAppCleaner,
 )
-from kpops.components.streams_bootstrap.producer.producer_app import ProducerAppCleaner
+from kpops.components.streams_bootstrap.model import StreamsBootstrapValues
+from kpops.components.streams_bootstrap.producer.model import (
+    ProducerAppValues,
+    ProducerConfig,
+)
+from kpops.components.streams_bootstrap.producer.producer_app import (
+    ProducerApp,
+    ProducerAppCleaner,
+)
 from kpops.components.streams_bootstrap.streams.streams_app import StreamsAppCleaner
-from kpops.core.registry import Registry
+from kpops.core.registry import Registry, _find_classes, find_class
 
 registry = Registry()
 registry.discover_components()
@@ -134,3 +146,46 @@ def test_cleaner_parents(
     cleaner: type[PipelineComponent], expected_parents: tuple[str, ...]
 ) -> None:
     assert tuple(parent.type for parent in cleaner.parents) == expected_parents
+
+
+class CustomStreamsBootstrapApp[
+    V: StreamsBootstrapValues[Any] = StreamsBootstrapValues
+](StreamsBootstrap[V]):
+    runs_on_spot: bool = False
+
+
+class CustomProducerApp(ProducerApp, CustomStreamsBootstrapApp[ProducerAppValues]): ...
+
+
+def test_custom_diamond_parents() -> None:
+    assert tuple(parent.type for parent in CustomProducerApp.parents) == (
+        "producer-app",
+        "custom-streams-bootstrap-app",
+        "streams-bootstrap",
+        "kafka-app",
+        "helm-app",
+        "kubernetes-app",
+        "pipeline-component",
+        "base-defaults-component",
+    )
+
+
+def test_custom_diamond_not_registered_as_generic() -> None:
+    module = sys.modules[__name__]
+    classes = list(_find_classes([module], base=PipelineComponent))
+    assert CustomProducerApp in classes
+    assert CustomStreamsBootstrapApp in classes
+    assert not any("[" in cls.__name__ for cls in classes)
+    assert find_class([module], base=CustomProducerApp) is CustomProducerApp
+
+
+def test_custom_diamond_values() -> None:
+    component = CustomProducerApp(
+        name="test",
+        namespace="test-namespace",
+        values=ProducerAppValues(image="registry/producer", kafka=ProducerConfig()),
+        enrich=False,
+        validate=False,
+    )
+    assert isinstance(component.values, ProducerAppValues)
+    assert component.runs_on_spot is False

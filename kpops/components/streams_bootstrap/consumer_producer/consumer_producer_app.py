@@ -25,7 +25,10 @@ from kpops.manifests.strimzi.kafka_topic import StrimziKafkaTopic
 log = structlog.get_logger("ConsumerProducerApp")
 
 
-class ConsumerProducerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
+class ConsumerProducerAppCleaner(
+    StreamsBootstrapCleaner[ConsumerProducerAppValues],
+    StreamsBootstrap[ConsumerProducerAppValues],
+):
     from_: None = None
     to: None = None
     values: ConsumerProducerAppValues
@@ -85,7 +88,7 @@ class ConsumerProducerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
         await pvc_handler.delete_pvcs(dry_run)
 
 
-class ConsumerProducerApp(StreamsBootstrap):
+class ConsumerProducerApp(StreamsBootstrap[ConsumerProducerAppValues]):
     """ConsumerProducerApp component that configures a streams-bootstrap consumerproducer-app.
 
     :param values: streams-bootstrap Helm values

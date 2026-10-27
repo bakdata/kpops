@@ -65,7 +65,7 @@ class HelmAppValues(KubernetesAppValues):
         )
 
 
-class HelmApp(KubernetesApp):
+class HelmApp[V: HelmAppValues = HelmAppValues](KubernetesApp[V]):
     """Kubernetes app managed through Helm with an associated Helm chart.
 
     :param repo_config: Configuration of the Helm chart repo to be used for
@@ -81,7 +81,7 @@ class HelmApp(KubernetesApp):
     diff_config: SkipGenerate[HelmDiffConfig] = HelmDiffConfig()
     version: str | None = None
     timeout: str | None = None
-    values: HelmAppValues
+    values: V
 
     @property
     def helm_repo_config(self) -> HelmRepoConfig | None:
