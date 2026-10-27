@@ -1,10 +1,8 @@
 # Producer app component that configures a streams-bootstrap producer app.
 #
-# Child of: KafkaApp
+# Child of: StreamsBootstrap
 # More documentation on ProducerApp: https://github.com/bakdata/streams-bootstrap
 producer-app:
-  # from: # While the producer-app does inherit from kafka-app, it does not need a
-  # `from` section, hence it does not support it.
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
   values: # required
@@ -17,3 +15,21 @@ producer-app:
         output_role2: output_topic2
     nameOverride: override-with-this-name # kafka-app-specific
     fullnameOverride: override-with-this-name # kafka-app-specific
+  # Topic(s) into which the component will write output
+  to:
+    topics:
+      ${pipeline.name}-output-topic:
+        type: output # Implied when role is NOT specified
+      ${pipeline.name}-extra-topic:
+        label: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
+      ${pipeline.name}-error-topic:
+        type: error
+        # Currently KPOps supports Avro and JSON schemas.
+        key_schema: key-schema # must implement SchemaProvider to use
+        value_schema: value-schema
+        partitions_count: 1
+        replication_factor: 1
+        configs: # https://kafka.apache.org/documentation/#topicconfigs
+          cleanup.policy: compact
+    models: # SchemaProvider is initiated with the values given here
+      model: model

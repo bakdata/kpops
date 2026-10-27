@@ -9,6 +9,13 @@ import structlog
 import yaml
 
 from hooks import ROOT
+from kpops.components.base_components.base_defaults_component import (
+    is_component_type,
+)
+from kpops.components.base_components.kafka_app import (
+    ConsumesTopics,
+    ProducesTopics,
+)
 from kpops.components.base_components.kafka_connector import KafkaConnector
 from kpops.components.base_components.pipeline_component import (
     PipelineComponent,
@@ -27,6 +34,42 @@ def generic_origin(component: type[PipelineComponent]) -> type[PipelineComponent
     return component
 
 
+def component_bases(
+    component: type[PipelineComponent],
+) -> list[type[PipelineComponent]]:
+    """Resolve the direct component bases of a component.
+
+    Parametrized generics are mapped to their origin and capability classes are
+    replaced by their own bases. The result is deduplicated and ordered.
+    """
+    bases: list[type[PipelineComponent]] = []
+    for base in component.__bases__:
+        if not issubclass(base, PipelineComponent):
+            continue
+        base = generic_origin(base)
+        resolved = [base] if is_component_type(base) else component_bases(base)
+        bases.extend(b for b in resolved if b not in bases)
+    return bases
+
+
+CAPABILITY_FIELDS: dict[type[PipelineComponent], tuple[str, ...]] = {
+    ConsumesTopics: ("from_",),
+    ProducesTopics: ("to",),
+}
+
+
+def has_direct_capability_field(
+    component: type[PipelineComponent], field_name: str
+) -> bool:
+    """Whether a capability that declares the field is a direct base of the component."""
+    return any(
+        generic_origin(base) in CAPABILITY_FIELDS
+        and field_name in CAPABILITY_FIELDS[generic_origin(base)]
+        for base in component.__bases__
+        if issubclass(base, PipelineComponent)
+    )
+
+
 PATH_DOCS_RESOURCES = ROOT / "docs/docs/resources"
 
 KPOPS_COMPONENTS = tuple(registry.components)
@@ -40,11 +83,7 @@ KPOPS_COMPONENTS_SECTIONS = {
 }
 KPOPS_COMPONENTS_INHERITANCE_REF = {
     component.type: {
-        "bases": [
-            generic_origin(base).type
-            for base in component.__bases__
-            if issubclass(base, PipelineComponent)
-        ],
+        "bases": [base.type for base in component_bases(component)],
         "parents": [
             cast(
                 type[PipelineComponent],
@@ -111,6 +150,10 @@ def filter_section(
     if KPOPS_COMPONENTS_INHERITANCE_REF[component_name]["bases"] == [
         PipelineComponent.type
     ]:
+        section = target_section + ".yaml"
+        if section in sections:
+            return section
+    if has_direct_capability_field(registry[component_name], target_section):
         section = target_section + ".yaml"
         if section in sections:
             return section

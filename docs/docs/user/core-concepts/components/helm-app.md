@@ -4,6 +4,8 @@
 
 Can be used to deploy any app in Kubernetes using Helm, for example, a REST service that serves Kafka data.
 
+`HelmApp` has no `from` or `to` section. To connect a Helm-based component to Kafka topics, create a custom component that combines `HelmApp` with the `ConsumesTopics` and `ProducesTopics` capabilities. See the [migration guide](../../migration-guide/v12-v13.md).
+
 ### Configuration
 
 <!-- dprint-ignore-start -->
