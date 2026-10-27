@@ -4,7 +4,7 @@ from collections.abc import Mapping, MutableMapping
 from dataclasses import dataclass
 from difflib import Differ
 from enum import StrEnum, auto
-from typing import TYPE_CHECKING, Any, Generic, NamedTuple, TypeVar, cast
+from typing import TYPE_CHECKING, Any, NamedTuple, cast
 
 import typer
 import yaml
@@ -28,37 +28,33 @@ class DiffType(StrEnum):
         return DiffType[label.upper()]
 
 
-_O = TypeVar("_O")
-_N = TypeVar("_N")
-
-
-class Change(NamedTuple, Generic[_O, _N]):
-    old_value: _O
-    new_value: _N
+class Change[O, N](NamedTuple):
+    old_value: O
+    new_value: N
 
     @staticmethod
     def factory(
-        type: DiffType, change: _O | _N | tuple[_O, _N]
-    ) -> Change[_O | None, _N | None]:
+        type: DiffType, change: O | N | tuple[O, N]
+    ) -> Change[O | None, N | None]:
         match type:
             case DiffType.ADD:
-                change = cast(_N, change)
+                change = cast(N, change)
                 return Change(None, change)
             case DiffType.REMOVE:
-                change = cast(_O, change)
+                change = cast(O, change)
                 return Change(change, None)
             case DiffType.CHANGE:
-                change = cast(tuple[_O, _N], change)
+                change = cast(tuple[O, N], change)
                 return Change(*change)
         msg = f"{type} is not part of {DiffType}"
         raise ValueError(msg)
 
 
 @dataclass
-class Diff(Generic[_O, _N]):
+class Diff[O, N]:
     diff_type: DiffType
     key: str
-    change: Change[_O, _N]
+    change: Change[O, N]
 
     @staticmethod
     def from_dicts(

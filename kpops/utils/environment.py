@@ -1,8 +1,7 @@
 import os
 from collections import UserDict
 from collections.abc import ItemsView, KeysView, Mapping, MutableMapping, ValuesView
-
-from typing_extensions import override
+from typing import override
 
 PIPELINE_PATH = "pipeline.path"
 

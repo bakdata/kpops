@@ -1,5 +1,5 @@
 from enum import StrEnum, auto
-from typing import Any, ClassVar
+from typing import Any, ClassVar, override
 
 import pydantic
 from pydantic import (
@@ -11,7 +11,6 @@ from pydantic import (
     model_serializer,
 )
 from pydantic.json_schema import SkipJsonSchema
-from typing_extensions import override
 
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
 from kpops.utils.enum import UpperStrEnum

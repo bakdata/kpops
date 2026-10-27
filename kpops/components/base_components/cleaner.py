@@ -1,6 +1,5 @@
 from abc import ABC
-
-from typing_extensions import override
+from typing import override
 
 from kpops.component_handlers.helm.model import HelmFlags
 from kpops.component_handlers.helm.utils import (

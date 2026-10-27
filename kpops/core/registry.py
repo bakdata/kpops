@@ -61,7 +61,9 @@ class Registry:
         yield from _iter_namespace(kpops.components)
 
 
-def find_class(modules: Iterable[ModuleType], base: type[_PluginT]) -> type[_PluginT]:
+def find_class[PluginT](
+    modules: Iterable[ModuleType], base: type[PluginT]
+) -> type[PluginT]:
     try:
         return next(_find_classes(modules, base=base))
     except StopIteration as e:
@@ -79,9 +81,9 @@ def import_module(module_name: str) -> ModuleType:
     return module
 
 
-def _find_classes(
-    modules: Iterable[ModuleType], base: type[_PluginT]
-) -> Iterator[type[_PluginT]]:
+def _find_classes[PluginT](
+    modules: Iterable[ModuleType], base: type[PluginT]
+) -> Iterator[type[PluginT]]:
     for module in modules:
         for _, _class in inspect.getmembers(module, inspect.isclass):
             if not __filter_internal_kpops_classes(

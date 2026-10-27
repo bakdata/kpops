@@ -1,10 +1,9 @@
 from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
-from typing import ClassVar
+from typing import ClassVar, override
 
 from pydantic import ConfigDict, Field
-from typing_extensions import override
 
 from kpops.component_handlers.helm.exception import ParseError
 from kpops.manifests.kubernetes import KubernetesManifest
