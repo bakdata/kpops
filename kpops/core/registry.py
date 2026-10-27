@@ -13,6 +13,10 @@ from typing import TYPE_CHECKING, TypeVar
 import structlog
 from pydantic import BaseModel
 
+from kpops.components.base_components.base_defaults_component import (
+    BaseDefaultsComponent,
+    is_component_type,
+)
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.const import KPOPS_MODULE
 from kpops.core.exception import ClassNotFoundError
@@ -90,13 +94,15 @@ def _find_classes[PluginT](
             if (
                 not __filter_internal_kpops_classes(_class.__module__, module.__name__)
                 and issubclass(_class, base)
-                and not _is_parametrized_generic(_class)
+                and not _is_excluded(_class)
             ):
                 yield _class
 
 
-def _is_parametrized_generic(_class: type) -> bool:
-    """Whether a class is a parametrized generic class created by Pydantic."""
+def _is_excluded(_class: type) -> bool:
+    """Whether a class is not a plugin: a capability mixin or a parametrized generic class."""
+    if issubclass(_class, BaseDefaultsComponent):
+        return not is_component_type(_class)
     return (
         issubclass(_class, BaseModel)
         and _class.__pydantic_generic_metadata__["origin"] is not None

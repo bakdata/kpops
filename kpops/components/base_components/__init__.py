@@ -1,5 +1,5 @@
 from .helm_app import HelmApp
-from .kafka_app import KafkaApp
+from .kafka_app import ConsumesTopics, KafkaApp, ProducesTopics
 from .kafka_connector import (
     KafkaConnector,
     KafkaSinkConnector,
@@ -9,6 +9,7 @@ from .kubernetes_app import KubernetesApp
 from .pipeline_component import PipelineComponent
 
 __all__ = (
+    "ConsumesTopics",
     "HelmApp",
     "KafkaApp",
     "KafkaConnector",
@@ -16,4 +17,5 @@ __all__ = (
     "KafkaSourceConnector",
     "KubernetesApp",
     "PipelineComponent",
+    "ProducesTopics",
 )

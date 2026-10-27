@@ -99,13 +99,9 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
 
         def gen_parents() -> Generator[type[BaseDefaultsComponent]]:
             for base in cls.mro():
-                # skip class itself, non-component ancestors and
-                # pydantic's parametrized generic classes
-                if (
-                    base is cls
-                    or not issubclass(base, BaseDefaultsComponent)
-                    or base.__pydantic_generic_metadata__["origin"] is not None
-                ):
+                # skip class itself, capability mixins, non-component ancestors
+                # and pydantic's parametrized generic classes
+                if base is cls or not is_component_type(base):
                     continue
                 yield base
 
@@ -195,6 +191,18 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
 
     def _validate_custom(self) -> None:
         """Run custom validation on component."""
+
+
+def is_component_type(cls: type) -> bool:
+    """Whether a class is a KPOps component type (pipeline `type`, defaults key, registry entry).
+
+    Excludes capability mixins and pydantic's parametrized generic classes.
+    """
+    if not issubclass(cls, BaseDefaultsComponent):
+        return False
+    if cls.__pydantic_generic_metadata__["origin"] is not None:
+        return False
+    return not cls.__dict__.get("_kpops_capability", False)
 
 
 def defaults_from_yaml(path: Path, key: str) -> dict[str, Any]:

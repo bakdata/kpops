@@ -2,10 +2,20 @@ import sys
 from typing import Any
 
 import pytest
+from pydantic import ValidationError
 
+from kpops.components.base_components import (
+    ConsumesTopics,
+    HelmApp,
+    KafkaSourceConnector,
+    ProducesTopics,
+)
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.components.streams_bootstrap.base import StreamsBootstrap
-from kpops.components.streams_bootstrap.consumer.consumer_app import ConsumerAppCleaner
+from kpops.components.streams_bootstrap.consumer.consumer_app import (
+    ConsumerApp,
+    ConsumerAppCleaner,
+)
 from kpops.components.streams_bootstrap.consumer_producer.consumer_producer_app import (
     ConsumerProducerAppCleaner,
 )
@@ -20,6 +30,7 @@ from kpops.components.streams_bootstrap.producer.producer_app import (
 )
 from kpops.components.streams_bootstrap.streams.streams_app import StreamsAppCleaner
 from kpops.core.registry import Registry, _find_classes, find_class
+from tests.components.test_kubernetes_app import DummyKubernetesApp
 
 registry = Registry()
 registry.discover_components()
@@ -43,14 +54,20 @@ EXPECTED_PARENTS: dict[str, tuple[str, ...]] = {
     ),
     "helm-app": ("kubernetes-app", "pipeline-component", "base-defaults-component"),
     "kafka-app": ("pipeline-component", "base-defaults-component"),
-    "kafka-connector": ("pipeline-component", "base-defaults-component"),
+    "kafka-connector": (
+        "kafka-app",
+        "pipeline-component",
+        "base-defaults-component",
+    ),
     "kafka-sink-connector": (
         "kafka-connector",
+        "kafka-app",
         "pipeline-component",
         "base-defaults-component",
     ),
     "kafka-source-connector": (
         "kafka-connector",
+        "kafka-app",
         "pipeline-component",
         "base-defaults-component",
     ),
@@ -189,3 +206,34 @@ def test_custom_diamond_values() -> None:
     )
     assert isinstance(component.values, ProducerAppValues)
     assert component.runs_on_spot is False
+
+
+@pytest.mark.parametrize(
+    ("component", "section"),
+    [
+        (HelmApp, "from"),
+        (HelmApp, "to"),
+        (DummyKubernetesApp, "from"),
+        (DummyKubernetesApp, "to"),
+        (ProducerApp, "from"),
+        (KafkaSourceConnector, "from"),
+        (ConsumerApp, "to"),
+    ],
+)
+def test_unsupported_topic_section_is_rejected(
+    component: type[PipelineComponent], section: str
+) -> None:
+    with pytest.raises(
+        ValidationError,
+        match=rf"does not support the `{section}` section",
+    ):
+        component(name="test", enrich=False, **{section: {"topics": {"topic": {}}}})
+
+
+def test_capabilities_are_not_component_types() -> None:
+    capabilities = {ConsumesTopics, ProducesTopics}
+    registered = set(registry.components)
+    assert not capabilities & registered
+    assert len(registered) == 12
+    for component in (*registered, *EXPECTED_CLEANER_PARENTS):
+        assert not capabilities & set(component.parents)

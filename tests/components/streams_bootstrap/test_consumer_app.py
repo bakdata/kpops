@@ -298,7 +298,7 @@ class TestConsumerApp:
         await consumer_app.deploy(dry_run=dry_run)
 
         # Ensure no outputs are attached to a ConsumerApp deployment
-        assert consumer_app.to is None
+        assert "to" not in type(consumer_app).model_fields
 
         assert mock.mock_calls == [
             mocker.call.helm_upgrade_install(
@@ -620,7 +620,7 @@ class TestConsumerApp:
         }
 
         # Verify no outputs are registered
-        assert consumer_app.to is None
+        assert "to" not in type(consumer_app).model_fields
         assert not getattr(consumer_app, "outputs", None) or not list(
             consumer_app.outputs
         )

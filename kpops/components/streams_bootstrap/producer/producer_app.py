@@ -2,9 +2,10 @@ from functools import cached_property
 from typing import override
 
 import structlog
-from pydantic import Field, ValidationError
+from pydantic import ValidationError
 
 from kpops.component_handlers.kubernetes.utils import trim
+from kpops.components.base_components import ProducesTopics
 from kpops.components.common.app_type import AppType
 from kpops.components.common.topic import (
     KafkaTopic,
@@ -52,21 +53,15 @@ class ProducerAppCleaner(
         )
 
 
-class ProducerApp(StreamsBootstrap[ProducerAppValues]):
+class ProducerApp(ProducesTopics, StreamsBootstrap[ProducerAppValues]):
     """ProducerApp component that configures a streams-bootstrap producer-app.
 
     Note that the producer does not support error topics.
 
     :param values: streams-bootstrap Helm values
-    :param from_: Producer doesn't support FromSection, defaults to None
     """
 
     values: ProducerAppValues
-    from_: None = Field(
-        default=None,
-        alias="from",
-        title="From",
-    )
 
     @property
     def is_cron_job(self) -> bool:
