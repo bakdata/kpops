@@ -2,12 +2,14 @@
 flowchart BT
     KubernetesApp --> PipelineComponent
     HelmApp --> KubernetesApp
+    KafkaApp --> PipelineComponent
+    StreamsBootstrap --> KafkaApp
     StreamsBootstrap --> HelmApp
     StreamsApp --> StreamsBootstrap
     ProducerApp --> StreamsBootstrap
     ConsumerApp --> StreamsBootstrap
     ConsumerProducerApp --> StreamsBootstrap
-    KafkaConnector --> PipelineComponent
+    KafkaConnector --> KafkaApp
     KafkaSourceConnector --> KafkaConnector
     KafkaSinkConnector --> KafkaConnector
 

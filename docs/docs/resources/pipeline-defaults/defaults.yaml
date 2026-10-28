@@ -1,8 +1,29 @@
 # Consumer app component that configures a streams-bootstrap consumer app.
 #
-# Child of: KafkaApp
+# Child of: StreamsBootstrap
 # More documentation on ConsumerApp: https://github.com/bakdata/streams-bootstrap
 consumer-app:
+  from: # Must not be null
+    topics: # read from topic
+      ${pipeline.name}-input-topic:
+        type: input # Implied when role is NOT specified
+      ${pipeline.name}-extra-topic:
+        label: topic-role # Implies `type` to be extra
+      ${pipeline.name}-input-pattern-topic:
+        type: pattern # Implied to be an input pattern if `label` is undefined
+      ${pipeline.name}-extra-pattern-topic:
+        type: pattern # Implied to be an extra pattern if `label` is defined
+        label: some-role
+    components: # read from specific component
+      account-producer:
+        type: input # Implied when role is NOT specified
+      other-producer:
+        label: some-role # Implies `type` to be extra
+      component-as-input-pattern:
+        type: pattern # Implied to be an input pattern if `label` is undefined
+      component-as-extra-pattern:
+        type: pattern # Implied to be an extra pattern if `label` is defined
+        label: some-role
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/consumer-app
   values: # required
@@ -72,9 +93,48 @@ consumer-app:
       #   metricType: AverageValue
 # ConsumerProducer app component that configures a streams-bootstrap consumerproducer app.
 #
-# Child of: KafkaApp
+# Child of: StreamsBootstrap
 # More documentation on ConsumerProducerApp: https://github.com/bakdata/streams-bootstrap
 consumer-producer-app:
+  from: # Must not be null
+    topics: # read from topic
+      ${pipeline.name}-input-topic:
+        type: input # Implied when role is NOT specified
+      ${pipeline.name}-extra-topic:
+        label: topic-role # Implies `type` to be extra
+      ${pipeline.name}-input-pattern-topic:
+        type: pattern # Implied to be an input pattern if `label` is undefined
+      ${pipeline.name}-extra-pattern-topic:
+        type: pattern # Implied to be an extra pattern if `label` is defined
+        label: some-role
+    components: # read from specific component
+      account-producer:
+        type: input # Implied when role is NOT specified
+      other-producer:
+        label: some-role # Implies `type` to be extra
+      component-as-input-pattern:
+        type: pattern # Implied to be an input pattern if `label` is undefined
+      component-as-extra-pattern:
+        type: pattern # Implied to be an extra pattern if `label` is defined
+        label: some-role
+  # Topic(s) into which the component will write output
+  to:
+    topics:
+      ${pipeline.name}-output-topic:
+        type: output # Implied when role is NOT specified
+      ${pipeline.name}-extra-topic:
+        label: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
+      ${pipeline.name}-error-topic:
+        type: error
+        # Currently KPOps supports Avro and JSON schemas.
+        key_schema: key-schema # must implement SchemaProvider to use
+        value_schema: value-schema
+        partitions_count: 1
+        replication_factor: 1
+        configs: # https://kafka.apache.org/documentation/#topicconfigs
+          cleanup.policy: compact
+    models: # SchemaProvider is initiated with the values given here
+      model: model
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/consumerproducer-app
   values: # required
@@ -150,7 +210,7 @@ consumer-producer-app:
       #   metricType: AverageValue
 # Kubernetes app managed through Helm with an associated Helm chart
 #
-# Parent of: KafkaApp
+# Parent of: StreamsBootstrap
 # Child of: KubernetesApp
 helm-app:
   values: # required
@@ -169,8 +229,8 @@ helm-app:
       insecure_skip_tls_verify: false
 # Base component for Kafka-based components.
 #
-# Parent of: ProducerApp, StreamsApp
-# Child of: KubernetesApp
+# Parent of: StreamsBootstrap, KafkaConnector
+# Child of: PipelineComponent
 kafka-app:
   # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
@@ -178,8 +238,26 @@ kafka-app:
 # Kafka connector
 #
 # Parent of: KafkaSinkConnector, KafkaSourceConnector
-# Child of: PipelineComponent
+# Child of: KafkaApp
 kafka-connector:
+  # Topic(s) into which the component will write output
+  to:
+    topics:
+      ${pipeline.name}-output-topic:
+        type: output # Implied when role is NOT specified
+      ${pipeline.name}-extra-topic:
+        label: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
+      ${pipeline.name}-error-topic:
+        type: error
+        # Currently KPOps supports Avro and JSON schemas.
+        key_schema: key-schema # must implement SchemaProvider to use
+        value_schema: value-schema
+        partitions_count: 1
+        replication_factor: 1
+        configs: # https://kafka.apache.org/documentation/#topicconfigs
+          cleanup.policy: compact
+    models: # SchemaProvider is initiated with the values given here
+      model: model
   # Full documentation on connectors: https://kafka.apache.org/documentation/#connectconfigs
   config: # required
     tasks.max: 1
@@ -188,6 +266,27 @@ kafka-connector:
 # Child of: KafkaConnector
 kafka-sink-connector:
   # No settings differ from `kafka-connector`
+  from: # Must not be null
+    topics: # read from topic
+      ${pipeline.name}-input-topic:
+        type: input # Implied when role is NOT specified
+      ${pipeline.name}-extra-topic:
+        label: topic-role # Implies `type` to be extra
+      ${pipeline.name}-input-pattern-topic:
+        type: pattern # Implied to be an input pattern if `label` is undefined
+      ${pipeline.name}-extra-pattern-topic:
+        type: pattern # Implied to be an extra pattern if `label` is defined
+        label: some-role
+    components: # read from specific component
+      account-producer:
+        type: input # Implied when role is NOT specified
+      other-producer:
+        label: some-role # Implies `type` to be extra
+      component-as-input-pattern:
+        type: pattern # Implied to be an input pattern if `label` is undefined
+      component-as-extra-pattern:
+        type: pattern # Implied to be an extra pattern if `label` is defined
+        label: some-role
 # Kafka source connector
 #
 # Child of: KafkaConnector
@@ -207,9 +306,27 @@ kubernetes-app:
     commandLine: {} # Example
 # Producer app component that configures a streams-bootstrap producer app.
 #
-# Child of: KafkaApp
+# Child of: StreamsBootstrap
 # More documentation on ProducerApp: https://github.com/bakdata/streams-bootstrap
 producer-app:
+  # Topic(s) into which the component will write output
+  to:
+    topics:
+      ${pipeline.name}-output-topic:
+        type: output # Implied when role is NOT specified
+      ${pipeline.name}-extra-topic:
+        label: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
+      ${pipeline.name}-error-topic:
+        type: error
+        # Currently KPOps supports Avro and JSON schemas.
+        key_schema: key-schema # must implement SchemaProvider to use
+        value_schema: value-schema
+        partitions_count: 1
+        replication_factor: 1
+        configs: # https://kafka.apache.org/documentation/#topicconfigs
+          cleanup.policy: compact
+    models: # SchemaProvider is initiated with the values given here
+      model: model
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
   values: # required
@@ -224,9 +341,48 @@ producer-app:
     fullnameOverride: override-with-this-name # kafka-app-specific
 # Streams app component that configures a streams-bootstrap app.
 #
-# Child of: KafkaApp
+# Child of: StreamsBootstrap
 # More documentation on StreamsApp: https://github.com/bakdata/streams-bootstrap
 streams-app:
+  from: # Must not be null
+    topics: # read from topic
+      ${pipeline.name}-input-topic:
+        type: input # Implied when role is NOT specified
+      ${pipeline.name}-extra-topic:
+        label: topic-role # Implies `type` to be extra
+      ${pipeline.name}-input-pattern-topic:
+        type: pattern # Implied to be an input pattern if `label` is undefined
+      ${pipeline.name}-extra-pattern-topic:
+        type: pattern # Implied to be an extra pattern if `label` is defined
+        label: some-role
+    components: # read from specific component
+      account-producer:
+        type: input # Implied when role is NOT specified
+      other-producer:
+        label: some-role # Implies `type` to be extra
+      component-as-input-pattern:
+        type: pattern # Implied to be an input pattern if `label` is undefined
+      component-as-extra-pattern:
+        type: pattern # Implied to be an extra pattern if `label` is defined
+        label: some-role
+  # Topic(s) into which the component will write output
+  to:
+    topics:
+      ${pipeline.name}-output-topic:
+        type: output # Implied when role is NOT specified
+      ${pipeline.name}-extra-topic:
+        label: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
+      ${pipeline.name}-error-topic:
+        type: error
+        # Currently KPOps supports Avro and JSON schemas.
+        key_schema: key-schema # must implement SchemaProvider to use
+        value_schema: value-schema
+        partitions_count: 1
+        replication_factor: 1
+        configs: # https://kafka.apache.org/documentation/#topicconfigs
+          cleanup.policy: compact
+    models: # SchemaProvider is initiated with the values given here
+      model: model
   # No arbitrary keys are allowed under `app` here
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/streams-app
