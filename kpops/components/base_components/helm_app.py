@@ -6,6 +6,7 @@ from typing import Annotated, Any, override
 import pydantic
 import structlog
 from pydantic import Field, computed_field
+from pydantic.json_schema import SkipJsonSchema
 
 from kpops.component_handlers.helm.dry_run_handler import DryRunHandler
 from kpops.component_handlers.helm.helm import Helm
@@ -79,7 +80,7 @@ class HelmApp[V: HelmAppValues = HelmAppValues](KubernetesApp[V]):
 
     repo_config: SkipGenerate[HelmRepoConfig | None] = None
     diff_config: SkipGenerate[HelmDiffConfig] = HelmDiffConfig()
-    version: str | None = None
+    version: str | SkipJsonSchema[None] = None
     timeout: str | None = None
     values: V
 

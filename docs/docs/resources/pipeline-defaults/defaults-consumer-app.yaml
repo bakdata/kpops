@@ -3,8 +3,6 @@
 # Child of: KafkaApp
 # More documentation on ConsumerApp: https://github.com/bakdata/streams-bootstrap
 consumer-app:
-  # to: # While the consumer-app does inherit from kafka-app, it does not need a
-  # `to` section, hence it does not support it.
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/consumer-app
   values: # required

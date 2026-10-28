@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import re
 from abc import ABC
-from typing import Any, Self, override
+from typing import Annotated, Any, Self, override
 
 import pydantic
 import structlog
-from pydantic import Field
+from pydantic.json_schema import SkipJsonSchema
 
 from kpops.component_handlers.helm.model import HelmRepoConfig
 from kpops.components.base_components import KafkaApp, ProducesTopics
@@ -43,10 +43,10 @@ class StreamsBootstrap[V: StreamsBootstrapValues[Any] = StreamsBootstrapValues](
 
     values: V
     repo_config: SkipGenerate[HelmRepoConfig | None] = STREAMS_BOOTSTRAP_HELM_REPO
-    version: str | None = Field(
-        default=STREAMS_BOOTSTRAP_VERSION,
-        pattern=STREAMS_BOOTSTRAP_VERSION_PATTERN,
-    )
+    version: Annotated[
+        str | SkipJsonSchema[None],
+        pydantic.Field(pattern=STREAMS_BOOTSTRAP_VERSION_PATTERN),
+    ] = STREAMS_BOOTSTRAP_VERSION
 
     @property
     @override
