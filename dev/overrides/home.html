@@ -154,44 +154,6 @@
         }
     }
 
-    /* Dark mode */
-    .mdx-hero__image--dark {
-        display: none;
-    }
-
-    [data-md-color-scheme="slate"] .mdx-hero__image--light {
-        display: none;
-    }
-
-    [data-md-color-scheme="slate"] .mdx-hero__image--dark {
-        display: block;
-    }
-
-    body[data-md-color-scheme="slate"] {
-        background: var(--kpops-dark-bg-color);
-    }
-
-    [data-md-color-scheme="slate"] .md-typeset h1.mdx-hero__badge,
-    [data-md-color-scheme="slate"] .mdx-hero__badge {
-        color: #e6e2ff;
-        background: rgba(165, 153, 255, 0.16);
-        border-color: rgba(165, 153, 255, 0.5);
-    }
-
-    [data-md-color-scheme="slate"] .mdx-hero__description {
-        color: #f1efff;
-    }
-
-    [data-md-color-scheme="slate"] .mdx-hero__button--secondary {
-        background: rgba(255, 255, 255, 0.1);
-        color: #f1efff !important;
-        border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    [data-md-color-scheme="slate"] .mdx-hero__button--secondary:hover {
-        background: rgba(255, 255, 255, 0.18);
-    }
-
 </style>
 
 <!-- Hero for landing page -->
@@ -199,10 +161,8 @@
     <div class="md-typeset">
         <div class="mdx-hero">
 
-            <img class="md-hero__image mdx-hero__image--light" src="assets/images/kpops-background.svg"
+            <img class="md-hero__image" src="assets/images/kpops-background.svg"
                  alt="KPOps background image"/>
-            <img class="md-hero__image mdx-hero__image--dark" src="assets/images/kpops-background-dark.svg"
-                 alt="" aria-hidden="true"/>
             <div class="md-grid mdx-hero__content">
                 <h1 class="mdx-hero__badge">
                     Kafka Pipeline Operations
