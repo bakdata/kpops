@@ -8,6 +8,7 @@
   "malva": {},
   "includes": ["**/*.{json,jsonc,yaml,yml,md,toml,css}"],
   "excludes": [
+    "examples/**",
     ".pytest_cache/**",
     ".mypy_cache/**",
     "**/.venv/**",
