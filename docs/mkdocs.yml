@@ -12,6 +12,21 @@ theme:
   variant: modern
   custom_dir: docs/overrides
   language: "en"
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: lucide/sun-moon
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: lucide/sun
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: lucide/moon
+        name: Switch to system preference
   font:
     text: "SF Pro"
     code: "DejaVu Sans Mono"
