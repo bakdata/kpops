@@ -1572,6 +1572,8 @@
       
         
       
+        
+      
     
     
     
@@ -1901,6 +1903,33 @@
     
   
   Migrate from v11 to v12
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+                
+              
+                
+                  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../migration-guide/v12-v13/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Migrate from v12 to v13
 
     
   </span>
@@ -2471,6 +2500,7 @@
 <h1 id="helmapp">HelmApp<a class="headerlink" href="#helmapp" title="Permanent link">&para;</a></h1>
 <h3 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h3>
 <p>Can be used to deploy any app in Kubernetes using Helm, for example, a REST service that serves Kafka data.</p>
+<p><code>HelmApp</code> has no <code>from</code> or <code>to</code> section. To connect a Helm-based component to Kafka topics, create a custom component that combines <code>HelmApp</code> with the <code>ConsumesTopics</code> and <code>ProducesTopics</code> capabilities. See the <a href="../../../migration-guide/v12-v13/">migration guide</a>.</p>
 <h3 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h3>
 <!-- dprint-ignore-start -->
 
