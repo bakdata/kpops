@@ -2,3 +2,5 @@
 #
 # Child of: KafkaConnector
 kafka-source-connector:
+  # The source connector has no `from` section
+  # from:

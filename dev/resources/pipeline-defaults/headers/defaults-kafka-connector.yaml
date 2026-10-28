@@ -1,5 +1,5 @@
 # Kafka connector
 #
 # Parent of: KafkaSinkConnector, KafkaSourceConnector
-# Child of: KafkaApp
+# Child of: PipelineComponent
 kafka-connector:

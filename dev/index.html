@@ -33,6 +33,11 @@
       
       <link rel="stylesheet" href="./assets/stylesheets/modern/main.e442bf79.min.css">
       
+        
+          
+        
+        <link rel="stylesheet" href="./assets/stylesheets/modern/palette.b60ce83d.min.css">
+      
       
 
 
@@ -61,7 +66,14 @@
   </head>
   
   
-    <body dir="ltr">
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
@@ -123,6 +135,42 @@
         </div>
       </div>
     </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-sun-moon" viewBox="0 0 24 24"><path d="M12 2v2M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715M16 12a4 4 0 0 0-4-4M19 5l-1.256 1.256M20 12h2"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-moon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
+      </label>
+    
+  
+</form>
+      
     
     
       <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
@@ -307,6 +355,44 @@
         }
     }
 
+    /* Dark mode */
+    .mdx-hero__image--dark {
+        display: none;
+    }
+
+    [data-md-color-scheme="slate"] .mdx-hero__image--light {
+        display: none;
+    }
+
+    [data-md-color-scheme="slate"] .mdx-hero__image--dark {
+        display: block;
+    }
+
+    body[data-md-color-scheme="slate"] {
+        background: var(--kpops-dark-bg-color);
+    }
+
+    [data-md-color-scheme="slate"] .md-typeset h1.mdx-hero__badge,
+    [data-md-color-scheme="slate"] .mdx-hero__badge {
+        color: #e6e2ff;
+        background: rgba(165, 153, 255, 0.16);
+        border-color: rgba(165, 153, 255, 0.5);
+    }
+
+    [data-md-color-scheme="slate"] .mdx-hero__description {
+        color: #f1efff;
+    }
+
+    [data-md-color-scheme="slate"] .mdx-hero__button--secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: #f1efff !important;
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    [data-md-color-scheme="slate"] .mdx-hero__button--secondary:hover {
+        background: rgba(255, 255, 255, 0.18);
+    }
+
 </style>
 
 <!-- Hero for landing page -->
@@ -314,8 +400,10 @@
     <div class="md-typeset">
         <div class="mdx-hero">
 
-            <img class="md-hero__image" src="assets/images/kpops-background.svg"
+            <img class="md-hero__image mdx-hero__image--light" src="assets/images/kpops-background.svg"
                  alt="KPOps background image"/>
+            <img class="md-hero__image mdx-hero__image--dark" src="assets/images/kpops-background-dark.svg"
+                 alt="" aria-hidden="true"/>
             <div class="md-grid mdx-hero__content">
                 <h1 class="mdx-hero__badge">
                     Kafka Pipeline Operations
@@ -1555,8 +1643,6 @@
       
         
       
-        
-      
     
     
     
@@ -1886,33 +1972,6 @@
     
   
   Migrate from v11 to v12
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-                
-              
-                
-                  
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="./user/migration-guide/v12-v13/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-  Migrate from v12 to v13
 
     
   </span>
