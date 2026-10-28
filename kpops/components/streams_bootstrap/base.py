@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from abc import ABC
-from typing import Annotated, Any, Self, override
+from typing import Any, Self, override
 
 import pydantic
 import structlog
@@ -43,10 +43,7 @@ class StreamsBootstrap[V: StreamsBootstrapValues[Any] = StreamsBootstrapValues](
 
     values: V
     repo_config: SkipGenerate[HelmRepoConfig | None] = STREAMS_BOOTSTRAP_HELM_REPO
-    version: Annotated[
-        str | SkipJsonSchema[None],
-        pydantic.Field(pattern=STREAMS_BOOTSTRAP_VERSION_PATTERN),
-    ] = STREAMS_BOOTSTRAP_VERSION
+    version: str | SkipJsonSchema[None] = STREAMS_BOOTSTRAP_VERSION
 
     @property
     @override
