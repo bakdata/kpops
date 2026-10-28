@@ -19,6 +19,7 @@ from kpops.components.base_components.kafka_app import (
 from kpops.components.base_components.kafka_connector import KafkaConnector
 from kpops.components.base_components.pipeline_component import (
     PipelineComponent,
+    leading_keys_first,
 )
 from kpops.core.registry import Registry
 
@@ -76,8 +77,14 @@ KPOPS_COMPONENTS = tuple(registry.components)
 KPOPS_COMPONENTS_SECTIONS = {
     component.type: [
         field_name
-        for field_name, field_info in component.model_fields.items()
-        if not field_info.exclude
+        for field_name, _ in leading_keys_first(
+            (
+                (field_name, field_info)
+                for field_name, field_info in component.model_fields.items()
+                if not field_info.exclude
+            ),
+            key=lambda field: field[1].serialization_alias or field[0],
+        )
     ]
     for component in KPOPS_COMPONENTS
 }

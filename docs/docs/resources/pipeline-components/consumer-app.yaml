@@ -6,6 +6,27 @@
   # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline.name}-
+  from: # Must not be null
+    topics: # read from topic
+      ${pipeline.name}-input-topic:
+        type: input # Implied when role is NOT specified
+      ${pipeline.name}-extra-topic:
+        label: topic-role # Implies `type` to be extra
+      ${pipeline.name}-input-pattern-topic:
+        type: pattern # Implied to be an input pattern if `label` is undefined
+      ${pipeline.name}-extra-pattern-topic:
+        type: pattern # Implied to be an extra pattern if `label` is defined
+        label: some-role
+    components: # read from specific component
+      account-producer:
+        type: input # Implied when role is NOT specified
+      other-producer:
+        label: some-role # Implies `type` to be extra
+      component-as-input-pattern:
+        type: pattern # Implied to be an input pattern if `label` is undefined
+      component-as-extra-pattern:
+        type: pattern # Implied to be an extra pattern if `label` is defined
+        label: some-role
   namespace: namespace # required
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/consumer-app
@@ -85,24 +106,3 @@
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
   version: "2.12.0" # Helm chart version
-  from: # Must not be null
-    topics: # read from topic
-      ${pipeline.name}-input-topic:
-        type: input # Implied when role is NOT specified
-      ${pipeline.name}-extra-topic:
-        label: topic-role # Implies `type` to be extra
-      ${pipeline.name}-input-pattern-topic:
-        type: pattern # Implied to be an input pattern if `label` is undefined
-      ${pipeline.name}-extra-pattern-topic:
-        type: pattern # Implied to be an extra pattern if `label` is defined
-        label: some-role
-    components: # read from specific component
-      account-producer:
-        type: input # Implied when role is NOT specified
-      other-producer:
-        label: some-role # Implies `type` to be extra
-      component-as-input-pattern:
-        type: pattern # Implied to be an input pattern if `label` is undefined
-      component-as-extra-pattern:
-        type: pattern # Implied to be an extra pattern if `label` is defined
-        label: some-role

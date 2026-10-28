@@ -1,10 +1,10 @@
 consumer-app.yaml:
+- from_.yaml
 - values-consumer-app.yaml
-- from_.yaml
 consumer-producer-app.yaml:
-- values-consumer-producer-app.yaml
-- to.yaml
 - from_.yaml
+- to.yaml
+- values-consumer-producer-app.yaml
 helm-app.yaml:
 - values-helm-app.yaml
 - repo_config-helm-app.yaml
@@ -21,9 +21,9 @@ kubernetes-app.yaml:
 - namespace.yaml
 - values-kubernetes-app.yaml
 producer-app.yaml:
+- to.yaml
 - values-producer-app.yaml
-- to.yaml
 streams-app.yaml:
-- values-streams-app.yaml
-- to.yaml
 - from_.yaml
+- to.yaml
+- values-streams-app.yaml
