@@ -20,7 +20,7 @@ MODULE = CustomSchemaProvider.__module__
 
 
 @pytest.fixture()
-def handlers() -> Generator[ComponentHandlers, None, None]:
+def handlers() -> Generator[ComponentHandlers]:
     handlers = ComponentHandlers(
         schema_handler=mock.AsyncMock(),
         connector_handler=mock.AsyncMock(),

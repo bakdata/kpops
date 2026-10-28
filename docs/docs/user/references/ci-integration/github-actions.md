@@ -15,7 +15,7 @@ parameters.
 | components        |    ❌    |       -       | string | components package path                                                                                                                       |
 | filter-type       |    ❌    |       -       | string | Whether to include/exclude the steps defined in KPOPS_PIPELINE_STEPS                                                                          |
 | parallel          |    ❌    |    "false"    | string | Whether to run pipelines in parallel                                                                                                          |
-| python-version    |    ❌    |   "3.11.x"    | string | Python version to install (Defaults to the latest stable version of Python 3.11)                                                              |
+| python-version    |    ❌    |   "3.14.x"    | string | Python version to install (Defaults to the latest stable version of Python 3.14)                                                              |
 | kpops-version     |    ❌    |    latest     | string | KPOps version to install                                                                                                                      |
 | helm-version      |    ❌    |    latest     | string | Helm version to install                                                                                                                       |
 | token             |    ❌    |    latest     | string | secrets.GITHUB_TOKEN, needed for setup-helm action if helm-version is set to latest                                                           |

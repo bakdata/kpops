@@ -1,8 +1,8 @@
+from typing import override
 from unittest.mock import MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
-from typing_extensions import override
 
 from kpops.component_handlers import get_handlers
 from kpops.component_handlers.kafka_connect.model import (

@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, override
 
 import httpx2
-from typing_extensions import override
 
 from kpops.core.exception import ServiceException
 

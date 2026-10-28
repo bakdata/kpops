@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import ClassVar
+from typing import ClassVar, override
 
 import pydantic
 import structlog
@@ -13,7 +13,6 @@ from pydantic_settings import (
     PydanticBaseSettingsSource,
     SettingsConfigDict,
 )
-from typing_extensions import override
 
 from kpops.component_handlers.helm.model import HelmConfig
 from kpops.core.exception import ValidationError

@@ -9,7 +9,7 @@ def is_jsonable(input: Any) -> bool:
     """
     try:
         json.dumps(input)
-    except (TypeError, OverflowError):
+    except TypeError, OverflowError:
         return False
     else:
         return True

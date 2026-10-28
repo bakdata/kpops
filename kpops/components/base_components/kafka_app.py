@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from abc import ABC
+from typing import override
 
 import structlog
-from typing_extensions import override
 
 from kpops.component_handlers import get_handlers
 from kpops.components.base_components.pipeline_component import PipelineComponent

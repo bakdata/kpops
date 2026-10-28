@@ -1,7 +1,7 @@
 import json
 from collections.abc import Hashable, Mapping
 from pathlib import Path
-from typing import Any
+from typing import Any, override
 
 import structlog
 import yaml
@@ -10,7 +10,6 @@ from cachetools import cached
 from cachetools.keys import hashkey
 from rich.console import Console
 from rich.syntax import Syntax
-from typing_extensions import override
 
 from kpops.utils.dict_ops import ImprovedTemplate
 
