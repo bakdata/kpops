@@ -14,6 +14,10 @@ from pydantic import (
 )
 
 from kpops.component_handlers import ComponentHandlers
+from kpops.components.base_components.kafka_app import (
+    ConsumesTopics,
+    ProducesTopics,
+)
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.core.exception import KpopsException, ParsingException, ValidationError
 from kpops.core.registry import Registry
@@ -26,6 +30,7 @@ if TYPE_CHECKING:
     from collections.abc import Awaitable, Coroutine, Iterator
     from pathlib import Path
 
+    from kpops.components.base_components.models.to_section import ToSection
     from kpops.config import KpopsConfig
     from kpops.manifests.kubernetes import KubernetesManifest
 
@@ -300,6 +305,10 @@ class Pipeline:
             raise ValueError(msg)
 
 
+def _output_section(component: PipelineComponent) -> ToSection | None:
+    return component.to if isinstance(component, ProducesTopics) else None
+
+
 def create_env_components_index(
     environment_components: list[dict[str, Any]],
 ) -> dict[str, dict[str, Any]]:
@@ -423,24 +432,30 @@ class PipelineGenerator:
             return
         # inflate & enrich components
         for inflated_component in component.inflate():  # TODO: recursively
-            if inflated_component.from_:
-                # read from specified components
-                for (
-                    original_from_component_id,
-                    from_topic,
-                ) in inflated_component.from_.components.items():
-                    original_from_component = self.pipeline[original_from_component_id]
+            if isinstance(inflated_component, ConsumesTopics):
+                if inflated_component.from_:
+                    # read from specified components
+                    for (
+                        original_from_component_id,
+                        from_topic,
+                    ) in inflated_component.from_.components.items():
+                        original_from_component = self.pipeline[
+                            original_from_component_id
+                        ]
 
-                    inflated_from_component = original_from_component.inflate()[-1]
-                    resolved_from_component = self.pipeline[inflated_from_component.id]
+                        inflated_from_component = original_from_component.inflate()[-1]
+                        resolved_from_component = self.pipeline[
+                            inflated_from_component.id
+                        ]
 
+                        inflated_component.weave_from_topics(
+                            _output_section(resolved_from_component), from_topic
+                        )
+                elif self.pipeline:
+                    # read from previous component
                     inflated_component.weave_from_topics(
-                        resolved_from_component.to, from_topic
+                        _output_section(self.pipeline.last)
                     )
-            elif self.pipeline and inflated_component.supports_from_section():
-                # read from previous component
-                prev_component = self.pipeline.last
-                inflated_component.weave_from_topics(prev_component.to)
             self.pipeline.add(inflated_component)
 
     def _enrich_component_with_env(

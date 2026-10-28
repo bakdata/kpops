@@ -10,6 +10,7 @@ from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectorConfig,
     KafkaConnectorType,
 )
+from kpops.components.base_components import ConsumesTopics
 from kpops.components.base_components.kafka_connector import (
     KafkaSinkConnector,
 )
@@ -53,7 +54,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         )
 
     def test_supports_from_section(self) -> None:
-        assert KafkaSinkConnector.supports_from_section()
+        assert issubclass(KafkaSinkConnector, ConsumesTopics)
 
     def test_connector_config_parsing(
         self, connector_config: KafkaConnectorConfig

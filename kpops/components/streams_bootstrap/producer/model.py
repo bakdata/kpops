@@ -15,7 +15,7 @@ class ProducerConfig(KafkaConfig):
     """producer-app kafka section."""
 
 
-class ProducerAppValues(StreamsBootstrapValues):
+class ProducerAppValues(StreamsBootstrapValues[ProducerConfig]):
     """producer-app configurations.
 
     The attributes correspond to keys and values that are used as values for the streams-bootstrap Helm chart.

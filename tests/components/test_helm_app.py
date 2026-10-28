@@ -131,8 +131,6 @@ class TestHelmApp:
         app_values: HelmAppValues,
     ) -> None:
         class AppWithLocalChart(HelmApp):
-            repo_config: None = None
-
             @property
             @override
             def helm_chart(self) -> str:

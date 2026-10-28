@@ -9,6 +9,7 @@ from kpops.component_handlers.helm.dry_run_handler import DryRunHandler
 from kpops.component_handlers.helm.helm import Helm
 from kpops.component_handlers.helm.model import HelmUpgradeInstallFlags
 from kpops.component_handlers.helm.utils import create_helm_release_name
+from kpops.components.base_components import ConsumesTopics
 from kpops.components.common.topic import (
     KafkaTopic,
     OutputTopicTypes,
@@ -94,7 +95,7 @@ class TestProducerApp:
         return mocker.patch.object(Helm, "get_values", return_value=None)
 
     def test_supports_from_section(self) -> None:
-        assert not ProducerApp.supports_from_section()
+        assert not issubclass(ProducerApp, ConsumesTopics)
 
     def test_helm_name_override(self, producer_app: ProducerApp) -> None:
         assert len(producer_app.helm_name_override) == 63
@@ -367,7 +368,6 @@ class TestProducerApp:
         assert producer_app.values.kafka.labeled_output_topics == {
             "first-extra-topic": KafkaTopic(name="extra-topic-1")
         }
-        assert producer_app.input_topics == []
         assert list(producer_app.inputs) == []
         assert list(producer_app.outputs) == [
             KafkaTopic(name="producer-app-output-topic"),

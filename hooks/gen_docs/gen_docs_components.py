@@ -12,11 +12,21 @@ from hooks import ROOT
 from kpops.components.base_components.kafka_connector import KafkaConnector
 from kpops.components.base_components.pipeline_component import (
     PipelineComponent,
+    leading_keys_first,
 )
 from kpops.core.registry import Registry
 
 registry = Registry()
 registry.discover_components()
+
+
+def generic_origin(component: type[PipelineComponent]) -> type[PipelineComponent]:
+    """Map a parametrized generic component class to its unparametrized origin."""
+    origin = component.__pydantic_generic_metadata__["origin"]
+    if origin is not None and issubclass(origin, PipelineComponent):
+        return origin
+    return component
+
 
 PATH_DOCS_RESOURCES = ROOT / "docs/docs/resources"
 
@@ -24,15 +34,21 @@ KPOPS_COMPONENTS = tuple(registry.components)
 KPOPS_COMPONENTS_SECTIONS = {
     component.type: [
         field_name
-        for field_name, field_info in component.model_fields.items()
-        if not field_info.exclude
+        for field_name, _ in leading_keys_first(
+            (
+                (field_name, field_info)
+                for field_name, field_info in component.model_fields.items()
+                if not field_info.exclude
+            ),
+            key=lambda field: field[1].serialization_alias or field[0],
+        )
     ]
     for component in KPOPS_COMPONENTS
 }
 KPOPS_COMPONENTS_INHERITANCE_REF = {
     component.type: {
         "bases": [
-            base.type
+            generic_origin(base).type
             for base in component.__bases__
             if issubclass(base, PipelineComponent)
         ],

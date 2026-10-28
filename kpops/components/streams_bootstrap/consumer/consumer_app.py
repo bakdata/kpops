@@ -2,9 +2,10 @@ from functools import cached_property
 from typing import override
 
 import structlog
-from pydantic import Field, ValidationError
+from pydantic import ValidationError
 
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
+from kpops.components.base_components import ConsumesTopics
 from kpops.components.base_components.helm_app import HelmApp
 from kpops.components.common.app_type import AppType
 from kpops.components.common.topic import KafkaTopic
@@ -22,15 +23,15 @@ from kpops.manifests.kubernetes import KubernetesManifest
 log = structlog.get_logger("ConsumerApp")
 
 
-class ConsumerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
+class ConsumerAppCleaner(
+    StreamsBootstrapCleaner[ConsumerAppValues], StreamsBootstrap[ConsumerAppValues]
+):
     values: ConsumerAppValues
 
     @property
     @override
     def helm_chart(self) -> str:
-        return (
-            f"{self.repo_config.repository_name}/{AppType.CLEANUP_CONSUMER_APP.value}"
-        )
+        return f"{self.repository_name}/{AppType.CLEANUP_CONSUMER_APP.value}"
 
     @override
     async def reset(self, dry_run: bool) -> None:
@@ -79,18 +80,13 @@ class ConsumerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
         await pvc_handler.delete_pvcs(dry_run)
 
 
-class ConsumerApp(StreamsBootstrap):
+class ConsumerApp(ConsumesTopics, StreamsBootstrap[ConsumerAppValues]):
     """ConsumerApp component that configures a streams-bootstrap consumer-app.
 
     :param values: streams-bootstrap Helm values
     """
 
     values: ConsumerAppValues
-    to: None = Field(
-        default=None,
-        alias="to",
-        title="To",
-    )
 
     @cached_property
     def _cleaner(self) -> ConsumerAppCleaner:
@@ -125,7 +121,7 @@ class ConsumerApp(StreamsBootstrap):
     @property
     @override
     def helm_chart(self) -> str:
-        return f"{self.repo_config.repository_name}/{AppType.CONSUMER_APP.value}"
+        return f"{self.repository_name}/{AppType.CONSUMER_APP.value}"
 
     @override
     async def destroy(self, dry_run: bool) -> None:
