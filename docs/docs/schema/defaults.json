@@ -1586,17 +1586,10 @@
                     "description": "Helm app values"
                 },
                 "version": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
                     "default": null,
                     "description": "Helm chart version",
-                    "title": "Version"
+                    "title": "Version",
+                    "type": "string"
                 }
             },
             "required": [
