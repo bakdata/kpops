@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from abc import ABC
-from collections.abc import Iterator
+from collections.abc import Callable, Iterable, Iterator
+from operator import itemgetter
 from typing import Any, ClassVar
 
 import pydantic
@@ -20,6 +21,25 @@ from kpops.manifests.kubernetes import KubernetesManifest
 from kpops.utils.pydantic import exclude_by_name, exclude_by_value
 
 GENERATE_LEADING_KEYS = ("enabled", "prefix", "from", "to")
+
+
+def leading_keys_first[T](items: Iterable[T], key: Callable[[T], str] = str) -> list[T]:
+    """Keep common keys at the top, independent of the MRO-based field order.
+
+    capability fields such as `from`/`to` are declared on mixins late in the MRO.
+
+    :param items: Items to order
+    :param key: Maps an item to its serialized key name
+    :returns: The items with leading keys first, remaining order unchanged
+    """
+    return sorted(
+        items,
+        key=lambda item: (
+            GENERATE_LEADING_KEYS.index(name)
+            if (name := key(item)) in GENERATE_LEADING_KEYS
+            else len(GENERATE_LEADING_KEYS)
+        ),
+    )
 
 
 class PipelineComponent(BaseDefaultsComponent, ABC):
@@ -57,12 +77,10 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         # NOTE: from SerializeAsOptionalModel
         if info.exclude_none:
             result = exclude_by_value(result, None)
-        # keep common keys at the top, independent of the MRO-based field order
-        # (capability fields like `from`/`to` are declared on mixins late in the MRO)
-        leading_fields = {
-            key: result.pop(key) for key in GENERATE_LEADING_KEYS if key in result
+        return {
+            **ordered_fields,
+            **dict(leading_keys_first(result.items(), key=itemgetter(0))),
         }
-        return {**ordered_fields, **leading_fields, **result}
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
