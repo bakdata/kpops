@@ -1,10 +1,8 @@
 # Consumer app component that configures a streams-bootstrap consumer app.
 #
-# Child of: KafkaApp
+# Child of: StreamsBootstrap
 # More documentation on ConsumerApp: https://github.com/bakdata/streams-bootstrap
 consumer-app:
-  # to: # While the consumer-app does inherit from kafka-app, it does not need a
-  # `to` section, hence it does not support it.
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/consumer-app
   values: # required
@@ -72,9 +70,30 @@ consumer-app:
       #   formula: business_hours
       #   target: "1"
       #   metricType: AverageValue
+  from: # Must not be null
+    topics: # read from topic
+      ${pipeline.name}-input-topic:
+        type: input # Implied when role is NOT specified
+      ${pipeline.name}-extra-topic:
+        label: topic-role # Implies `type` to be extra
+      ${pipeline.name}-input-pattern-topic:
+        type: pattern # Implied to be an input pattern if `label` is undefined
+      ${pipeline.name}-extra-pattern-topic:
+        type: pattern # Implied to be an extra pattern if `label` is defined
+        label: some-role
+    components: # read from specific component
+      account-producer:
+        type: input # Implied when role is NOT specified
+      other-producer:
+        label: some-role # Implies `type` to be extra
+      component-as-input-pattern:
+        type: pattern # Implied to be an input pattern if `label` is undefined
+      component-as-extra-pattern:
+        type: pattern # Implied to be an extra pattern if `label` is defined
+        label: some-role
 # ConsumerProducer app component that configures a streams-bootstrap consumerproducer app.
 #
-# Child of: KafkaApp
+# Child of: StreamsBootstrap
 # More documentation on ConsumerProducerApp: https://github.com/bakdata/streams-bootstrap
 consumer-producer-app:
   # Allowed configs:
@@ -150,54 +169,6 @@ consumer-producer-app:
       #   formula: business_hours
       #   target: "1"
       #   metricType: AverageValue
-# Kubernetes app managed through Helm with an associated Helm chart
-#
-# Parent of: KafkaApp
-# Child of: KubernetesApp
-helm-app:
-  values: # required
-    image: exampleImage # Example
-    debug: false # Example
-    commandLine: {} # Example
-  # Helm repository configuration (optional)
-  # If not set the helm repo add will not be called. Useful when using local Helm charts
-  repo_config:
-    repository_name: bakdata-streams-bootstrap # required
-    url: https://bakdata.github.io/streams-bootstrap/ # required
-    repo_auth_flags:
-      username: user
-      password: pass
-      ca_file: /home/user/path/to/ca-file
-      insecure_skip_tls_verify: false
-# Base component for Kafka-based components.
-#
-# Parent of: ProducerApp, StreamsApp
-# Child of: KubernetesApp
-kafka-app:
-  # Pipeline prefix that will prefix every component name. If you wish to not
-  # have any prefix you can specify an empty string.
-  prefix: ${pipeline.name}-
-  from: # Must not be null
-    topics: # read from topic
-      ${pipeline.name}-input-topic:
-        type: input # Implied when role is NOT specified
-      ${pipeline.name}-extra-topic:
-        label: topic-role # Implies `type` to be extra
-      ${pipeline.name}-input-pattern-topic:
-        type: pattern # Implied to be an input pattern if `label` is undefined
-      ${pipeline.name}-extra-pattern-topic:
-        type: pattern # Implied to be an extra pattern if `label` is defined
-        label: some-role
-    components: # read from specific component
-      account-producer:
-        type: input # Implied when role is NOT specified
-      other-producer:
-        label: some-role # Implies `type` to be extra
-      component-as-input-pattern:
-        type: pattern # Implied to be an input pattern if `label` is undefined
-      component-as-extra-pattern:
-        type: pattern # Implied to be an extra pattern if `label` is defined
-        label: some-role
   # Topic(s) into which the component will write output
   to:
     topics:
@@ -216,14 +187,6 @@ kafka-app:
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
-# Kafka connector
-#
-# Parent of: KafkaSinkConnector, KafkaSourceConnector
-# Child of: PipelineComponent
-kafka-connector:
-  # Pipeline prefix that will prefix every component name. If you wish to not
-  # have any prefix you can specify an empty string.
-  prefix: ${pipeline.name}-
   from: # Must not be null
     topics: # read from topic
       ${pipeline.name}-input-topic:
@@ -245,6 +208,38 @@ kafka-connector:
       component-as-extra-pattern:
         type: pattern # Implied to be an extra pattern if `label` is defined
         label: some-role
+# Kubernetes app managed through Helm with an associated Helm chart
+#
+# Parent of: StreamsBootstrap
+# Child of: KubernetesApp
+helm-app:
+  values: # required
+    image: exampleImage # Example
+    debug: false # Example
+    commandLine: {} # Example
+  # Helm repository configuration (optional)
+  # If not set the helm repo add will not be called. Useful when using local Helm charts
+  repo_config:
+    repository_name: bakdata-streams-bootstrap # required
+    url: https://bakdata.github.io/streams-bootstrap/ # required
+    repo_auth_flags:
+      username: user
+      password: pass
+      ca_file: /home/user/path/to/ca-file
+      insecure_skip_tls_verify: false
+# Base component for Kafka-based components.
+#
+# Parent of: StreamsBootstrap, KafkaConnector
+# Child of: PipelineComponent
+kafka-app:
+  # Pipeline prefix that will prefix every component name. If you wish to not
+  # have any prefix you can specify an empty string.
+  prefix: ${pipeline.name}-
+# Kafka connector
+#
+# Parent of: KafkaSinkConnector, KafkaSourceConnector
+# Child of: KafkaApp
+kafka-connector:
   # Topic(s) into which the component will write output
   to:
     topics:
@@ -271,20 +266,6 @@ kafka-connector:
 # Child of: KafkaConnector
 kafka-sink-connector:
   # No settings differ from `kafka-connector`
-# Kafka source connector
-#
-# Child of: KafkaConnector
-kafka-source-connector:
-  # The source connector has no `from` section
-  # from:
-# Base Kubernetes App
-#
-# Parent of: HelmApp
-# Child of: PipelineComponent
-kubernetes-app:
-  # Pipeline prefix that will prefix every component name. If you wish to not
-  # have any prefix you can specify an empty string.
-  prefix: ${pipeline.name}-
   from: # Must not be null
     topics: # read from topic
       ${pipeline.name}-input-topic:
@@ -306,6 +287,40 @@ kubernetes-app:
       component-as-extra-pattern:
         type: pattern # Implied to be an extra pattern if `label` is defined
         label: some-role
+# Kafka source connector
+#
+# Child of: KafkaConnector
+kafka-source-connector:
+# Base Kubernetes App
+#
+# Parent of: HelmApp
+# Child of: PipelineComponent
+kubernetes-app:
+  # Pipeline prefix that will prefix every component name. If you wish to not
+  # have any prefix you can specify an empty string.
+  prefix: ${pipeline.name}-
+  namespace: namespace # required
+  values: # required
+    image: exampleImage # Example
+    debug: false # Example
+    commandLine: {} # Example
+# Producer app component that configures a streams-bootstrap producer app.
+#
+# Child of: StreamsBootstrap
+# More documentation on ProducerApp: https://github.com/bakdata/streams-bootstrap
+producer-app:
+  # Allowed configs:
+  # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
+  values: # required
+    kafka: # required, producer-app-specific
+      bootstrapServers: ${config.kafka_brokers}
+      schemaRegistryUrl: ${config.schema_registry.url}
+      outputTopic: output_topic
+      labeledOutputTopics:
+        output_role1: output_topic1
+        output_role2: output_topic2
+    nameOverride: override-with-this-name # kafka-app-specific
+    fullnameOverride: override-with-this-name # kafka-app-specific
   # Topic(s) into which the component will write output
   to:
     topics:
@@ -324,33 +339,9 @@ kubernetes-app:
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
-  namespace: namespace # required
-  values: # required
-    image: exampleImage # Example
-    debug: false # Example
-    commandLine: {} # Example
-# Producer app component that configures a streams-bootstrap producer app.
-#
-# Child of: KafkaApp
-# More documentation on ProducerApp: https://github.com/bakdata/streams-bootstrap
-producer-app:
-  # from: # While the producer-app does inherit from kafka-app, it does not need a
-  # `from` section, hence it does not support it.
-  # Allowed configs:
-  # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
-  values: # required
-    kafka: # required, producer-app-specific
-      bootstrapServers: ${config.kafka_brokers}
-      schemaRegistryUrl: ${config.schema_registry.url}
-      outputTopic: output_topic
-      labeledOutputTopics:
-        output_role1: output_topic1
-        output_role2: output_topic2
-    nameOverride: override-with-this-name # kafka-app-specific
-    fullnameOverride: override-with-this-name # kafka-app-specific
 # Streams app component that configures a streams-bootstrap app.
 #
-# Child of: KafkaApp
+# Child of: StreamsBootstrap
 # More documentation on StreamsApp: https://github.com/bakdata/streams-bootstrap
 streams-app:
   # No arbitrary keys are allowed under `app` here
@@ -431,3 +422,42 @@ streams-app:
       #   formula: business_hours
       #   target: "1"
       #   metricType: AverageValue
+  # Topic(s) into which the component will write output
+  to:
+    topics:
+      ${pipeline.name}-output-topic:
+        type: output # Implied when role is NOT specified
+      ${pipeline.name}-extra-topic:
+        label: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
+      ${pipeline.name}-error-topic:
+        type: error
+        # Currently KPOps supports Avro and JSON schemas.
+        key_schema: key-schema # must implement SchemaProvider to use
+        value_schema: value-schema
+        partitions_count: 1
+        replication_factor: 1
+        configs: # https://kafka.apache.org/documentation/#topicconfigs
+          cleanup.policy: compact
+    models: # SchemaProvider is initiated with the values given here
+      model: model
+  from: # Must not be null
+    topics: # read from topic
+      ${pipeline.name}-input-topic:
+        type: input # Implied when role is NOT specified
+      ${pipeline.name}-extra-topic:
+        label: topic-role # Implies `type` to be extra
+      ${pipeline.name}-input-pattern-topic:
+        type: pattern # Implied to be an input pattern if `label` is undefined
+      ${pipeline.name}-extra-pattern-topic:
+        type: pattern # Implied to be an extra pattern if `label` is defined
+        label: some-role
+    components: # read from specific component
+      account-producer:
+        type: input # Implied when role is NOT specified
+      other-producer:
+        label: some-role # Implies `type` to be extra
+      component-as-input-pattern:
+        type: pattern # Implied to be an input pattern if `label` is undefined
+      component-as-extra-pattern:
+        type: pattern # Implied to be an extra pattern if `label` is defined
+        label: some-role
