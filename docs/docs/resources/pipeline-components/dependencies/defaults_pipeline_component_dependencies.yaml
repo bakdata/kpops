@@ -1,6 +1,9 @@
 consumer-app.yaml:
+- from_.yaml
 - values-consumer-app.yaml
 consumer-producer-app.yaml:
+- from_.yaml
+- to.yaml
 - values-consumer-producer-app.yaml
 helm-app.yaml:
 - values-helm-app.yaml
@@ -8,14 +11,19 @@ helm-app.yaml:
 kafka-app.yaml:
 - prefix.yaml
 kafka-connector.yaml:
+- to.yaml
 - config-kafka-connector.yaml
-kafka-sink-connector.yaml: []
+kafka-sink-connector.yaml:
+- from_.yaml
 kafka-source-connector.yaml: []
 kubernetes-app.yaml:
 - prefix.yaml
 - namespace.yaml
 - values-kubernetes-app.yaml
 producer-app.yaml:
+- to.yaml
 - values-producer-app.yaml
 streams-app.yaml:
+- from_.yaml
+- to.yaml
 - values-streams-app.yaml
