@@ -159,7 +159,7 @@
         },
         "ConsumerAppValues": {
             "additionalProperties": true,
-            "description": "consumer-app configurations.\nThe attributes correspond to keys and values that are used as values for the streams-bootstrap Helm chart.",
+            "description": "consumer-app configurations.",
             "properties": {
                 "affinity": {
                     "anyOf": [
