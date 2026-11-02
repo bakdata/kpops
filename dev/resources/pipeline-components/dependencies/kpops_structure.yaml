@@ -1,9 +1,10 @@
 kpops_components_fields:
   consumer-app:
+  - name
   - enabled
   - prefix
   - from_
-  - name
+  - to
   - namespace
   - values
   - repo_config
@@ -11,11 +12,11 @@ kpops_components_fields:
   - version
   - timeout
   consumer-producer-app:
+  - name
   - enabled
   - prefix
   - from_
   - to
-  - name
   - namespace
   - values
   - repo_config
@@ -23,9 +24,11 @@ kpops_components_fields:
   - version
   - timeout
   helm-app:
+  - name
   - enabled
   - prefix
-  - name
+  - from_
+  - to
   - namespace
   - values
   - repo_config
@@ -33,46 +36,55 @@ kpops_components_fields:
   - version
   - timeout
   kafka-app:
-  - enabled
-  - prefix
   - name
-  kafka-connector:
-  - enabled
-  - prefix
-  - to
-  - name
-  - config
-  - state
-  kafka-sink-connector:
   - enabled
   - prefix
   - from_
   - to
+  kafka-connector:
   - name
+  - enabled
+  - prefix
+  - from_
+  - to
+  - config
+  - state
+  kafka-sink-connector:
+  - name
+  - enabled
+  - prefix
+  - from_
+  - to
   - config
   - state
   kafka-source-connector:
+  - name
   - enabled
   - prefix
+  - from_
   - to
-  - name
   - config
   - state
   kubernetes-app:
+  - name
   - enabled
   - prefix
-  - name
+  - from_
+  - to
   - namespace
   - values
   pipeline-component:
-  - enabled
-  - prefix
   - name
-  producer-app:
   - enabled
   - prefix
+  - from_
   - to
+  producer-app:
   - name
+  - enabled
+  - prefix
+  - from_
+  - to
   - namespace
   - values
   - repo_config
@@ -80,11 +92,11 @@ kpops_components_fields:
   - version
   - timeout
   streams-app:
+  - name
   - enabled
   - prefix
   - from_
   - to
-  - name
   - namespace
   - values
   - repo_config
@@ -92,9 +104,11 @@ kpops_components_fields:
   - version
   - timeout
   streams-bootstrap:
+  - name
   - enabled
   - prefix
-  - name
+  - from_
+  - to
   - namespace
   - values
   - repo_config
@@ -104,7 +118,6 @@ kpops_components_fields:
 kpops_components_inheritance_ref:
   consumer-app:
     bases:
-    - consumes-topics
     - streams-bootstrap
     parents:
     - streams-bootstrap
@@ -115,8 +128,6 @@ kpops_components_inheritance_ref:
     - base-defaults-component
   consumer-producer-app:
     bases:
-    - consumes-topics
-    - produces-topics
     - streams-bootstrap
     parents:
     - streams-bootstrap
@@ -140,18 +151,15 @@ kpops_components_inheritance_ref:
     - base-defaults-component
   kafka-connector:
     bases:
-    - produces-topics
+    - pipeline-component
     parents:
-    - kafka-app
     - pipeline-component
     - base-defaults-component
   kafka-sink-connector:
     bases:
-    - consumes-topics
     - kafka-connector
     parents:
     - kafka-connector
-    - kafka-app
     - pipeline-component
     - base-defaults-component
   kafka-source-connector:
@@ -159,7 +167,6 @@ kpops_components_inheritance_ref:
     - kafka-connector
     parents:
     - kafka-connector
-    - kafka-app
     - pipeline-component
     - base-defaults-component
   kubernetes-app:
@@ -174,7 +181,6 @@ kpops_components_inheritance_ref:
     - base-defaults-component
   producer-app:
     bases:
-    - produces-topics
     - streams-bootstrap
     parents:
     - streams-bootstrap
@@ -185,8 +191,6 @@ kpops_components_inheritance_ref:
     - base-defaults-component
   streams-app:
     bases:
-    - consumes-topics
-    - produces-topics
     - streams-bootstrap
     parents:
     - streams-bootstrap

@@ -17,6 +17,34 @@
   --md-admonition-icon--wip: url("data:image/svg+xml;charset=utf-8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"m13.78 15.3 6 6 2.11-2.16-6-6-2.11 2.16m3.72-5.2c-.39 0-.81-.05-1.14-.19L4.97 21.25l-2.11-2.11 7.41-7.4L8.5 9.96l-.72.7-1.45-1.41v2.86l-.7.7-3.52-3.56.7-.7h2.81l-1.4-1.41 3.56-3.56a2.976 2.976 0 0 1 4.22 0L9.89 5.74l1.41 1.4-.71.71 1.79 1.78 1.82-1.88c-.14-.33-.2-.75-.2-1.12a3.49 3.49 0 0 1 3.5-3.52c.59 0 1.11.14 1.58.42L16.41 6.2l1.5 1.5 2.67-2.67c.28.47.42.97.42 1.6 0 1.92-1.55 3.47-3.5 3.47Z\"/></svg>");
 }
 
+/* Dark mode: brand-tinted background instead of pure black */
+body[data-md-color-scheme="slate"] {
+  --kpops-dark-bg-color: #1d1a30;
+  --md-default-bg-color: var(--kpops-dark-bg-color);
+  --md-code-bg-color: #25213d;
+
+  /* Syntax highlighting: hues kept away from the brand purple for contrast */
+  --md-code-fg-color: #e8e6f5;
+  --md-code-hl-color: rgba(
+    165,
+    153,
+    255,
+    0.18
+  ); /* highlighted line background */
+  --md-code-hl-keyword-color: #ff7eb6; /* pink */
+  --md-code-hl-string-color: #7ee2b8; /* mint */
+  --md-code-hl-number-color: #ffc66d; /* amber */
+  --md-code-hl-constant-color: #ff9e64; /* orange */
+  --md-code-hl-function-color: #6cb6ff; /* blue */
+  --md-code-hl-special-color: #5ad8e6; /* cyan */
+  --md-code-hl-variable-color: #8bd5ff; /* light blue */
+  --md-code-hl-name-color: #e8e6f5; /* neutral, same as fg */
+  --md-code-hl-generic-color: #e8e6f5;
+  --md-code-hl-operator-color: #b7b3d6; /* muted lavender-grey */
+  --md-code-hl-punctuation-color: #a9a5c4;
+  --md-code-hl-comment-color: #8f8aa8; /* dimmer, still ~4.6:1 on bg */
+}
+
 .md-typeset .md-button, .md-button--primary {
   background-color: var(--kpops-button-color);
 }
