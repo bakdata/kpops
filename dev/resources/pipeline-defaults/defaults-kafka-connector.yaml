@@ -1,32 +1,8 @@
 # Kafka connector
 #
 # Parent of: KafkaSinkConnector, KafkaSourceConnector
-# Child of: PipelineComponent
+# Child of: KafkaApp
 kafka-connector:
-  # Pipeline prefix that will prefix every component name. If you wish to not
-  # have any prefix you can specify an empty string.
-  prefix: ${pipeline.name}-
-  from: # Must not be null
-    topics: # read from topic
-      ${pipeline.name}-input-topic:
-        type: input # Implied when role is NOT specified
-      ${pipeline.name}-extra-topic:
-        label: topic-role # Implies `type` to be extra
-      ${pipeline.name}-input-pattern-topic:
-        type: pattern # Implied to be an input pattern if `label` is undefined
-      ${pipeline.name}-extra-pattern-topic:
-        type: pattern # Implied to be an extra pattern if `label` is defined
-        label: some-role
-    components: # read from specific component
-      account-producer:
-        type: input # Implied when role is NOT specified
-      other-producer:
-        label: some-role # Implies `type` to be extra
-      component-as-input-pattern:
-        type: pattern # Implied to be an input pattern if `label` is undefined
-      component-as-extra-pattern:
-        type: pattern # Implied to be an extra pattern if `label` is defined
-        label: some-role
   # Topic(s) into which the component will write output
   to:
     topics:
