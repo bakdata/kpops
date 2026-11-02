@@ -1,19 +1,16 @@
 from collections.abc import Callable
 from functools import cached_property
-from typing import TYPE_CHECKING, Any, Concatenate, Generic, TypeVar
-
-_T = TypeVar("_T")
-_R = TypeVar("_R")
+from typing import TYPE_CHECKING, Any, Concatenate
 
 if TYPE_CHECKING:
 
-    def cached_classproperty(
-        func: Callable[Concatenate[Any, ...], _R], attrname: str | None = None
-    ) -> _R: ...
+    def cached_classproperty[R](
+        func: Callable[Concatenate[Any, ...], R], attrname: str | None = None
+    ) -> R: ...
 
 else:
 
-    class cached_classproperty(cached_property, Generic[_T, _R]):
-        def __get__(self, owner_obj: _T, owner_cls: type[_T]) -> _R:
-            self.func: Callable[[type[_T]], _R]
+    class cached_classproperty[T, R](cached_property):
+        def __get__(self, owner_obj: T, owner_cls: type[T]) -> R:
+            self.func: Callable[[type[T]], R]
             return self.func(owner_cls)

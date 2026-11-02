@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, TypeAlias
+from typing import TYPE_CHECKING, Any
 
 import rustworkx as rx
 import structlog
@@ -31,7 +31,7 @@ if TYPE_CHECKING:
 
 log = structlog.get_logger("PipelineGenerator")
 
-ComponentFilterPredicate: TypeAlias = Callable[[PipelineComponent], bool]
+type ComponentFilterPredicate = Callable[[PipelineComponent], bool]
 
 
 async def _run_component(

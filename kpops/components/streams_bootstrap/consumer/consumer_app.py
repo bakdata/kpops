@@ -1,8 +1,8 @@
 from functools import cached_property
+from typing import override
 
 import structlog
 from pydantic import Field, ValidationError
-from typing_extensions import override
 
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
 from kpops.components.base_components.helm_app import HelmApp

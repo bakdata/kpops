@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Any, NoReturn
+from typing import Any, NoReturn, override
 
 import structlog
 from pydantic import AliasChoices, Field, PrivateAttr, ValidationInfo, field_validator
-from typing_extensions import override
 
 from kpops.component_handlers import get_handlers
 from kpops.component_handlers.kafka_connect.model import (

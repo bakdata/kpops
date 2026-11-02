@@ -2,11 +2,10 @@ from __future__ import annotations
 
 import re
 from abc import ABC
-from typing import ClassVar
+from typing import ClassVar, override
 
 import structlog
 from pydantic import ConfigDict
-from typing_extensions import override
 
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel
