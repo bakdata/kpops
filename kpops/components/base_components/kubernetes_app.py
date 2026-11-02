@@ -25,7 +25,9 @@ class KubernetesAppValues(CamelCaseConfigModel, DescConfigModel):
     )
 
 
-class KubernetesApp(PipelineComponent, ABC):
+class KubernetesApp[V: KubernetesAppValues = KubernetesAppValues](
+    PipelineComponent, ABC
+):
     """Base class for all Kubernetes apps.
 
     All built-in components are Kubernetes apps, except for the Kafka connectors.
@@ -35,7 +37,7 @@ class KubernetesApp(PipelineComponent, ABC):
     """
 
     namespace: str
-    values: KubernetesAppValues
+    values: V
 
     @override
     def _validate_custom(self) -> None:

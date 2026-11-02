@@ -65,7 +65,7 @@ class HelmAppValues(KubernetesAppValues):
         )
 
 
-class HelmApp(KubernetesApp):
+class HelmApp[V: HelmAppValues = HelmAppValues](KubernetesApp[V]):
     """Kubernetes app managed through Helm with an associated Helm chart.
 
     :param repo_config: Configuration of the Helm chart repo to be used for
@@ -81,17 +81,23 @@ class HelmApp(KubernetesApp):
     diff_config: SkipGenerate[HelmDiffConfig] = HelmDiffConfig()
     version: str | None = None
     timeout: str | None = None
-    values: HelmAppValues
+    values: V
+
+    @property
+    def helm_repo_config(self) -> HelmRepoConfig | None:
+        """Helm chart repo configuration used for Helm operations."""
+        return self.repo_config
 
     @cached_property
     def _helm(self) -> Helm:
         """Helm object that contains component-specific config such as repo."""
         helm = Helm(get_config().helm_config)
-        if self.repo_config is not None:
+        repo_config = self.helm_repo_config
+        if repo_config is not None:
             helm.add_repo(
-                self.repo_config.repository_name,
-                self.repo_config.url,
-                self.repo_config.repo_auth_flags,
+                repo_config.repository_name,
+                repo_config.url,
+                repo_config.repo_auth_flags,
             )
         return helm
 
@@ -127,9 +133,8 @@ class HelmApp(KubernetesApp):
     @property
     def helm_flags(self) -> HelmFlags:
         """Return shared flags for Helm commands."""
-        auth_flags = (
-            self.repo_config.repo_auth_flags.model_dump() if self.repo_config else {}
-        )
+        repo_config = self.helm_repo_config
+        auth_flags = repo_config.repo_auth_flags.model_dump() if repo_config else {}
         effective_timeout = (
             self.timeout or get_config().helm_config.timeout or HelmFlags().timeout
         )

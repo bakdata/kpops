@@ -2,14 +2,14 @@ from __future__ import annotations
 
 import re
 from abc import ABC
-from typing import Self, override
+from typing import Any, Self, override
 
 import pydantic
 import structlog
-from pydantic import Field
+from pydantic.json_schema import SkipJsonSchema
 
 from kpops.component_handlers.helm.model import HelmRepoConfig
-from kpops.components.base_components import KafkaApp
+from kpops.components.base_components import KafkaApp, ProducesTopics
 from kpops.components.base_components.cleaner import Cleaner
 from kpops.components.base_components.helm_app import HelmApp
 from kpops.components.streams_bootstrap.model import StreamsBootstrapValues
@@ -30,7 +30,9 @@ COMPILED_VERSION_PATTERN = re.compile(STREAMS_BOOTSTRAP_VERSION_PATTERN)
 log = structlog.get_logger("StreamsBootstrap")
 
 
-class StreamsBootstrap(KafkaApp, HelmApp, ABC):
+class StreamsBootstrap[V: StreamsBootstrapValues[Any] = StreamsBootstrapValues](
+    KafkaApp, HelmApp[V], ABC
+):
     """Base for components with a streams-bootstrap Helm chart.
 
     :param values: streams-bootstrap Helm values
@@ -39,16 +41,26 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
     :param version: Helm chart version, defaults to "3.6.1"
     """
 
-    values: StreamsBootstrapValues
-    repo_config: SkipGenerate[HelmRepoConfig] = STREAMS_BOOTSTRAP_HELM_REPO
-    version: str = Field(
-        default=STREAMS_BOOTSTRAP_VERSION,
-        pattern=STREAMS_BOOTSTRAP_VERSION_PATTERN,
-    )
+    values: V
+    repo_config: SkipGenerate[HelmRepoConfig | None] = STREAMS_BOOTSTRAP_HELM_REPO
+    version: str | SkipJsonSchema[None] = STREAMS_BOOTSTRAP_VERSION
+
+    @property
+    @override
+    def helm_repo_config(self) -> HelmRepoConfig:
+        return self.repo_config or STREAMS_BOOTSTRAP_HELM_REPO
+
+    @property
+    def repository_name(self) -> str:
+        return self.helm_repo_config.repository_name
 
     @pydantic.field_validator("version", mode="after")
     @classmethod
-    def version_validator(cls, version: str) -> str:
+    def version_validator(cls, version: str | None) -> str:
+        if version is None:
+            msg = "The streams-bootstrap component requires a chart version."
+            raise ValueError(msg)
+
         pattern_match = COMPILED_VERSION_PATTERN.match(version)
 
         if not pattern_match:
@@ -78,7 +90,7 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
     @override
     def manifest_deploy(self) -> tuple[KubernetesManifest, ...]:
         resource = super().manifest_deploy()
-        if self.to:
+        if isinstance(self, ProducesTopics) and self.to:
             resource = resource + tuple(
                 StrimziKafkaTopic.from_topic(topic) for topic in self.to.kafka_topics
             )
@@ -87,21 +99,20 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
 
     @override
     def manifest_destroy(self) -> tuple[KubernetesManifest, ...]:
-        if self.to:
+        if isinstance(self, ProducesTopics) and self.to:
             return tuple(
                 StrimziKafkaTopic.from_topic(topic) for topic in self.to.kafka_topics
             )
         return ()
 
 
-class StreamsBootstrapCleaner(Cleaner, ABC):
+class StreamsBootstrapCleaner[V: StreamsBootstrapValues[Any] = StreamsBootstrapValues](
+    Cleaner[V], ABC
+):
     """Helm app for resetting and cleaning a streams-bootstrap app."""
 
-    from_: None = None
-    to: None = None
-
     @classmethod
-    def from_parent(cls, parent: StreamsBootstrap) -> Self:
+    def from_parent(cls, parent: StreamsBootstrap[Any]) -> Self:
         parent_kwargs = parent.model_dump(
             by_alias=True,
             exclude_none=True,

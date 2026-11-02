@@ -89,12 +89,13 @@ class ConsumerConfig(KafkaConfig):
         )
 
 
-class ConsumerAppValues(StreamsBootstrapValues):
-    """consumer-app configurations.
+class BaseConsumerAppValues[K: ConsumerConfig = ConsumerConfig](
+    StreamsBootstrapValues[K]
+):
+    """shared consumer-app configurations.
 
     The attributes correspond to keys and values that are used as values for the streams-bootstrap Helm chart.
 
-    :param kafka: consumer-app kafka section
     :param autoscaling: Kubernetes event-driven autoscaling config, defaults to None
     :param stateful_set: Whether to use a StatefulSet instead of a Deployment to deploy the consumer app.
     :param persistence: Configuration for persistent volume to store the state of the consumer app.
@@ -103,7 +104,6 @@ class ConsumerAppValues(StreamsBootstrapValues):
     :param termination_grace_period_seconds: Delay for graceful application shutdown in seconds: https://pracucci.com/graceful-shutdown-of-kubernetes-pods.html
     """
 
-    kafka: ConsumerConfig = ConsumerConfig()
     autoscaling: StreamsAppAutoScaling | None = None
     stateful_set: bool = False
     persistence: PersistenceConfig | None = None
@@ -112,3 +112,12 @@ class ConsumerAppValues(StreamsBootstrapValues):
     termination_grace_period_seconds: int | None = None
 
     model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
+
+
+class ConsumerAppValues(BaseConsumerAppValues[ConsumerConfig]):
+    """consumer-app configurations.
+
+    :param kafka: consumer-app kafka section
+    """
+
+    kafka: ConsumerConfig = ConsumerConfig()

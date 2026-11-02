@@ -11,7 +11,12 @@ from types import ModuleType
 from typing import TYPE_CHECKING, TypeVar
 
 import structlog
+from pydantic import BaseModel
 
+from kpops.components.base_components.base_defaults_component import (
+    BaseDefaultsComponent,
+    is_component_type,
+)
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.const import KPOPS_MODULE
 from kpops.core.exception import ClassNotFoundError
@@ -86,10 +91,22 @@ def _find_classes[PluginT](
 ) -> Iterator[type[PluginT]]:
     for module in modules:
         for _, _class in inspect.getmembers(module, inspect.isclass):
-            if not __filter_internal_kpops_classes(
-                _class.__module__, module.__name__
-            ) and issubclass(_class, base):
+            if (
+                not __filter_internal_kpops_classes(_class.__module__, module.__name__)
+                and issubclass(_class, base)
+                and not _is_excluded(_class)
+            ):
                 yield _class
+
+
+def _is_excluded(_class: type) -> bool:
+    """Whether a class is not a plugin: a capability mixin or a parametrized generic class."""
+    if issubclass(_class, BaseDefaultsComponent):
+        return not is_component_type(_class)
+    return (
+        issubclass(_class, BaseModel)
+        and _class.__pydantic_generic_metadata__["origin"] is not None
+    )
 
 
 def __filter_internal_kpops_classes(class_module: str, module_name: str) -> bool:

@@ -5,6 +5,7 @@ import structlog
 from pydantic import ValidationError
 
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
+from kpops.components.base_components import ConsumesTopics, ProducesTopics
 from kpops.components.base_components.helm_app import HelmApp
 from kpops.components.common.app_type import AppType
 from kpops.components.common.topic import KafkaTopic
@@ -25,15 +26,16 @@ from kpops.manifests.strimzi.kafka_topic import StrimziKafkaTopic
 log = structlog.get_logger("ConsumerProducerApp")
 
 
-class ConsumerProducerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
-    from_: None = None
-    to: None = None
+class ConsumerProducerAppCleaner(
+    StreamsBootstrapCleaner[ConsumerProducerAppValues],
+    StreamsBootstrap[ConsumerProducerAppValues],
+):
     values: ConsumerProducerAppValues
 
     @property
     @override
     def helm_chart(self) -> str:
-        return f"{self.repo_config.repository_name}/{AppType.CLEANUP_CONSUMER_PRODUCER_APP.value}"
+        return f"{self.repository_name}/{AppType.CLEANUP_CONSUMER_PRODUCER_APP.value}"
 
     @override
     async def reset(self, dry_run: bool) -> None:
@@ -85,7 +87,9 @@ class ConsumerProducerAppCleaner(StreamsBootstrapCleaner, StreamsBootstrap):
         await pvc_handler.delete_pvcs(dry_run)
 
 
-class ConsumerProducerApp(StreamsBootstrap):
+class ConsumerProducerApp(
+    ConsumesTopics, ProducesTopics, StreamsBootstrap[ConsumerProducerAppValues]
+):
     """ConsumerProducerApp component that configures a streams-bootstrap consumerproducer-app.
 
     :param values: streams-bootstrap Helm values
@@ -148,9 +152,7 @@ class ConsumerProducerApp(StreamsBootstrap):
     @property
     @override
     def helm_chart(self) -> str:
-        return (
-            f"{self.repo_config.repository_name}/{AppType.CONSUMER_PRODUCER_APP.value}"
-        )
+        return f"{self.repository_name}/{AppType.CONSUMER_PRODUCER_APP.value}"
 
     @override
     async def destroy(self, dry_run: bool) -> None:
