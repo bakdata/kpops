@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "file": "action.yaml",
+      "rule": "shellcheck",
+      "fingerprint": "c4ad485156ae4383",
+      "context": "ae2660f048030970",
+      "occurrence": 0,
+      "message": "shellcheck reported issue in this script: SC2086:info:4:27: Double quote to prevent globbing and word splitting"
+    },
+    {
+      "file": "action.yaml",
+      "rule": "shellcheck",
+      "fingerprint": "6c4f8780fabf7dfc",
+      "context": "f6d54c51512162af",
+      "occurrence": 0,
+      "message": "shellcheck reported issue in this script: SC2193:warning:3:37: The arguments to this comparison can never be equal. Make sure your syntax is correct"
+    }
+  ]
+}
