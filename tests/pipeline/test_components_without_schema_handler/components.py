@@ -1,4 +1,4 @@
-from typing_extensions import override
+from typing import override
 
 from kpops.component_handlers.kafka_connect.model import KafkaConnectorConfig
 from kpops.components.base_components.kafka_connector import KafkaSinkConnector

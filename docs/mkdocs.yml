@@ -12,6 +12,21 @@ theme:
   variant: modern
   custom_dir: docs/overrides
   language: "en"
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: lucide/sun-moon
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: lucide/sun
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: lucide/moon
+        name: Switch to system preference
   font:
     text: "SF Pro"
     code: "DejaVu Sans Mono"
@@ -132,6 +147,7 @@ nav:
               - Migrate from v9 to v10: user/migration-guide/v9-v10.md
               - Migrate from v10 to v11: user/migration-guide/v10-v11.md
               - Migrate from v11 to v12: user/migration-guide/v11-v12.md
+              - Migrate from v12 to v13: user/migration-guide/v12-v13.md
           - CLI usage: user/references/cli-commands.md
           - Editor integration: user/references/editor-integration.md
           - CI integration:

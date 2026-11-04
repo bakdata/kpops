@@ -27,8 +27,6 @@
       component-as-extra-pattern:
         type: pattern # Implied to be an extra pattern if `label` is defined
         label: some-role
-  # to: # While the consumer-app does inherit from kafka-app, it does not need a
-  # `to` section, hence it does not support it.
   namespace: namespace # required
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/consumer-app
@@ -246,45 +244,6 @@
   # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline.name}-
-  from: # Must not be null
-    topics: # read from topic
-      ${pipeline.name}-input-topic:
-        type: input # Implied when role is NOT specified
-      ${pipeline.name}-extra-topic:
-        label: topic-role # Implies `type` to be extra
-      ${pipeline.name}-input-pattern-topic:
-        type: pattern # Implied to be an input pattern if `label` is undefined
-      ${pipeline.name}-extra-pattern-topic:
-        type: pattern # Implied to be an extra pattern if `label` is defined
-        label: some-role
-    components: # read from specific component
-      account-producer:
-        type: input # Implied when role is NOT specified
-      other-producer:
-        label: some-role # Implies `type` to be extra
-      component-as-input-pattern:
-        type: pattern # Implied to be an input pattern if `label` is undefined
-      component-as-extra-pattern:
-        type: pattern # Implied to be an extra pattern if `label` is defined
-        label: some-role
-  # Topic(s) into which the component will write output
-  to:
-    topics:
-      ${pipeline.name}-output-topic:
-        type: output # Implied when role is NOT specified
-      ${pipeline.name}-extra-topic:
-        label: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
-      ${pipeline.name}-error-topic:
-        type: error
-        # Currently KPOps supports Avro and JSON schemas.
-        key_schema: key-schema # must implement SchemaProvider to use
-        value_schema: value-schema
-        partitions_count: 1
-        replication_factor: 1
-        configs: # https://kafka.apache.org/documentation/#topicconfigs
-          cleanup.policy: compact
-    models: # SchemaProvider is initiated with the values given here
-      model: model
   namespace: namespace # required
   values: # required
     image: exampleImage # Example
@@ -308,45 +267,6 @@
   # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline.name}-
-  from: # Must not be null
-    topics: # read from topic
-      ${pipeline.name}-input-topic:
-        type: input # Implied when role is NOT specified
-      ${pipeline.name}-extra-topic:
-        label: topic-role # Implies `type` to be extra
-      ${pipeline.name}-input-pattern-topic:
-        type: pattern # Implied to be an input pattern if `label` is undefined
-      ${pipeline.name}-extra-pattern-topic:
-        type: pattern # Implied to be an extra pattern if `label` is defined
-        label: some-role
-    components: # read from specific component
-      account-producer:
-        type: input # Implied when role is NOT specified
-      other-producer:
-        label: some-role # Implies `type` to be extra
-      component-as-input-pattern:
-        type: pattern # Implied to be an input pattern if `label` is undefined
-      component-as-extra-pattern:
-        type: pattern # Implied to be an extra pattern if `label` is defined
-        label: some-role
-  # Topic(s) into which the component will write output
-  to:
-    topics:
-      ${pipeline.name}-output-topic:
-        type: output # Implied when role is NOT specified
-      ${pipeline.name}-extra-topic:
-        label: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
-      ${pipeline.name}-error-topic:
-        type: error
-        # Currently KPOps supports Avro and JSON schemas.
-        key_schema: key-schema # must implement SchemaProvider to use
-        value_schema: value-schema
-        partitions_count: 1
-        replication_factor: 1
-        configs: # https://kafka.apache.org/documentation/#topicconfigs
-          cleanup.policy: compact
-    models: # SchemaProvider is initiated with the values given here
-      model: model
 # Kafka sink connector
 - type: kafka-sink-connector
   name: kafka-sink-connector # required
@@ -401,8 +321,6 @@
   # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline.name}-
-  # The source connector has no `from` section
-  # from:
   # Topic(s) into which the component will write output
   to:
     topics:
@@ -430,45 +348,6 @@
   # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline.name}-
-  from: # Must not be null
-    topics: # read from topic
-      ${pipeline.name}-input-topic:
-        type: input # Implied when role is NOT specified
-      ${pipeline.name}-extra-topic:
-        label: topic-role # Implies `type` to be extra
-      ${pipeline.name}-input-pattern-topic:
-        type: pattern # Implied to be an input pattern if `label` is undefined
-      ${pipeline.name}-extra-pattern-topic:
-        type: pattern # Implied to be an extra pattern if `label` is defined
-        label: some-role
-    components: # read from specific component
-      account-producer:
-        type: input # Implied when role is NOT specified
-      other-producer:
-        label: some-role # Implies `type` to be extra
-      component-as-input-pattern:
-        type: pattern # Implied to be an input pattern if `label` is undefined
-      component-as-extra-pattern:
-        type: pattern # Implied to be an extra pattern if `label` is defined
-        label: some-role
-  # Topic(s) into which the component will write output
-  to:
-    topics:
-      ${pipeline.name}-output-topic:
-        type: output # Implied when role is NOT specified
-      ${pipeline.name}-extra-topic:
-        label: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
-      ${pipeline.name}-error-topic:
-        type: error
-        # Currently KPOps supports Avro and JSON schemas.
-        key_schema: key-schema # must implement SchemaProvider to use
-        value_schema: value-schema
-        partitions_count: 1
-        replication_factor: 1
-        configs: # https://kafka.apache.org/documentation/#topicconfigs
-          cleanup.policy: compact
-    models: # SchemaProvider is initiated with the values given here
-      model: model
   namespace: namespace # required
   values: # required
     image: exampleImage # Example
@@ -482,8 +361,6 @@
   # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline.name}-
-  # from: # While the producer-app does inherit from kafka-app, it does not need a
-  # `from` section, hence it does not support it.
   # Topic(s) into which the component will write output
   to:
     topics:

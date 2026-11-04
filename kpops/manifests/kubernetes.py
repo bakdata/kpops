@@ -1,10 +1,9 @@
 from collections.abc import Iterator
-from typing import Any, ClassVar, Self
+from typing import Any, ClassVar, Self, override
 
 import pydantic
 import yaml
 from pydantic import ConfigDict, Field
-from typing_extensions import override
 
 from kpops.utils.pydantic import CamelCaseConfigModel, by_alias
 

@@ -1,6 +1,6 @@
 # Streams Bootstrap
 
-Subclass of [_HelmApp_](helm-app.md).
+Subclass of [_HelmApp_](helm-app.md) and _KafkaApp_.
 
 ### Usage
 

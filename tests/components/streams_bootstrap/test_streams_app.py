@@ -229,6 +229,19 @@ class TestStreamsApp:
         assert "inputPattern" in streams_config
         assert "extraInputPatterns" not in streams_config
 
+    def test_should_raise_validation_error_when_version_is_none(self) -> None:
+        with pytest.raises(ValidationError, match="requires a chart version"):
+            StreamsApp.model_validate(
+                {
+                    "name": STREAMS_APP_NAME,
+                    "namespace": NAMESPACE,
+                    "values": {
+                        "kafka": {"bootstrapServers": "fake-broker:9092"},
+                    },
+                    "version": None,
+                },
+            )
+
     def test_should_validate(self) -> None:
         # An exception should be raised when both label and type are defined and type is input
         with pytest.raises(

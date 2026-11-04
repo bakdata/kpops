@@ -1,5 +1,6 @@
+from typing import override
+
 from schema_registry.client.schema import AvroSchema
-from typing_extensions import override
 
 from kpops.component_handlers.schema_handler.schema_provider import (
     Schema,

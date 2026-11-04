@@ -2,16 +2,12 @@ import re
 from collections import ChainMap as _ChainMap
 from collections.abc import Mapping
 from string import Template
-from typing import Any, ClassVar, TypeVar
-
-from typing_extensions import override
-
-_V = TypeVar("_V", bound=object)
+from typing import Any, ClassVar, override
 
 
-def update_nested_pair(
-    original_dict: dict[str, _V], other_dict: Mapping[str, _V]
-) -> dict[str, _V]:
+def update_nested_pair[V: object](
+    original_dict: dict[str, V], other_dict: Mapping[str, V]
+) -> dict[str, V]:
     """Nested update for 2 dictionaries.
 
     Adds all new fields in ``other_dict`` to ``original_dict``.
@@ -34,7 +30,7 @@ def update_nested_pair(
     return original_dict
 
 
-def update_nested(*argv: dict[str, _V]) -> dict[str, _V]:
+def update_nested[V: object](*argv: dict[str, V]) -> dict[str, V]:
     """Merge multiple configuration dicts.
 
     The dicts have multiple layers. These layers will be merged recursively.
@@ -54,11 +50,11 @@ def update_nested(*argv: dict[str, _V]) -> dict[str, _V]:
     return update_nested(update_nested_pair(argv[0], argv[1]), *argv[2:])
 
 
-def flatten_mapping(
-    nested_mapping: Mapping[str, _V],
+def flatten_mapping[V: object](
+    nested_mapping: Mapping[str, V],
     prefix: str | None = None,
     separator: str = "_",
-) -> dict[str, _V]:
+) -> dict[str, V]:
     """Flattens a Mapping.
 
     :param nested_mapping: Nested mapping that is to be flattened
@@ -84,12 +80,12 @@ def flatten_mapping(
     return top
 
 
-def generate_substitution(
-    input: dict[str, _V],
+def generate_substitution[V: object](
+    input: dict[str, V],
     prefix: str | None = None,
-    existing_substitution: dict[str, _V] | None = None,
+    existing_substitution: dict[str, V] | None = None,
     separator: str | None = None,
-) -> dict[str, _V]:
+) -> dict[str, V]:
     """Generate a complete substitution dict from a given dict.
 
     Finds all attributes that belong to a model and expands them to create

@@ -6,7 +6,7 @@ from collections.abc import Generator, Hashable, Sequence
 from dataclasses import asdict
 from functools import cached_property
 from pathlib import Path
-from typing import Any, ClassVar, Self, TypeVar, cast
+from typing import Any, ClassVar, Self, cast
 
 import pydantic
 import structlog
@@ -99,8 +99,9 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
 
         def gen_parents() -> Generator[type[BaseDefaultsComponent]]:
             for base in cls.mro():
-                # skip class itself and non-component ancestors
-                if base is cls or not issubclass(base, BaseDefaultsComponent):
+                # skip class itself, capability mixins, non-component ancestors
+                # and pydantic's parametrized generic classes
+                if base is cls or not is_component_type(base):
                     continue
                 yield base
 
@@ -192,6 +193,18 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         """Run custom validation on component."""
 
 
+def is_component_type(cls: type) -> bool:
+    """Whether a class is a KPOps component type (pipeline `type`, defaults key, registry entry).
+
+    Excludes capability mixins and pydantic's parametrized generic classes.
+    """
+    if not issubclass(cls, BaseDefaultsComponent):
+        return False
+    if cls.__pydantic_generic_metadata__["origin"] is not None:
+        return False
+    return not cls.__dict__.get("_kpops_capability", False)
+
+
 def defaults_from_yaml(path: Path, key: str) -> dict[str, Any]:
     """Read component-specific settings from a ``defaults*.yaml`` file and return @default if not found.
 
@@ -264,10 +277,7 @@ def get_defaults_file_paths(
     return default_paths
 
 
-_T = TypeVar("_T", bound=Hashable)
-
-
-def deduplicate(seq: Sequence[_T]) -> list[_T]:
+def deduplicate[T: Hashable](seq: Sequence[T]) -> list[T]:
     """Deduplicate items of a sequence while preserving its order.
 
     :param seq: Sequence to be 'cleaned'

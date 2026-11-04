@@ -27,8 +27,6 @@
       component-as-extra-pattern:
         type: pattern # Implied to be an extra pattern if `label` is defined
         label: some-role
-  # to: # While the consumer-app does inherit from kafka-app, it does not need a
-  # `to` section, hence it does not support it.
   namespace: namespace # required
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/consumer-app

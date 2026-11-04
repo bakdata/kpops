@@ -22,9 +22,9 @@ jobs:
       matrix:
         os:
           - ubuntu-24.04
-        python-version: ["3.11"]
+        python-version: ["3.14"]
         include:
-          - python-version: "3.11"
+          - python-version: "3.14"
             os: ubuntu-24.04
             format-for-github: true
     runs-on: ${{ matrix.os }}
@@ -73,7 +73,7 @@ jobs:
       matrix:
         # reduced matrix for merge queue to avoid repeated full run
         os: ${{ fromJSON(github.event_name == 'merge_group' && '["ubuntu-24.04"]' || '["ubuntu-24.04", "windows-2022"]') }}
-        python-version: ${{ fromJSON(github.event_name == 'merge_group' && '["3.15"]' || '["3.11", "3.12", "3.13", "3.14", "3.15"]') }}
+        python-version: ${{ fromJSON(github.event_name == 'merge_group' && '["3.15"]' || '["3.14", "3.15"]') }}
         is-draft-pr:
           - ${{ github.event.pull_request.draft == true }}
         exclude:
@@ -108,13 +108,13 @@ jobs:
         with:
           version-file: .tool-versions
 
-      - name: Install lefthook
+      - name: Install hk
         uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
         env:
           MISE_NO_HOOKS: "1"
         with:
           version: "2026.10.5"
-          install_args: "lefthook"
+          install_args: "hk"
 
       - name: Generate schema (kpops schema)
         run: |
@@ -123,15 +123,15 @@ jobs:
 
       - name: Generate CLI Usage docs (typer-cli)
         run: uv run --frozen
-          lefthook run pre-commit --command kpops-docs-cli --force
+          hk fix --all --step kpops-docs-cli
 
       - name: Generate Environment variable docs
         run: uv run --frozen
-          lefthook run pre-commit --command kpops-docs-env-vars --force
+          hk fix --all --step kpops-docs-env-vars
 
       - name: Generate pipeline definitions
         run: uv run --frozen
-          lefthook run pre-commit --command kpops-docs-components --force
+          hk fix --all --step kpops-docs-components
 
       - name: Test docs build (zensical)
         run: uv run --frozen --group=docs

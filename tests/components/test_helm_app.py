@@ -1,9 +1,9 @@
+from typing import override
 from unittest.mock import MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
 from structlog.testing import capture_logs
-from typing_extensions import override
 
 from kpops.component_handlers.helm.helm import Helm
 from kpops.component_handlers.helm.model import (
@@ -131,8 +131,6 @@ class TestHelmApp:
         app_values: HelmAppValues,
     ) -> None:
         class AppWithLocalChart(HelmApp):
-            repo_config: None = None
-
             @property
             @override
             def helm_chart(self) -> str:
