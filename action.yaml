@@ -56,7 +56,7 @@ runs:
         TEMP_FILE="${{ github.action_path }}/kpops-runner-action-requirements.txt"
         echo "kpops${{ inputs.kpops-version != 'latest' && format('=={0}', inputs.kpops-version) || '' }}" > "$TEMP_FILE"
         cat "$TEMP_FILE"
-        echo  "path=$TEMP_FILE">> $GITHUB_OUTPUT
+        echo "path=$TEMP_FILE" >> "$GITHUB_OUTPUT"
 
     - name: Set up Python ${{ inputs.python-version }}
       uses: actions/setup-python@v7
@@ -69,10 +69,12 @@ runs:
 
     - name: Install KPOps
       shell: bash
+      env:
+        KPOPS_VERSION: ${{ inputs.kpops-version }}
       run: |
         echo "::group::install kpops package"
         # Check if kpops-version contains ".dev"
-        if [[ "${{ inputs.kpops-version }}" == *".dev"* ]]; then
+        if [[ "$KPOPS_VERSION" == *".dev"* ]]; then
           pip install -r "${{ steps.requirements.outputs.path }}" -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/
         else
           pip install -r "${{ steps.requirements.outputs.path }}"
