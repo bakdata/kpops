@@ -27,6 +27,10 @@ local linters = new Mapping<String, Step> {
   ["dprint"] = (Builtins.dprint) {
     glob = List("*.json", "*.jsonc", "*.yaml", "*.yml", "*.md", "*.toml", "*.css")
   }
+  ["jactionlint"] {
+    glob = List(".github/**", "action.yaml")
+    check = "jactionlint --pyflakes="
+  }
   ["kpops-schema"] = new Generator {
     glob = List("uv.lock", "kpops/**/*.py", "hooks/gen_schema.py")
     fix = "\(py) hooks.gen_schema"
