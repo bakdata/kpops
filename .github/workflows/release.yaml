@@ -14,7 +14,50 @@ on:
           - major
 
 jobs:
+  require-green-ci:
+    name: Require green CI
+    # the reusable release workflow always releases the head of the default branch, see https://github.com/bakdata/ci-templates/issues/345
+    if: github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      actions: read
+      contents: read
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - name: Wait for CI run
+        id: ci
+        run: |
+          run_id=$(gh run list --workflow ci.yaml --commit "$GITHUB_SHA" --event push --limit 1 --json databaseId --jq '.[0].databaseId')
+          if [ -z "$run_id" ]; then
+            echo "::error::No CI run found for $GITHUB_SHA"
+            exit 1
+          fi
+          gh run watch "$run_id" --interval 30 > /dev/null
+          echo "run-id=$run_id" >> "$GITHUB_OUTPUT"
+
+      - name: Check CI success
+        env:
+          RUN_ID: ${{ steps.ci.outputs.run-id }}
+        run: |
+          conclusion=$(gh run view "$RUN_ID" --json jobs --jq '.jobs[] | select(.name == "CI success") | .conclusion')
+          if [ "$conclusion" != "success" ]; then
+            echo "::error::CI success is '${conclusion:-missing}' in run $RUN_ID"
+            exit 1
+          fi
+
+      - name: Check default branch is unchanged
+        run: |
+          head=$(gh api "repos/$GH_REPO/commits/$GITHUB_REF_NAME" --jq .sha)
+          if [ "$head" != "$GITHUB_SHA" ]; then
+            echo "::error::$GITHUB_REF_NAME moved to $head while waiting for CI on $GITHUB_SHA, start the release again"
+            exit 1
+          fi
+
   create-github-release-push-tag:
+    needs: [require-green-ci]
     uses: bakdata/ci-templates/.github/workflows/python-uv-release.yaml@2.3.0
     name: Release
     with:
