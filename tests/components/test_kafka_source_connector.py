@@ -70,6 +70,39 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         assert "topics" not in KafkaSourceConnectorConfig.model_fields
         assert connector.config.model_dump()["topics"] == "a,b"
 
+    def test_source_connector_config_fields(
+        self, connector_config: KafkaConnectorConfig
+    ) -> None:
+        connector = KafkaSourceConnector(
+            name=CONNECTOR_NAME,
+            config={
+                **connector_config.model_dump(),
+                "topic.creation.default.replication.factor": -1,
+                "topic.creation.default.partitions": 3,
+                "exactly.once.support": "required",
+            },
+        )
+        assert connector.config.topic_creation_default_partitions == 3
+        assert connector.config.exactly_once_support == "required"
+        assert (
+            connector.config.model_dump()
+            | {
+                "topic.creation.default.replication.factor": "-1",
+                "topic.creation.default.partitions": "3",
+                "exactly.once.support": "required",
+            }
+            == connector.config.model_dump()
+        )
+
+        with pytest.raises(ValidationError):
+            KafkaSourceConnector(
+                name=CONNECTOR_NAME,
+                config={
+                    **connector_config.model_dump(),
+                    "transaction.boundary": "invalid",
+                },
+            )
+
     def test_from_section_raises_exception(
         self,
         connector_config: KafkaConnectorConfig,
