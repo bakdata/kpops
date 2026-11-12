@@ -104,7 +104,7 @@ kpops_components_fields:
 kpops_components_inheritance_ref:
   consumer-app:
     bases:
-    - consumes-topics
+    - kafka-app
     - streams-bootstrap
     parents:
     - streams-bootstrap
@@ -115,8 +115,7 @@ kpops_components_inheritance_ref:
     - base-defaults-component
   consumer-producer-app:
     bases:
-    - consumes-topics
-    - produces-topics
+    - kafka-app
     - streams-bootstrap
     parents:
     - streams-bootstrap
@@ -140,14 +139,14 @@ kpops_components_inheritance_ref:
     - base-defaults-component
   kafka-connector:
     bases:
-    - produces-topics
+    - kafka-app
     parents:
     - kafka-app
     - pipeline-component
     - base-defaults-component
   kafka-sink-connector:
     bases:
-    - consumes-topics
+    - kafka-app
     - kafka-connector
     parents:
     - kafka-connector
@@ -174,7 +173,7 @@ kpops_components_inheritance_ref:
     - base-defaults-component
   producer-app:
     bases:
-    - produces-topics
+    - kafka-app
     - streams-bootstrap
     parents:
     - streams-bootstrap
@@ -185,8 +184,7 @@ kpops_components_inheritance_ref:
     - base-defaults-component
   streams-app:
     bases:
-    - consumes-topics
-    - produces-topics
+    - kafka-app
     - streams-bootstrap
     parents:
     - streams-bootstrap

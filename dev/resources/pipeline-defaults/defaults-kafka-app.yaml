@@ -1,7 +1,7 @@
 # Base component for Kafka-based components.
 #
-# Parent of: ProducerApp, StreamsApp
-# Child of: KubernetesApp
+# Parent of: StreamsBootstrap, KafkaConnector
+# Child of: PipelineComponent
 kafka-app:
   # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
