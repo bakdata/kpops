@@ -16,7 +16,7 @@ on:
 jobs:
   require-green-ci:
     name: Require green CI
-    # the reusable release workflow always releases the head of the default branch
+    # the reusable release workflow always releases the head of the default branch, see https://github.com/bakdata/ci-templates/issues/345
     if: github.ref_name == github.event.repository.default_branch
     runs-on: ubuntu-24.04
     timeout-minutes: 60
