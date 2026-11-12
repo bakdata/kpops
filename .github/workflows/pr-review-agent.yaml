@@ -49,7 +49,7 @@ jobs:
         env:
           MISE_NO_HOOKS: "1"
         with:
-          version: "2026.10.5"
+          version: ${{ vars.MISE_VERSION }}
           working_directory: ${{ env.TRUSTED_DIR }}/.github/pr-review
 
       - name: Review
