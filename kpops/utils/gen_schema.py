@@ -87,7 +87,7 @@ def gen_pipeline_schema() -> None:
             ),
         )
 
-    PipelineComponents = Union[tuple(components)]
+    PipelineComponents = Union[tuple(components)]  # noqa: UP007
     AnnotatedPipelineComponents = Annotated[
         PipelineComponents, Field(discriminator="type")  # ty: ignore[invalid-type-form]
     ]
