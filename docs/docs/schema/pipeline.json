@@ -2050,9 +2050,40 @@
             },
             "description": "Settings specific to Kafka sink connectors.",
             "properties": {
+                "config.action.reload": {
+                    "anyOf": [
+                        {
+                            "enum": [
+                                "none",
+                                "restart"
+                            ],
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The action that Connect should take on the connector when changes in external configuration providers result in a change in the connector's configuration properties. `none` does nothing, `restart` restarts the connector with the updated configuration properties.",
+                    "title": "Config.Action.Reload"
+                },
                 "connector.class": {
+                    "description": "Name or alias of the class for this connector. Must be a subclass of org.apache.kafka.connect.connector.Connector.",
                     "title": "Connector.Class",
                     "type": "string"
+                },
+                "errors.deadletterqueue.context.headers.enable": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "If true, add headers containing error context to the messages written to the dead letter queue.",
+                    "title": "Errors.Deadletterqueue.Context.Headers.Enable"
                 },
                 "errors.deadletterqueue.topic.name": {
                     "anyOf": [
@@ -2063,10 +2094,146 @@
                             "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": null,
+                    "description": "The name of the topic to be used as the dead letter queue (DLQ) for messages that result in an error when processed by this sink connector, or its transformations or converters. The topic name is blank by default, which means that no messages are to be recorded in the DLQ."
+                },
+                "errors.deadletterqueue.topic.replication.factor": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Replication factor used to create the dead letter queue topic when it doesn't already exist.",
+                    "title": "Errors.Deadletterqueue.Topic.Replication.Factor"
+                },
+                "errors.log.enable": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "If true, write each error and the details of the failed operation and problematic record to the Connect application log. This is false by default, so that only errors that are not tolerated are reported.",
+                    "title": "Errors.Log.Enable"
+                },
+                "errors.log.include.messages": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Whether to include in the log the Connect record that resulted in a failure. This is false by default, which prevents record keys, values, and headers from being written to log files.",
+                    "title": "Errors.Log.Include.Messages"
+                },
+                "errors.retry.delay.max.ms": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The maximum duration in milliseconds between consecutive retry attempts. Jitter will be added to the delay once this limit is reached to prevent thundering herd issues.",
+                    "title": "Errors.Retry.Delay.Max.Ms"
+                },
+                "errors.retry.timeout": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The maximum duration in milliseconds that a failed operation will be reattempted. The default is 0, which means no retries will be attempted. Use -1 for infinite retries.",
+                    "title": "Errors.Retry.Timeout"
+                },
+                "errors.tolerance": {
+                    "anyOf": [
+                        {
+                            "enum": [
+                                "none",
+                                "all"
+                            ],
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Behavior for tolerating errors during connector operation. `none` (default) signals that any error will result in an immediate connector task failure; `all` changes the behavior to skip over problematic records.",
+                    "title": "Errors.Tolerance"
+                },
+                "header.converter": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "HeaderConverter class used to convert between Kafka Connect format and the serialized form that is written to Kafka. This controls the format of the header values in messages written to or read from Kafka. By default, the SimpleHeaderConverter is used to serialize header values to strings and deserialize them by inferring the schemas.",
+                    "title": "Header.Converter"
+                },
+                "key.converter": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Converter class used to convert between Kafka Connect format and the serialized form that is written to Kafka. This controls the format of the keys in messages written to or read from Kafka. Examples of common formats include JSON and Avro.",
+                    "title": "Key.Converter"
+                },
+                "predicates": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Comma-separated aliases for the predicates used by transformations.",
+                    "title": "Predicates"
+                },
+                "tasks.max": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Maximum number of tasks to use for this connector.",
+                    "title": "Tasks.Max"
                 },
                 "topics": {
                     "default": [],
+                    "description": "List of topics to consume, separated by commas. Only one of `topics` or `topics.regex` should be specified.",
                     "items": {
                         "type": "string"
                     },
@@ -2083,7 +2250,34 @@
                         }
                     ],
                     "default": null,
+                    "description": "Regular expression giving topics to consume. Under the hood, the regex is compiled to a `java.util.regex.Pattern`. Only one of `topics` or `topics.regex` should be specified.",
                     "title": "Topics.Regex"
+                },
+                "transforms": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Comma-separated aliases for the transformations to be applied to records.",
+                    "title": "Transforms"
+                },
+                "value.converter": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Converter class used to convert between Kafka Connect format and the serialized form that is written to Kafka. This controls the format of the values in messages written to or read from Kafka. Examples of common formats include JSON and Avro.",
+                    "title": "Value.Converter"
                 }
             },
             "required": [
@@ -2177,9 +2371,273 @@
             },
             "description": "Settings specific to Kafka source connectors.",
             "properties": {
+                "config.action.reload": {
+                    "anyOf": [
+                        {
+                            "enum": [
+                                "none",
+                                "restart"
+                            ],
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The action that Connect should take on the connector when changes in external configuration providers result in a change in the connector's configuration properties. `none` does nothing, `restart` restarts the connector with the updated configuration properties.",
+                    "title": "Config.Action.Reload"
+                },
                 "connector.class": {
+                    "description": "Name or alias of the class for this connector. Must be a subclass of org.apache.kafka.connect.connector.Connector.",
                     "title": "Connector.Class",
                     "type": "string"
+                },
+                "errors.log.enable": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "If true, write each error and the details of the failed operation and problematic record to the Connect application log. This is false by default, so that only errors that are not tolerated are reported.",
+                    "title": "Errors.Log.Enable"
+                },
+                "errors.log.include.messages": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Whether to include in the log the Connect record that resulted in a failure. This is false by default, which prevents record keys, values, and headers from being written to log files.",
+                    "title": "Errors.Log.Include.Messages"
+                },
+                "errors.retry.delay.max.ms": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The maximum duration in milliseconds between consecutive retry attempts. Jitter will be added to the delay once this limit is reached to prevent thundering herd issues.",
+                    "title": "Errors.Retry.Delay.Max.Ms"
+                },
+                "errors.retry.timeout": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The maximum duration in milliseconds that a failed operation will be reattempted. The default is 0, which means no retries will be attempted. Use -1 for infinite retries.",
+                    "title": "Errors.Retry.Timeout"
+                },
+                "errors.tolerance": {
+                    "anyOf": [
+                        {
+                            "enum": [
+                                "none",
+                                "all"
+                            ],
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Behavior for tolerating errors during connector operation. `none` (default) signals that any error will result in an immediate connector task failure; `all` changes the behavior to skip over problematic records.",
+                    "title": "Errors.Tolerance"
+                },
+                "exactly.once.support": {
+                    "anyOf": [
+                        {
+                            "enum": [
+                                "requested",
+                                "required"
+                            ],
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "`required` forces a preflight check to ensure the connector can provide exactly-once semantics with the given configuration. `requested` (default) skips this check. Requires exactly-once source support on the worker.",
+                    "title": "Exactly.Once.Support"
+                },
+                "header.converter": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "HeaderConverter class used to convert between Kafka Connect format and the serialized form that is written to Kafka. This controls the format of the header values in messages written to or read from Kafka. By default, the SimpleHeaderConverter is used to serialize header values to strings and deserialize them by inferring the schemas.",
+                    "title": "Header.Converter"
+                },
+                "key.converter": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Converter class used to convert between Kafka Connect format and the serialized form that is written to Kafka. This controls the format of the keys in messages written to or read from Kafka. Examples of common formats include JSON and Avro.",
+                    "title": "Key.Converter"
+                },
+                "offsets.storage.topic": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The name of a separate offsets topic to use for this connector. If not specified, the worker's global offsets topic is used. Only applicable in distributed mode."
+                },
+                "predicates": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Comma-separated aliases for the predicates used by transformations.",
+                    "title": "Predicates"
+                },
+                "tasks.max": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Maximum number of tasks to use for this connector.",
+                    "title": "Tasks.Max"
+                },
+                "topic.creation.default.partitions": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Number of partitions for new topics created by this connector. Use -1 for the broker's default. Together with `topic.creation.default.replication.factor`, this enables topic creation for the connector if `topic.creation.enable` is set on the worker.",
+                    "title": "Topic.Creation.Default.Partitions"
+                },
+                "topic.creation.default.replication.factor": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Replication factor for new topics created by this connector. Use -1 for the broker's default. Together with `topic.creation.default.partitions`, this enables topic creation for the connector if `topic.creation.enable` is set on the worker.",
+                    "title": "Topic.Creation.Default.Replication.Factor"
+                },
+                "topic.creation.groups": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Groups of configurations for topics created by source connectors.",
+                    "title": "Topic.Creation.Groups"
+                },
+                "transaction.boundary": {
+                    "anyOf": [
+                        {
+                            "enum": [
+                                "poll",
+                                "interval",
+                                "connector"
+                            ],
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Where producer transactions are committed. `poll` (default) commits a transaction for every batch of records a task provides to Connect. `interval` commits after a user-defined time interval. `connector` relies on connector-defined transaction boundaries, which not all connectors support.",
+                    "title": "Transaction.Boundary"
+                },
+                "transaction.boundary.interval.ms": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "If `transaction.boundary` is `interval`, the interval in milliseconds for producer transaction commits by connector tasks. Defaults to the worker's `offset.flush.interval.ms`.",
+                    "title": "Transaction.Boundary.Interval.Ms"
+                },
+                "transforms": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Comma-separated aliases for the transformations to be applied to records.",
+                    "title": "Transforms"
+                },
+                "value.converter": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Converter class used to convert between Kafka Connect format and the serialized form that is written to Kafka. This controls the format of the values in messages written to or read from Kafka. Examples of common formats include JSON and Avro.",
+                    "title": "Value.Converter"
                 }
             },
             "required": [
