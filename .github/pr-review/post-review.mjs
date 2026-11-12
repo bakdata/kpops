@@ -9,10 +9,13 @@ export function parseReview(text) {
   if (start === -1 || end < start) throw new Error(`No JSON object in agent output:\n${text}`);
   const review = JSON.parse(text.slice(start, end + 1));
   if (!["approve", "comment"].includes(review.verdict)) throw new Error(`Invalid verdict: ${review.verdict}`);
+  if (!Array.isArray(review.findings)) throw new Error(`Invalid findings: ${JSON.stringify(review.findings)}`);
+  const invalid = review.findings.filter((f) => !(f?.path && Number.isInteger(f.line) && f.body?.trim()));
+  if (invalid.length > 0) throw new Error(`Invalid findings: ${JSON.stringify(invalid)}`);
   return {
     verdict: review.verdict,
     summary: (review.summary ?? "").trim(),
-    findings: (review.findings ?? []).filter((f) => f?.path && Number.isInteger(f.line) && f.body?.trim()),
+    findings: review.findings,
   };
 }
 
@@ -80,7 +83,7 @@ export default async function postReview({ github, context, core }) {
 
   if (event !== "APPROVE") {
     const reviews = await github.paginate(github.rest.pulls.listReviews, { ...pr, per_page: 100 });
-    for (const r of reviews.filter((r) => r.user?.login === BOT_LOGIN && r.state === "APPROVED")) {
+    for (const r of reviews.filter((r) => r.user?.login === BOT_LOGIN && r.state === "APPROVED" && r.body?.includes(MARKER))) {
       await github.rest.pulls.dismissReview({
         ...pr,
         review_id: r.id,
