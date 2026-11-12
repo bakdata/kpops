@@ -35,7 +35,7 @@ jobs:
 
       - name: Check CI success
         run: |
-          conclusion=$(gh api "repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA/check-runs?check_name=CI%20success" --jq '.check_runs | sort_by(.started_at) | last | .conclusion')
+          conclusion=$(gh api "repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA/check-runs?check_name=CI%20success" --jq '.check_runs[0].conclusion // empty')
           if [ "$conclusion" != "success" ]; then
             echo "::error::CI success is '${conclusion:-missing}' for $GITHUB_SHA"
             exit 1
