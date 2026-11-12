@@ -14,7 +14,37 @@ on:
           - major
 
 jobs:
+  require-green-ci:
+    name: Require green CI
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      actions: read
+      checks: read
+    steps:
+      - name: Wait for CI run
+        run: |
+          run_id=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow ci.yaml --commit "$GITHUB_SHA" --event push --limit 1 --json databaseId --jq '.[0].databaseId')
+          if [ -z "$run_id" ]; then
+            echo "::error::No CI run found for $GITHUB_SHA"
+            exit 1
+          fi
+          gh run watch "$run_id" --repo "$GITHUB_REPOSITORY" --interval 30 > /dev/null
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check CI success
+        run: |
+          conclusion=$(gh api "repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA/check-runs?check_name=CI%20success" --jq '.check_runs | sort_by(.started_at) | last | .conclusion')
+          if [ "$conclusion" != "success" ]; then
+            echo "::error::CI success is '${conclusion:-missing}' for $GITHUB_SHA"
+            exit 1
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   create-github-release-push-tag:
+    needs: [require-green-ci]
     uses: bakdata/ci-templates/.github/workflows/python-uv-release.yaml@2.3.0
     name: Release
     with:
