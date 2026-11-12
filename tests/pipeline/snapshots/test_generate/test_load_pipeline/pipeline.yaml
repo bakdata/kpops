@@ -36,8 +36,8 @@
         type: output
         partitions_count: 50
         configs:
-          retention.ms: '-1'
           cleanup.policy: compact,delete
+          retention.ms: '-1'
       resources-first-pipeline-converter-error:
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
