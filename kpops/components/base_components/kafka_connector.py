@@ -11,6 +11,8 @@ from kpops.component_handlers.kafka_connect.model import (
     ConnectorNewState,
     KafkaConnectorConfig,
     KafkaConnectorType,
+    KafkaSinkConnectorConfig,
+    KafkaSourceConnectorConfig,
 )
 from kpops.components.base_components.kafka_app import ConsumesTopics, ProducesTopics
 from kpops.components.common.topic import KafkaTopic
@@ -18,7 +20,9 @@ from kpops.components.common.topic import KafkaTopic
 log = structlog.get_logger("KafkaConnector")
 
 
-class KafkaConnector(ProducesTopics, ABC):
+class KafkaConnector[C: KafkaConnectorConfig = KafkaConnectorConfig](
+    ProducesTopics, ABC
+):
     """Base class for all Kafka connectors.
 
     Should only be used to set defaults
@@ -27,7 +31,7 @@ class KafkaConnector(ProducesTopics, ABC):
     :param state: Connector state
     """
 
-    config: KafkaConnectorConfig
+    config: C
     state: ConnectorNewState | None = None
     _connector_type: KafkaConnectorType = PrivateAttr()
 
@@ -37,7 +41,7 @@ class KafkaConnector(ProducesTopics, ABC):
         cls,
         config: KafkaConnectorConfig | dict[str, Any],
         info: ValidationInfo,
-    ) -> KafkaConnectorConfig:
+    ) -> dict[str, Any]:
         if isinstance(config, KafkaConnectorConfig):
             config = config.model_dump()
         component_name: str = info.data["prefix"] + info.data["name"]
@@ -46,7 +50,7 @@ class KafkaConnector(ProducesTopics, ABC):
             msg = f"Connector name '{connector_name}' should be the same as component name '{component_name}'"
             raise ValueError(msg)
         config["name"] = component_name
-        return KafkaConnectorConfig.model_validate(config)
+        return config
 
     @override
     async def deploy(self, dry_run: bool) -> None:
@@ -82,15 +86,23 @@ class KafkaConnector(ProducesTopics, ABC):
                 await get_handlers().topic_handler.delete_topic(topic, dry_run=dry_run)
 
 
-class KafkaSourceConnector(KafkaConnector):
-    """Kafka source connector model."""
+class KafkaSourceConnector(KafkaConnector[KafkaSourceConnectorConfig]):
+    """Kafka source connector model.
 
+    :param config: Source connector config
+    """
+
+    config: KafkaSourceConnectorConfig
     _connector_type: KafkaConnectorType = PrivateAttr(KafkaConnectorType.SOURCE)
 
 
-class KafkaSinkConnector(ConsumesTopics, KafkaConnector):
-    """Kafka sink connector model."""
+class KafkaSinkConnector(ConsumesTopics, KafkaConnector[KafkaSinkConnectorConfig]):
+    """Kafka sink connector model.
 
+    :param config: Sink connector config
+    """
+
+    config: KafkaSinkConnectorConfig
     _connector_type: KafkaConnectorType = PrivateAttr(KafkaConnectorType.SINK)
 
     @property
