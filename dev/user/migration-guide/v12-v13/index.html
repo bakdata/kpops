@@ -1945,6 +1945,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#separate-config-for-sink-and-source-connectors" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Separate config for sink and source connectors
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#defaults-schema" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
@@ -2489,6 +2500,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#separate-config-for-sink-and-source-connectors" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Separate config for sink and source connectors
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#defaults-schema" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
@@ -2572,6 +2594,8 @@
 <p>This also applies to values merged in from the <code>defaults.yaml</code> of shared keys such as <code>pipeline-component</code>.</p>
 <h2 id="kafka-connectors-inherit-kafka-app-defaults">Kafka connectors inherit <code>kafka-app</code> defaults<a class="headerlink" href="#kafka-connectors-inherit-kafka-app-defaults" title="Permanent link">&para;</a></h2>
 <p>Kafka connectors are now <code>KafkaApp</code>s. Settings defined under <code>kafka-app</code> in <code>defaults.yaml</code> now also apply to <code>kafka-connector</code>, <code>kafka-source-connector</code> and <code>kafka-sink-connector</code>.</p>
+<h2 id="separate-config-for-sink-and-source-connectors">Separate config for sink and source connectors<a class="headerlink" href="#separate-config-for-sink-and-source-connectors" title="Permanent link">&para;</a></h2>
+<p><code>topics</code>, <code>topics.regex</code> and <code>errors.deadletterqueue.topic.name</code> are sink-only settings. The schema now offers them only under <code>kafka-sink-connector</code>, no longer under <code>kafka-connector</code> and <code>kafka-source-connector</code>. If set on a source connector, they are still passed through to Kafka Connect as is.</p>
 <h2 id="defaults-schema">Defaults schema<a class="headerlink" href="#defaults-schema" title="Permanent link">&para;</a></h2>
 <p><code>from</code> and <code>to</code> are no longer offered under <code>pipeline-component</code>, <code>kubernetes-app</code>, <code>helm-app</code>, <code>kafka-app</code> and <code>streams-bootstrap</code> in <code>defaults.yaml</code> (and <code>from</code> under <code>kafka-connector</code>). Define them under the concrete component keys instead.</p>
 <h4 id="defaultsyaml">defaults.yaml<a class="headerlink" href="#defaultsyaml" title="Permanent link">&para;</a></h4>
@@ -2615,6 +2639,15 @@
 </span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6"></a><span class="k">class</span><span class="w"> </span><span class="nc">MyProducer</span><span class="p">(</span><span class="n">ProducerApp</span><span class="p">,</span> <span class="n">MyStreamsBootstrapBase</span><span class="p">[</span><span class="n">ProducerAppValues</span><span class="p">]):</span> <span class="o">...</span>
 </span></code></pre></div></td></tr></table></div>
 <p>This replaces former <code># pyright: ignore[reportIncompatibleVariableOverride]</code> workarounds.</p>
+<ul>
+<li><code>KafkaConnector</code> is generic over its config type. <code>KafkaSinkConnector</code> uses <code>KafkaSinkConnectorConfig</code> and <code>KafkaSourceConnector</code> uses <code>KafkaSourceConnectorConfig</code>. The fields <code>topics</code>, <code>topics_regex</code> and <code>errors_deadletterqueue_topic_name</code> moved from <code>KafkaConnectorConfig</code> to <code>KafkaSinkConnectorConfig</code>.</li>
+</ul>
+<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span>
+<span class="normal"><a href="#__codelineno-4-2">2</a></span>
+<span class="normal"><a href="#__codelineno-4-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="gd">- class MyConnector(KafkaConnector):</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2"></a><span class="gi">+ class MyConnector(KafkaConnector[MyConnectorConfig]):</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3"></a><span class="w"> </span>     config: MyConnectorConfig
+</span></code></pre></div></td></tr></table></div>
 <ul>
 <li><code>ConsumerAppValues</code> gained the generic base <code>BaseConsumerAppValues[K]</code>.</li>
 <li><code>StreamsBootstrap.repo_config</code> and <code>StreamsBootstrap.version</code> are now typed as optional.</li>
