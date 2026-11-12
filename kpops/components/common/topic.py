@@ -2,12 +2,19 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from enum import StrEnum, auto
-from typing import Annotated, Any, ClassVar
+from typing import Annotated, Any, ClassVar, Literal
 
 import pydantic
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from kpops.utils.pydantic import DescConfigModel, Templatable, to_str
+from kpops.utils.pydantic import (
+    DescConfigModel,
+    Templatable,
+    by_alias,
+    exclude_by_value,
+    to_dot,
+    to_str,
+)
 
 
 class OutputTopicTypes(StrEnum):
@@ -19,6 +26,101 @@ class OutputTopicTypes(StrEnum):
 
     OUTPUT = auto()
     ERROR = auto()
+
+
+class KafkaTopicConfigs(DescConfigModel):
+    """Kafka topic-level configs.
+
+    Topic config reference: https://docs.confluent.io/platform/current/installation/configuration/topic-configs.html
+    Configs that are not listed here can still be set and are passed through as is.
+
+    :param cleanup_policy: The retention policy to use on log segments. `delete` (default) discards old segments when their retention time or size limit has been reached. `compact` enables log compaction, which retains the latest value for each key. Both can be combined as a comma-separated list, e.g. `delete,compact`.
+    :param compression_type: The final compression type for the topic. Accepts the standard codecs (`gzip`, `snappy`, `lz4`, `zstd`), `uncompressed` for no compression, and `producer` to retain the original compression codec set by the producer.
+    :param compression_gzip_level: The compression level to use if `compression.type` is set to `gzip`.
+    :param compression_lz4_level: The compression level to use if `compression.type` is set to `lz4`.
+    :param compression_zstd_level: The compression level to use if `compression.type` is set to `zstd`.
+    :param delete_retention_ms: The amount of time in milliseconds to retain delete tombstone markers for log compacted topics. This also bounds the time in which a consumer must complete a read starting from offset 0 to get a valid snapshot of the final state.
+    :param file_delete_delay_ms: The time in milliseconds to wait before deleting a file from the filesystem.
+    :param flush_messages: The number of messages after which an fsync of data written to the log is forced. It is generally recommended to not set this and to rely on replication for durability and the operating system's background flush.
+    :param flush_ms: The time interval in milliseconds after which an fsync of data written to the log is forced. It is generally recommended to not set this and to rely on replication for durability and the operating system's background flush.
+    :param index_interval_bytes: How frequently, in bytes, Kafka adds entries to its offset index. More frequent indexing allows reads to jump closer to the exact position in the log but results in larger index files.
+    :param local_retention_bytes: The maximum size of local log segments that can grow for a partition before old segments are deleted. The default of `-2` means that the value of `retention.bytes` is used. Tiered storage only.
+    :param local_retention_ms: The time in milliseconds to keep local log segments before they are deleted. The default of `-2` means that the value of `retention.ms` is used. Tiered storage only.
+    :param max_compaction_lag_ms: The maximum time in milliseconds a message remains ineligible for compaction in the log. Only applicable for compacted logs.
+    :param max_message_bytes: The largest record batch size allowed by Kafka (after compression, if enabled).
+    :param message_downconversion_enable: Whether to enable down-conversion of message formats for consumers. Deprecated: this is a no-op in Apache Kafka 4.0 and newer.
+    :param message_timestamp_after_max_ms: The maximum allowed difference in milliseconds between the message timestamp and the broker's timestamp when the message timestamp is later. Ignored if `message.timestamp.type` is `LogAppendTime`.
+    :param message_timestamp_before_max_ms: The maximum allowed difference in milliseconds between the broker's timestamp and the message timestamp when the message timestamp is earlier. Ignored if `message.timestamp.type` is `LogAppendTime`.
+    :param message_timestamp_type: Whether the timestamp in the message is the message create time (`CreateTime`) or the log append time (`LogAppendTime`).
+    :param min_cleanable_dirty_ratio: How frequently the log compactor attempts to clean the log, expressed as the ratio of dirty log to total log. A higher ratio means fewer, more efficient cleanings but more wasted space in the log.
+    :param min_compaction_lag_ms: The minimum time in milliseconds a message remains uncompacted in the log. Only applicable for compacted logs.
+    :param min_insync_replicas: The minimum number of in-sync replicas (including the leader) required for a write to succeed when a producer sets `acks` to `all` (or `-1`).
+    :param preallocate: Whether to preallocate the file on disk when creating a new log segment.
+    :param remote_log_copy_disable: Whether tiered data for the topic becomes read only, with no more data uploaded. Once set, `local.retention.*` becomes irrelevant and all data expiration follows `retention.*`.
+    :param remote_log_delete_on_disable: Whether tiered data should be deleted after tiered storage is disabled on the topic. Must be enabled when setting `remote.storage.enable` from true to false.
+    :param remote_storage_enable: Whether to enable tiered storage for the topic. When disabling, `remote.log.delete.on.disable` must also be set to true.
+    :param retention_bytes: The maximum size in bytes a partition can grow to before old log segments are discarded when using the `delete` retention policy. The limit is enforced per partition. By default there is no size limit.
+    :param retention_ms: The maximum time in milliseconds a log is retained before old log segments are discarded when using the `delete` retention policy. If set to `-1`, no time limit is applied.
+    :param segment_bytes: The segment file size for the log. A larger segment size means fewer files but less granular control over retention. The active segment is rolled once it reaches this size.
+    :param segment_index_bytes: The size in bytes of the index that maps offsets to file positions. It is generally not necessary to change this setting.
+    :param segment_jitter_ms: The maximum random jitter in milliseconds subtracted from the scheduled segment roll time to avoid thundering herds of segment rolling.
+    :param segment_ms: The period of time in milliseconds after which Kafka forces the log to roll even if the segment file is not full, so that retention can delete or compact old data.
+    :param unclean_leader_election_enable: Whether to allow replicas not in the ISR set to be elected as leader as a last resort, even though this may result in data loss.
+    """
+
+    cleanup_policy: str | None = None
+    compression_type: (
+        Literal["uncompressed", "zstd", "lz4", "snappy", "gzip", "producer"] | None
+    ) = None
+    compression_gzip_level: int | None = None
+    compression_lz4_level: int | None = None
+    compression_zstd_level: int | None = None
+    delete_retention_ms: int | None = None
+    file_delete_delay_ms: int | None = None
+    flush_messages: int | None = None
+    flush_ms: int | None = None
+    index_interval_bytes: int | None = None
+    local_retention_bytes: int | None = None
+    local_retention_ms: int | None = None
+    max_compaction_lag_ms: int | None = None
+    max_message_bytes: int | None = None
+    message_downconversion_enable: bool | None = None
+    message_timestamp_after_max_ms: int | None = None
+    message_timestamp_before_max_ms: int | None = None
+    message_timestamp_type: Literal["CreateTime", "LogAppendTime"] | None = None
+    min_cleanable_dirty_ratio: float | None = None
+    min_compaction_lag_ms: int | None = None
+    min_insync_replicas: int | None = None
+    preallocate: bool | None = None
+    remote_log_copy_disable: bool | None = None
+    remote_log_delete_on_disable: bool | None = None
+    remote_storage_enable: bool | None = None
+    retention_bytes: int | None = None
+    retention_ms: int | None = None
+    segment_bytes: int | None = None
+    segment_index_bytes: int | None = None
+    segment_jitter_ms: int | None = None
+    segment_ms: int | None = None
+    unclean_leader_election_enable: bool | None = None
+
+    model_config: ClassVar[ConfigDict] = ConfigDict(
+        extra="allow",
+        alias_generator=to_dot,
+        json_schema_extra=DescConfigModel.json_schema_extra,
+        populate_by_name=True,
+    )
+
+    @pydantic.model_serializer(mode="wrap", when_used="always")
+    def serialize_model(
+        self,
+        default_serialize_handler: pydantic.SerializerFunctionWrapHandler,
+        info: pydantic.SerializationInfo,
+    ) -> dict[str, str]:
+        result = exclude_by_value(default_serialize_handler(self), None)
+        return {
+            by_alias(self.__class__, name): to_str(value)
+            for name, value in result.items()
+        }
 
 
 class TopicConfig(DescConfigModel):
@@ -50,7 +152,7 @@ class TopicConfig(DescConfigModel):
         default=None,
         title="Replication factor",
     )
-    configs: dict[str, str | int] = {}
+    configs: KafkaTopicConfigs = KafkaTopicConfigs()
     label: str | None = None
 
     model_config: ClassVar[ConfigDict] = ConfigDict(
@@ -66,10 +168,6 @@ class TopicConfig(DescConfigModel):
             msg = "Define `label` only if `type` is undefined"
             raise ValueError(msg)
         return self
-
-    @pydantic.field_serializer("configs")
-    def serialize_configs(self, configs: dict[str, str | int]) -> dict[str, str]:
-        return {key: to_str(value) for key, value in configs.items()}
 
 
 class KafkaTopic(BaseModel):

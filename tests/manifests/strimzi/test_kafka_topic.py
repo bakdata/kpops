@@ -66,7 +66,7 @@ def test_strimzi_kafka_topic_from_topic(
     # Check spec
     assert strimzi_topic.spec.partitions == kafka_topic.config.partitions_count
     assert strimzi_topic.spec.replicas == kafka_topic.config.replication_factor
-    assert strimzi_topic.spec.config == kafka_topic.config.configs
+    assert strimzi_topic.spec.config == kafka_topic.config.configs.model_dump()
 
 
 def test_strimzi_kafka_topic_from_topic_with_namespace(
@@ -89,7 +89,7 @@ def test_strimzi_kafka_topic_from_topic_with_namespace(
     # Check spec
     assert strimzi_topic.spec.partitions == kafka_topic.config.partitions_count
     assert strimzi_topic.spec.replicas == kafka_topic.config.replication_factor
-    assert strimzi_topic.spec.config == kafka_topic.config.configs
+    assert strimzi_topic.spec.config == kafka_topic.config.configs.model_dump()
 
 
 def test_strimzi_kafka_topic_missing_config(
