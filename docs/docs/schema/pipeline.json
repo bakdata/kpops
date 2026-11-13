@@ -4620,6 +4620,10 @@
                             "type": "integer"
                         },
                         {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
                             "type": "null"
                         }
                     ],
@@ -4631,6 +4635,10 @@
                     "anyOf": [
                         {
                             "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
                         },
                         {
                             "type": "null"

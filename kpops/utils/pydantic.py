@@ -1,4 +1,8 @@
 import json
+import re
+from collections.abc import Generator
+from contextlib import contextmanager
+from contextvars import ContextVar
 from pathlib import Path
 from typing import Annotated, Any, ClassVar, TypeVar, final, override
 
@@ -11,11 +15,13 @@ from pydantic import (
     GetCoreSchemaHandler,
     SerializationInfo,
     SerializerFunctionWrapHandler,
+    ValidatorFunctionWrapHandler,
     WrapSerializer,
+    WrapValidator,
     model_serializer,
 )
 from pydantic.fields import FieldInfo
-from pydantic.json_schema import SkipJsonSchema
+from pydantic.json_schema import GetJsonSchemaHandler, JsonSchemaValue, SkipJsonSchema
 from pydantic_core import PydanticUseDefault, core_schema
 from pydantic_settings import BaseSettings, PydanticBaseSettingsSource
 
@@ -328,4 +334,64 @@ SkipGenerate = Annotated[
     _T,
     WrapSerializer(serialize_skip_context_generate),
     "Exclude field from generate output",
+]
+
+
+PLACEHOLDER_PATTERN = re.compile(r"\$\{.+\}")
+
+
+def is_placeholder(value: object) -> bool:
+    return isinstance(value, str) and PLACEHOLDER_PATTERN.search(value) is not None
+
+
+_placeholders_allowed: ContextVar[bool] = ContextVar(
+    "placeholders_allowed", default=True
+)
+
+
+@contextmanager
+def placeholders_allowed(allowed: bool) -> Generator[None]:
+    """Control whether `Templatable` fields accept placeholders.
+
+    :param allowed: Whether placeholders pass validation
+    """
+    token = _placeholders_allowed.set(allowed)
+    try:
+        yield
+    finally:
+        _placeholders_allowed.reset(token)
+
+
+def validate_placeholder(
+    value: object, handler: ValidatorFunctionWrapHandler
+) -> object:
+    if _placeholders_allowed.get() and is_placeholder(value):
+        return value
+    return handler(value)
+
+
+def serialize_placeholder(value: Any, handler: SerializerFunctionWrapHandler) -> Any:
+    if is_placeholder(value):
+        return value
+    return handler(value)
+
+
+class PlaceholderJsonSchema:
+    def __get_pydantic_json_schema__(
+        self, schema: core_schema.CoreSchema, handler: GetJsonSchemaHandler
+    ) -> JsonSchemaValue:
+        return {
+            "anyOf": [
+                handler(schema),
+                {"type": "string", "pattern": PLACEHOLDER_PATTERN.pattern},
+            ]
+        }
+
+
+Templatable = Annotated[
+    _T,
+    WrapValidator(validate_placeholder),
+    WrapSerializer(serialize_placeholder),
+    PlaceholderJsonSchema(),
+    "Also accepts a placeholder, which is validated after substitution",
 ]
