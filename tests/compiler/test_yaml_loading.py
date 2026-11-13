@@ -20,6 +20,15 @@ def test_fail_load_yaml() -> None:
         load_yaml_file(RESOURCE_PATH / "erroneous-file.yaml")
 
 
+def test_load_yaml_outside_cwd(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    file = tmp_path / "outside.yaml"
+    file.write_text("key: value\n")
+    cwd = tmp_path / "cwd"
+    cwd.mkdir()
+    monkeypatch.chdir(cwd)
+    assert load_yaml_file(file) == {"key": "value"}
+
+
 @patch("yaml.safe_load")
 def test_caching_load_yaml(mocked_func: MagicMock) -> None:
     load_yaml_file(
