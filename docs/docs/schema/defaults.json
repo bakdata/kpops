@@ -3096,6 +3096,566 @@
             "title": "KafkaSourceConnectorConfig",
             "type": "object"
         },
+        "KafkaTopicConfigs": {
+            "additionalProperties": true,
+            "description": "Kafka topic-level configs.\nTopic config reference: https://docs.confluent.io/platform/current/installation/configuration/topic-configs.html Configs that are not listed here can still be set and are passed through as is.",
+            "properties": {
+                "cleanup.policy": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The retention policy to use on log segments. `delete` (default) discards old segments when their retention time or size limit has been reached. `compact` enables log compaction, which retains the latest value for each key. Both can be combined as a comma-separated list, e.g. `delete,compact`.",
+                    "title": "Cleanup.Policy"
+                },
+                "compression.gzip.level": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The compression level to use if `compression.type` is set to `gzip`.",
+                    "title": "Compression.Gzip.Level"
+                },
+                "compression.lz4.level": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The compression level to use if `compression.type` is set to `lz4`.",
+                    "title": "Compression.Lz4.Level"
+                },
+                "compression.type": {
+                    "anyOf": [
+                        {
+                            "enum": [
+                                "uncompressed",
+                                "zstd",
+                                "lz4",
+                                "snappy",
+                                "gzip",
+                                "producer"
+                            ],
+                            "type": "string"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The final compression type for the topic. Accepts the standard codecs (`gzip`, `snappy`, `lz4`, `zstd`), `uncompressed` for no compression, and `producer` to retain the original compression codec set by the producer.",
+                    "title": "Compression.Type"
+                },
+                "compression.zstd.level": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The compression level to use if `compression.type` is set to `zstd`.",
+                    "title": "Compression.Zstd.Level"
+                },
+                "delete.retention.ms": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The amount of time in milliseconds to retain delete tombstone markers for log compacted topics. This also bounds the time in which a consumer must complete a read starting from offset 0 to get a valid snapshot of the final state.",
+                    "title": "Delete.Retention.Ms"
+                },
+                "file.delete.delay.ms": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The time in milliseconds to wait before deleting a file from the filesystem.",
+                    "title": "File.Delete.Delay.Ms"
+                },
+                "flush.messages": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The number of messages after which an fsync of data written to the log is forced. It is generally recommended to not set this and to rely on replication for durability and the operating system's background flush.",
+                    "title": "Flush.Messages"
+                },
+                "flush.ms": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The time interval in milliseconds after which an fsync of data written to the log is forced. It is generally recommended to not set this and to rely on replication for durability and the operating system's background flush.",
+                    "title": "Flush.Ms"
+                },
+                "index.interval.bytes": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "How frequently, in bytes, Kafka adds entries to its offset index. More frequent indexing allows reads to jump closer to the exact position in the log but results in larger index files.",
+                    "title": "Index.Interval.Bytes"
+                },
+                "local.retention.bytes": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The maximum size of local log segments that can grow for a partition before old segments are deleted. The default of `-2` means that the value of `retention.bytes` is used. Tiered storage only.",
+                    "title": "Local.Retention.Bytes"
+                },
+                "local.retention.ms": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The time in milliseconds to keep local log segments before they are deleted. The default of `-2` means that the value of `retention.ms` is used. Tiered storage only.",
+                    "title": "Local.Retention.Ms"
+                },
+                "max.compaction.lag.ms": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The maximum time in milliseconds a message remains ineligible for compaction in the log. Only applicable for compacted logs.",
+                    "title": "Max.Compaction.Lag.Ms"
+                },
+                "max.message.bytes": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The largest record batch size allowed by Kafka (after compression, if enabled).",
+                    "title": "Max.Message.Bytes"
+                },
+                "message.downconversion.enable": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Whether to enable down-conversion of message formats for consumers. Deprecated: this is a no-op in Apache Kafka 4.0 and newer.",
+                    "title": "Message.Downconversion.Enable"
+                },
+                "message.timestamp.after.max.ms": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The maximum allowed difference in milliseconds between the message timestamp and the broker's timestamp when the message timestamp is later. Ignored if `message.timestamp.type` is `LogAppendTime`.",
+                    "title": "Message.Timestamp.After.Max.Ms"
+                },
+                "message.timestamp.before.max.ms": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The maximum allowed difference in milliseconds between the broker's timestamp and the message timestamp when the message timestamp is earlier. Ignored if `message.timestamp.type` is `LogAppendTime`.",
+                    "title": "Message.Timestamp.Before.Max.Ms"
+                },
+                "message.timestamp.type": {
+                    "anyOf": [
+                        {
+                            "enum": [
+                                "CreateTime",
+                                "LogAppendTime"
+                            ],
+                            "type": "string"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Whether the timestamp in the message is the message create time (`CreateTime`) or the log append time (`LogAppendTime`).",
+                    "title": "Message.Timestamp.Type"
+                },
+                "min.cleanable.dirty.ratio": {
+                    "anyOf": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "How frequently the log compactor attempts to clean the log, expressed as the ratio of dirty log to total log. A higher ratio means fewer, more efficient cleanings but more wasted space in the log.",
+                    "title": "Min.Cleanable.Dirty.Ratio"
+                },
+                "min.compaction.lag.ms": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The minimum time in milliseconds a message remains uncompacted in the log. Only applicable for compacted logs.",
+                    "title": "Min.Compaction.Lag.Ms"
+                },
+                "min.insync.replicas": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The minimum number of in-sync replicas (including the leader) required for a write to succeed when a producer sets `acks` to `all` (or `-1`).",
+                    "title": "Min.Insync.Replicas"
+                },
+                "preallocate": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Whether to preallocate the file on disk when creating a new log segment.",
+                    "title": "Preallocate"
+                },
+                "remote.log.copy.disable": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Whether tiered data for the topic becomes read only, with no more data uploaded. Once set, `local.retention.*` becomes irrelevant and all data expiration follows `retention.*`.",
+                    "title": "Remote.Log.Copy.Disable"
+                },
+                "remote.log.delete.on.disable": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Whether tiered data should be deleted after tiered storage is disabled on the topic. Must be enabled when setting `remote.storage.enable` from true to false.",
+                    "title": "Remote.Log.Delete.On.Disable"
+                },
+                "remote.storage.enable": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Whether to enable tiered storage for the topic. When disabling, `remote.log.delete.on.disable` must also be set to true.",
+                    "title": "Remote.Storage.Enable"
+                },
+                "retention.bytes": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The maximum size in bytes a partition can grow to before old log segments are discarded when using the `delete` retention policy. The limit is enforced per partition. By default there is no size limit.",
+                    "title": "Retention.Bytes"
+                },
+                "retention.ms": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The maximum time in milliseconds a log is retained before old log segments are discarded when using the `delete` retention policy. If set to `-1`, no time limit is applied.",
+                    "title": "Retention.Ms"
+                },
+                "segment.bytes": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The segment file size for the log. A larger segment size means fewer files but less granular control over retention. The active segment is rolled once it reaches this size.",
+                    "title": "Segment.Bytes"
+                },
+                "segment.index.bytes": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The size in bytes of the index that maps offsets to file positions. It is generally not necessary to change this setting.",
+                    "title": "Segment.Index.Bytes"
+                },
+                "segment.jitter.ms": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The maximum random jitter in milliseconds subtracted from the scheduled segment roll time to avoid thundering herds of segment rolling.",
+                    "title": "Segment.Jitter.Ms"
+                },
+                "segment.ms": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The period of time in milliseconds after which Kafka forces the log to roll even if the segment file is not full, so that retention can delete or compact old data.",
+                    "title": "Segment.Ms"
+                },
+                "unclean.leader.election.enable": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Whether to allow replicas not in the ISR set to be elected as leader as a last resort, even though this may result in data loss.",
+                    "title": "Unclean.Leader.Election.Enable"
+                }
+            },
+            "title": "KafkaTopicConfigs",
+            "type": "object"
+        },
         "KubernetesApp": {
             "additionalProperties": true,
             "description": "Base class for all Kubernetes apps.\nAll built-in components are Kubernetes apps, except for the Kafka connectors.",
@@ -6025,20 +6585,9 @@
             "description": "Configure an output topic.",
             "properties": {
                 "configs": {
-                    "additionalProperties": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "integer"
-                            }
-                        ]
-                    },
+                    "$ref": "#/$defs/KafkaTopicConfigs",
                     "default": {},
-                    "description": "Topic configs",
-                    "title": "Configs",
-                    "type": "object"
+                    "description": "Topic configs"
                 },
                 "key_schema": {
                     "anyOf": [

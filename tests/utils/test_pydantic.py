@@ -4,6 +4,7 @@ import pytest
 from pydantic import BaseModel, ValidationError
 
 from kpops.utils.pydantic import (
+    KeyValueConfigModel,
     SerializeAsOptional,
     SerializeAsOptionalModel,
     Templatable,
@@ -234,3 +235,21 @@ def test_templatable_json_schema() -> None:
         {"type": "string", "pattern": r"\$\{.+\}"},
         {"type": "null"},
     ]
+
+
+def test_key_value_config_model() -> None:
+    class Config(KeyValueConfigModel):
+        retention_ms: int | None = None
+        cleanup_policy: str | None = None
+        unset_value: str | None = None
+
+    config = Config.model_validate(
+        {"retention.ms": 1000, "cleanup_policy": "compact", "extra.flag": True}
+    )
+    assert config.retention_ms == 1000
+    assert config.cleanup_policy == "compact"
+    assert config.model_dump() == {
+        "retention.ms": "1000",
+        "cleanup.policy": "compact",
+        "extra.flag": "true",
+    }
