@@ -8,6 +8,7 @@ from kpops.utils.pydantic import (
     SerializeAsOptionalModel,
     Templatable,
     exclude_by_value,
+    placeholders_allowed,
     to_dash,
     to_dot,
     to_snake,
@@ -213,6 +214,17 @@ def test_templatable_invalid(data: dict[str, Any]) -> None:
     with pytest.raises(ValidationError) as exc_info:
         TemplatableModel.model_validate(data)
     assert exc_info.value.error_count() == 1
+
+
+def test_templatable_placeholders_disallowed() -> None:
+    with placeholders_allowed(False), pytest.raises(ValidationError):
+        TemplatableModel.model_validate({"number": "${component.number}"})
+    with placeholders_allowed(False):
+        assert TemplatableModel.model_validate({"number": "1"}).number == 1
+
+    with placeholders_allowed(False), placeholders_allowed(True):
+        model = TemplatableModel.model_validate({"number": "${component.number}"})
+    assert model.number == "${component.number}"
 
 
 def test_templatable_json_schema() -> None:

@@ -1,5 +1,8 @@
 import json
 import re
+from collections.abc import Generator
+from contextlib import contextmanager
+from contextvars import ContextVar
 from pathlib import Path
 from typing import Annotated, Any, ClassVar, TypeVar, final, override
 
@@ -341,8 +344,26 @@ def is_placeholder(value: Any) -> bool:
     return isinstance(value, str) and PLACEHOLDER_PATTERN.search(value) is not None
 
 
+_placeholders_allowed: ContextVar[bool] = ContextVar(
+    "placeholders_allowed", default=True
+)
+
+
+@contextmanager
+def placeholders_allowed(allowed: bool) -> Generator[None]:
+    """Control whether `Templatable` fields accept placeholders.
+
+    :param allowed: Whether placeholders pass validation
+    """
+    token = _placeholders_allowed.set(allowed)
+    try:
+        yield
+    finally:
+        _placeholders_allowed.reset(token)
+
+
 def validate_placeholder(value: Any, handler: ValidatorFunctionWrapHandler) -> Any:
-    if is_placeholder(value):
+    if _placeholders_allowed.get() and is_placeholder(value):
         return value
     return handler(value)
 

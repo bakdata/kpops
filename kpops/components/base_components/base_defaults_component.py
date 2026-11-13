@@ -28,7 +28,7 @@ from kpops.utils.dict_ops import (
     update_nested_pair,
 )
 from kpops.utils.environment import ENV, PIPELINE_PATH
-from kpops.utils.pydantic import DescConfigModel, to_dash
+from kpops.utils.pydantic import DescConfigModel, placeholders_allowed, to_dash
 from kpops.utils.types import JsonType
 from kpops.utils.yaml import display_path, load_yaml_file, substitute_nested
 
@@ -64,14 +64,17 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         if values.get("enrich", True):
             cls = self.__class__
             values = cls.extend_with_defaults(**values)
-            tmp_self = cls(**values, enrich=False)
+            with placeholders_allowed(True):
+                tmp_self = cls(**values, enrich=False)
             values = tmp_self.model_dump(mode="json", by_alias=True)
             values = cls.substitute_in_component(**values)
-            self.__init__(
-                enrich=False,
-                validate=True,
-                **values,
-            )
+            # nothing is substituted after this, so leftover placeholders are errors
+            with placeholders_allowed(False):
+                self.__init__(
+                    enrich=False,
+                    validate=True,
+                    **values,
+                )
         else:
             super().__init__(**values)
 
