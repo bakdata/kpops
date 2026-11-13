@@ -50,6 +50,22 @@ def update_nested[V: object](*argv: dict[str, V]) -> dict[str, V]:
     return update_nested(update_nested_pair(argv[0], argv[1]), *argv[2:])
 
 
+def sort_nested(value: Any) -> Any:
+    """Sort the keys of all mappings recursively, list order is kept.
+
+    :param value: Value to sort
+    :returns: Copy with sorted mappings
+    """
+    if isinstance(value, Mapping):
+        return {
+            key: sort_nested(nested)
+            for key, nested in sorted(value.items(), key=lambda item: str(item[0]))
+        }
+    if isinstance(value, list):
+        return [sort_nested(item) for item in value]
+    return value
+
+
 def flatten_mapping[V: object](
     nested_mapping: Mapping[str, V],
     prefix: str | None = None,

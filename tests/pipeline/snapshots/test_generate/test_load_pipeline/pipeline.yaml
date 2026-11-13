@@ -1,7 +1,7 @@
 - type: scheduled-producer
   name: scheduled-producer
-  enabled: true
   prefix: resources-first-pipeline-
+  enabled: true
   to:
     topics:
       resources-first-pipeline-scheduled-producer:
@@ -13,6 +13,7 @@
     models:
       com/bakdata/kafka/fake: 1.0.0
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: example-registry/fake-image
     imageTag: 0.0.1
@@ -23,13 +24,12 @@
     commandLine:
       FAKE_ARG: fake-arg-value
     schedule: 30 3/8 * * *
-  version: 3.6.1
   helm_release_name: resources-first-pipeline-scheduled-producer
   helm_name_override: resources-first-pipeline-scheduled-producer
 - type: converter
   name: converter
-  enabled: true
   prefix: resources-first-pipeline-
+  enabled: true
   to:
     topics:
       resources-first-pipeline-converter:
@@ -46,6 +46,7 @@
           cleanup.policy: compact,delete
     models: {}
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: bakdata-demo-streams-app
     kafka:
@@ -70,13 +71,12 @@
       lagThreshold: 10000
       maxReplicas: 1
     statefulSet: false
-  version: 3.6.1
   helm_release_name: resources-first-pipeline-converter
   helm_name_override: resources-first-pipeline-converter
 - type: filter
   name: a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
-  enabled: true
   prefix: resources-first-pipeline-
+  enabled: true
   to:
     topics:
       ? resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
@@ -92,6 +92,7 @@
           cleanup.policy: compact,delete
     models: {}
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: fake-registry/filter
     imageTag: 2.4.1
@@ -119,7 +120,6 @@
         - resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
     statefulSet: false
     replicaCount: 4
-  version: 3.6.1
   helm_release_name: resources-first-pipeline-a-long-name-a-long-nam-68327
   helm_name_override: resources-first-pipeline-a-long-name-a-long-name-a-long-n-68327
 

@@ -1,0 +1,47 @@
+- type: streams-app
+  name: app
+  prefix: ''
+  enabled: true
+  from:
+    topics:
+      input-a:
+        type: input
+      input-b:
+        type: input
+    components: {}
+  to:
+    topics:
+      output:
+        type: output
+        configs: {}
+      resources-key-order-inline-app-error:
+        type: error
+        value_schema: com.bakdata.kafka.DeadLetter
+        partitions_count: 1
+        configs:
+          cleanup.policy: compact,delete
+    models: {}
+  namespace: example-namespace
+  version: 3.6.1
+  values:
+    image: example-image
+    kafka:
+      bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      schemaRegistryUrl: http://localhost:8081/
+      outputTopic: output
+      inputTopics:
+        - input-a
+        - input-b
+      errorTopic: resources-key-order-inline-app-error
+      config:
+        a.config: a
+        b.config: b
+        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+    statefulSet: false
+    labels:
+      label-a: a
+      label-b: b
+  my_extra_a: a
+  my_extra_b: b
+  helm_release_name: app
+  helm_name_override: app

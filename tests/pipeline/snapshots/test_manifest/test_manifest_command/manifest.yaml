@@ -116,11 +116,10 @@ kind: KafkaTopic
 metadata:
   labels:
     strimzi.io/cluster: my-cluster
-  name: resources-custom-config-app2-error
+  name: resources-custom-config-app2
 spec:
-  config:
-    cleanup.policy: compact,delete
-  partitions: 1
+  config: {}
+  partitions: 3
   replicas: 1
 
 ---
@@ -129,9 +128,10 @@ kind: KafkaTopic
 metadata:
   labels:
     strimzi.io/cluster: my-cluster
-  name: resources-custom-config-app2
+  name: resources-custom-config-app2-error
 spec:
-  config: {}
-  partitions: 3
+  config:
+    cleanup.policy: compact,delete
+  partitions: 1
   replicas: 1
 

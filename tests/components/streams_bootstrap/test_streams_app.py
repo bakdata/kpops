@@ -181,9 +181,9 @@ class TestStreamsApp:
             },
         )
         assert streams_app.values.kafka.input_topics == [
-            KafkaTopic(name="example-input"),
-            KafkaTopic(name="b"),
             KafkaTopic(name="a"),
+            KafkaTopic(name="b"),
+            KafkaTopic(name="example-input"),
         ]
         assert streams_app.values.kafka.labeled_input_topics == {
             "role1": [KafkaTopic(name="topic-extra")],
@@ -412,20 +412,6 @@ class TestStreamsApp:
         assert streams_app.to
         assert streams_app.to.kafka_topics == [
             KafkaTopic(
-                name="streams-app-output-topic",
-                config=TopicConfig(
-                    type=OutputTopicTypes.OUTPUT,
-                    partitions_count=10,
-                ),
-            ),
-            KafkaTopic(
-                name="streams-app-error-topic",
-                config=TopicConfig(
-                    type=OutputTopicTypes.ERROR,
-                    partitions_count=10,
-                ),
-            ),
-            KafkaTopic(
                 name="extra-topic-1",
                 config=TopicConfig(
                     partitions_count=10,
@@ -437,6 +423,20 @@ class TestStreamsApp:
                 config=TopicConfig(
                     partitions_count=10,
                     label="second-extra-topic",
+                ),
+            ),
+            KafkaTopic(
+                name="streams-app-error-topic",
+                config=TopicConfig(
+                    type=OutputTopicTypes.ERROR,
+                    partitions_count=10,
+                ),
+            ),
+            KafkaTopic(
+                name="streams-app-output-topic",
+                config=TopicConfig(
+                    type=OutputTopicTypes.OUTPUT,
+                    partitions_count=10,
                 ),
             ),
         ]
@@ -792,9 +792,9 @@ class TestStreamsApp:
         )
 
         assert streams_app.values.kafka.input_topics == [
-            KafkaTopic(name="example-input"),
-            KafkaTopic(name="b"),
             KafkaTopic(name="a"),
+            KafkaTopic(name="b"),
+            KafkaTopic(name="example-input"),
         ]
         assert streams_app.values.kafka.labeled_input_topics == {
             "role1": [KafkaTopic(name="topic-extra")],
@@ -809,12 +809,12 @@ class TestStreamsApp:
             KafkaTopic(name="extra-topic"),
         ]
         assert list(streams_app.inputs) == [
-            KafkaTopic(name="example-input"),
-            KafkaTopic(name="b"),
             KafkaTopic(name="a"),
+            KafkaTopic(name="b"),
+            KafkaTopic(name="example-input"),
+            KafkaTopic(name="topic-extra"),
             KafkaTopic(name="topic-extra2"),
             KafkaTopic(name="topic-extra3"),
-            KafkaTopic(name="topic-extra"),
         ]
 
     def test_raise_validation_error_when_persistence_enabled_and_size_not_set(

@@ -1,7 +1,7 @@
 - type: streams-app
   name: streams-app-development
-  enabled: true
   prefix: resources-pipeline-with-env-defaults-
+  enabled: true
   from:
     topics:
       example-topic:
@@ -20,6 +20,7 @@
           cleanup.policy: compact,delete
     models: {}
   namespace: development-namespace
+  version: 3.6.1
   values:
     image: fake-image
     kafka:
@@ -32,13 +33,12 @@
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
     statefulSet: false
-  version: 3.6.1
   helm_release_name: resources-pipeline-with-env-defaults-streams-ap-49439
   helm_name_override: resources-pipeline-with-env-defaults-streams-app-development
 - type: kafka-sink-connector
   name: es-sink-connector
-  enabled: true
   prefix: resources-pipeline-with-env-defaults-
+  enabled: true
   config:
     connector.class: io.confluent.connect.elasticsearch.ElasticsearchSinkConnector
     name: resources-pipeline-with-env-defaults-es-sink-connector

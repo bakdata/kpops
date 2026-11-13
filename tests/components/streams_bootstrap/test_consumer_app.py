@@ -166,9 +166,9 @@ class TestConsumerApp:
             },
         )
         assert consumer_app.values.kafka.input_topics == [
-            KafkaTopic(name="example-input"),
-            KafkaTopic(name="b"),
             KafkaTopic(name="a"),
+            KafkaTopic(name="b"),
+            KafkaTopic(name="example-input"),
         ]
         assert consumer_app.values.kafka.labeled_input_topics == {
             "role1": [KafkaTopic(name="topic-extra")],
@@ -610,9 +610,9 @@ class TestConsumerApp:
         )
 
         assert consumer_app.values.kafka.input_topics == [
-            KafkaTopic(name="example-input"),
-            KafkaTopic(name="b"),
             KafkaTopic(name="a"),
+            KafkaTopic(name="b"),
+            KafkaTopic(name="example-input"),
         ]
         assert consumer_app.values.kafka.labeled_input_topics == {
             "role1": [KafkaTopic(name="topic-extra")],
@@ -626,12 +626,12 @@ class TestConsumerApp:
         )
 
         assert list(consumer_app.inputs) == [
-            KafkaTopic(name="example-input"),
-            KafkaTopic(name="b"),
             KafkaTopic(name="a"),
+            KafkaTopic(name="b"),
+            KafkaTopic(name="example-input"),
+            KafkaTopic(name="topic-extra"),
             KafkaTopic(name="topic-extra2"),
             KafkaTopic(name="topic-extra3"),
-            KafkaTopic(name="topic-extra"),
         ]
 
     def test_raise_validation_error_when_persistence_enabled_and_size_not_set(

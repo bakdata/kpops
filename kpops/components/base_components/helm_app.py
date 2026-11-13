@@ -25,6 +25,7 @@ from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
     KubernetesAppValues,
 )
+from kpops.components.base_components.section import Section
 from kpops.config import get_config
 from kpops.core.operation import OperationMode
 from kpops.manifests.argo import ArgoSyncWave, enrich_annotations
@@ -77,10 +78,12 @@ class HelmApp[V: HelmAppValues = HelmAppValues](KubernetesApp[V]):
     :param timeout: Timeout for Helm operations to finish
     """
 
-    repo_config: SkipGenerate[HelmRepoConfig | None] = None
-    diff_config: SkipGenerate[HelmDiffConfig] = HelmDiffConfig()
-    version: str | None = None
-    timeout: str | None = None
+    repo_config: Annotated[SkipGenerate[HelmRepoConfig | None], Section.ARTIFACT] = None
+    diff_config: Annotated[SkipGenerate[HelmDiffConfig], Section.ARTIFACT] = (
+        HelmDiffConfig()
+    )
+    version: Annotated[str | None, Section.ARTIFACT] = None
+    timeout: Annotated[str | None, Section.ARTIFACT] = None
     values: V
 
     @property

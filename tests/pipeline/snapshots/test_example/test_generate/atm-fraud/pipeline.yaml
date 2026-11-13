@@ -1,7 +1,7 @@
 - type: producer-app
   name: account-producer
-  enabled: true
   prefix: atm-fraud-
+  enabled: true
   to:
     topics:
       atm-fraud-account-producer-topic:
@@ -9,6 +9,7 @@
         configs: {}
     models: {}
   namespace: ${NAMESPACE}
+  version: 7.5.0
   values:
     image: ${DOCKER_REGISTRY}/atm-demo-accountproducer
     imageTag: 2.0.0
@@ -21,13 +22,12 @@
     labels:
       pipeline: atm-fraud
     replicaCount: 1
-  version: 7.5.0
   helm_release_name: atm-fraud-account-producer
   helm_name_override: atm-fraud-account-producer
 - type: producer-app
   name: transaction-avro-producer
-  enabled: true
   prefix: atm-fraud-
+  enabled: true
   to:
     topics:
       atm-fraud-transaction-avro-producer-topic:
@@ -35,6 +35,7 @@
         configs: {}
     models: {}
   namespace: ${NAMESPACE}
+  version: 7.5.0
   values:
     image: ${DOCKER_REGISTRY}/atm-demo-transactionavroproducer
     imageTag: 2.0.0
@@ -43,20 +44,19 @@
       schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
       outputTopic: atm-fraud-transaction-avro-producer-topic
     commandLine:
-      REAL_TX: 19
       ITERATION: 20
+      REAL_TX: 19
     schedule: 0 12 * * *
     suspend: true
     labels:
       pipeline: atm-fraud
     replicaCount: 1
-  version: 7.5.0
   helm_release_name: atm-fraud-transaction-avro-producer
   helm_name_override: atm-fraud-transaction-avro-producer
 - type: streams-app
   name: transaction-joiner
-  enabled: true
   prefix: atm-fraud-
+  enabled: true
   to:
     topics:
       atm-fraud-transaction-joiner-dead-letter-topic:
@@ -68,6 +68,7 @@
         configs: {}
     models: {}
   namespace: ${NAMESPACE}
+  version: 7.5.0
   values:
     image: ${DOCKER_REGISTRY}/atm-demo-transactionjoiner
     imageTag: 2.0.0
@@ -84,13 +85,12 @@
     labels:
       pipeline: atm-fraud
     replicaCount: 1
-  version: 7.5.0
   helm_release_name: atm-fraud-transaction-joiner
   helm_name_override: atm-fraud-transaction-joiner
 - type: streams-app
   name: fraud-detector
-  enabled: true
   prefix: atm-fraud-
+  enabled: true
   to:
     topics:
       atm-fraud-fraud-detector-dead-letter-topic:
@@ -102,6 +102,7 @@
         configs: {}
     models: {}
   namespace: ${NAMESPACE}
+  version: 7.5.0
   values:
     image: ${DOCKER_REGISTRY}/atm-demo-frauddetector
     imageTag: 2.0.0
@@ -118,20 +119,19 @@
     labels:
       pipeline: atm-fraud
     replicaCount: 1
-  version: 7.5.0
   helm_release_name: atm-fraud-fraud-detector
   helm_name_override: atm-fraud-fraud-detector
 - type: streams-app
   name: account-linker
-  enabled: true
   prefix: atm-fraud-
+  enabled: true
   from:
     topics: {}
     components:
-      fraud-detector:
-        type: input
       account-producer:
         label: accounts
+      fraud-detector:
+        type: input
   to:
     topics:
       atm-fraud-account-linker-dead-letter-topic:
@@ -143,6 +143,7 @@
         configs: {}
     models: {}
   namespace: ${NAMESPACE}
+  version: 7.5.0
   values:
     image: ${DOCKER_REGISTRY}/atm-demo-accountlinker
     imageTag: 2.0.0
@@ -162,13 +163,12 @@
     labels:
       pipeline: atm-fraud
     replicaCount: 1
-  version: 7.5.0
   helm_release_name: atm-fraud-account-linker
   helm_name_override: atm-fraud-account-linker
 - type: kafka-sink-connector
   name: postgresql-connector
-  enabled: true
   prefix: atm-fraud-
+  enabled: true
   config:
     connector.class: io.confluent.connect.jdbc.JdbcSinkConnector
     name: atm-fraud-postgresql-connector
@@ -181,14 +181,14 @@
     errors.deadletterqueue.topic.name: postgres-request-sink-dead-letters
     errors.deadletterqueue.topic.replication.factor: '1'
     errors.deadletterqueue.context.headers.enable: 'true'
+    auto.create: 'true'
+    connection.ds.pool.size: '5'
+    connection.password: AppPassword
     connection.url: jdbc:postgresql://postgresql-dev.${NAMESPACE}.svc.cluster.local:5432/app_db
     connection.user: app1
-    connection.password: AppPassword
-    connection.ds.pool.size: '5'
     insert.mode: insert
     insert.mode.databaselevel: 'true'
-    value.converter.schema.registry.url: http://k8kafka-cp-schema-registry.${NAMESPACE}.svc.cluster.local:8081
-    transforms.flatten.type: org.apache.kafka.connect.transforms.Flatten$Value
-    auto.create: 'true'
-    table.name.format: fraud_transactions
     pk.mode: record_value
+    table.name.format: fraud_transactions
+    transforms.flatten.type: org.apache.kafka.connect.transforms.Flatten$Value
+    value.converter.schema.registry.url: http://k8kafka-cp-schema-registry.${NAMESPACE}.svc.cluster.local:8081

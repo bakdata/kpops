@@ -84,22 +84,6 @@ def exclude_by_value[V](
     }
 
 
-def exclude_by_name[V](
-    dumped_model: dict[str, V], *excluded_fields: str
-) -> dict[str, V]:
-    """Strip all key-value pairs with certain field names.
-
-    :param dumped_model: Dumped model
-    :param excluded_fields: Excluded field names
-    :return: Dumped model without excluded fields
-    """
-    return {
-        field_name: field_value
-        for field_name, field_value in dumped_model.items()
-        if field_name not in excluded_fields
-    }
-
-
 def exclude_defaults[V](
     model_cls: type[BaseModel], dumped_model: dict[str, V]
 ) -> dict[str, V]:
