@@ -176,6 +176,7 @@ class KeyValueConfigModel(DescConfigModel):
 
     Fields are serialized with their dotted alias, e.g. ``cleanup_policy`` as ``cleanup.policy``.
     Configs that are not declared are passed through as is.
+    Keys are sorted alphabetically, independent of whether they are declared.
     """
 
     model_config: ClassVar[ConfigDict] = ConfigDict(
@@ -192,10 +193,12 @@ class KeyValueConfigModel(DescConfigModel):
         info: SerializationInfo,
     ) -> dict[str, str]:
         result = exclude_by_value(default_serialize_handler(self), None)
-        return {
-            by_alias(self.__class__, name): to_str(value)
-            for name, value in result.items()
-        }
+        return dict(
+            sorted(
+                (by_alias(self.__class__, name), to_str(value))
+                for name, value in result.items()
+            )
+        )
 
 
 @final
