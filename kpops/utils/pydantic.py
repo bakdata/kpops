@@ -1,4 +1,5 @@
 import json
+import re
 from pathlib import Path
 from typing import Annotated, Any, ClassVar, TypeVar, final, override
 
@@ -11,11 +12,13 @@ from pydantic import (
     GetCoreSchemaHandler,
     SerializationInfo,
     SerializerFunctionWrapHandler,
+    ValidatorFunctionWrapHandler,
     WrapSerializer,
+    WrapValidator,
     model_serializer,
 )
 from pydantic.fields import FieldInfo
-from pydantic.json_schema import SkipJsonSchema
+from pydantic.json_schema import GetJsonSchemaHandler, JsonSchemaValue, SkipJsonSchema
 from pydantic_core import PydanticUseDefault, core_schema
 from pydantic_settings import BaseSettings, PydanticBaseSettingsSource
 
@@ -328,4 +331,44 @@ SkipGenerate = Annotated[
     _T,
     WrapSerializer(serialize_skip_context_generate),
     "Exclude field from generate output",
+]
+
+
+PLACEHOLDER_PATTERN = re.compile(r"\$\{.+\}")
+
+
+def is_placeholder(value: Any) -> bool:
+    return isinstance(value, str) and PLACEHOLDER_PATTERN.search(value) is not None
+
+
+def validate_placeholder(value: Any, handler: ValidatorFunctionWrapHandler) -> Any:
+    if is_placeholder(value):
+        return value
+    return handler(value)
+
+
+def serialize_placeholder(value: Any, handler: SerializerFunctionWrapHandler) -> Any:
+    if is_placeholder(value):
+        return value
+    return handler(value)
+
+
+class PlaceholderJsonSchema:
+    def __get_pydantic_json_schema__(
+        self, schema: core_schema.CoreSchema, handler: GetJsonSchemaHandler
+    ) -> JsonSchemaValue:
+        return {
+            "anyOf": [
+                handler(schema),
+                {"type": "string", "pattern": PLACEHOLDER_PATTERN.pattern},
+            ]
+        }
+
+
+Templatable = Annotated[
+    _T,
+    WrapValidator(validate_placeholder),
+    WrapSerializer(serialize_placeholder),
+    PlaceholderJsonSchema(),
+    "Also accepts a placeholder, which is validated after substitution",
 ]

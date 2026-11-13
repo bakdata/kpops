@@ -1,0 +1,13 @@
+- type: streams-app
+  name: app
+  partitions: 3
+  replicas: 2
+  namespace: example-namespace
+  values:
+    image: example-image
+  to:
+    topics:
+      output:
+        type: output
+        partitions_count: ${component.partitions}
+        replication_factor: ${component.replicas}
