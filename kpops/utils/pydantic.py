@@ -340,7 +340,7 @@ SkipGenerate = Annotated[
 PLACEHOLDER_PATTERN = re.compile(r"\$\{.+\}")
 
 
-def is_placeholder(value: Any) -> bool:
+def is_placeholder(value: object) -> bool:
     return isinstance(value, str) and PLACEHOLDER_PATTERN.search(value) is not None
 
 
@@ -362,7 +362,9 @@ def placeholders_allowed(allowed: bool) -> Generator[None]:
         _placeholders_allowed.reset(token)
 
 
-def validate_placeholder(value: Any, handler: ValidatorFunctionWrapHandler) -> Any:
+def validate_placeholder(
+    value: object, handler: ValidatorFunctionWrapHandler
+) -> object:
     if _placeholders_allowed.get() and is_placeholder(value):
         return value
     return handler(value)
