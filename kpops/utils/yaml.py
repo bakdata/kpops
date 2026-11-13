@@ -24,11 +24,22 @@ def generate_hashkey(
     return hashkey(str(file_path) + str(sorted(substitution.items())))
 
 
+def display_path(path: Path) -> Path:
+    """Shorten path relative to the working directory if it is located inside.
+
+    :param path: Path to display
+    :return: Path relative to the working directory, otherwise the absolute path
+    """
+    path = path.resolve()
+    cwd = Path.cwd()
+    return path.relative_to(cwd) if path.is_relative_to(cwd) else path
+
+
 @cached(cache={}, key=generate_hashkey)
 def load_yaml_file(
     file_path: Path, *, substitution: Mapping[str, Any] | None = None
 ) -> Any:
-    log.debug("Picked up YAML file", path=file_path.resolve().relative_to(Path.cwd()))
+    log.debug("Picked up YAML file", path=display_path(file_path))
     return yaml.safe_load(substitute(file_path.read_text(), substitution))
 
 

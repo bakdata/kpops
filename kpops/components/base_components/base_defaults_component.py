@@ -30,7 +30,7 @@ from kpops.utils.dict_ops import (
 from kpops.utils.environment import ENV, PIPELINE_PATH
 from kpops.utils.pydantic import DescConfigModel, to_dash
 from kpops.utils.types import JsonType
-from kpops.utils.yaml import load_yaml_file, substitute_nested
+from kpops.utils.yaml import display_path, load_yaml_file, substitute_nested
 
 log = structlog.get_logger("BaseDefaultsComponent")
 
@@ -226,11 +226,10 @@ def defaults_from_yaml(path: Path, key: str) -> dict[str, Any]:
     value = content.get(key)
     if value is None:
         return {}
-    default_path = path.relative_to(Path.cwd())
     log.debug(
         "Found defaults for component type",
         type=key,
-        default_path=default_path,
+        default_path=display_path(path),
     )
     return value
 
