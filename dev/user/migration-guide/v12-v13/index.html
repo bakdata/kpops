@@ -1956,6 +1956,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#typed-connector-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Typed connector config
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#defaults-schema" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
@@ -2511,6 +2522,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#typed-connector-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Typed connector config
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#defaults-schema" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
@@ -2596,6 +2618,8 @@
 <p>Kafka connectors are now <code>KafkaApp</code>s. Settings defined under <code>kafka-app</code> in <code>defaults.yaml</code> now also apply to <code>kafka-connector</code>, <code>kafka-source-connector</code> and <code>kafka-sink-connector</code>.</p>
 <h2 id="separate-config-for-sink-and-source-connectors">Separate config for sink and source connectors<a class="headerlink" href="#separate-config-for-sink-and-source-connectors" title="Permanent link">&para;</a></h2>
 <p><code>topics</code>, <code>topics.regex</code> and <code>errors.deadletterqueue.topic.name</code> are sink-only settings. The schema now offers them only under <code>kafka-sink-connector</code>, no longer under <code>kafka-connector</code> and <code>kafka-source-connector</code>. If set on a source connector, they are still passed through to Kafka Connect as is.</p>
+<h2 id="typed-connector-config">Typed connector config<a class="headerlink" href="#typed-connector-config" title="Permanent link">&para;</a></h2>
+<p>Common connector settings such as <code>tasks.max</code>, <code>errors.tolerance</code> and <code>errors.log.enable</code> are now validated as numbers, booleans or one of their allowed values. Write them unquoted, e.g. <code>tasks.max: 1</code> instead of <code>tasks.max: "1"</code>. Quoted values are still accepted, but editors using the schema flag them. KPOps placeholders and Kafka Connect config provider references such as <code>${file:/etc/connect/connector.properties:tasks.max}</code> remain supported.</p>
 <h2 id="defaults-schema">Defaults schema<a class="headerlink" href="#defaults-schema" title="Permanent link">&para;</a></h2>
 <p><code>from</code> and <code>to</code> are no longer offered under <code>pipeline-component</code>, <code>kubernetes-app</code>, <code>helm-app</code>, <code>kafka-app</code> and <code>streams-bootstrap</code> in <code>defaults.yaml</code> (and <code>from</code> under <code>kafka-connector</code>). Define them under the concrete component keys instead.</p>
 <h4 id="defaultsyaml">defaults.yaml<a class="headerlink" href="#defaultsyaml" title="Permanent link">&para;</a></h4>
