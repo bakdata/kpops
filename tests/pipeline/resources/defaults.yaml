@@ -122,4 +122,4 @@ kafka-sink-connector:
     linger.ms: "5000"
     max.buffered.records: "20000"
     read.timeout.ms: "120000"
-    tasks.max: "1"
+    tasks.max: 1
