@@ -29,7 +29,9 @@ from kpops.utils.pydantic import (
 CONFIG_PROVIDER_PATTERN = re.compile(r"\$\{[\w.-]+:[^}]*\}")
 
 
-def validate_config_provider(value: Any, handler: ValidatorFunctionWrapHandler) -> Any:
+def validate_config_provider(
+    value: object, handler: ValidatorFunctionWrapHandler
+) -> object:
     if isinstance(value, str) and CONFIG_PROVIDER_PATTERN.fullmatch(value):
         return value
     return handler(value)
