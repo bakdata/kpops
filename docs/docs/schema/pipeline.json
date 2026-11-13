@@ -2060,6 +2060,10 @@
                             "type": "string"
                         },
                         {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
                             "type": "null"
                         }
                     ],
@@ -2076,6 +2080,10 @@
                     "anyOf": [
                         {
                             "type": "boolean"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
                         },
                         {
                             "type": "null"
@@ -2103,6 +2111,10 @@
                             "type": "integer"
                         },
                         {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
                             "type": "null"
                         }
                     ],
@@ -2114,6 +2126,10 @@
                     "anyOf": [
                         {
                             "type": "boolean"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
                         },
                         {
                             "type": "null"
@@ -2129,6 +2145,10 @@
                             "type": "boolean"
                         },
                         {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
                             "type": "null"
                         }
                     ],
@@ -2142,6 +2162,10 @@
                             "type": "integer"
                         },
                         {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
                             "type": "null"
                         }
                     ],
@@ -2153,6 +2177,10 @@
                     "anyOf": [
                         {
                             "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
                         },
                         {
                             "type": "null"
@@ -2169,6 +2197,10 @@
                                 "none",
                                 "all"
                             ],
+                            "type": "string"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
                             "type": "string"
                         },
                         {
@@ -2222,6 +2254,10 @@
                     "anyOf": [
                         {
                             "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
                         },
                         {
                             "type": "null"
@@ -2381,6 +2417,10 @@
                             "type": "string"
                         },
                         {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
                             "type": "null"
                         }
                     ],
@@ -2399,6 +2439,10 @@
                             "type": "boolean"
                         },
                         {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
                             "type": "null"
                         }
                     ],
@@ -2410,6 +2454,10 @@
                     "anyOf": [
                         {
                             "type": "boolean"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
                         },
                         {
                             "type": "null"
@@ -2425,6 +2473,10 @@
                             "type": "integer"
                         },
                         {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
                             "type": "null"
                         }
                     ],
@@ -2436,6 +2488,10 @@
                     "anyOf": [
                         {
                             "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
                         },
                         {
                             "type": "null"
@@ -2455,6 +2511,10 @@
                             "type": "string"
                         },
                         {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
                             "type": "null"
                         }
                     ],
@@ -2469,6 +2529,10 @@
                                 "requested",
                                 "required"
                             ],
+                            "type": "string"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
                             "type": "string"
                         },
                         {
@@ -2536,6 +2600,10 @@
                             "type": "integer"
                         },
                         {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
                             "type": "null"
                         }
                     ],
@@ -2549,6 +2617,10 @@
                             "type": "integer"
                         },
                         {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
                             "type": "null"
                         }
                     ],
@@ -2560,6 +2632,10 @@
                     "anyOf": [
                         {
                             "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
                         },
                         {
                             "type": "null"
@@ -2593,6 +2669,10 @@
                             "type": "string"
                         },
                         {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
+                        },
+                        {
                             "type": "null"
                         }
                     ],
@@ -2604,6 +2684,10 @@
                     "anyOf": [
                         {
                             "type": "integer"
+                        },
+                        {
+                            "pattern": "\\$\\{.+\\}",
+                            "type": "string"
                         },
                         {
                             "type": "null"

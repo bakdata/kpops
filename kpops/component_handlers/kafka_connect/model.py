@@ -16,6 +16,7 @@ from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
 from kpops.utils.enum import UpperStrEnum
 from kpops.utils.pydantic import (
     DescConfigModel,
+    Templatable,
     by_alias,
     exclude_by_value,
     to_dot,
@@ -47,18 +48,18 @@ class KafkaConnectorConfig(DescConfigModel):
 
     connector_class: str
     name: SkipJsonSchema[str]
-    tasks_max: int | None = None
+    tasks_max: Templatable[int] | None = None
     key_converter: str | None = None
     value_converter: str | None = None
     header_converter: str | None = None
     transforms: str | None = None
     predicates: str | None = None
-    config_action_reload: Literal["none", "restart"] | None = None
-    errors_retry_timeout: int | None = None
-    errors_retry_delay_max_ms: int | None = None
-    errors_tolerance: Literal["none", "all"] | None = None
-    errors_log_enable: bool | None = None
-    errors_log_include_messages: bool | None = None
+    config_action_reload: Templatable[Literal["none", "restart"]] | None = None
+    errors_retry_timeout: Templatable[int] | None = None
+    errors_retry_delay_max_ms: Templatable[int] | None = None
+    errors_tolerance: Templatable[Literal["none", "all"]] | None = None
+    errors_log_enable: Templatable[bool] | None = None
+    errors_log_include_messages: Templatable[bool] | None = None
 
     @override
     @staticmethod
@@ -124,8 +125,8 @@ class KafkaSinkConnectorConfig(KafkaConnectorConfig):
     topics: list[KafkaTopicStr] = []
     topics_regex: str | None = None
     errors_deadletterqueue_topic_name: KafkaTopicStr | None = None
-    errors_deadletterqueue_topic_replication_factor: int | None = None
-    errors_deadletterqueue_context_headers_enable: bool | None = None
+    errors_deadletterqueue_topic_replication_factor: Templatable[int] | None = None
+    errors_deadletterqueue_context_headers_enable: Templatable[bool] | None = None
 
     @pydantic.field_validator("topics", mode="before")
     @classmethod
@@ -154,11 +155,13 @@ class KafkaSourceConnectorConfig(KafkaConnectorConfig):
     """
 
     topic_creation_groups: str | None = None
-    topic_creation_default_replication_factor: int | None = None
-    topic_creation_default_partitions: int | None = None
-    exactly_once_support: Literal["requested", "required"] | None = None
-    transaction_boundary: Literal["poll", "interval", "connector"] | None = None
-    transaction_boundary_interval_ms: int | None = None
+    topic_creation_default_replication_factor: Templatable[int] | None = None
+    topic_creation_default_partitions: Templatable[int] | None = None
+    exactly_once_support: Templatable[Literal["requested", "required"]] | None = None
+    transaction_boundary: (
+        Templatable[Literal["poll", "interval", "connector"]] | None
+    ) = None
+    transaction_boundary_interval_ms: Templatable[int] | None = None
     offsets_storage_topic: KafkaTopicStr | None = None
 
 
