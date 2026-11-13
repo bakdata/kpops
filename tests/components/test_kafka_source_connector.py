@@ -130,6 +130,33 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                 **{"boundary": "invalid"},
             )
 
+    def test_config_provider_reference_in_typed_config_fields(
+        self, connector_config: KafkaConnectorConfig
+    ) -> None:
+        connector = KafkaSourceConnector(
+            name=CONNECTOR_NAME,
+            config={
+                **connector_config.model_dump(),
+                "tasks.max": "${file:/etc/connect/connector.properties:tasks.max}",
+                "errors.tolerance": "${env:ERRORS_TOLERANCE}",
+            },
+        )
+        assert connector.config.model_dump()["tasks.max"] == (
+            "${file:/etc/connect/connector.properties:tasks.max}"
+        )
+        assert connector.config.model_dump()["errors.tolerance"] == (
+            "${env:ERRORS_TOLERANCE}"
+        )
+
+        with pytest.raises(ValidationError):
+            KafkaSourceConnector(
+                name=CONNECTOR_NAME,
+                config={
+                    **connector_config.model_dump(),
+                    "tasks.max": "${component.max_taks}",
+                },
+            )
+
     def test_from_section_raises_exception(
         self,
         connector_config: KafkaConnectorConfig,
