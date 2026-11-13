@@ -4,13 +4,14 @@ from abc import ABC
 from typing import Any, override
 
 import structlog
-from pydantic import PrivateAttr, ValidationInfo, field_validator
+from pydantic import ValidationInfo, field_validator
 
 from kpops.component_handlers import get_handlers
 from kpops.component_handlers.kafka_connect.model import (
     ConnectorNewState,
     KafkaConnectorConfig,
-    KafkaConnectorType,
+    KafkaSinkConnectorConfig,
+    KafkaSourceConnectorConfig,
 )
 from kpops.components.base_components.kafka_app import ConsumesTopics, ProducesTopics
 from kpops.components.common.topic import KafkaTopic
@@ -18,7 +19,9 @@ from kpops.components.common.topic import KafkaTopic
 log = structlog.get_logger("KafkaConnector")
 
 
-class KafkaConnector(ProducesTopics, ABC):
+class KafkaConnector[C: KafkaConnectorConfig = KafkaConnectorConfig](
+    ProducesTopics, ABC
+):
     """Base class for all Kafka connectors.
 
     Should only be used to set defaults
@@ -27,9 +30,8 @@ class KafkaConnector(ProducesTopics, ABC):
     :param state: Connector state
     """
 
-    config: KafkaConnectorConfig
+    config: C
     state: ConnectorNewState | None = None
-    _connector_type: KafkaConnectorType = PrivateAttr()
 
     @field_validator("config", mode="before")
     @classmethod
@@ -37,7 +39,7 @@ class KafkaConnector(ProducesTopics, ABC):
         cls,
         config: KafkaConnectorConfig | dict[str, Any],
         info: ValidationInfo,
-    ) -> KafkaConnectorConfig:
+    ) -> dict[str, Any]:
         if isinstance(config, KafkaConnectorConfig):
             config = config.model_dump()
         component_name: str = info.data["prefix"] + info.data["name"]
@@ -46,7 +48,7 @@ class KafkaConnector(ProducesTopics, ABC):
             msg = f"Connector name '{connector_name}' should be the same as component name '{component_name}'"
             raise ValueError(msg)
         config["name"] = component_name
-        return KafkaConnectorConfig.model_validate(config)
+        return config
 
     @override
     async def deploy(self, dry_run: bool) -> None:
@@ -82,16 +84,12 @@ class KafkaConnector(ProducesTopics, ABC):
                 await get_handlers().topic_handler.delete_topic(topic, dry_run=dry_run)
 
 
-class KafkaSourceConnector(KafkaConnector):
+class KafkaSourceConnector(KafkaConnector[KafkaSourceConnectorConfig]):
     """Kafka source connector model."""
 
-    _connector_type: KafkaConnectorType = PrivateAttr(KafkaConnectorType.SOURCE)
 
-
-class KafkaSinkConnector(ConsumesTopics, KafkaConnector):
+class KafkaSinkConnector(ConsumesTopics, KafkaConnector[KafkaSinkConnectorConfig]):
     """Kafka sink connector model."""
-
-    _connector_type: KafkaConnectorType = PrivateAttr(KafkaConnectorType.SINK)
 
     @property
     @override

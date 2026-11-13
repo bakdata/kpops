@@ -23,6 +23,7 @@ from kpops.component_handlers.kafka_connect.model import (
     ConnectorStatusResponse,
     KafkaConnectorConfig,
     KafkaConnectorType,
+    KafkaSinkConnectorConfig,
 )
 from kpops.config import KpopsConfig
 from tests.component_handlers.kafka_connect import RESOURCES_PATH
@@ -114,6 +115,28 @@ class TestKafkaConnect:
             "name": CONNECTOR_NAME,
             "config": connector_config.model_dump(),
         }
+
+    async def test_create_connector_request_sink_config(
+        self,
+        httpx2_mock: HTTPXMock,
+        kafka_connect: KafkaConnect,
+        connector_response: dict[str, Any],
+    ) -> None:
+        connector_config = KafkaSinkConnectorConfig.model_validate(
+            {**connector_response["config"], "topics.regex": ".*"}
+        )
+        httpx2_mock.add_response(
+            method="POST",
+            url=f"{DEFAULT_HOST}/connectors",
+            status_code=httpx2.codes.INTERNAL_SERVER_ERROR,
+        )
+        with pytest.raises(KafkaConnectError):
+            await kafka_connect.create_connector(connector_config)
+
+        request = httpx2_mock.get_requests()[0]
+        config = json.loads(request.content)["config"]
+        assert config["topics"] == "test-topic"
+        assert config["topics.regex"] == ".*"
 
     async def test_create_connector_request_with_initial_state(
         self,
