@@ -2608,8 +2608,7 @@
 <h2 id="advanced-use-cases">Advanced use cases<a class="headerlink" href="#advanced-use-cases" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>Refer to default component field values</strong>: As long as a value is assigned to a component attribute, it is possible to refer to it with a placeholder. To see all component fields, take a look at the <a href="../../../../schema/pipeline.json">pipeline schema</a>.</li>
-<li><strong>Chaining variables</strong>: It is possible to chain any number of variables, see the <a href="#component-specific-variables">example</a> above.
-   In fields that expect a number or boolean, placeholders can refer to config values and to component values set in the pipeline definition or defaults, but not to values that KPOps derives later, such as <code>helm_release_name</code>.</li>
+<li><strong>Chaining variables</strong>: It is possible to chain any number of variables, see the <a href="#component-specific-variables">example</a> above.</li>
 <li><strong>Cross-component substitution</strong>: <a href="https://yaml.org/" target="_blank">YAML</a> is quite an intricate language and with some of its <a href="https://yaml.org/spec/1.2.2/#692-node-anchors" target="_blank">magic</a> one could write cross-component references.</li>
 </ol>
 
