@@ -103,6 +103,33 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                 },
             )
 
+    def test_substitute_in_typed_config_fields(
+        self, connector_config: KafkaConnectorConfig
+    ) -> None:
+        connector = KafkaSourceConnector(
+            name=CONNECTOR_NAME,
+            config={
+                **connector_config.model_dump(),
+                "tasks.max": "${component.max_tasks}",
+                "errors.log.enable": "${config.retain_clean_jobs}",
+                "transaction.boundary": "${component.boundary}",
+            },
+            **{"max_tasks": 3, "boundary": "interval"},
+        )
+        assert connector.config.tasks_max == 3
+        assert connector.config.errors_log_enable is False
+        assert connector.config.transaction_boundary == "interval"
+
+        with pytest.raises(ValidationError):
+            KafkaSourceConnector(
+                name=CONNECTOR_NAME,
+                config={
+                    **connector_config.model_dump(),
+                    "transaction.boundary": "${component.boundary}",
+                },
+                **{"boundary": "invalid"},
+            )
+
     def test_from_section_raises_exception(
         self,
         connector_config: KafkaConnectorConfig,
