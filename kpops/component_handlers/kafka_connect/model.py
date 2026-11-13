@@ -28,9 +28,6 @@ class KafkaConnectorConfig(DescConfigModel):
 
     connector_class: str
     name: SkipJsonSchema[str]
-    topics: list[KafkaTopicStr] = []
-    topics_regex: str | None = None
-    errors_deadletterqueue_topic_name: KafkaTopicStr | None = None
 
     @override
     @staticmethod
@@ -54,6 +51,7 @@ class KafkaConnectorConfig(DescConfigModel):
         alias_generator=to_dot,
         json_schema_extra=json_schema_extra,
         populate_by_name=True,
+        polymorphic_serialization=True,
     )
 
     @field_validator("connector_class")
@@ -64,22 +62,9 @@ class KafkaConnectorConfig(DescConfigModel):
             raise ValueError(msg)
         return connector_class
 
-    @pydantic.field_validator("topics", mode="before")
-    @classmethod
-    def deserialize_topics(cls, topics: Any) -> list[KafkaTopic] | Any | None:
-        if isinstance(topics, str):
-            return [KafkaTopic(name=topic_name) for topic_name in topics.split(",")]
-        return topics
-
     @property
     def class_name(self) -> str:
         return self.connector_class.split(".")[-1]
-
-    @pydantic.field_serializer("topics")
-    def serialize_topics(self, topics: list[KafkaTopic]) -> str | None:
-        if not topics:
-            return None
-        return ",".join(topic.name for topic in topics)
 
     # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
     @model_serializer(mode="wrap", when_used="always")
@@ -93,6 +78,31 @@ class KafkaConnectorConfig(DescConfigModel):
             by_alias(self.__class__, name): to_str(value)
             for name, value in result.items()
         }
+
+
+class KafkaSinkConnectorConfig(KafkaConnectorConfig):
+    """Settings specific to Kafka sink connectors."""
+
+    topics: list[KafkaTopicStr] = []
+    topics_regex: str | None = None
+    errors_deadletterqueue_topic_name: KafkaTopicStr | None = None
+
+    @pydantic.field_validator("topics", mode="before")
+    @classmethod
+    def deserialize_topics(cls, topics: Any) -> list[KafkaTopic] | Any | None:
+        if isinstance(topics, str):
+            return [KafkaTopic(name=topic_name) for topic_name in topics.split(",")]
+        return topics
+
+    @pydantic.field_serializer("topics")
+    def serialize_topics(self, topics: list[KafkaTopic]) -> str | None:
+        if not topics:
+            return None
+        return ",".join(topic.name for topic in topics)
+
+
+class KafkaSourceConnectorConfig(KafkaConnectorConfig):
+    """Settings specific to Kafka source connectors."""
 
 
 class ConnectorCurrentState(UpperStrEnum):
