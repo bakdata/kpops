@@ -1,0 +1,9 @@
+# KPOps
+
+> Deploy Kafka pipelines to Kubernetes.
+
+The documentation is versioned. Use the version matching the KPOps version of the project.
+
+## Versions
+
+- [dev](https://bakdata.github.io/kpops/dev/llms.txt): [full text](https://bakdata.github.io/kpops/dev/llms-full.txt)
