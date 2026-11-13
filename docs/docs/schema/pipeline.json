@@ -1958,7 +1958,7 @@
             "properties": {
                 "config": {
                     "$ref": "#/$defs/KafkaSinkConnectorConfig",
-                    "description": "Sink connector config"
+                    "description": "Connector config"
                 },
                 "enabled": {
                     "default": true,
@@ -2098,7 +2098,7 @@
             "properties": {
                 "config": {
                     "$ref": "#/$defs/KafkaSourceConnectorConfig",
-                    "description": "Source connector config"
+                    "description": "Connector config"
                 },
                 "enabled": {
                     "default": true,

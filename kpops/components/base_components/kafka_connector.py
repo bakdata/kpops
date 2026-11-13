@@ -4,13 +4,12 @@ from abc import ABC
 from typing import Any, override
 
 import structlog
-from pydantic import PrivateAttr, ValidationInfo, field_validator
+from pydantic import ValidationInfo, field_validator
 
 from kpops.component_handlers import get_handlers
 from kpops.component_handlers.kafka_connect.model import (
     ConnectorNewState,
     KafkaConnectorConfig,
-    KafkaConnectorType,
     KafkaSinkConnectorConfig,
     KafkaSourceConnectorConfig,
 )
@@ -33,7 +32,6 @@ class KafkaConnector[C: KafkaConnectorConfig = KafkaConnectorConfig](
 
     config: C
     state: ConnectorNewState | None = None
-    _connector_type: KafkaConnectorType = PrivateAttr()
 
     @field_validator("config", mode="before")
     @classmethod
@@ -87,23 +85,11 @@ class KafkaConnector[C: KafkaConnectorConfig = KafkaConnectorConfig](
 
 
 class KafkaSourceConnector(KafkaConnector[KafkaSourceConnectorConfig]):
-    """Kafka source connector model.
-
-    :param config: Source connector config
-    """
-
-    config: KafkaSourceConnectorConfig
-    _connector_type: KafkaConnectorType = PrivateAttr(KafkaConnectorType.SOURCE)
+    """Kafka source connector model."""
 
 
 class KafkaSinkConnector(ConsumesTopics, KafkaConnector[KafkaSinkConnectorConfig]):
-    """Kafka sink connector model.
-
-    :param config: Sink connector config
-    """
-
-    config: KafkaSinkConnectorConfig
-    _connector_type: KafkaConnectorType = PrivateAttr(KafkaConnectorType.SINK)
+    """Kafka sink connector model."""
 
     @property
     @override
