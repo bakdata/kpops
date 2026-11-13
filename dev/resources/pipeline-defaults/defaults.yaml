@@ -213,10 +213,6 @@ consumer-producer-app:
 # Parent of: StreamsBootstrap
 # Child of: KubernetesApp
 helm-app:
-  values: # required
-    image: exampleImage # Example
-    debug: false # Example
-    commandLine: {} # Example
   # Helm repository configuration (optional)
   # If not set the helm repo add will not be called. Useful when using local Helm charts
   repo_config:
@@ -227,6 +223,10 @@ helm-app:
       password: pass
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
+  values: # required
+    image: exampleImage # Example
+    debug: false # Example
+    commandLine: {} # Example
 # Base component for Kafka-based components.
 #
 # Parent of: StreamsBootstrap, KafkaConnector
