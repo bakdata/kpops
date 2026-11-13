@@ -63,38 +63,43 @@ class KafkaTopicConfigs(KeyValueConfigModel):
 
     cleanup_policy: str | None = None
     compression_type: (
-        Literal["uncompressed", "zstd", "lz4", "snappy", "gzip", "producer"] | None
+        Templatable[
+            Literal["uncompressed", "zstd", "lz4", "snappy", "gzip", "producer"]
+        ]
+        | None
     ) = None
-    compression_gzip_level: int | None = None
-    compression_lz4_level: int | None = None
-    compression_zstd_level: int | None = None
-    delete_retention_ms: int | None = None
-    file_delete_delay_ms: int | None = None
-    flush_messages: int | None = None
-    flush_ms: int | None = None
-    index_interval_bytes: int | None = None
-    local_retention_bytes: int | None = None
-    local_retention_ms: int | None = None
-    max_compaction_lag_ms: int | None = None
-    max_message_bytes: int | None = None
-    message_downconversion_enable: bool | None = None
-    message_timestamp_after_max_ms: int | None = None
-    message_timestamp_before_max_ms: int | None = None
-    message_timestamp_type: Literal["CreateTime", "LogAppendTime"] | None = None
-    min_cleanable_dirty_ratio: float | None = None
-    min_compaction_lag_ms: int | None = None
-    min_insync_replicas: int | None = None
-    preallocate: bool | None = None
-    remote_log_copy_disable: bool | None = None
-    remote_log_delete_on_disable: bool | None = None
-    remote_storage_enable: bool | None = None
-    retention_bytes: int | None = None
-    retention_ms: int | None = None
-    segment_bytes: int | None = None
-    segment_index_bytes: int | None = None
-    segment_jitter_ms: int | None = None
-    segment_ms: int | None = None
-    unclean_leader_election_enable: bool | None = None
+    compression_gzip_level: Templatable[int] | None = None
+    compression_lz4_level: Templatable[int] | None = None
+    compression_zstd_level: Templatable[int] | None = None
+    delete_retention_ms: Templatable[int] | None = None
+    file_delete_delay_ms: Templatable[int] | None = None
+    flush_messages: Templatable[int] | None = None
+    flush_ms: Templatable[int] | None = None
+    index_interval_bytes: Templatable[int] | None = None
+    local_retention_bytes: Templatable[int] | None = None
+    local_retention_ms: Templatable[int] | None = None
+    max_compaction_lag_ms: Templatable[int] | None = None
+    max_message_bytes: Templatable[int] | None = None
+    message_downconversion_enable: Templatable[bool] | None = None
+    message_timestamp_after_max_ms: Templatable[int] | None = None
+    message_timestamp_before_max_ms: Templatable[int] | None = None
+    message_timestamp_type: (
+        Templatable[Literal["CreateTime", "LogAppendTime"]] | None
+    ) = None
+    min_cleanable_dirty_ratio: Templatable[float] | None = None
+    min_compaction_lag_ms: Templatable[int] | None = None
+    min_insync_replicas: Templatable[int] | None = None
+    preallocate: Templatable[bool] | None = None
+    remote_log_copy_disable: Templatable[bool] | None = None
+    remote_log_delete_on_disable: Templatable[bool] | None = None
+    remote_storage_enable: Templatable[bool] | None = None
+    retention_bytes: Templatable[int] | None = None
+    retention_ms: Templatable[int] | None = None
+    segment_bytes: Templatable[int] | None = None
+    segment_index_bytes: Templatable[int] | None = None
+    segment_jitter_ms: Templatable[int] | None = None
+    segment_ms: Templatable[int] | None = None
+    unclean_leader_election_enable: Templatable[bool] | None = None
 
 
 class TopicConfig(DescConfigModel):
