@@ -11,20 +11,12 @@ from pydantic import (
     computed_field,
     field_serializer,
     field_validator,
-    model_serializer,
 )
 from pydantic.json_schema import SkipJsonSchema
 
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
 from kpops.utils.enum import UpperStrEnum
-from kpops.utils.pydantic import (
-    DescConfigModel,
-    Templatable,
-    by_alias,
-    exclude_by_value,
-    to_dot,
-    to_str,
-)
+from kpops.utils.pydantic import KeyValueConfigModel, Templatable
 
 CONFIG_PROVIDER_PATTERN = re.compile(r"\$\{[\w.-]+:[^}]*\}")
 
@@ -47,7 +39,7 @@ ConnectorConfigValue = Templatable[
 ]
 
 
-class KafkaConnectorConfig(DescConfigModel):
+class KafkaConnectorConfig(KeyValueConfigModel):
     """Settings specific to Kafka Connectors.
 
     Connector config reference: https://kafka.apache.org/documentation/#connectconfigs
@@ -102,10 +94,7 @@ class KafkaConnectorConfig(DescConfigModel):
         }
 
     model_config: ClassVar[ConfigDict] = ConfigDict(
-        extra="allow",
-        alias_generator=to_dot,
         json_schema_extra=json_schema_extra,
-        populate_by_name=True,
         polymorphic_serialization=True,
     )
 
@@ -120,19 +109,6 @@ class KafkaConnectorConfig(DescConfigModel):
     @property
     def class_name(self) -> str:
         return self.connector_class.split(".")[-1]
-
-    # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
-    @model_serializer(mode="wrap", when_used="always")
-    def serialize_model(
-        self,
-        default_serialize_handler: pydantic.SerializerFunctionWrapHandler,
-        info: pydantic.SerializationInfo,
-    ) -> dict[str, str]:
-        result = exclude_by_value(default_serialize_handler(self), None)
-        return {
-            by_alias(self.__class__, name): to_str(value)
-            for name, value in result.items()
-        }
 
 
 class KafkaSinkConnectorConfig(KafkaConnectorConfig):

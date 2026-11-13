@@ -187,6 +187,33 @@ class DescConfigModel(BaseModel):
     )
 
 
+class KeyValueConfigModel(DescConfigModel):
+    """Config presented as a flat map of dot-separated keys to string values.
+
+    Fields are serialized with their dotted alias, e.g. ``cleanup_policy`` as ``cleanup.policy``.
+    Configs that are not declared are passed through as is.
+    """
+
+    model_config: ClassVar[ConfigDict] = ConfigDict(
+        extra="allow",
+        alias_generator=to_dot,
+        populate_by_name=True,
+    )
+
+    # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
+    @model_serializer(mode="wrap", when_used="always")
+    def serialize_model(
+        self,
+        default_serialize_handler: SerializerFunctionWrapHandler,
+        info: SerializationInfo,
+    ) -> dict[str, str]:
+        result = exclude_by_value(default_serialize_handler(self), None)
+        return {
+            by_alias(self.__class__, name): to_str(value)
+            for name, value in result.items()
+        }
+
+
 @final
 class YamlConfigSettingsSource(PydanticBaseSettingsSource):
     """Loads variables from a YAML file at the project's root."""
