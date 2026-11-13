@@ -1956,17 +1956,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#deterministic-key-order" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Deterministic key order
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#defaults-schema" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
@@ -2522,17 +2511,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#deterministic-key-order" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Deterministic key order
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#defaults-schema" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
@@ -2618,10 +2596,6 @@
 <p>Kafka connectors are now <code>KafkaApp</code>s. Settings defined under <code>kafka-app</code> in <code>defaults.yaml</code> now also apply to <code>kafka-connector</code>, <code>kafka-source-connector</code> and <code>kafka-sink-connector</code>.</p>
 <h2 id="separate-config-for-sink-and-source-connectors">Separate config for sink and source connectors<a class="headerlink" href="#separate-config-for-sink-and-source-connectors" title="Permanent link">&para;</a></h2>
 <p><code>topics</code>, <code>topics.regex</code> and <code>errors.deadletterqueue.topic.name</code> are sink-only settings. The schema now offers them only under <code>kafka-sink-connector</code>, no longer under <code>kafka-connector</code> and <code>kafka-source-connector</code>. If set on a source connector, they are still passed through to Kafka Connect as is.</p>
-<h2 id="deterministic-key-order">Deterministic key order<a class="headerlink" href="#deterministic-key-order" title="Permanent link">&para;</a></h2>
-<p>The generated pipeline no longer depends on whether a setting comes from <code>pipeline.yaml</code> or <code>defaults.yaml</code>. Component keys are grouped in a fixed order: identity (<code>type</code>, <code>name</code>, <code>prefix</code>), lifecycle (<code>enabled</code>, <code>state</code>), input (<code>from</code>), output (<code>to</code>), target (<code>namespace</code>), artifact (<code>version</code>, <code>timeout</code>, …), custom component fields, configuration (<code>values</code>, <code>config</code>), extra fields (alphabetical) and computed fields (<code>helm_release_name</code>, …).</p>
-<p>All other mappings, such as <code>values</code>, <code>labels</code>, <code>from.topics</code> and <code>to.topics</code>, are sorted alphabetically at every level. List order is kept.</p>
-<p>This changes values derived from these mappings, e.g. <code>values.kafka.inputTopics</code> is now ordered alphabetically. Expect a one-time diff and rollout of affected apps when upgrading. If several topics of the <code>to</code> section map to the same single value (e.g. two <code>error</code> topics), the alphabetically last topic wins.</p>
 <h2 id="defaults-schema">Defaults schema<a class="headerlink" href="#defaults-schema" title="Permanent link">&para;</a></h2>
 <p><code>from</code> and <code>to</code> are no longer offered under <code>pipeline-component</code>, <code>kubernetes-app</code>, <code>helm-app</code>, <code>kafka-app</code> and <code>streams-bootstrap</code> in <code>defaults.yaml</code> (and <code>from</code> under <code>kafka-connector</code>). Define them under the concrete component keys instead.</p>
 <h4 id="defaultsyaml">defaults.yaml<a class="headerlink" href="#defaultsyaml" title="Permanent link">&para;</a></h4>
@@ -2675,36 +2649,6 @@
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3"></a><span class="w"> </span>     config: MyConnectorConfig
 </span></code></pre></div></td></tr></table></div>
 <ul>
-<li>Component fields are placed in a <code>Section</code> of the generated output. Fields without a section go to <code>Section.CUSTOM</code>, after the artifact and before <code>values</code>/<code>config</code>. Overridden fields keep the section of their parent. Assign a section with <code>Annotated</code>, for computed fields on the return type:</li>
-</ul>
-<div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1"> 1</a></span>
-<span class="normal"><a href="#__codelineno-5-2"> 2</a></span>
-<span class="normal"><a href="#__codelineno-5-3"> 3</a></span>
-<span class="normal"><a href="#__codelineno-5-4"> 4</a></span>
-<span class="normal"><a href="#__codelineno-5-5"> 5</a></span>
-<span class="normal"><a href="#__codelineno-5-6"> 6</a></span>
-<span class="normal"><a href="#__codelineno-5-7"> 7</a></span>
-<span class="normal"><a href="#__codelineno-5-8"> 8</a></span>
-<span class="normal"><a href="#__codelineno-5-9"> 9</a></span>
-<span class="normal"><a href="#__codelineno-5-10">10</a></span>
-<span class="normal"><a href="#__codelineno-5-11">11</a></span>
-<span class="normal"><a href="#__codelineno-5-12">12</a></span>
-<span class="normal"><a href="#__codelineno-5-13">13</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2"></a>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">computed_field</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4"></a>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5"></a><span class="kn">from</span><span class="w"> </span><span class="nn">kpops.components.base_components</span><span class="w"> </span><span class="kn">import</span> <span class="n">HelmApp</span><span class="p">,</span> <span class="n">Section</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6"></a>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7"></a>
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8"></a><span class="k">class</span><span class="w"> </span><span class="nc">MyApp</span><span class="p">(</span><span class="n">HelmApp</span><span class="p">):</span>
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9"></a>    <span class="n">my_namespace_label</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Section</span><span class="o">.</span><span class="n">TARGET</span><span class="p">]</span>
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10"></a>
-</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11"></a>    <span class="nd">@computed_field</span>
-</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12"></a>    <span class="nd">@property</span>
-</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">my_full_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Section</span><span class="o">.</span><span class="n">IDENTITY</span><span class="p">]:</span> <span class="o">...</span>
-</span></code></pre></div></td></tr></table></div>
-<ul>
-<li><code>GENERATE_LEADING_KEYS</code> and <code>leading_keys_first</code> have been removed from <code>kpops.components.base_components.pipeline_component</code>. Use <code>Section</code> instead.</li>
 <li><code>ConsumerAppValues</code> gained the generic base <code>BaseConsumerAppValues[K]</code>.</li>
 <li><code>StreamsBootstrap.repo_config</code> and <code>StreamsBootstrap.version</code> are now typed as optional.</li>
 </ul>
