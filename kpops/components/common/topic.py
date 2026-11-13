@@ -7,14 +7,7 @@ from typing import Annotated, Any, ClassVar, Literal
 import pydantic
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from kpops.utils.pydantic import (
-    DescConfigModel,
-    Templatable,
-    by_alias,
-    exclude_by_value,
-    to_dot,
-    to_str,
-)
+from kpops.utils.pydantic import DescConfigModel, KeyValueConfigModel, Templatable
 
 
 class OutputTopicTypes(StrEnum):
@@ -28,7 +21,7 @@ class OutputTopicTypes(StrEnum):
     ERROR = auto()
 
 
-class KafkaTopicConfigs(DescConfigModel):
+class KafkaTopicConfigs(KeyValueConfigModel):
     """Kafka topic-level configs.
 
     Topic config reference: https://docs.confluent.io/platform/current/installation/configuration/topic-configs.html
@@ -102,25 +95,6 @@ class KafkaTopicConfigs(DescConfigModel):
     segment_jitter_ms: int | None = None
     segment_ms: int | None = None
     unclean_leader_election_enable: bool | None = None
-
-    model_config: ClassVar[ConfigDict] = ConfigDict(
-        extra="allow",
-        alias_generator=to_dot,
-        json_schema_extra=DescConfigModel.json_schema_extra,
-        populate_by_name=True,
-    )
-
-    @pydantic.model_serializer(mode="wrap", when_used="always")
-    def serialize_model(
-        self,
-        default_serialize_handler: pydantic.SerializerFunctionWrapHandler,
-        info: pydantic.SerializationInfo,
-    ) -> dict[str, str]:
-        result = exclude_by_value(default_serialize_handler(self), None)
-        return {
-            by_alias(self.__class__, name): to_str(value)
-            for name, value in result.items()
-        }
 
 
 class TopicConfig(DescConfigModel):
