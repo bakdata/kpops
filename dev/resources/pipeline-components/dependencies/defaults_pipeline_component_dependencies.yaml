@@ -6,8 +6,8 @@ consumer-producer-app.yaml:
 - to.yaml
 - values-consumer-producer-app.yaml
 helm-app.yaml:
-- values-helm-app.yaml
 - repo_config-helm-app.yaml
+- values-helm-app.yaml
 kafka-app.yaml:
 - prefix.yaml
 kafka-connector.yaml:
