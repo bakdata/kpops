@@ -26,10 +26,15 @@ class CustomApp(KubernetesApp[CustomValues]):
     def my_derived(self) -> str:
         return "derived"
 
-    @computed_field
+    @computed_field(alias="myTarget")
     @property
     def my_target(self) -> Annotated[str, Section.TARGET]:
         return "target"
+
+    @computed_field(alias="myAliasedDerived")
+    @property
+    def my_aliased_derived(self) -> str:
+        return "derived"
 
 
 @pytest.mark.parametrize(
@@ -68,10 +73,11 @@ def test_generate_key_order() -> None:
         "my_name",
         "enabled",
         "namespace",
-        "my_target",
+        "myTarget",
         "my_flag",
         "values",
         "extra_a",
         "extra_b",
         "my_derived",
+        "myAliasedDerived",
     ]

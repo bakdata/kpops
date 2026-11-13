@@ -74,7 +74,7 @@ def field_order(model: type[BaseModel]) -> dict[str, tuple[Section, int]]:
                 if get_origin(return_type) is Annotated
                 else ()
             )
-            register(name, _find_section(metadata), Section.DERIVED)
+            register(computed.alias or name, _find_section(metadata), Section.DERIVED)
     return order
 
 
