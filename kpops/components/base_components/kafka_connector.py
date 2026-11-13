@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Any, override
+from typing import Annotated, Any, override
 
 import structlog
 from pydantic import PrivateAttr, ValidationInfo, field_validator
@@ -15,6 +15,7 @@ from kpops.component_handlers.kafka_connect.model import (
     KafkaSourceConnectorConfig,
 )
 from kpops.components.base_components.kafka_app import ConsumesTopics, ProducesTopics
+from kpops.components.base_components.section import Section
 from kpops.components.common.topic import KafkaTopic
 
 log = structlog.get_logger("KafkaConnector")
@@ -31,8 +32,8 @@ class KafkaConnector[C: KafkaConnectorConfig = KafkaConnectorConfig](
     :param state: Connector state
     """
 
-    config: C
-    state: ConnectorNewState | None = None
+    config: Annotated[C, Section.CONFIG]
+    state: Annotated[ConnectorNewState | None, Section.LIFECYCLE] = None
     _connector_type: KafkaConnectorType = PrivateAttr()
 
     @field_validator("config", mode="before")

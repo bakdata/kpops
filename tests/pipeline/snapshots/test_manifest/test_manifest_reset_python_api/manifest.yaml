@@ -4,7 +4,7 @@ kind: KafkaTopic
 metadata:
   labels:
     strimzi.io/cluster: my-cluster
-  name: my-producer-app-output-topic
+  name: my-labeled-producer-app-topic-output
 spec:
   config: {}
   partitions: 1
@@ -16,7 +16,7 @@ kind: KafkaTopic
 metadata:
   labels:
     strimzi.io/cluster: my-cluster
-  name: my-labeled-producer-app-topic-output
+  name: my-producer-app-output-topic
 spec:
   config: {}
   partitions: 1
@@ -88,18 +88,6 @@ kind: KafkaTopic
 metadata:
   labels:
     strimzi.io/cluster: my-cluster
-  name: my-output-topic
-spec:
-  config: {}
-  partitions: 1
-  replicas: 1
-
----
-apiVersion: kafka.strimzi.io/v1beta2
-kind: KafkaTopic
-metadata:
-  labels:
-    strimzi.io/cluster: my-cluster
   name: my-error-topic
 spec:
   config: {}
@@ -113,6 +101,18 @@ metadata:
   labels:
     strimzi.io/cluster: my-cluster
   name: my-labeled-topic-output
+spec:
+  config: {}
+  partitions: 1
+  replicas: 1
+
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: my-cluster
+  name: my-output-topic
 spec:
   config: {}
   partitions: 1

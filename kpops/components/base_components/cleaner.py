@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import override
+from typing import Annotated, override
 
 from kpops.component_handlers.helm.model import HelmFlags
 from kpops.component_handlers.helm.utils import (
@@ -7,13 +7,14 @@ from kpops.component_handlers.helm.utils import (
     create_helm_release_name,
 )
 from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
+from kpops.components.base_components.section import Section
 from kpops.config import get_config
 
 
 class Cleaner[V: HelmAppValues = HelmAppValues](HelmApp[V], ABC):
     """Generic Helm app for cleaning or resetting."""
 
-    suffix: str = "-clean"
+    suffix: Annotated[str, Section.IDENTITY] = "-clean"
 
     @property
     @override

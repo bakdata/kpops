@@ -17,11 +17,10 @@ from kpops.components.base_components.kafka_app import (
     ProducesTopics,
 )
 from kpops.components.base_components.kafka_connector import KafkaConnector
-from kpops.components.base_components.pipeline_component import (
-    PipelineComponent,
-    leading_keys_first,
-)
+from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.components.base_components.section import section_sort_key
 from kpops.core.registry import Registry
+from kpops.utils.pydantic import by_alias
 
 registry = Registry()
 registry.discover_components()
@@ -71,22 +70,24 @@ def has_direct_capability_field(
     )
 
 
+def sorted_fields(component: type[PipelineComponent]) -> list[str]:
+    """Names of the serialized fields of a component in generate order."""
+    key = section_sort_key(component)
+    return sorted(
+        (
+            field_name
+            for field_name, field_info in component.model_fields.items()
+            if not field_info.exclude
+        ),
+        key=lambda field_name: key(by_alias(component, field_name)),
+    )
+
+
 PATH_DOCS_RESOURCES = ROOT / "docs/docs/resources"
 
 KPOPS_COMPONENTS = tuple(registry.components)
 KPOPS_COMPONENTS_SECTIONS = {
-    component.type: [
-        field_name
-        for field_name, _ in leading_keys_first(
-            (
-                (field_name, field_info)
-                for field_name, field_info in component.model_fields.items()
-                if not field_info.exclude
-            ),
-            key=lambda field: field[1].serialization_alias or field[0],
-        )
-    ]
-    for component in KPOPS_COMPONENTS
+    component.type: sorted_fields(component) for component in KPOPS_COMPONENTS
 }
 KPOPS_COMPONENTS_INHERITANCE_REF = {
     component.type: {

@@ -1,17 +1,18 @@
 - type: my-producer-app
   name: my-producer-app
-  enabled: true
   prefix: resources-streams-bootstrap-
+  enabled: true
   to:
     topics:
-      my-producer-app-output-topic:
-        type: output
-        configs: {}
       my-labeled-producer-app-topic-output:
         configs: {}
         label: my-producer-app-output-topic-label
+      my-producer-app-output-topic:
+        type: output
+        configs: {}
     models: {}
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: my-registry/my-producer-image
     imageTag: 1.0.0
@@ -23,13 +24,12 @@
         my-producer-app-output-topic-label: my-labeled-producer-app-topic-output
       outputTopic: my-producer-app-output-topic
     commandLine:
-      STR: fake-arg-value
       BOOL: true
-      INT: 1
       FLOAT: 0.1
+      INT: 1
+      STR: fake-arg-value
     files:
       log4j2.xml:
-        mountPath: app/resources
         content: |
           <?xml version="1.0" encoding="UTF-8"?>
           <Configuration>
@@ -44,37 +44,37 @@
                   </Root>
               </Loggers>
           </Configuration>
+        mountPath: app/resources
     schedule: 30 3/8 * * *
-  version: 3.6.1
   helm_release_name: resources-streams-bootstrap-my-producer-app
   helm_name_override: resources-streams-bootstrap-my-producer-app
 - type: my-streams-app
   name: my-streams-app
-  enabled: true
   prefix: resources-streams-bootstrap-
+  enabled: true
   from:
     topics:
-      my-input-topic:
-        type: input
-      my-labeled-input-topic:
-        label: my-input-topic-label
       my-input-pattern:
         type: pattern
+      my-input-topic:
+        type: input
       my-labeled-input-pattern:
         type: pattern
         label: my-input-topic-labeled-pattern
+      my-labeled-input-topic:
+        label: my-input-topic-label
     components: {}
   to:
     topics:
-      my-output-topic:
-        type: output
-        configs: {}
       my-error-topic:
         type: error
         configs: {}
       my-labeled-topic-output:
         configs: {}
         label: my-output-topic-label
+      my-output-topic:
+        type: output
+        configs: {}
       resources-streams-bootstrap-my-streams-app-error:
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
@@ -83,6 +83,7 @@
           cleanup.policy: compact,delete
     models: {}
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: my-registry/my-streams-app-image
     imageTag: 1.0.0
@@ -109,7 +110,6 @@
       CONVERT_XML: true
     files:
       log4j2.xml:
-        mountPath: app/resources
         content: |
           <?xml version="1.0" encoding="UTF-8"?>
           <Configuration>
@@ -124,6 +124,7 @@
                   </Root>
               </Loggers>
           </Configuration>
+        mountPath: app/resources
     javaOptions:
       maxRAMPercentage: 85
       others: []
@@ -143,6 +144,5 @@
                   values: []
             weight: 1
     statefulSet: false
-  version: 3.6.1
   helm_release_name: resources-streams-bootstrap-my-streams-app
   helm_name_override: resources-streams-bootstrap-my-streams-app

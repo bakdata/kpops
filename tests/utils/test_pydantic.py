@@ -248,8 +248,8 @@ def test_key_value_config_model() -> None:
     )
     assert config.retention_ms == 1000
     assert config.cleanup_policy == "compact"
-    assert config.model_dump() == {
-        "retention.ms": "1000",
-        "cleanup.policy": "compact",
-        "extra.flag": "true",
-    }
+    assert list(config.model_dump().items()) == [
+        ("cleanup.policy", "compact"),
+        ("extra.flag", "true"),
+        ("retention.ms", "1000"),
+    ]
