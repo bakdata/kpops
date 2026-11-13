@@ -94,18 +94,18 @@
         configs: {}
     models: {}
   config:
-    connector.class: io.confluent.connect.elasticsearch.ElasticsearchSinkConnector
-    name: resources-read-from-component-inflate-step-inflated-sink-connector
-    tasks.max: '1'
-    topics: resources-read-from-component-inflate-step
     batch.size: '2000'
     behavior.on.malformed.documents: warn
     behavior.on.null.values: delete
     connection.compression: 'true'
+    connector.class: io.confluent.connect.elasticsearch.ElasticsearchSinkConnector
     key.ignore: 'false'
     linger.ms: '5000'
     max.buffered.records: '20000'
+    name: resources-read-from-component-inflate-step-inflated-sink-connector
     read.timeout.ms: '120000'
+    tasks.max: '1'
+    topics: resources-read-from-component-inflate-step
     transforms.changeTopic.replacement: resources-read-from-component-inflate-step-index-v1
 - type: streams-app
   name: inflate-step-inflated-streams-app
@@ -195,18 +195,18 @@
         configs: {}
     models: {}
   config:
-    connector.class: io.confluent.connect.elasticsearch.ElasticsearchSinkConnector
-    name: resources-read-from-component-inflate-step-without-prefix-inflated-sink-connector
-    tasks.max: '1'
-    topics: resources-read-from-component-inflate-step-without-prefix
     batch.size: '2000'
     behavior.on.malformed.documents: warn
     behavior.on.null.values: delete
     connection.compression: 'true'
+    connector.class: io.confluent.connect.elasticsearch.ElasticsearchSinkConnector
     key.ignore: 'false'
     linger.ms: '5000'
     max.buffered.records: '20000'
+    name: resources-read-from-component-inflate-step-without-prefix-inflated-sink-connector
     read.timeout.ms: '120000'
+    tasks.max: '1'
+    topics: resources-read-from-component-inflate-step-without-prefix
     transforms.changeTopic.replacement: resources-read-from-component-inflate-step-without-prefix-index-v1
 - type: streams-app
   name: inflate-step-without-prefix-inflated-streams-app

@@ -40,16 +40,16 @@
   prefix: resources-kafka-connect-sink-
   enabled: true
   config:
-    connector.class: io.confluent.connect.elasticsearch.ElasticsearchSinkConnector
-    name: resources-kafka-connect-sink-es-sink-connector
-    tasks.max: '1'
-    topics: example-output
     batch.size: '2000'
     behavior.on.malformed.documents: warn
     behavior.on.null.values: delete
     connection.compression: 'true'
+    connector.class: io.confluent.connect.elasticsearch.ElasticsearchSinkConnector
     key.ignore: 'false'
     linger.ms: '5000'
     max.buffered.records: '20000'
+    name: resources-kafka-connect-sink-es-sink-connector
     read.timeout.ms: '120000'
+    tasks.max: '1'
+    topics: example-output
 
