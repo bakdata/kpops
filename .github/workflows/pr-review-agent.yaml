@@ -1,0 +1,112 @@
+name: PR review
+
+on:
+  pull_request_target:
+    types: [opened, ready_for_review]
+
+concurrency:
+  group: pr-review-agent-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  MODEL: openai/gpt-6.1-sol
+  THINKING: high
+  PR_NUMBER: ${{ github.event.pull_request.number }}
+  HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+
+jobs:
+  review:
+    # forks are never reviewed, the agent runs PR code with secrets in the base branch context
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.sender.type != 'Bot' && !github.event.pull_request.draft
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    # no write access since the agent has bash, posting happens in a separate job
+    permissions:
+      contents: read
+    name: Review
+    env:
+      TRUSTED_DIR: ${{ github.workspace }}/trusted
+    steps:
+      # the prompt, skill and tool versions must not come from the PR under review
+      - uses: actions/checkout@v7
+        with:
+          path: trusted
+          sparse-checkout: |
+            /.github/pr-review/
+            /.agents/skills/
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
+      - uses: actions/checkout@v7
+        with:
+          path: pr
+          ref: ${{ env.HEAD_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install Pi
+        uses: jdx/mise-action@82a612c5ab8bcda7cc5db6b7e81a8e7584c3dc6e # v5.2.3
+        env:
+          MISE_NO_HOOKS: "1"
+        with:
+          version: ${{ vars.MISE_VERSION }}
+          working_directory: ${{ env.TRUSTED_DIR }}/.github/pr-review
+
+      - name: Review
+        working-directory: pr
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_KEY }}
+          PI_CODING_AGENT_DIR: ${{ runner.temp }}/pi
+          PI_SKIP_VERSION_CHECK: 1
+          PI_TELEMETRY: 0
+          TITLE: ${{ github.event.pull_request.title }}
+          BODY: ${{ github.event.pull_request.body }}
+          BASE: ${{ github.event.pull_request.base.ref }}
+        run: |
+          printf '# #%s: %s\n\n%s\n\nBase branch: %s\n' "$PR_NUMBER" "$TITLE" "$BODY" "$BASE" > "$RUNNER_TEMP/context.md"
+          pi --print --no-session --offline --no-approve \
+            --no-extensions --extension builtin:codemode \
+            --no-skills --skill "$TRUSTED_DIR/.agents/skills/code-review" \
+            --no-prompt-templates --no-themes --no-mcp \
+            --tools read,grep,find,ls,bash,codemode \
+            --model "$MODEL" --thinking "$THINKING" \
+            --append-system-prompt "$TRUSTED_DIR/.github/pr-review/prompt.md" \
+            "@$RUNNER_TEMP/context.md" "Review this pull request." \
+            > "$RUNNER_TEMP/review.json"
+          cat "$RUNNER_TEMP/review.json"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: review
+          path: ${{ runner.temp }}/review.json
+          retention-days: 7
+
+  post:
+    needs: review
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: write
+    name: Post
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: /.github/pr-review/
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: review
+          path: ${{ runner.temp }}
+
+      - name: Post review
+        uses: actions/github-script@v9
+        env:
+          REVIEW_FILE: ${{ runner.temp }}/review.json
+        with:
+          retries: 3
+          script: |
+            const { default: postReview } = await import(`${process.env.GITHUB_WORKSPACE}/.github/pr-review/post-review.mjs`);
+            await postReview({ github, context, core });

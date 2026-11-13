@@ -113,7 +113,7 @@ jobs:
         env:
           MISE_NO_HOOKS: "1"
         with:
-          version: "2026.10.5"
+          version: ${{ vars.MISE_VERSION }}
           install_args: "hk"
 
       - name: Generate schema (kpops schema)
