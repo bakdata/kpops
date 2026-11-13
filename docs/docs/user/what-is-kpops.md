@@ -4,6 +4,10 @@ With a couple of easy commands in the shell, and a [`pipeline.yaml`](#example) o
 
 [^1]: A Kafka pipeline can consist of consecutive [streaming applications](./core-concepts/components/streams-app.md), [producers](./core-concepts/components/producer-app.md), and [connectors](./core-concepts/components/kafka-connector.md).
 
+!!! tip "Working with AI agents"
+
+    Point your agent to [`llms.txt`](https://bakdata.github.io/kpops/llms.txt), e.g. to write pipelines or migrate a project to a new major version.
+
 ## Key features
 
 - **Deploy Kafka apps to Kubernetes**: KPOps allows to deploy consecutive Kafka Streams applications and producers using an easy-to-read and -write pipeline definition.
