@@ -1,0 +1,55 @@
+# KPOps
+
+KPOps deploys Kafka pipelines to Kubernetes. Pipelines are defined in `pipeline.yaml`, shared settings in `defaults.yaml` and global settings in `config.yaml`.
+
+JSON schemas for validation: [pipeline](schema/pipeline.json), [defaults](schema/defaults.json), [config](schema/config.json).
+
+For custom Python components, read the installed `kpops` package source. The [developer guide](developer/getting-started/) covers contributing to KPOps. Release notes are in the [changelog](user/changelog/).
+
+## Getting started
+
+- [What is KPOps](<https://bakdata.github.io/kpops/dev/user/what-is-kpops/index.md>)
+- [Quick start](<https://bakdata.github.io/kpops/dev/user/getting-started/quick-start/index.md>)
+- [Setup](<https://bakdata.github.io/kpops/dev/user/getting-started/setup/index.md>)
+- [Teardown](<https://bakdata.github.io/kpops/dev/user/getting-started/teardown/index.md>)
+- [ATM Fraud detection pipeline](<https://bakdata.github.io/kpops/dev/user/examples/atm-fraud-pipeline/index.md>)
+
+## Core concepts
+
+- [Overview](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/overview/index.md>)
+- [ConsumerApp](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/consumer-app/index.md>)
+- [ConsumerProducerApp](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/consumer-producer-app/index.md>)
+- [HelmApp](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/helm-app/index.md>)
+- [KafkaConnector](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/kafka-connector/index.md>)
+- [KafkaSinkConnector](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/kafka-sink-connector/index.md>)
+- [KafkaSourceConnector](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/kafka-source-connector/index.md>)
+- [KubernetesApp](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/kubernetes-app/index.md>)
+- [ProducerApp](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/producer-app/index.md>)
+- [StreamsApp](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/streams-app/index.md>)
+- [StreamsBootstrap](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/streams-bootstrap/index.md>)
+- [Config](<https://bakdata.github.io/kpops/dev/user/core-concepts/config/index.md>)
+- [Defaults](<https://bakdata.github.io/kpops/dev/user/core-concepts/defaults/index.md>)
+- [Operation Modes](<https://bakdata.github.io/kpops/dev/user/core-concepts/operation-mode/index.md>)
+- [Environment variables](<https://bakdata.github.io/kpops/dev/user/core-concepts/variables/environment_variables/index.md>)
+- [Substitution](<https://bakdata.github.io/kpops/dev/user/core-concepts/variables/substitution/index.md>)
+
+## References
+
+- [CLI usage](<https://bakdata.github.io/kpops/dev/user/references/cli-commands/index.md>)
+- [Editor integration](<https://bakdata.github.io/kpops/dev/user/references/editor-integration/index.md>)
+- [GitHub Actions](<https://bakdata.github.io/kpops/dev/user/references/ci-integration/github-actions/index.md>)
+
+## Migration guides
+
+- [Migrate from v1 to v2](<https://bakdata.github.io/kpops/dev/user/migration-guide/v1-v2/index.md>)
+- [Migrate from v10 to v11](<https://bakdata.github.io/kpops/dev/user/migration-guide/v10-v11/index.md>)
+- [Migrate from v11 to v12](<https://bakdata.github.io/kpops/dev/user/migration-guide/v11-v12/index.md>)
+- [Migrate from v12 to v13](<https://bakdata.github.io/kpops/dev/user/migration-guide/v12-v13/index.md>)
+- [Migrate from v2 to v3](<https://bakdata.github.io/kpops/dev/user/migration-guide/v2-v3/index.md>)
+- [Migrate from v3 to v4](<https://bakdata.github.io/kpops/dev/user/migration-guide/v3-v4/index.md>)
+- [Migrate from v4 to v5](<https://bakdata.github.io/kpops/dev/user/migration-guide/v4-v5/index.md>)
+- [Migrate from v5 to v6](<https://bakdata.github.io/kpops/dev/user/migration-guide/v5-v6/index.md>)
+- [Migrate from v6 to v7](<https://bakdata.github.io/kpops/dev/user/migration-guide/v6-v7/index.md>)
+- [Migrate from v7 to v8](<https://bakdata.github.io/kpops/dev/user/migration-guide/v7-v8/index.md>)
+- [Migrate from v8 to v9](<https://bakdata.github.io/kpops/dev/user/migration-guide/v8-v9/index.md>)
+- [Migrate from v9 to v10](<https://bakdata.github.io/kpops/dev/user/migration-guide/v9-v10/index.md>)

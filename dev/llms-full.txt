@@ -1,0 +1,3725 @@
+# KPOps
+
+KPOps deploys Kafka pipelines to Kubernetes. Pipelines are defined in `pipeline.yaml`, shared settings in `defaults.yaml` and global settings in `config.yaml`.
+
+JSON schemas for validation: [pipeline](schema/pipeline.json), [defaults](schema/defaults.json), [config](schema/config.json).
+
+For custom Python components, read the installed `kpops` package source. The [developer guide](developer/getting-started/) covers contributing to KPOps. Release notes are in the [changelog](user/changelog/).
+
+# Getting started
+
+# What is KPOps?
+
+With a couple of easy commands in the shell, and a [`pipeline.yaml`](<#example>) of under 30 lines, KPOps can not only [`deploy`](<https://bakdata.github.io/kpops/dev/user/references/cli-commands/index.md#kpops-deploy>) a Kafka pipeline[^/kpops/dev/user/what-is-kpops/#1] to a Kubernetes cluster, but also [`reset`](<https://bakdata.github.io/kpops/dev/user/references/cli-commands/index.md#kpops-reset>), [`clean`](<https://bakdata.github.io/kpops/dev/user/references/cli-commands/index.md#kpops-clean>) or [`destroy`](<https://bakdata.github.io/kpops/dev/user/references/cli-commands/index.md#kpops-destroy>) it!
+
+> [!TIP]
+>
+> **Working with AI agents**
+>
+> Point your agent to [`llms.txt`](<https://bakdata.github.io/kpops/llms.txt>), e.g. to write pipelines or migrate a project to a new major version.
+
+## Key features
+
+- **Deploy Kafka apps to Kubernetes**: KPOps allows to deploy consecutive Kafka Streams applications and producers using an easy-to-read and -write pipeline definition.
+- **Manage Kafka Connectors**: KPOps connects with your Kafka Connect cluster and deploys, validates, and deletes your connectors.
+- **Configure multiple pipelines and steps**: KPOps has various abstractions that simplify configuring multiple pipelines and steps within pipelines by sharing common configuration between different components, such as producers or streaming applications.
+- **Handle your topics and schemas**: KPOps not only creates and deletes your topics but also registers and deletes your schemas.
+- **Clean termination of Kafka components**: KPOps removes your pipeline components (i.e., Kafka Streams applications) from the Kubernetes cluster *and* cleans up the component-related states (i.e., removing/resetting offset of Kafka consumer groups).
+- **Preview your pipeline changes**: With the KPOps dry-run, you can ensure your pipeline definition is set up correctly. This helps to minimize downtime and prevent potential errors or issues that could impact your production environment.
+
+## Example
+
+[![atm-fraud-pipeline](<https://bakdata.github.io/kpops/dev/images/word-count-pipeline_streams-explorer.png>)](<https://bakdata.github.io/kpops/dev/images/word-count-pipeline_streams-explorer.png>)
+
+An overview of [Word-count pipeline](<https://bakdata.github.io/kpops/dev/getting-started/quick-start>) shown in [Streams Explorer](<https://github.com/bakdata/streams-explorer#streams-explorer>)
+
+Word-count pipeline.yaml
+
+```yaml
+- type: producer-app
+  name: data-producer
+  values:
+    image: bakdata/kpops-demo-sentence-producer
+
+- type: streams-app
+  name: word-count-app
+  values:
+    image: bakdata/kpops-demo-word-count-app
+    replicaCount: 1
+  to:
+    topics:
+      ${output_topic_name}:
+        type: output
+        configs:
+          cleanup.policy: compact
+
+- type: kafka-sink-connector
+  name: redis-sink-connector
+  config:
+    connector.class: com.github.jcustenborder.kafka.connect.redis.RedisSinkConnector
+    redis.hosts: redis-headless:6379
+    redis.database: 0
+    tasks.max: 1
+    key.converter: org.apache.kafka.connect.storage.StringConverter
+    value.converter: org.apache.kafka.connect.storage.StringConverter
+```
+
+[^/kpops/dev/user/what-is-kpops/#1]: A Kafka pipeline can consist of consecutive [streaming applications](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/streams-app/index.md>), [producers](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/producer-app/index.md>), and [connectors](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/kafka-connector/index.md>).
+
+# Quick start
+
+## Word-count
+
+Word-count is a demo pipeline consisting of a producer producing words to Kafka, a Kafka streams app counting the number of times each word occurs, and finally a Redis database into which the words are exported.
+
+## What this will demonstrate
+
+- Deploying a Redis database using Helm
+- Deploying a pipeline using KPOps
+- Destroying a pipeline using KPOps
+
+## Prerequisites
+
+Completed all steps in the [setup](<https://bakdata.github.io/kpops/dev/user/setup>).
+
+## Setup and deployment
+
+### Redis
+
+Deploy Redis using the [Bitnami Helm chart:](<https://artifacthub.io/packages/helm/bitnami/redis>) Add the Helm repository:
+
+```shell
+helm repo add bitnami https://charts.bitnami.com/bitnami && \
+helm repo update
+```
+
+Install Redis with Helm:
+
+```shell
+helm upgrade --install -f ./values-redis.yaml \
+--namespace kpops \
+redis bitnami/redis
+```
+
+> [!NOTE]
+>
+> **Redis example Helm chart values (`values-redis.yaml`)**
+>
+> ```yaml
+> architecture: standalone
+> auth:
+>   enabled: false
+> master:
+>   count: 1
+>   configuration: "databases 1"
+> image:
+>   tag: 7.0.8
+> ```
+
+### Word-count example pipeline setup
+
+#### Port forwarding
+
+Before we deploy the pipeline, we need to forward the ports of `kafka-rest-proxy` and `kafka-connect`. Run the following commands in two different terminals.
+
+```shell
+kubectl port-forward --namespace kpops service/k8kafka-cp-rest 8082:8082
+```
+
+```shell
+kubectl port-forward --namespace kpops service/k8kafka-cp-kafka-connect 8083:8083
+```
+
+### Deploying the Word-count pipeline
+
+1. Clone the [kpops-examples repository](<https://github.com/bakdata/kpops-examples>) and `cd` into the directory.
+2. Export environment variables in your terminal:
+
+   ```shell
+   export DOCKER_REGISTRY=bakdata && \
+   export NAMESPACE=kpops
+   ```
+3. Deploy the pipeline
+
+   ```shell
+   kpops deploy word-count/pipeline.yaml --execute
+   ```
+
+> [!NOTE]
+>
+> You can use the `--dry-run` flag instead of the `--execute` flag and check the logs if your pipeline will be deployed correctly.
+
+### Check if the deployment is successful
+
+You can use the [Streams Explorer](<https://github.com/bakdata/streams-explorer>) to inspect the deployed pipeline. To do so, port-forward the service in a separate terminal session using the command below:
+
+```shell
+kubectl port-forward -n kpops service/streams-explorer 8080:8080
+```
+
+After that open [http://localhost:8080](<http://localhost:8080>) in your browser.
+
+You should be able to see pipeline shown in the image below:
+
+[![word-count-pipeline](<https://bakdata.github.io/kpops/dev/images/word-count-pipeline_streams-explorer.png>)](<https://bakdata.github.io/kpops/dev/images/word-count-pipeline_streams-explorer.png>)
+
+An overview of Word-count pipeline shown in Streams Explorer
+
+> [!WARNING]
+>
+> **Attention**
+>
+> Kafka Connect needs some time to set up the connector. Moreover, Streams Explorer needs a while to scrape the information from Kafka Connect. Therefore, it might take a bit until you see the whole graph.
+
+## Teardown resources
+
+### Redis
+
+Redis can be uninstalled by running the following command:
+
+```shell
+helm --namespace kpops uninstall redis
+```
+
+### Word-count pipeline
+
+1. Export environment variables in your terminal.
+
+   ```shell
+   export DOCKER_REGISTRY=bakdata && \
+   export NAMESPACE=kpops
+   ```
+2. Remove the pipeline
+
+   ```shell
+   kpops clean word-count/pipeline.yaml --verbose --execute
+   ```
+
+> [!NOTE]
+>
+> You can use the `--dry-run` flag instead of the `--execute` flag and check the logs if your pipeline will be destroyed correctly.
+
+> [!WARNING]
+>
+> **Attention**
+>
+> If you face any issues destroying this example see [Teardown](<https://bakdata.github.io/kpops/dev/user/teardown>) for manual deletion.
+
+## Common errors
+
+- `deploy` fails: 1. Read the error message. 2. Try to correct the mistakes if there were any. Likely the configuration is incorrect, or the port-forwarding is not working as intended. 3. Run `clean`. 4. Run `deploy --dry-run` to avoid having to `clean` again. If an error is dropped, start over from step 1. 5. If the dry-run is successful, run `deploy`.
+- `clean` fails: 1. Read the error message. 2. Try to correct the indicated mistakes if there were any. Likely the configuration is incorrect, or the port-forwarding is not working as intended. 3. Run `clean`. 4. If `clean` fails, follow the steps in [teardown](<https://bakdata.github.io/kpops/dev/user/teardown>).
+
+# Setup KPOps
+
+In this part, you will set up KPOps. This includes:
+
+- optionally creating a local Kubernetes cluster
+- running Apache Kafka and Confluent's Schema Registry
+- installing KPOps
+
+## Prerequisites
+
+- [k3d (Version 5.4.6+)](<https://k3d.io/v5.4.6/>) and [Docker (Version \>= v20.10.5)](<https://www.docker.com/get-started/>) or an existing Kubernetes cluster (\>= 1.21.0)
+- [kubectl (Compatible with server version 1.21.0)](<https://kubernetes.io/docs/tasks/tools/>)
+- [Helm (Version 3.8.0+)](<https://helm.sh>)
+
+## Setup Kubernetes with k3d
+
+If you don't have access to an existing Kubernetes cluster, this section will guide you through creating a local cluster. We recommend the lightweight Kubernetes distribution [k3s](<https://k3s.io/>) for this. [k3d](<https://k3d.io/>) is a wrapper around k3s in Docker that lets you get started fast.
+
+1. You can install k3d with its installation script:
+
+   ```shell
+   wget -q -O - https://raw.githubusercontent.com/k3d-io/k3d/v5.4.6/install.sh | bash
+   ```
+
+   For other ways of installing k3d, you can have a look at their [installation guide](<https://k3d.io/v5.4.6/#installation>).
+2. The [Kafka deployment](<#deploy-kafka>) needs a modified Docker image. In that case the image is built and pushed to a Docker registry that holds it. If you do not have access to an existing Docker registry, you can use k3d's Docker registry:
+
+   ```shell
+   k3d registry create kpops-registry.localhost --port 12345
+   ```
+3. Now you can create a new cluster called `kpops` that uses the previously created Docker registry:
+
+   ```shell
+   k3d cluster create kpops --k3s-arg "--no-deploy=traefik@server:*" --registry-use k3d-kpops-registry.localhost:12345
+   ```
+
+> [!NOTE]
+>
+> Creating a new k3d cluster automatically configures `kubectl` to connect to the local cluster by modifying your `~/.kube/config`. In case you manually set the `KUBECONFIG` variable or don't want k3d to modify your config, k3d offers [many other options](<https://k3d.io/v5.4.6/usage/kubeconfig/#handling-kubeconfigs>).
+
+You can check the cluster status with `kubectl get pods -n kube-system`. If all returned elements have a `STATUS` of `Running` or `Completed`, then the cluster is up and running.
+
+## Deploy Kafka
+
+[Kafka](<https://kafka.apache.org/>) is an open-source data streaming platform. More information about Kafka can be found in the [documentation](<https://kafka.apache.org/documentation/>). To deploy Kafka, this guide uses Confluent's [Helm chart](<https://github.com/confluentinc/cp-helm-charts>).
+
+1. To allow connectivity to other systems [Kafka Connect](<https://docs.confluent.io/platform/current/connect/index.html#kafka-connect>) needs to be extended with drivers. You can install a [JDBC driver](<https://docs.confluent.io/kafka-connectors/jdbc/current/jdbc-drivers.html>) for Kafka Connect by creating a new Docker image:
+
+   1. Create a `Dockerfile` with the following content:
+
+      ```dockerfile
+      FROM confluentinc/cp-kafka-connect:7.1.3
+
+      RUN confluent-hub install --no-prompt confluentinc/kafka-connect-jdbc:10.6.0
+      ```
+   2. Build and push the modified image to your private Docker registry:
+
+      ```shell
+      docker build . --tag localhost:12345/kafka-connect-jdbc:7.1.3 && \
+      docker push localhost:12345/kafka-connect-jdbc:7.1.3
+      ```
+
+   Detailed instructions on building, tagging and pushing a docker image can be found in [Docker docs](<https://docs.docker.com/>).
+2. Add Confluent's Helm chart repository and update the index:
+
+   ```shell
+   helm repo add confluentinc https://confluentinc.github.io/cp-helm-charts/ &&  
+   helm repo update
+   ```
+3. Install Kafka, Zookeeper, Confluent's Schema Registry, Kafka Rest Proxy, and Kafka Connect. A single Helm chart installs all five components. Below you can find an example for the `--values ./kafka.yaml` file configuring the deployment accordingly. Deploy the services:
+
+   ```shell
+   helm upgrade \
+       --install \
+       --version 0.6.1 \
+       --values ./kafka.yaml \
+       --namespace kpops \
+       --create-namespace \
+       --wait \
+       k8kafka confluentinc/cp-helm-charts
+   ```
+
+> [!NOTE]
+>
+> **Kafka Helm chart values (`kafka.yaml`)**
+>
+> An example value configuration for Confluent's Helm chart. This configuration deploys a single Kafka Broker, a Schema Registry, Zookeeper, Kafka Rest Proxy, and Kafka Connect with minimal resources.
+>
+> ```yaml
+> cp-zookeeper:
+>   enabled: true
+>   servers: 1
+>   imageTag: 7.1.3
+>   heapOptions: "-Xms124M -Xmx124M"
+>   overrideGroupId: k8kafka
+>   fullnameOverride: "k8kafka-cp-zookeeper"
+>   resources:
+>     requests:
+>       cpu: 50m
+>       memory: 0.2G
+>     limits:
+>       cpu: 250m
+>       memory: 0.2G
+>   prometheus:
+>     jmx:
+>       enabled: false
+>
+> cp-kafka:
+>   enabled: true
+>   brokers: 1
+>   imageTag: 7.1.3
+>   podManagementPolicy: Parallel
+>   configurationOverrides:
+>     "auto.create.topics.enable": false
+>     "offsets.topic.replication.factor": 1
+>     "transaction.state.log.replication.factor": 1
+>     "transaction.state.log.min.isr": 1
+>     "confluent.metrics.reporter.topic.replicas": 1
+>   resources:
+>     requests:
+>       cpu: 50m
+>       memory: 0.5G
+>     limits:
+>       cpu: 250m
+>       memory: 0.5G
+>   prometheus:
+>     jmx:
+>       enabled: false
+>   persistence:
+>     enabled: false
+>
+> cp-schema-registry:
+>   enabled: true
+>   imageTag: 7.1.3
+>   fullnameOverride: "k8kafka-cp-schema-registry"
+>   overrideGroupId: k8kafka
+>   kafka:
+>     bootstrapServers: "PLAINTEXT://k8kafka-cp-kafka-headless:9092"
+>   resources:
+>     requests:
+>       cpu: 50m
+>       memory: 0.25G
+>     limits:
+>       cpu: 250m
+>       memory: 0.25G
+>   prometheus:
+>     jmx:
+>       enabled: false
+>
+> cp-kafka-connect:
+>   enabled: true
+>   replicaCount: 1
+>   image: k3d-kpops-registry.localhost:12345/kafka-connect-jdbc
+>   imageTag: 7.1.3
+>   fullnameOverride: "k8kafka-cp-kafka-connect"
+>   overrideGroupId: k8kafka
+>   kafka:
+>     bootstrapServers: "PLAINTEXT://k8kafka-cp-kafka-headless:9092"
+>   heapOptions: "-Xms256M -Xmx256M"
+>   resources:
+>     requests:
+>       cpu: 500m
+>       memory: 0.25G
+>     limits:
+>       cpu: 500m
+>       memory: 0.25G
+>   configurationOverrides:
+>     "consumer.max.poll.records": "10"
+>     "consumer.max.poll.interval.ms": "900000"
+>     "config.storage.replication.factor": "1"
+>     "offset.storage.replication.factor": "1"
+>     "status.storage.replication.factor": "1"
+>   cp-schema-registry:
+>     url: http://k8kafka-cp-schema-registry:8081
+>   prometheus:
+>     jmx:
+>       enabled: false
+>
+> cp-kafka-rest:
+>   enabled: true
+>   imageTag: 7.1.3
+>   fullnameOverride: "k8kafka-cp-rest"
+>   heapOptions: "-Xms256M -Xmx256M"
+>   resources:
+>     requests:
+>       cpu: 50m
+>       memory: 0.25G
+>     limits:
+>       cpu: 250m
+>       memory: 0.5G
+>   prometheus:
+>     jmx:
+>       enabled: false
+>
+> cp-ksql-server:
+>   enabled: false
+> cp-control-center:
+>   enabled: false
+> ```
+
+## Deploy Streams Explorer
+
+[Streams Explorer](<https://github.com/bakdata/streams-explorer>) allows examining Apache Kafka data pipelines in a Kubernetes cluster including the inspection of schemas and monitoring of metrics. First, add the Helm repository:
+
+```shell
+helm repo add streams-explorer https://bakdata.github.io/streams-explorer && \
+helm repo update
+```
+
+Below you can find an example for the `--values ./streams-explorer.yaml` file configuring the deployment accordingly. Now, deploy the service:
+
+```shell
+helm upgrade \
+    --install \
+    --version 0.2.3 \
+    --values ./streams-explorer.yaml \
+    --namespace kpops \
+    streams-explorer streams-explorer/streams-explorer
+```
+
+> [!NOTE]
+>
+> **Streams Explorer Helm chart values (`streams-explorer.yaml`)**
+>
+> An example value configuration for Steams Explorer Helm chart.
+>
+> ```yaml
+> imageTag: "v2.1.2"
+> config:
+>    K8S__deployment__cluster: true
+>    SCHEMAREGISTRY__url: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081
+>    KAFKACONNECT__url: http://k8kafka-cp-kafka-connect.kpops.svc.cluster.local:8083
+> resources:
+>    requests:
+>        cpu: 200m
+>        memory: 300Mi
+>    limits:
+>        cpu: 200m
+>        memory: 300Mi
+> ```
+
+## Check the status of your deployments
+
+Now we will check if all the pods are running in our namespace. You can list all pods in the namespace with this command:
+
+```shell
+kubectl --namespace kpops get pods
+```
+
+Then you should see the following output in your terminal:
+
+```shell
+NAME                                          READY   STATUS    RESTARTS   AGE
+k8kafka-cp-kafka-connect-8fc7d544f-8pjnt      1/1     Running   0          15m
+k8kafka-cp-zookeeper-0                        1/1     Running   0          15m
+k8kafka-cp-kafka-0                            1/1     Running   0          15m
+k8kafka-cp-schema-registry-588f8c65db-jdwbq   1/1     Running   0          15m
+k8kafka-cp-rest-6bbfd7b645-nwkf8              1/1     Running   0          15m
+streams-explorer-54db878c67-s8wbz             1/1     Running   0          15m
+```
+
+Pay attention to the `STATUS` row. The pods should have a status of `Running`.
+
+## Install KPOps
+
+KPOps comes as a [PyPI package](<https://pypi.org/project/kpops/>). You can install it with [`uv`](<https://docs.astral.sh/uv/>):
+
+```shell
+uv tool install kpops
+```
+
+# Teardown resources
+
+## KPOps teardown commands
+
+- `destroy`: Removes Kubernetes resources.
+- `reset`: Runs `destroy`, resets the states of Kafka Streams apps and resets offsets to zero.
+- `clean`: Runs `reset` and removes all Kafka resources.
+
+## KPOps-deployed pipeline
+
+The [`kpops` CLI](<https://bakdata.github.io/kpops/dev/user/references/cli-commands/index.md>) can be used to destroy a pipeline that was previously deployed with KPOps. In case that doesn't work, the pipeline can always be taken down manually with `helm` (see section [Infrastructure](<#infrastructure>)).
+
+1. Export environment variables.
+
+   ```shell
+   export DOCKER_REGISTRY=bakdata && \
+   export NAMESPACE=kpops
+   ```
+2. Navigate to the `examples` folder. Replace the `<name-of-the-example-directory>` with the example you want to tear down. For example the `atm-fraud-detection`.
+3. Remove the pipeline
+
+   ```shell
+   # Uncomment 1 line to either destroy, reset or clean.
+
+   # kpops destroy <name-of-the-example-directory>/pipeline.yaml \
+   # kpops reset <name-of-the-example-directory>/pipeline.yaml \
+   # kpops clean <name-of-the-example-directory>/pipeline.yaml \
+   --config <name-of-the-example-directory>/config.yaml \
+   --execute
+   ```
+
+## Infrastructure
+
+Delete namespace:
+
+```shell
+kubectl delete namespace kpops
+```
+
+> [!NOTE]
+>
+> In case `kpops destroy` is not working one can uninstall the pipeline services one by one. This is equivalent to running `kpops destroy`. In case a clean uninstall (like the one `kpops clean` does) is needed, one needs to also delete the topics and schemas created by deployment of the pipeline.
+
+## Local cluster
+
+Delete local cluster:
+
+```shell
+k3d cluster delete kpops
+```
+
+## Local image registry
+
+Delete local registry:
+
+```shell
+k3d registry delete k3d-kpops-registry.localhost
+```
+
+# ATM fraud detection pipeline
+
+ATM fraud is a demo pipeline for ATM fraud detection. The original by Confluent is written in KSQL and outlined in this [blogpost](<https://www.confluent.io/blog/atm-fraud-detection-apache-kafka-ksql/>). The one used in this example is re-built from scratch using [bakdata](<https://bakdata.com/>)'s [`streams-bootstrap`](<https://github.com/bakdata/streams-bootstrap>) library.
+
+## What this will demonstrate
+
+- Deploying a PostgreSQL database using Helm
+- Deploying a pipeline using KPOps
+- Destroying a pipeline using KPOps
+
+## Prerequisites
+
+Completed all steps in the [setup](<https://bakdata.github.io/kpops/dev/user/getting-started/setup/index.md>).
+
+## Setup and deployment
+
+### PostgreSQL
+
+Deploy PostgreSQL using the [Bitnami Helm chart:](<https://artifacthub.io/packages/helm/bitnami/postgresql>) Add the helm repository:
+
+```shell
+helm repo add bitnami https://charts.bitnami.com/bitnami && \
+helm repo update
+```
+
+Install the PostgreSQL with helm:
+
+```shell
+helm upgrade --install -f ./postgresql.yaml \
+--namespace kpops \
+postgresql bitnami/postgresql
+```
+
+> [!NOTE]
+>
+> **PostgreSQL Example Helm chart values (`postgresql.yaml`)**
+>
+> ```yaml
+> auth:
+>   database: app_db
+>   enablePostgresUser: true
+>   password: AppPassword
+>   postgresPassword: StrongPassword
+>   username: app1
+> primary:
+>   persistence:
+>     enabled: false
+>     existingClaim: postgresql-data-claim
+> volumePermissions:
+>   enabled: true
+> ```
+
+### ATM fraud detection example pipeline setup
+
+#### Port forwarding
+
+Before we deploy the pipeline, we need to forward the ports of `kafka-rest-proxy` and `kafka-connect`. Run the following commands in two different terminals.
+
+```shell
+kubectl port-forward --namespace kpops service/k8kafka-cp-rest 8082:8082
+```
+
+```shell
+kubectl port-forward --namespace kpops service/k8kafka-cp-kafka-connect 8083:8083
+```
+
+### Deploying the ATM fraud detection pipeline
+
+1. Clone the [kpops-examples repository](<https://github.com/bakdata/kpops-examples>) and `cd` into the directory.
+2. Export environment variables in your terminal:
+
+   ```shell
+   export DOCKER_REGISTRY=bakdata && \
+   export NAMESPACE=kpops
+   ```
+3. Deploy the pipeline
+
+   ```shell
+   kpops deploy atm-fraud/pipeline.yaml --execute
+   ```
+
+> [!NOTE]
+>
+> You can use the `--dry-run` flag instead of the `--execute` flag and check the logs if your pipeline will be deployed correctly.
+
+### Check if the deployment is successful
+
+You can use the [Streams Explorer](<https://github.com/bakdata/streams-explorer>) to see the deployed pipeline. To do so, port-forward the service in a separate terminal session using the command below:
+
+```shell
+kubectl port-forward -n kpops service/streams-explorer 8080:8080
+```
+
+After that open [http://localhost:8080](<http://localhost:8080>) in your browser. You should be able to see pipeline shown in the image below:
+
+[![atm-fraud-pipeline](<https://bakdata.github.io/kpops/dev/images/atm-fraud-pipeline_streams-explorer.png>)](<https://bakdata.github.io/kpops/dev/images/atm-fraud-pipeline_streams-explorer.png>)
+
+An overview of ATM fraud pipeline shown in Streams Explorer
+
+> [!WARNING]
+>
+> **Attention**
+>
+> Kafka Connect needs some time to set up the connector. Moreover, Streams Explorer needs a while to scrape the information from Kafka connect. Therefore, it might take a bit until you see the whole graph.
+
+## Teardown resources
+
+### PostrgreSQL
+
+PostgreSQL can be uninstalled by running the following command:
+
+```shell
+helm --namespace kpops uninstall postgresql
+```
+
+### ATM fraud pipeline
+
+1. Export environment variables in your terminal.
+
+   ```shell
+   export DOCKER_REGISTRY=bakdata && \
+   export NAMESPACE=kpops
+   ```
+2. Remove the pipeline
+
+   ```shell
+   kpops clean atm-fraud/pipeline.yaml --verbose  --execute
+   ```
+
+> [!NOTE]
+>
+> You can use the `--dry-run` flag instead of the `--execute` flag and check the logs if your pipeline will be destroyed correctly.
+
+> [!WARNING]
+>
+> **Attention**
+>
+> If you face any issues destroying this example see [Teardown](<https://bakdata.github.io/kpops/dev/user/getting-started/teardown/index.md>) for manual deletion.
+
+## Common errors
+
+- `deploy` fails:
+
+  1. Read the error message.
+  2. Try to correct the mistakes if there were any. Likely the configuration is incorrect, or the port-forwarding is not working as intended.
+  3. Run `clean`.
+  4. Run `deploy --dry-run` to avoid havig to `clean` again. If an error is dropped, start over from step 1.
+  5. If the dry-run is succesful, run `deploy`.
+- `clean` fails:
+
+  1. Read the error message.
+  2. Try to correct the indicated mistakes if there were any. Likely the configuration is incorrect, or the port-forwarding is not working as intended.
+  3. Run `clean`.
+  4. If `clean` fails, follow the steps in [teardown](<https://bakdata.github.io/kpops/dev/user/getting-started/teardown/index.md>).
+
+# Core concepts
+
+# Overview
+
+This section explains the different components of KPOps, their usage and configuration in the pipeline definition [`pipeline.yaml`](<https://bakdata.github.io/kpops/dev/resources/pipeline-components/pipeline/index.md>).
+
+```
+flowchart BT
+    KubernetesApp --> PipelineComponent
+    HelmApp --> KubernetesApp
+    KafkaApp --> PipelineComponent
+    StreamsBootstrap --> KafkaApp
+    StreamsBootstrap --> HelmApp
+    StreamsApp --> StreamsBootstrap
+    ProducerApp --> StreamsBootstrap
+    ConsumerApp --> StreamsBootstrap
+    ConsumerProducerApp --> StreamsBootstrap
+    KafkaConnector --> KafkaApp
+    KafkaSourceConnector --> KafkaConnector
+    KafkaSinkConnector --> KafkaConnector
+
+    click KubernetesApp "./../kubernetes-app"
+    click HelmApp "./../helm-app"
+    click StreamsBootstrap "./../streams-bootstrap"
+    click StreamsApp "./../streams-app"
+    click ProducerApp "./../producer-app"
+    click ConsumerApp "./../consumer-app"
+    click ConsumerProducerApp "./../consumer-producer-app"
+    click KafkaConnector "./../kafka-connector"
+    click KafkaSourceConnector "./../kafka-source-connector"
+    click KafkaSinkConnector "./../kafka-sink-connector"
+```
+
+*KPOps component hierarchy*
+
+# ConsumerApp
+
+Subclass of [*StreamsBootstrap*](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/streams-bootstrap/index.md>).
+
+### Usage
+
+Configures a [streams-bootstrap](<https://github.com/bakdata/streams-bootstrap>) [Kafka consumer app](<https://github.com/bakdata/streams-bootstrap#kafka-consumer>)
+
+### Configuration
+
+> [!NOTE]
+>
+> **`pipeline.yaml`**
+>
+> ```yaml
+> # ConsumerApp component that configures a streams-bootstrap consumer-app.
+> # More documentation on ConsumerApp:
+> # https://github.com/bakdata/streams-bootstrap
+> - type: consumer-app
+>   name: consumer-app # required
+>   # Pipeline prefix that will prefix every component name. If you wish to not
+>   # have any prefix you can specify an empty string.
+>   prefix: ${pipeline.name}-
+>   from: # Must not be null
+>     topics: # read from topic
+>       ${pipeline.name}-input-topic:
+>         type: input # Implied when role is NOT specified
+>       ${pipeline.name}-extra-topic:
+>         label: topic-role # Implies `type` to be extra
+>       ${pipeline.name}-input-pattern-topic:
+>         type: pattern # Implied to be an input pattern if `label` is undefined
+>       ${pipeline.name}-extra-pattern-topic:
+>         type: pattern # Implied to be an extra pattern if `label` is defined
+>         label: some-role
+>     components: # read from specific component
+>       account-producer:
+>         type: input # Implied when role is NOT specified
+>       other-producer:
+>         label: some-role # Implies `type` to be extra
+>       component-as-input-pattern:
+>         type: pattern # Implied to be an input pattern if `label` is undefined
+>       component-as-extra-pattern:
+>         type: pattern # Implied to be an extra pattern if `label` is defined
+>         label: some-role
+>   namespace: namespace # required
+>   # Allowed configs:
+>   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/consumer-app
+>   values: # required
+>     kafka: # required, consumer-app-specific
+>       bootstrapServers: ${config.kafka_brokers}
+>       schemaRegistryUrl: ${config.schema_registry.url}
+>       groupId: consumer-group-id
+>       inputTopics:
+>         - topic1
+>         - topic2
+>       inputPattern: input-pattern
+>       labeledInputTopics:
+>         input_role1:
+>           - input_topic1
+>           - input_topic2
+>         input_role2:
+>           - input_topic3
+>           - input_topic4
+>       labeledInputPatterns:
+>         pattern_role1: input_pattern1
+>       config:
+>         my.consumer.config: my.value
+>     nameOverride: override-with-this-name # kafka-app-specific
+>     fullnameOverride: override-with-this-name # kafka-app-specific
+>     autoscaling: # consumer-app-specific
+>       enabled: false # Whether to enable auto-scaling using KEDA.
+>       lagThreshold: 0 # Average target value to trigger scaling actions.
+>       # This is the interval to check each trigger on.
+>       # https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval
+>       pollingInterval: 30
+>       # The period to wait after the last trigger reported active before scaling
+>       #  the resource back to 0. https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod
+>       cooldownPeriod: 300
+>       # The offset reset policy for the consumer if the the consumer group is
+>       # not yet subscribed to a partition.
+>       offsetResetPolicy: earliest
+>       # This setting is passed to the HPA definition that KEDA will create for a
+>       # given resource and holds the maximum number of replicas of the target resource.
+>       # https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount
+>       maxReplicas: 1
+>       # Minimum number of replicas KEDA will scale the resource down to.
+>       # https://keda.sh/docs/2.7/concepts/scaling-deployments/#minreplicacount
+>       minReplicas: 0
+>       # If this property is set, KEDA will scale the resource down to this
+>       # number of replicas.
+>       # https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount
+>       idleReplicas: 0
+>       topics: # List of topics used by the consumer app.
+>         - topic1
+>         - topic2
+>       # Complete list of KEDA triggers. When set, these replace all
+>       # chart-generated Kafka lag triggers.
+>       triggers: []
+>       # - type: cron
+>       #   name: business_hours
+>       #   metadata:
+>       #     timezone: Europe/Berlin
+>       #     start: "0 8 * * 1-5"
+>       #     end: "0 18 * * 1-5"
+>       #     desiredReplicas: "2"
+>       # List of KEDA triggers appended to chart-generated Kafka lag triggers.
+>       additionalTriggers: []
+>       # KEDA composite metric configuration. Requires explicit triggers.
+>       # scalingModifiers:
+>       #   formula: business_hours
+>       #   target: "1"
+>       #   metricType: AverageValue
+>   # Helm repository configuration (optional)
+>   # If not set the helm repo add will not be called. Useful when using local Helm charts
+>   repo_config:
+>     repository_name: bakdata-streams-bootstrap # required
+>     url: https://bakdata.github.io/streams-bootstrap/ # required
+>     repo_auth_flags:
+>       username: user
+>       password: pass
+>       ca_file: /home/user/path/to/ca-file
+>       insecure_skip_tls_verify: false
+>   version: "2.12.0" # Helm chart version
+> ```
+
+### Operations
+
+#### deploy
+
+Identical to [StreamsBootstrap's `deploy`](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/streams-bootstrap/index.md#deploy>). The consumer app has no `to` section, so no topics are created and no schemas are submitted.
+
+#### destroy
+
+Uninstall Helm release.
+
+#### reset
+
+- Delete the consumer group offsets
+
+#### clean
+
+Similar to [`reset`](<#reset>) with an additional step:
+
+- Delete persistent volume claims if `statefulSet` is enabled and `persistence` is enabled
+
+# ConsumerProducerApp
+
+Subclass of [*StreamsBootstrap*](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/streams-bootstrap/index.md>).
+
+### Usage
+
+Configures a [streams-bootstrap](<https://github.com/bakdata/streams-bootstrap>) [Kafka ConsumerProducer app](<https://github.com/bakdata/streams-bootstrap#kafka-consumerproducer>)
+
+### Configuration
+
+> [!NOTE]
+>
+> **`pipeline.yaml`**
+>
+> ```yaml
+> # ConsumerProducerApp component that configures a streams-bootstrap consumerproducer-app.
+> # More documentation on ConsumerProducerApp:
+> # https://github.com/bakdata/streams-bootstrap
+> - type: consumer-producer-app
+>   name: consumer-producer-app # required
+>   # Pipeline prefix that will prefix every component name. If you wish to not
+>   # have any prefix you can specify an empty string.
+>   prefix: ${pipeline.name}-
+>   from: # Must not be null
+>     topics: # read from topic
+>       ${pipeline.name}-input-topic:
+>         type: input # Implied when role is NOT specified
+>       ${pipeline.name}-extra-topic:
+>         label: topic-role # Implies `type` to be extra
+>       ${pipeline.name}-input-pattern-topic:
+>         type: pattern # Implied to be an input pattern if `label` is undefined
+>       ${pipeline.name}-extra-pattern-topic:
+>         type: pattern # Implied to be an extra pattern if `label` is defined
+>         label: some-role
+>     components: # read from specific component
+>       account-producer:
+>         type: input # Implied when role is NOT specified
+>       other-producer:
+>         label: some-role # Implies `type` to be extra
+>       component-as-input-pattern:
+>         type: pattern # Implied to be an input pattern if `label` is undefined
+>       component-as-extra-pattern:
+>         type: pattern # Implied to be an extra pattern if `label` is defined
+>         label: some-role
+>   # Topic(s) into which the component will write output
+>   to:
+>     topics:
+>       ${pipeline.name}-output-topic:
+>         type: output # Implied when role is NOT specified
+>       ${pipeline.name}-extra-topic:
+>         label: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
+>       ${pipeline.name}-error-topic:
+>         type: error
+>         # Currently KPOps supports Avro and JSON schemas.
+>         key_schema: key-schema # must implement SchemaProvider to use
+>         value_schema: value-schema
+>         partitions_count: 1
+>         replication_factor: 1
+>         configs: # https://kafka.apache.org/documentation/#topicconfigs
+>           cleanup.policy: compact
+>     models: # SchemaProvider is initiated with the values given here
+>       model: model
+>   namespace: namespace # required
+>   # Allowed configs:
+>   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/consumerproducer-app
+>   values: # required
+>     kafka: # required, consumer-producer-app-specific
+>       bootstrapServers: ${config.kafka_brokers}
+>       schemaRegistryUrl: ${config.schema_registry.url}
+>       groupId: consumer-producer-group-id
+>       inputTopics:
+>         - topic1
+>         - topic2
+>       outputTopic: output-topic
+>       inputPattern: input-pattern
+>       labeledInputTopics:
+>         input_role1:
+>           - input_topic1
+>           - input_topic2
+>         input_role2:
+>           - input_topic3
+>           - input_topic4
+>       labeledInputPatterns:
+>         pattern_role1: input_pattern1
+>       labeledOutputTopics:
+>         output_role1: output_topic1
+>         output_role2: output_topic2
+>       errorTopic: error-topic
+>       config:
+>         my.consumer.producer.config: my.value
+>       deleteOutput: false
+>     nameOverride: override-with-this-name # kafka-app-specific
+>     fullnameOverride: override-with-this-name # kafka-app-specific
+>     autoscaling: # consumer-producer-app-specific
+>       enabled: false # Whether to enable auto-scaling using KEDA.
+>       lagThreshold: 0 # Average target value to trigger scaling actions.
+>       # This is the interval to check each trigger on.
+>       # https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval
+>       pollingInterval: 30
+>       # The period to wait after the last trigger reported active before scaling
+>       #  the resource back to 0. https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod
+>       cooldownPeriod: 300
+>       # The offset reset policy for the consumer if the the consumer group is
+>       # not yet subscribed to a partition.
+>       offsetResetPolicy: earliest
+>       # This setting is passed to the HPA definition that KEDA will create for a
+>       # given resource and holds the maximum number of replicas of the target resource.
+>       # https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount
+>       maxReplicas: 1
+>       # Minimum number of replicas KEDA will scale the resource down to.
+>       # https://keda.sh/docs/2.7/concepts/scaling-deployments/#minreplicacount
+>       minReplicas: 0
+>       # If this property is set, KEDA will scale the resource down to this
+>       # number of replicas.
+>       # https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount
+>       idleReplicas: 0
+>       topics: # List of topics used by the consumer-producer app.
+>         - topic1
+>         - topic2
+>       # Complete list of KEDA triggers. When set, these replace all
+>       # chart-generated Kafka lag triggers.
+>       triggers: []
+>       # - type: cron
+>       #   name: business_hours
+>       #   metadata:
+>       #     timezone: Europe/Berlin
+>       #     start: "0 8 * * 1-5"
+>       #     end: "0 18 * * 1-5"
+>       #     desiredReplicas: "2"
+>       # List of KEDA triggers appended to chart-generated Kafka lag triggers.
+>       additionalTriggers: []
+>       # KEDA composite metric configuration. Requires explicit triggers.
+>       # scalingModifiers:
+>       #   formula: business_hours
+>       #   target: "1"
+>       #   metricType: AverageValue
+>   # Helm repository configuration (optional)
+>   # If not set the helm repo add will not be called. Useful when using local Helm charts
+>   repo_config:
+>     repository_name: bakdata-streams-bootstrap # required
+>     url: https://bakdata.github.io/streams-bootstrap/ # required
+>     repo_auth_flags:
+>       username: user
+>       password: pass
+>       ca_file: /home/user/path/to/ca-file
+>       insecure_skip_tls_verify: false
+>   version: "2.12.0" # Helm chart version
+> ```
+
+### Operations
+
+#### deploy
+
+In addition to [StreamsBootstrap's `deploy`](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/streams-bootstrap/index.md#deploy>):
+
+- Create topics if provided (optional)
+- Submit Avro schemas to the registry if provided (optional)
+
+#### destroy
+
+Uninstall Helm release.
+
+#### reset
+
+- Delete the consumer group offsets
+
+#### clean
+
+Similar to [`reset`](<#reset>) with additional steps:
+
+- Delete the app's output topics
+- Delete all associated schemas in the Schema Registry
+- Delete persistent volume claims if `statefulSet` is enabled and `persistence` is enabled
+
+# HelmApp
+
+### Usage
+
+Can be used to deploy any app in Kubernetes using Helm, for example, a REST service that serves Kafka data.
+
+`HelmApp` has no `from` or `to` section. To connect a Helm-based component to Kafka topics, create a custom component that combines `HelmApp` with the `ConsumesTopics` and `ProducesTopics` capabilities. See the [migration guide](<https://bakdata.github.io/kpops/dev/user/migration-guide/v12-v13/index.md>).
+
+### Configuration
+
+> [!NOTE]
+>
+> **`pipeline.yaml`**
+>
+> ```yaml
+> # Kubernetes app managed through Helm with an associated Helm chart
+> - type: helm-app
+>   name: helm-app # required
+>   # Pipeline prefix that will prefix every component name. If you wish to not
+>   # have any prefix you can specify an empty string.
+>   prefix: ${pipeline.name}-
+>   namespace: namespace # required
+>   values: # required
+>     image: exampleImage # Example
+>     debug: false # Example
+>     commandLine: {} # Example
+>   # Helm repository configuration (optional)
+>   # If not set the helm repo add will not be called. Useful when using local Helm charts
+>   repo_config:
+>     repository_name: bakdata-streams-bootstrap # required
+>     url: https://bakdata.github.io/streams-bootstrap/ # required
+>     repo_auth_flags:
+>       username: user
+>       password: pass
+>       ca_file: /home/user/path/to/ca-file
+>       insecure_skip_tls_verify: false
+>   version: "1.0.0" # Helm chart version
+> ```
+
+### Operations
+
+#### deploy
+
+Identical to [HelmApp's `deploy`](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/helm-app/index.md#deploy>).
+
+#### destroy
+
+Identical to [HelmApp's `destroy`](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/helm-app/index.md#deploy>).
+
+#### reset
+
+Do nothing.
+
+#### clean
+
+Do nothing.
+
+# KafkaConnector
+
+`KafkaConnector` is a component that deploys [Kafka Connectors](<https://kafka.apache.org/documentation.html#connect_configuring>). Since a connector cannot be different from sink or source it is not recommended to use `KafkaConnector` for deployment in [`pipeline.yaml`](<https://bakdata.github.io/kpops/dev/resources/pipeline-components/pipeline/index.md>). Instead, `KafkaConnector` should be used in [`defaults.yaml`](<https://bakdata.github.io/kpops/dev/user/core-concepts/defaults/index.md#kafkaconnector>) to set defaults for all connectors in the pipeline as they can share some common settings.
+
+# KafkaSinkConnector
+
+Subclass of [*KafkaConnector*](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/kafka-connector/index.md>).
+
+### Usage
+
+Lets other systems pull data from Apache Kafka.
+
+### Configuration
+
+> [!NOTE]
+>
+> **`pipeline.yaml`**
+>
+> ```yaml
+> # Kafka sink connector
+> - type: kafka-sink-connector
+>   name: kafka-sink-connector # required
+>   # Pipeline prefix that will prefix every component name. If you wish to not
+>   # have any prefix you can specify an empty string.
+>   prefix: ${pipeline.name}-
+>   from: # Must not be null
+>     topics: # read from topic
+>       ${pipeline.name}-input-topic:
+>         type: input # Implied when role is NOT specified
+>       ${pipeline.name}-extra-topic:
+>         label: topic-role # Implies `type` to be extra
+>       ${pipeline.name}-input-pattern-topic:
+>         type: pattern # Implied to be an input pattern if `label` is undefined
+>       ${pipeline.name}-extra-pattern-topic:
+>         type: pattern # Implied to be an extra pattern if `label` is defined
+>         label: some-role
+>     components: # read from specific component
+>       account-producer:
+>         type: input # Implied when role is NOT specified
+>       other-producer:
+>         label: some-role # Implies `type` to be extra
+>       component-as-input-pattern:
+>         type: pattern # Implied to be an input pattern if `label` is undefined
+>       component-as-extra-pattern:
+>         type: pattern # Implied to be an extra pattern if `label` is defined
+>         label: some-role
+>   # Topic(s) into which the component will write output
+>   to:
+>     topics:
+>       ${pipeline.name}-output-topic:
+>         type: output # Implied when role is NOT specified
+>       ${pipeline.name}-extra-topic:
+>         label: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
+>       ${pipeline.name}-error-topic:
+>         type: error
+>         # Currently KPOps supports Avro and JSON schemas.
+>         key_schema: key-schema # must implement SchemaProvider to use
+>         value_schema: value-schema
+>         partitions_count: 1
+>         replication_factor: 1
+>         configs: # https://kafka.apache.org/documentation/#topicconfigs
+>           cleanup.policy: compact
+>     models: # SchemaProvider is initiated with the values given here
+>       model: model
+>   # Full documentation on connectors: https://kafka.apache.org/documentation/#connectconfigs
+>   config: # required
+>     tasks.max: 1
+> ```
+
+### Operations
+
+#### deploy
+
+- Add the sink connector to the Kafka Connect cluster
+- Create the output topics if provided (optional)
+- Register schemas in the Schema Registry if provided (optional)
+
+#### destroy
+
+The associated sink connector is removed from the Kafka Connect cluster.
+
+#### reset
+
+Reset the consumer group offsets using [bakdata's sink resetter](<https://github.com/bakdata/kafka-connect-resetter/#sink-resetter>).
+
+#### clean
+
+- Delete associated consumer group
+- Delete configured error topics
+
+# KafkaSourceConnector
+
+Subclass of [*KafkaConnector*](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/kafka-connector/index.md>).
+
+### Usage
+
+Manages source connectors in your Kafka Connect cluster.
+
+### Configuration
+
+> [!NOTE]
+>
+> **`pipeline.yaml`**
+>
+> ```yaml
+> # Kafka source connector
+> - type: kafka-source-connector # required
+>   name: kafka-source-connector # required
+>   # Pipeline prefix that will prefix every component name. If you wish to not
+>   # have any prefix you can specify an empty string.
+>   prefix: ${pipeline.name}-
+>   # Topic(s) into which the component will write output
+>   to:
+>     topics:
+>       ${pipeline.name}-output-topic:
+>         type: output # Implied when role is NOT specified
+>       ${pipeline.name}-extra-topic:
+>         label: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
+>       ${pipeline.name}-error-topic:
+>         type: error
+>         # Currently KPOps supports Avro and JSON schemas.
+>         key_schema: key-schema # must implement SchemaProvider to use
+>         value_schema: value-schema
+>         partitions_count: 1
+>         replication_factor: 1
+>         configs: # https://kafka.apache.org/documentation/#topicconfigs
+>           cleanup.policy: compact
+>     models: # SchemaProvider is initiated with the values given here
+>       model: model
+>   # Full documentation on connectors: https://kafka.apache.org/documentation/#connectconfigs
+>   config: # required
+>     tasks.max: 1
+> ```
+
+### Operations
+
+#### deploy
+
+- Add the source connector to the Kafka Connect cluster
+- Create the output topics if provided (optional)
+- Register schemas in the Schema registry if provided (optional)
+
+#### destroy
+
+Remove the source connector from the Kafka Connect cluster.
+
+#### reset
+
+Delete state associated with the connector using [bakdata's source resetter](<https://github.com/bakdata/kafka-connect-resetter/#source-resetter>).
+
+#### clean
+
+- Delete all associated output topics
+- Delete all associated schemas in the Schema Registry
+- Delete state associated with the connector
+
+# KubernetesApp
+
+### Usage
+
+Can be used to create components for any Kubernetes app.
+
+### Configuration
+
+> [!NOTE]
+>
+> **`pipeline.yaml`**
+>
+> ```yaml
+> # Base Kubernetes App
+> - type: kubernetes-app
+>   name: kubernetes-app # required
+>   # Pipeline prefix that will prefix every component name. If you wish to not
+>   # have any prefix you can specify an empty string.
+>   prefix: ${pipeline.name}-
+>   namespace: namespace # required
+>   values: # required
+>     image: exampleImage # Example
+>     debug: false # Example
+>     commandLine: {} # Example
+> ```
+
+### Operations
+
+#### deploy
+
+Do nothing.
+
+#### destroy
+
+Do nothing.
+
+#### reset
+
+Do nothing.
+
+#### clean
+
+Do nothing.
+
+# ProducerApp
+
+Subclass of [*StreamsBootstrap*](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/streams-bootstrap/index.md>).
+
+### Usage
+
+Configures a [streams-bootstrap](<https://github.com/bakdata/streams-bootstrap>) [Kafka producer app](<https://github.com/bakdata/streams-bootstrap#kafka-producer>)
+
+### Configuration
+
+> [!NOTE]
+>
+> **`pipeline.yaml`**
+>
+> ```yaml
+> # ProducerApp component that configures a streams-bootstrap producer-app.
+> # More documentation on ProducerApp:
+> # https://github.com/bakdata/streams-bootstrap
+> - type: producer-app
+>   name: producer-app # required
+>   # Pipeline prefix that will prefix every component name. If you wish to not
+>   # have any prefix you can specify an empty string.
+>   prefix: ${pipeline.name}-
+>   # Topic(s) into which the component will write output
+>   to:
+>     topics:
+>       ${pipeline.name}-output-topic:
+>         type: output # Implied when role is NOT specified
+>       ${pipeline.name}-extra-topic:
+>         label: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
+>       ${pipeline.name}-error-topic:
+>         type: error
+>         # Currently KPOps supports Avro and JSON schemas.
+>         key_schema: key-schema # must implement SchemaProvider to use
+>         value_schema: value-schema
+>         partitions_count: 1
+>         replication_factor: 1
+>         configs: # https://kafka.apache.org/documentation/#topicconfigs
+>           cleanup.policy: compact
+>     models: # SchemaProvider is initiated with the values given here
+>       model: model
+>   namespace: namespace # required
+>   # Allowed configs:
+>   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
+>   values: # required
+>     kafka: # required, producer-app-specific
+>       bootstrapServers: ${config.kafka_brokers}
+>       schemaRegistryUrl: ${config.schema_registry.url}
+>       outputTopic: output_topic
+>       labeledOutputTopics:
+>         output_role1: output_topic1
+>         output_role2: output_topic2
+>     nameOverride: override-with-this-name # kafka-app-specific
+>     fullnameOverride: override-with-this-name # kafka-app-specific
+>   # Helm repository configuration (optional)
+>   # If not set the helm repo add will not be called. Useful when using local Helm charts
+>   repo_config:
+>     repository_name: bakdata-streams-bootstrap # required
+>     url: https://bakdata.github.io/streams-bootstrap/ # required
+>     repo_auth_flags:
+>       username: user
+>       password: pass
+>       ca_file: /home/user/path/to/ca-file
+>       insecure_skip_tls_verify: false
+>   version: "2.12.0" # Helm chart version
+> ```
+
+### Operations
+
+#### deploy
+
+In addition to [StreamsBootstrap's `deploy`](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/streams-bootstrap/index.md#deploy>):
+
+- Create topics if provided (optional)
+- Submit Avro schemas to the registry if provided (optional)
+
+#### destroy
+
+Uninstall Helm release.
+
+#### reset
+
+Do nothing, producers are stateless.
+
+#### clean
+
+- Delete the output topics of the Kafka producer
+- Delete all associated schemas in the Schema Registry
+
+# StreamsApp
+
+Subclass of and [*StreamsBootstrap*](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/streams-bootstrap/index.md>).
+
+### Usage
+
+Configures a [streams-bootstrap](<https://github.com/bakdata/streams-bootstrap>) [Kafka Streams app](<https://github.com/bakdata/streams-bootstrap#kafka-streams>)
+
+### Configuration
+
+> [!NOTE]
+>
+> **`pipeline.yaml`**
+>
+> ```yaml
+> # StreamsApp component that configures a streams-bootstrap streams-app.
+> # More documentation on StreamsApp: https://github.com/bakdata/streams-bootstrap
+> - type: streams-app # required
+>   name: streams-app # required
+>   # Pipeline prefix that will prefix every component name. If you wish to not
+>   # have any prefix you can specify an empty string.
+>   prefix: ${pipeline.name}-
+>   from: # Must not be null
+>     topics: # read from topic
+>       ${pipeline.name}-input-topic:
+>         type: input # Implied when role is NOT specified
+>       ${pipeline.name}-extra-topic:
+>         label: topic-role # Implies `type` to be extra
+>       ${pipeline.name}-input-pattern-topic:
+>         type: pattern # Implied to be an input pattern if `label` is undefined
+>       ${pipeline.name}-extra-pattern-topic:
+>         type: pattern # Implied to be an extra pattern if `label` is defined
+>         label: some-role
+>     components: # read from specific component
+>       account-producer:
+>         type: input # Implied when role is NOT specified
+>       other-producer:
+>         label: some-role # Implies `type` to be extra
+>       component-as-input-pattern:
+>         type: pattern # Implied to be an input pattern if `label` is undefined
+>       component-as-extra-pattern:
+>         type: pattern # Implied to be an extra pattern if `label` is defined
+>         label: some-role
+>   # Topic(s) into which the component will write output
+>   to:
+>     topics:
+>       ${pipeline.name}-output-topic:
+>         type: output # Implied when role is NOT specified
+>       ${pipeline.name}-extra-topic:
+>         label: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
+>       ${pipeline.name}-error-topic:
+>         type: error
+>         # Currently KPOps supports Avro and JSON schemas.
+>         key_schema: key-schema # must implement SchemaProvider to use
+>         value_schema: value-schema
+>         partitions_count: 1
+>         replication_factor: 1
+>         configs: # https://kafka.apache.org/documentation/#topicconfigs
+>           cleanup.policy: compact
+>     models: # SchemaProvider is initiated with the values given here
+>       model: model
+>   namespace: namespace # required
+>   # No arbitrary keys are allowed under `app` here
+>   # Allowed configs:
+>   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/streams-app
+>   values: # required
+>     # streams-bootstrap kafka section
+>     kafka: # required, streams-app-specific
+>       bootstrapServers: ${config.kafka_brokers}
+>       schemaRegistryUrl: ${config.schema_registry.url}
+>       applicationId: example-id
+>       inputTopics:
+>         - topic1
+>         - topic2
+>       outputTopic: output-topic
+>       inputPattern: input-pattern
+>       labeledInputTopics:
+>         input_role1:
+>           - input_topic1
+>           - input_topic2
+>         input_role2:
+>           - input_topic3
+>           - input_topic4
+>       labeledInputPatterns:
+>         pattern_role1: input_pattern1
+>       labeledOutputTopics:
+>         output_role1: output_topic1
+>         output_role2: output_topic2
+>       errorTopic: error-topic
+>       config:
+>         my.streams.config: my.value
+>       deleteOutput: false
+>     nameOverride: override-with-this-name # streams-app-specific
+>     fullnameOverride: override-with-this-name # streams-app-specific
+>     autoscaling: # streams-app-specific
+>       enabled: false # Whether to enable auto-scaling using KEDA.
+>       lagThreshold: 0 # Average target value to trigger scaling actions.
+>       # This is the interval to check each trigger on.
+>       # https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval
+>       pollingInterval: 30
+>       # The period to wait after the last trigger reported active before scaling
+>       #  the resource back to 0. https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod
+>       cooldownPeriod: 300
+>       # The offset reset policy for the consumer if the the consumer group is
+>       # not yet subscribed to a partition.
+>       offsetResetPolicy: earliest
+>       # This setting is passed to the HPA definition that KEDA will create for a
+>       # given resource and holds the maximum number of replicas of the target resource.
+>       # https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount
+>       maxReplicas: 1
+>       # Minimum number of replicas KEDA will scale the resource down to.
+>       # https://keda.sh/docs/2.7/concepts/scaling-deployments/#minreplicacount
+>       minReplicas: 0
+>       # If this property is set, KEDA will scale the resource down to this
+>       # number of replicas.
+>       # https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount
+>       idleReplicas: 0
+>       internalTopics: # List of auto-generated Kafka Streams topics used by the streams app.
+>         - topic1
+>         - topic2
+>       topics: # List of topics used by the streams app.
+>         - topic1
+>         - topic2
+>       # Complete list of KEDA triggers. When set, these replace all
+>       # chart-generated Kafka lag triggers.
+>       triggers: []
+>       # - type: cron
+>       #   name: business_hours
+>       #   metadata:
+>       #     timezone: Europe/Berlin
+>       #     start: "0 8 * * 1-5"
+>       #     end: "0 18 * * 1-5"
+>       #     desiredReplicas: "2"
+>       # List of KEDA triggers appended to chart-generated Kafka lag triggers.
+>       additionalTriggers: []
+>       # KEDA composite metric configuration. Requires explicit triggers.
+>       # scalingModifiers:
+>       #   formula: business_hours
+>       #   target: "1"
+>       #   metricType: AverageValue
+>   # Helm repository configuration (optional)
+>   # If not set the helm repo add will not be called. Useful when using local Helm charts
+>   repo_config:
+>     repository_name: bakdata-streams-bootstrap # required
+>     url: https://bakdata.github.io/streams-bootstrap/ # required
+>     repo_auth_flags:
+>       username: user
+>       password: pass
+>       ca_file: /home/user/path/to/ca-file
+>       insecure_skip_tls_verify: false
+>   version: "2.12.0" # Helm chart version
+> ```
+
+### Operations
+
+#### deploy
+
+In addition to [StreamsBootstrap's `deploy`](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/streams-bootstrap/index.md#deploy>):
+
+- Create topics if provided (optional)
+- Submit Avro schemas to the registry if provided (optional)
+
+#### destroy
+
+Uninstall Helm release.
+
+#### reset
+
+- Delete the consumer group offsets
+- Delete Kafka Streams state
+
+#### clean
+
+Similar to [`reset`](<#reset>) with to additional steps:
+
+- Delete the app's output topics
+- Delete all associated schemas in the Schema Registry
+
+# Streams Bootstrap
+
+Subclass of [*HelmApp*](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/helm-app/index.md>) and *KafkaApp*.
+
+### Usage
+
+- Defines a [streams-bootstrap](<https://github.com/bakdata/streams-bootstrap>) component
+
+- Often used in `defaults.yaml`
+
+### Operations
+
+#### deploy
+
+Deploy using Helm.
+
+#### destroy
+
+Uninstall Helm release.
+
+#### reset
+
+Do nothing.
+
+#### clean
+
+Do nothing.
+
+# Configuration
+
+KPOps reads its global configuration that is unrelated to a pipeline's [components](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/overview/index.md>) from [`config.yaml`](<#__codelineno-0-1>).
+
+Consider enabling [KPOps' editor integration](<https://bakdata.github.io/kpops/dev/user/references/editor-integration/index.md>) feature to enjoy the benefits of autocompletion and validation when configuring your pipeline.
+
+To learn about any of the available settings, take a look at the example below.
+
+> [!NOTE]
+>
+> **`config.yaml`**
+>
+> ```yaml
+> # CONFIGURATION
+> #
+> # Base directory to the pipelines (default is current working directory)
+> pipeline_base_dir: .
+> # The Kafka brokers address.
+> # REQUIRED
+> kafka_brokers: "http://broker1:9092,http://broker2:9092"
+> # Configure the topic name variables you can use in the pipeline definition.
+> topic_name_config:
+>   # Configures the value for the variable ${output_topic_name}
+>   default_output_topic_name: ${pipeline.name}-${component.name}
+>   # Configures the value for the variable ${error_topic_name}
+>   default_error_topic_name: ${pipeline.name}-${component.name}-error
+> # Configuration for Schema Registry.
+> schema_registry:
+>   # Whether the Schema Registry handler should be initialized.
+>   enabled: false
+>   # Address of the Schema Registry.
+>   url: "http://localhost:8081"
+> # Configuration for the Kafka REST Proxy.
+> kafka_rest:
+>   # Address of the Kafka REST Proxy.
+>   url: "http://localhost:8082"
+> # Configuration for Kafka Connect.
+> kafka_connect:
+>   # Address of Kafka Connect.
+>   url: "http://localhost:8083"
+> # Flag for `helm upgrade --install`.
+> # Create the release namespace if not present.
+> create_namespace: false
+> # Global flags for Helm.
+> helm_config:
+>   # Name of kubeconfig context (`--kube-context`)
+>   context: name
+>   # Run Helm in Debug mode.
+>   debug: false
+>   # Kubernetes API version used for Capabilities.APIVersions
+>   api_version: null
+> # Whether to retain clean up jobs in the cluster or uninstall the, after
+> # completion.
+> retain_clean_jobs: false
+> ```
+
+> [!NOTE]
+>
+> **Environment-specific pipeline definitions**
+>
+> Similarly to [defaults](<https://bakdata.github.io/kpops/dev/user/core-concepts/defaults/index.md#configuration>), it is possible to have an unlimited amount of additional environment-specific pipeline definitions. The naming convention is the same: add a suffix of the form `_{environment}` to the filename.
+
+# Defaults
+
+KPOps has a very efficient way of dealing with repeating settings which manifests as [`defaults.yaml`](<https://bakdata.github.io/kpops/resources/pipeline-defaults/defaults>). This file provides the user with the power to set defaults for any and all [components](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/overview/index.md>), thus omitting the need to repeat the same settings in [`pipeline.yaml`](<https://bakdata.github.io/kpops/resources/pipeline-components/pipeline>).
+
+[See real-world examples for `defaults`](<https://bakdata.github.io/kpops/resources/examples/defaults>).
+
+## Features
+
+### Inheritance
+
+An important mechanic of KPOps is that `defaults` set for a component apply to all components that inherit from it.
+
+### Configuration
+
+KPOps allows using multiple default values. The `defaults.yaml` (or `defaults_<env>.yaml`) files can be distributed across multiple files. These will be picked up by KPOps and get merged into a single `pipeline.yaml` file. KPOps starts from reading the default files from where the pipeline path is defined and picks up every defaults file on its way to where the `pipeline_base_dir` is defined.
+
+The deepest `defaults.yaml` file in the folder hierarchy (i.e., the closest one to the `pipeline.yaml`) overwrites the higher-level defaults' values.
+
+It is important to note that `defaults_{environment}.yaml` overrides only the settings that are explicitly set to be different from the ones in the base `defaults` file.
+
+> [!NOTE]
+>
+> **defaults merge priority**
+>
+> Imagine the following folder structure, where the `pipeline_base_dir` is configured to `pipelines`:
+>
+> ```text
+> └─ pipelines
+>    └── distributed-defaults
+>        ├── defaults.yaml
+>        ├── defaults_dev.yaml
+>        └── pipeline-deep
+>            ├── defaults.yaml
+>            └── pipeline.yaml
+> ```
+>
+> KPOps picks up the defaults in the following order (high to low priority):
+>
+> - `./pipelines/distributed-defaults/pipeline-deep/defaults.yaml`
+> - `./pipelines/distributed-defaults/defaults_dev.yaml`
+> - `./pipelines/distributed-defaults/defaults.yaml`
+
+## Components
+
+The `defaults` codeblocks in this section contain the full set of settings that are specific to the component. If a setting already exists in a parent config, it will not be included in the child's.
+
+### [KubernetesApp](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/kubernetes-app/index.md>)
+
+> [!NOTE]
+>
+> **`defaults.yaml`**
+>
+> ```yaml
+> # Base Kubernetes App
+> #
+> # Parent of: HelmApp
+> # Child of: PipelineComponent
+> kubernetes-app:
+>   # Pipeline prefix that will prefix every component name. If you wish to not
+>   # have any prefix you can specify an empty string.
+>   prefix: ${pipeline.name}-
+>   namespace: namespace # required
+>   values: # required
+>     image: exampleImage # Example
+>     debug: false # Example
+>     commandLine: {} # Example
+> ```
+
+### [StreamsApp](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/streams-app/index.md>)
+
+> [!NOTE]
+>
+> **`defaults.yaml`**
+>
+> ```yaml
+> # Streams app component that configures a streams-bootstrap app.
+> #
+> # Child of: StreamsBootstrap
+> # More documentation on StreamsApp: https://github.com/bakdata/streams-bootstrap
+> streams-app:
+>   from: # Must not be null
+>     topics: # read from topic
+>       ${pipeline.name}-input-topic:
+>         type: input # Implied when role is NOT specified
+>       ${pipeline.name}-extra-topic:
+>         label: topic-role # Implies `type` to be extra
+>       ${pipeline.name}-input-pattern-topic:
+>         type: pattern # Implied to be an input pattern if `label` is undefined
+>       ${pipeline.name}-extra-pattern-topic:
+>         type: pattern # Implied to be an extra pattern if `label` is defined
+>         label: some-role
+>     components: # read from specific component
+>       account-producer:
+>         type: input # Implied when role is NOT specified
+>       other-producer:
+>         label: some-role # Implies `type` to be extra
+>       component-as-input-pattern:
+>         type: pattern # Implied to be an input pattern if `label` is undefined
+>       component-as-extra-pattern:
+>         type: pattern # Implied to be an extra pattern if `label` is defined
+>         label: some-role
+>   # Topic(s) into which the component will write output
+>   to:
+>     topics:
+>       ${pipeline.name}-output-topic:
+>         type: output # Implied when role is NOT specified
+>       ${pipeline.name}-extra-topic:
+>         label: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
+>       ${pipeline.name}-error-topic:
+>         type: error
+>         # Currently KPOps supports Avro and JSON schemas.
+>         key_schema: key-schema # must implement SchemaProvider to use
+>         value_schema: value-schema
+>         partitions_count: 1
+>         replication_factor: 1
+>         configs: # https://kafka.apache.org/documentation/#topicconfigs
+>           cleanup.policy: compact
+>     models: # SchemaProvider is initiated with the values given here
+>       model: model
+>   # No arbitrary keys are allowed under `app` here
+>   # Allowed configs:
+>   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/streams-app
+>   values: # required
+>     # streams-bootstrap kafka section
+>     kafka: # required, streams-app-specific
+>       bootstrapServers: ${config.kafka_brokers}
+>       schemaRegistryUrl: ${config.schema_registry.url}
+>       applicationId: example-id
+>       inputTopics:
+>         - topic1
+>         - topic2
+>       outputTopic: output-topic
+>       inputPattern: input-pattern
+>       labeledInputTopics:
+>         input_role1:
+>           - input_topic1
+>           - input_topic2
+>         input_role2:
+>           - input_topic3
+>           - input_topic4
+>       labeledInputPatterns:
+>         pattern_role1: input_pattern1
+>       labeledOutputTopics:
+>         output_role1: output_topic1
+>         output_role2: output_topic2
+>       errorTopic: error-topic
+>       config:
+>         my.streams.config: my.value
+>       deleteOutput: false
+>     nameOverride: override-with-this-name # streams-app-specific
+>     fullnameOverride: override-with-this-name # streams-app-specific
+>     autoscaling: # streams-app-specific
+>       enabled: false # Whether to enable auto-scaling using KEDA.
+>       lagThreshold: 0 # Average target value to trigger scaling actions.
+>       # This is the interval to check each trigger on.
+>       # https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval
+>       pollingInterval: 30
+>       # The period to wait after the last trigger reported active before scaling
+>       #  the resource back to 0. https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod
+>       cooldownPeriod: 300
+>       # The offset reset policy for the consumer if the the consumer group is
+>       # not yet subscribed to a partition.
+>       offsetResetPolicy: earliest
+>       # This setting is passed to the HPA definition that KEDA will create for a
+>       # given resource and holds the maximum number of replicas of the target resource.
+>       # https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount
+>       maxReplicas: 1
+>       # Minimum number of replicas KEDA will scale the resource down to.
+>       # https://keda.sh/docs/2.7/concepts/scaling-deployments/#minreplicacount
+>       minReplicas: 0
+>       # If this property is set, KEDA will scale the resource down to this
+>       # number of replicas.
+>       # https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount
+>       idleReplicas: 0
+>       internalTopics: # List of auto-generated Kafka Streams topics used by the streams app.
+>         - topic1
+>         - topic2
+>       topics: # List of topics used by the streams app.
+>         - topic1
+>         - topic2
+>       # Complete list of KEDA triggers. When set, these replace all
+>       # chart-generated Kafka lag triggers.
+>       triggers: []
+>       # - type: cron
+>       #   name: business_hours
+>       #   metadata:
+>       #     timezone: Europe/Berlin
+>       #     start: "0 8 * * 1-5"
+>       #     end: "0 18 * * 1-5"
+>       #     desiredReplicas: "2"
+>       # List of KEDA triggers appended to chart-generated Kafka lag triggers.
+>       additionalTriggers: []
+>       # KEDA composite metric configuration. Requires explicit triggers.
+>       # scalingModifiers:
+>       #   formula: business_hours
+>       #   target: "1"
+>       #   metricType: AverageValue
+> ```
+
+### [ProducerApp](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/producer-app/index.md>)
+
+> [!NOTE]
+>
+> **`defaults.yaml`**
+>
+> ```yaml
+>
+> ```
+
+### [KafkaConnector](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/kafka-connector/index.md>)
+
+> [!NOTE]
+>
+> **`defaults.yaml`**
+>
+> ```yaml
+> # Kafka connector
+> #
+> # Parent of: KafkaSinkConnector, KafkaSourceConnector
+> # Child of: KafkaApp
+> kafka-connector:
+>   # Topic(s) into which the component will write output
+>   to:
+>     topics:
+>       ${pipeline.name}-output-topic:
+>         type: output # Implied when role is NOT specified
+>       ${pipeline.name}-extra-topic:
+>         label: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
+>       ${pipeline.name}-error-topic:
+>         type: error
+>         # Currently KPOps supports Avro and JSON schemas.
+>         key_schema: key-schema # must implement SchemaProvider to use
+>         value_schema: value-schema
+>         partitions_count: 1
+>         replication_factor: 1
+>         configs: # https://kafka.apache.org/documentation/#topicconfigs
+>           cleanup.policy: compact
+>     models: # SchemaProvider is initiated with the values given here
+>       model: model
+>   # Full documentation on connectors: https://kafka.apache.org/documentation/#connectconfigs
+>   config: # required
+>     tasks.max: 1
+> ```
+
+### [KafkaSourceConnector](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/kafka-source-connector/index.md>)
+
+> [!NOTE]
+>
+> **`defaults.yaml`**
+>
+> ```yaml
+> # Kafka source connector
+> #
+> # Child of: KafkaConnector
+> kafka-source-connector:
+> ```
+
+### [KafkaSinkConnector](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/kafka-sink-connector/index.md>)
+
+> [!NOTE]
+>
+> **`defaults.yaml`**
+>
+> ```yaml
+> # Kafka sink connector
+> #
+> # Child of: KafkaConnector
+> kafka-sink-connector:
+>   # No settings differ from `kafka-connector`
+>   from: # Must not be null
+>     topics: # read from topic
+>       ${pipeline.name}-input-topic:
+>         type: input # Implied when role is NOT specified
+>       ${pipeline.name}-extra-topic:
+>         label: topic-role # Implies `type` to be extra
+>       ${pipeline.name}-input-pattern-topic:
+>         type: pattern # Implied to be an input pattern if `label` is undefined
+>       ${pipeline.name}-extra-pattern-topic:
+>         type: pattern # Implied to be an extra pattern if `label` is defined
+>         label: some-role
+>     components: # read from specific component
+>       account-producer:
+>         type: input # Implied when role is NOT specified
+>       other-producer:
+>         label: some-role # Implies `type` to be extra
+>       component-as-input-pattern:
+>         type: pattern # Implied to be an input pattern if `label` is undefined
+>       component-as-extra-pattern:
+>         type: pattern # Implied to be an extra pattern if `label` is defined
+>         label: some-role
+> ```
+
+# Operation Modes in KPOps
+
+KPOps supports three operation modes—`managed`, `manifest`, and `argo`. These modes determine how resources are managed and allow users to tailor their deployment strategy.
+
+- **Managed Mode** (default): KPOps uses Helm, and communicates with services like Kafka Rest Proxy, and Kafka Connect under the hood to manage the installation/(graceful) deletion of applications, creation/deletion of Kafka topics, creation/deletion of Connectors defined in your `pipeline.yaml`.
+- **Manifest Mode**: Focuses on generating Kubernetes manifests.
+- **Argo Mode**: Extends the functionality to include ArgoCD-specific hooks for certain operations, facilitating GitOps workflows with automated cleanup and reset tasks.
+
+---
+
+## Configuring Operation Modes
+
+You can configure the operation mode using one of the following methods:
+
+1. **Command-Line Option**: Pass the `--operation-mode <OPERATION>` flag when running a CLI command. Refer to the [CLI commands documentation](<https://bakdata.github.io/kpops/9.0/user/references/cli-commands/#kpops-deploy>) for more details.
+2. **Environment Variable**: Set the operation mode by defining the `KPOPS_OPERATION_MODE` environment variable.
+
+---
+
+## Generated Resources by Mode and Operation
+
+### `deploy`
+
+#### **Manifest Mode**
+
+- **streams-bootstrap Applications**:
+
+  - Depending on your pipeline configuration, Kubernetes `Job`, `Deployment`, `ConfigMap`, and `Service` resources.
+  - Please refer to [streams-bootstrap Helm Charts](<https://github.com/bakdata/streams-bootstrap/tree/master/charts>).
+- **Topics**:
+
+  - Strimzi `KafkaTopic` CRDs.
+
+#### **Argo Mode**
+
+- **streams-bootstrap Applications**:
+
+  - Depending on your pipeline configuration, Kubernetes `Job`, `Deployment`, `ConfigMap`, and `Service` resources.
+  - Additional Argo `sync-wave` annotation to ensure Kafka topics are created first (default `sync-wave=0`) before deploying apps (lower priority `sync-wave>0`). All components of each sync wave are deployed in parallel by Argo.
+  - Please refer to [streams-bootstrap Helm Charts](<https://github.com/bakdata/streams-bootstrap/tree/master/charts>).
+- **Topics**:
+
+  - Strimzi `KafkaTopic` CRDs.
+- **Cleanup Jobs**:
+
+  - Kubernetes `Job` resources configured **with** ArgoCD `PostDelete` hooks, ensuring cleanup tasks are executed after ArgoCD application deletion.
+
+---
+
+### `reset`
+
+#### **Manifest Mode**
+
+- **Topics**:
+
+  - Strimzi `KafkaTopic` CRDs.
+- **Reset Jobs**:
+
+  - Kubernetes `Job` resources for resetting Kafka Streams application states.
+
+#### **Argo Mode**
+
+- **Topics**:
+
+  - Strimzi `KafkaTopic` CRDs.
+- **Reset Jobs**:
+
+  - Kubernetes `Job` resources **without** ArgoCD `PostDelete` hooks, providing a simpler reset process.
+
+---
+
+### `clean`
+
+#### **Manifest Mode**
+
+- **Clean Jobs**:
+
+  - Kubernetes `Job` resources for cleaning up temporary resources or artifacts using application container images.
+
+#### **Argo Mode**
+
+- **Not Applicable**:
+
+  - The `clean` command is not supported in Argo mode. The clean is instead achieved through cleanup job hooks during the `deploy` command.
+
+---
+
+### `destroy`
+
+#### **Manifest Mode**
+
+- **Topics**:
+
+  - Strimzi `KafkaTopic` CRDs.
+
+#### **Argo Mode**
+
+- **Topics**:
+
+  - Strimzi `KafkaTopic` CRDs.
+
+---
+
+## Use Cases for Each Mode
+
+### Manifest Mode
+
+- **Flexibility**: Use the generated manifests in manual workflows or integrate with any Kubernetes deployment tool.
+- **Version Control**: Commit generated manifests to a Git repository for tracking changes and rollback.
+
+### Argo Mode
+
+- **GitOps Integration**: Simplifies workflows when using ArgoCD for automated deployments and lifecycle management.
+- **PostDelete Hooks**: Automatically cleans up resources after deletion of ArgoCD applications.
+
+---
+
+## Summary of Resource Generation by Operation and Mode
+
+| Resource Type | `deploy` | `reset` | `clean` | `destroy` |
+| --- | --- | --- | --- | --- |
+| Producer Apps | Manifest: Generated | N/A | N/A | N/A |
+|  | Argo: Generated |  |  |  |
+| Streams Apps | Manifest: Generated | N/A | N/A | N/A |
+|  | Argo: Generated |  |  |  |
+| Topics | Manifest: Generated | Manifest: Generated | N/A | Manifest: Generated |
+|  | Argo: Generated | Argo: Generated |  | Argo: Generated |
+| Cleanup Jobs | Manifest: N/A | N/A | Manifest: Generated | N/A |
+|  | Argo: With `PostDelete` hooks | N/A | N/A | N/A |
+| Reset Jobs | Manifest: N/A | Manifest: Generated | N/A | N/A |
+|  | Argo: Without `PostDelete` hooks |  |  |  |
+
+# Environment variables
+
+Environment variables can be set by using the [export](<https://www.unix.com/man-page/linux/1/export/>) command in Linux or the [set](<https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/set_1>) command in Windows.
+
+> [!TIP]
+>
+> **dotenv files**
+>
+> KPOps currently supports `.env` files only for variables related to the [config](<https://bakdata.github.io/kpops/dev/user/core-concepts/config/index.md>). Full support for `.env` files is on the [roadmap](<https://github.com/bakdata/kpops/issues/20>). One of the possible ways to use one and export the contents manually is with the following command: `export $(xargs < .env)`. This would work in `bash` suppose there are no spaces inside the values.
+
+## Config
+
+These variables take precedence over the settings in `config.yaml`. Variables marked as required can instead be set in the global config.
+
+| Name | Default Value | Required | Description | Setting name |
+| --- | --- | --- | --- | --- |
+| KPOPS\_PIPELINE\_BASE\_DIR | . | False | Base directory to the pipelines (default is current working directory) | pipeline\_base\_dir |
+| KPOPS\_KAFKA\_BROKERS |  | True | The comma separated Kafka brokers address. | kafka\_brokers |
+| KPOPS\_TOPIC\_NAME\_CONFIG\_\_DEFAULT\_OUTPUT\_TOPIC\_NAME | ${pipeline.name}-${component.name} | False | Configures the value for the variable ${output\_topic\_name} | topic\_name\_config.default\_output\_topic\_name |
+| KPOPS\_TOPIC\_NAME\_CONFIG\_\_DEFAULT\_ERROR\_TOPIC\_NAME | ${pipeline.name}-${component.name}-error | False | Configures the value for the variable ${error\_topic\_name} | topic\_name\_config.default\_error\_topic\_name |
+| KPOPS\_SCHEMA\_REGISTRY\_\_ENABLED | False | False | Whether the Schema Registry handler should be initialized. | schema\_registry.enabled |
+| KPOPS\_SCHEMA\_REGISTRY\_\_URL | http://localhost:8081/ | False | Address of the Schema Registry. | schema\_registry.url |
+| KPOPS\_SCHEMA\_REGISTRY\_\_TIMEOUT | 30 | False | Operation timeout in seconds. | schema\_registry.timeout |
+| KPOPS\_KAFKA\_REST\_\_URL | http://localhost:8082/ | False | Address of the Kafka REST Proxy. | kafka\_rest.url |
+| KPOPS\_KAFKA\_REST\_\_TIMEOUT | 30 | False | Operation timeout in seconds. | kafka\_rest.timeout |
+| KPOPS\_KAFKA\_CONNECT\_\_URL | http://localhost:8083/ | False | Address of Kafka Connect. | kafka\_connect.url |
+| KPOPS\_KAFKA\_CONNECT\_\_TIMEOUT | 30 | False | Operation timeout in seconds. | kafka\_connect.timeout |
+| KPOPS\_CREATE\_NAMESPACE | False | False | Flag for `helm upgrade --install`. Create the release namespace if not present. | create\_namespace |
+| KPOPS\_HELM\_CONFIG\_\_CONTEXT |  | False | Name of kubeconfig context (`--kube-context`) | helm\_config.context |
+| KPOPS\_HELM\_CONFIG\_\_DEBUG | False | False | Run Helm in Debug mode | helm\_config.debug |
+| KPOPS\_HELM\_CONFIG\_\_API\_VERSION |  | False | Kubernetes API version used for `Capabilities.APIVersions` | helm\_config.api\_version |
+| KPOPS\_HELM\_CONFIG\_\_TIMEOUT |  | False | Helm flag --timeout. Duration to wait for any individual Kubernetes operation | helm\_config.timeout |
+| KPOPS\_HELM\_CONFIG\_\_FORCE\_REPLACE | False | False | Helm flag --force-replace. Forces resource updates by replacement | helm\_config.force\_replace |
+| KPOPS\_RETAIN\_CLEAN\_JOBS | False | False | Whether to retain clean up jobs in the cluster or uninstall the, after completion. | retain\_clean\_jobs |
+| KPOPS\_STRIMZI\_TOPIC |  | False | Configuration for Strimzi Kafka Topics. | strimzi\_topic |
+| KPOPS\_OPERATION\_MODE | managed | False | The operation mode of KPOps (managed, manifest, argo). | operation\_mode |
+
+> [!NOTE]
+>
+> **config\_env\_vars.env**
+>
+> Exhaustive list of all config-related environment variables
+>
+> ```py
+> # Global config environment variables
+> #
+> # The default setup is shown. These variables take precedence over the
+> # settings in `config.yaml`. Variables marked as required can instead
+> # be set in the global config.
+> #
+> # pipeline_base_dir
+> # Base directory to the pipelines (default is current working
+> # directory)
+> KPOPS_PIPELINE_BASE_DIR=.
+> # kafka_brokers
+> # The comma separated Kafka brokers address.
+> KPOPS_KAFKA_BROKERS # No default value, required
+> # topic_name_config.default_output_topic_name
+> # Configures the value for the variable ${output_topic_name}
+> KPOPS_TOPIC_NAME_CONFIG__DEFAULT_OUTPUT_TOPIC_NAME=${pipeline.name}-${component.name}
+> # topic_name_config.default_error_topic_name
+> # Configures the value for the variable ${error_topic_name}
+> KPOPS_TOPIC_NAME_CONFIG__DEFAULT_ERROR_TOPIC_NAME=${pipeline.name}-${component.name}-error
+> # schema_registry.enabled
+> # Whether the Schema Registry handler should be initialized.
+> KPOPS_SCHEMA_REGISTRY__ENABLED=False
+> # schema_registry.url
+> # Address of the Schema Registry.
+> KPOPS_SCHEMA_REGISTRY__URL=http://localhost:8081/
+> # schema_registry.timeout
+> # Operation timeout in seconds.
+> KPOPS_SCHEMA_REGISTRY__TIMEOUT=30
+> # kafka_rest.url
+> # Address of the Kafka REST Proxy.
+> KPOPS_KAFKA_REST__URL=http://localhost:8082/
+> # kafka_rest.timeout
+> # Operation timeout in seconds.
+> KPOPS_KAFKA_REST__TIMEOUT=30
+> # kafka_connect.url
+> # Address of Kafka Connect.
+> KPOPS_KAFKA_CONNECT__URL=http://localhost:8083/
+> # kafka_connect.timeout
+> # Operation timeout in seconds.
+> KPOPS_KAFKA_CONNECT__TIMEOUT=30
+> # create_namespace
+> # Flag for `helm upgrade --install`. Create the release namespace if
+> # not present.
+> KPOPS_CREATE_NAMESPACE=False
+> # helm_config.context
+> # Name of kubeconfig context (`--kube-context`)
+> KPOPS_HELM_CONFIG__CONTEXT # No default value, not required
+> # helm_config.debug
+> # Run Helm in Debug mode
+> KPOPS_HELM_CONFIG__DEBUG=False
+> # helm_config.api_version
+> # Kubernetes API version used for `Capabilities.APIVersions`
+> KPOPS_HELM_CONFIG__API_VERSION # No default value, not required
+> # helm_config.timeout
+> # Helm flag --timeout. Duration to wait for any individual Kubernetes
+> # operation
+> KPOPS_HELM_CONFIG__TIMEOUT # No default value, not required
+> # helm_config.force_replace
+> # Helm flag --force-replace. Forces resource updates by replacement
+> KPOPS_HELM_CONFIG__FORCE_REPLACE=False
+> # retain_clean_jobs
+> # Whether to retain clean up jobs in the cluster or uninstall the,
+> # after completion.
+> KPOPS_RETAIN_CLEAN_JOBS=False
+> # strimzi_topic
+> # Configuration for Strimzi Kafka Topics.
+> KPOPS_STRIMZI_TOPIC # No default value, not required
+> # operation_mode
+> # The operation mode of KPOps (managed, manifest, argo).
+> KPOPS_OPERATION_MODE=managed
+> ```
+
+## CLI
+
+These variables take precedence over the commands' flags. If a variable is set, the corresponding flag does not have to be specified in commands. Variables marked as required can instead be set as flags.
+
+| Name | Default Value | Required | Description |
+| --- | --- | --- | --- |
+| KPOPS\_CONFIG\_PATH | . | False | Path to the dir containing config.yaml files |
+| KPOPS\_DOTENV\_PATH |  | False | Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one. |
+| KPOPS\_ENVIRONMENT |  | False | The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults\_development.yaml for environment=development). |
+| KPOPS\_OPERATION\_MODE | managed | False | How KPOps should operate. |
+| KPOPS\_PIPELINE\_PATHS |  | True | Paths to dir containing 'pipeline.yaml' or files named 'pipeline.yaml'. |
+| KPOPS\_PIPELINE\_STEPS |  | False | Comma separated list of steps to apply the command on |
+
+> [!NOTE]
+>
+> **cli\_env\_vars.env**
+>
+> Exhaustive list of all cli-related environment variables
+>
+> ```py
+> # CLI Environment variables
+> #
+> # The default setup is shown. These variables take precedence over the
+> # commands' flags. If a variable is set, the corresponding flag does
+> # not have to be specified in commands. Variables marked as required
+> # can instead be set as flags.
+> #
+> # Path to the dir containing config.yaml files
+> KPOPS_CONFIG_PATH=.
+> # Path to dotenv file. Multiple files can be provided. The files will
+> # be loaded in order, with each file overriding the previous one.
+> KPOPS_DOTENV_PATH # No default value, not required
+> # The environment you want to generate and deploy the pipeline to.
+> # Suffix your environment files with this value (e.g.
+> # defaults_development.yaml for environment=development).
+> KPOPS_ENVIRONMENT # No default value, not required
+> # How KPOps should operate.
+> KPOPS_OPERATION_MODE=managed
+> # Paths to dir containing 'pipeline.yaml' or files named
+> # 'pipeline.yaml'.
+> KPOPS_PIPELINE_PATHS # No default value, required
+> # Comma separated list of steps to apply the command on
+> KPOPS_PIPELINE_STEPS # No default value, not required
+> ```
+
+# Substitution
+
+KPOps supports the usage of placeholders and environment variables in [pipeline definition](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/overview/index.md>) and [defaults](<https://bakdata.github.io/kpops/dev/user/core-concepts/defaults/index.md>).
+
+## Component-specific variables
+
+These variables can be used in a component's definition to refer to any of its attributes, including ones that the user has defined in the defaults.
+
+All of them are prefixed with `component.` and follow the following form: `component.{attribute_name}`. If the attribute itself contains attributes, they can be referred to like this: `component.{attribute_name}.{subattribute_name}`.
+
+> [!NOTE]
+>
+> **Example**
+>
+> ```yaml
+> - type: scheduled-producer
+>   values:
+>     labels:
+>       app_type: "${component.type}"
+>       app_name: "${component.name}"
+>       app_schedule: "${component.values.schedule}"
+>     commandLine:
+>       FAKE_ARG: "fake-arg-value"
+>     schedule: "30 3/8 * * *"
+> - type: converter
+>   values:
+>     commandLine:
+>       CONVERT_XML: true
+>     resources:
+>       limits:
+>         memory: 2G
+>       requests:
+>         memory: 2G
+> - type: filter
+>   name: "filter-app"
+>   values:
+>     labels:
+>       app_type: "${component.type}"
+>       app_name: "${component.name}"
+>       app_resources_requests_memory: "${component.values.resources.requests.memory}"
+>       ${component.type}: "${component.values.labels.app_name}-${component.values.labels.app_type}"
+>       test_placeholder_in_placeholder: "${component.values.labels.${component.type}}"
+>     commandLine:
+>       TYPE: "nothing"
+>     resources:
+>       requests:
+>         memory: 3G
+>     replicaCount: 4
+>     autoscaling:
+>       minReplicas: 4
+>       maxReplicas: 4
+> ```
+
+## Pipeline-config-specific variables
+
+These variables include all fields in the [config](<https://bakdata.github.io/kpops/dev/user/core-concepts/config/index.md>) and refer to the pipeline configuration that is independent of the components.
+
+All such variables are prefixed with `config.` and are of the same form as the [component-specific variables](<#component-specific-variables>).
+
+> [!NOTE]
+>
+> **Info**
+>
+> `error_topic_name` is an alias for `config.topic_name_config.default_error_topic_name`  
+> `output_topic_name` is an alias for `config.topic_name_config.default_output_topic_name`
+
+## Environment variables
+
+Environment variables such as `$PATH` can be used in the pipeline definition and defaults without any transformation following the form `${ENV_VAR_NAME}`. This, of course, includes variables like the ones relevant to the [KPOps cli](<https://bakdata.github.io/kpops/dev/user/references/cli-commands/index.md>) that are exported by the user.
+
+[See all KPOps environment variables](<https://bakdata.github.io/kpops/dev/user/core-concepts/variables/environment_variables/index.md>)
+
+## Pipeline name variables
+
+These are special variables that refer to the name and path of a pipeline.
+
+- `${pipeline.name}`: Concatenated path of the directory that contains the file pipeline.yaml. For instance, `./data/pipelines/v1/pipeline.yaml`, here the value for the variable would be `data-pipelines-v1`.
+
+- `${pipeline_name_<level>}`: Similar to the previous variable, each `<level>` contains a part of the path to the `pipeline.yaml` file. Consider the previous example, `${pipeline_name_0}` would be `data`, `${pipeline_name_1}` would be `pipelines`, and `${pipeline_name_2}` equals to `v1`.
+
+- `${pipeline.parent.name}`: Like `${pipeline.name}` but only up to the *parent directory* of the directory that contains the file pipeline.yaml. For instance, `./data/pipelines/v1/pipeline.yaml`, here the value for the variable would be `data-pipelines`. This can be useful e.g. to read from a component of a pipeline defined in `./data/pipelines/pipeline.yaml` (without `/v1`).
+
+## Advanced use cases
+
+1. **Refer to default component field values**: As long as a value is assigned to a component attribute, it is possible to refer to it with a placeholder. To see all component fields, take a look at the [pipeline schema](<https://bakdata.github.io/kpops/dev/schema/pipeline.json>).
+2. **Chaining variables**: It is possible to chain any number of variables, see the [example](<#component-specific-variables>) above.
+3. **Cross-component substitution**: [YAML](<https://yaml.org/>) is quite an intricate language and with some of its [magic](<https://yaml.org/spec/1.2.2/#692-node-anchors>) one could write cross-component references.
+
+# References
+
+# CLI Usage
+
+**Usage**:
+
+```console
+$ kpops [OPTIONS] COMMAND [ARGS]...
+```
+
+**Options**:
+
+- `-V, --version`: Print KPOps version
+- `--install-completion`: Install completion for the current shell.
+- `--show-completion`: Show completion for the current shell, to copy it or customize the installation.
+- `--help`: Show this message and exit.
+
+**Commands**:
+
+- `init`: Initialize a new KPOps project.
+- `generate`: Generate enriched pipeline representation
+- `deploy`: Deploy pipeline steps
+- `destroy`: Destroy pipeline steps
+- `reset`: Reset pipeline steps
+- `clean`: Clean pipeline steps
+- `schema`: Generate JSON schema.
+
+## `kpops init`
+
+Initialize a new KPOps project.
+
+**Usage**:
+
+```console
+$ kpops init [OPTIONS] {path}
+```
+
+**Arguments**:
+
+- `path`: Path for a new KPOps project. It should lead to an empty (or non-existent) directory. The part of the path that doesn't exist will be created. \[required\]
+
+**Options**:
+
+- `--config-include-optional / --no-config-include-optional`: Whether to include non-required settings in the generated 'config.yaml' \[default: no-config-include-optional\]
+- `--help`: Show this message and exit.
+
+## `kpops generate`
+
+Enrich pipeline steps with defaults. The enriched pipeline is used for all KPOps operations (deploy, destroy, ...).
+
+**Usage**:
+
+```console
+$ kpops generate [OPTIONS] {pipeline_paths}...
+```
+
+**Arguments**:
+
+- `pipeline_paths...`: Paths to dir containing 'pipeline.yaml' or files named 'pipeline.yaml'. \[env var: KPOPS\_PIPELINE\_PATHS; required\]
+
+**Options**:
+
+- `--dotenv <file>`: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one. \[env var: KPOPS\_DOTENV\_PATH\]
+- `--config <directory>`: Path to the dir containing config.yaml files \[env var: KPOPS\_CONFIG\_PATH; default: .\]
+- `--steps <str>`: Comma separated list of steps to apply the command on \[env var: KPOPS\_PIPELINE\_STEPS\]
+- `--filter-type <include|exclude>`: Whether the --steps option should include/exclude the steps \[default: include\]
+- `--environment <str>`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults\_development.yaml for environment=development). \[env var: KPOPS\_ENVIRONMENT\]
+- `--verbose / --no-verbose`: Enable verbose printing \[default: no-verbose\]
+- `--help`: Show this message and exit.
+
+## `kpops deploy`
+
+Deploy pipeline steps
+
+**Usage**:
+
+```console
+$ kpops deploy [OPTIONS] {pipeline_paths}...
+```
+
+**Arguments**:
+
+- `pipeline_paths...`: Paths to dir containing 'pipeline.yaml' or files named 'pipeline.yaml'. \[env var: KPOPS\_PIPELINE\_PATHS; required\]
+
+**Options**:
+
+- `--dotenv <file>`: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one. \[env var: KPOPS\_DOTENV\_PATH\]
+- `--config <directory>`: Path to the dir containing config.yaml files \[env var: KPOPS\_CONFIG\_PATH; default: .\]
+- `--steps <str>`: Comma separated list of steps to apply the command on \[env var: KPOPS\_PIPELINE\_STEPS\]
+- `--filter-type <include|exclude>`: Whether the --steps option should include/exclude the steps \[default: include\]
+- `--environment <str>`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults\_development.yaml for environment=development). \[env var: KPOPS\_ENVIRONMENT\]
+- `--dry-run / --execute`: Whether to dry run the command or execute it \[default: dry-run\]
+- `--verbose / --no-verbose`: Enable verbose printing \[default: no-verbose\]
+- `--parallel / --no-parallel`: Enable or disable parallel execution of pipeline steps. If enabled, multiple steps can be processed concurrently. If disabled, steps will be processed sequentially. \[default: no-parallel\]
+- `--operation-mode <argo|manifest|managed>`: How KPOps should operate. \[env var: KPOPS\_OPERATION\_MODE; default: managed\]
+- `--help`: Show this message and exit.
+
+## `kpops destroy`
+
+Destroy pipeline steps
+
+**Usage**:
+
+```console
+$ kpops destroy [OPTIONS] {pipeline_paths}...
+```
+
+**Arguments**:
+
+- `pipeline_paths...`: Paths to dir containing 'pipeline.yaml' or files named 'pipeline.yaml'. \[env var: KPOPS\_PIPELINE\_PATHS; required\]
+
+**Options**:
+
+- `--dotenv <file>`: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one. \[env var: KPOPS\_DOTENV\_PATH\]
+- `--config <directory>`: Path to the dir containing config.yaml files \[env var: KPOPS\_CONFIG\_PATH; default: .\]
+- `--steps <str>`: Comma separated list of steps to apply the command on \[env var: KPOPS\_PIPELINE\_STEPS\]
+- `--filter-type <include|exclude>`: Whether the --steps option should include/exclude the steps \[default: include\]
+- `--environment <str>`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults\_development.yaml for environment=development). \[env var: KPOPS\_ENVIRONMENT\]
+- `--dry-run / --execute`: Whether to dry run the command or execute it \[default: dry-run\]
+- `--verbose / --no-verbose`: Enable verbose printing \[default: no-verbose\]
+- `--parallel / --no-parallel`: Enable or disable parallel execution of pipeline steps. If enabled, multiple steps can be processed concurrently. If disabled, steps will be processed sequentially. \[default: no-parallel\]
+- `--operation-mode <argo|manifest|managed>`: How KPOps should operate. \[env var: KPOPS\_OPERATION\_MODE; default: managed\]
+- `--help`: Show this message and exit.
+
+## `kpops reset`
+
+Reset pipeline steps
+
+**Usage**:
+
+```console
+$ kpops reset [OPTIONS] {pipeline_paths}...
+```
+
+**Arguments**:
+
+- `pipeline_paths...`: Paths to dir containing 'pipeline.yaml' or files named 'pipeline.yaml'. \[env var: KPOPS\_PIPELINE\_PATHS; required\]
+
+**Options**:
+
+- `--dotenv <file>`: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one. \[env var: KPOPS\_DOTENV\_PATH\]
+- `--config <directory>`: Path to the dir containing config.yaml files \[env var: KPOPS\_CONFIG\_PATH; default: .\]
+- `--steps <str>`: Comma separated list of steps to apply the command on \[env var: KPOPS\_PIPELINE\_STEPS\]
+- `--filter-type <include|exclude>`: Whether the --steps option should include/exclude the steps \[default: include\]
+- `--environment <str>`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults\_development.yaml for environment=development). \[env var: KPOPS\_ENVIRONMENT\]
+- `--dry-run / --execute`: Whether to dry run the command or execute it \[default: dry-run\]
+- `--verbose / --no-verbose`: Enable verbose printing \[default: no-verbose\]
+- `--parallel / --no-parallel`: Enable or disable parallel execution of pipeline steps. If enabled, multiple steps can be processed concurrently. If disabled, steps will be processed sequentially. \[default: no-parallel\]
+- `--operation-mode <argo|manifest|managed>`: How KPOps should operate. \[env var: KPOPS\_OPERATION\_MODE; default: managed\]
+- `--help`: Show this message and exit.
+
+## `kpops clean`
+
+Clean pipeline steps
+
+**Usage**:
+
+```console
+$ kpops clean [OPTIONS] {pipeline_paths}...
+```
+
+**Arguments**:
+
+- `pipeline_paths...`: Paths to dir containing 'pipeline.yaml' or files named 'pipeline.yaml'. \[env var: KPOPS\_PIPELINE\_PATHS; required\]
+
+**Options**:
+
+- `--dotenv <file>`: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one. \[env var: KPOPS\_DOTENV\_PATH\]
+- `--config <directory>`: Path to the dir containing config.yaml files \[env var: KPOPS\_CONFIG\_PATH; default: .\]
+- `--steps <str>`: Comma separated list of steps to apply the command on \[env var: KPOPS\_PIPELINE\_STEPS\]
+- `--filter-type <include|exclude>`: Whether the --steps option should include/exclude the steps \[default: include\]
+- `--environment <str>`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults\_development.yaml for environment=development). \[env var: KPOPS\_ENVIRONMENT\]
+- `--dry-run / --execute`: Whether to dry run the command or execute it \[default: dry-run\]
+- `--verbose / --no-verbose`: Enable verbose printing \[default: no-verbose\]
+- `--parallel / --no-parallel`: Enable or disable parallel execution of pipeline steps. If enabled, multiple steps can be processed concurrently. If disabled, steps will be processed sequentially. \[default: no-parallel\]
+- `--operation-mode <argo|manifest|managed>`: How KPOps should operate. \[env var: KPOPS\_OPERATION\_MODE; default: managed\]
+- `--help`: Show this message and exit.
+
+## `kpops schema`
+
+Generate JSON schema.
+
+The schemas can be used to enable support for KPOps files in a text editor.
+
+**Usage**:
+
+```console
+$ kpops schema [OPTIONS] {scope}:<pipeline|defaults|config>
+```
+
+**Arguments**:
+
+- `scope:<pipeline|defaults|config>`: Scope of the generated schema
+
+  ```text
+    - pipeline: Schema of PipelineComponents for KPOps pipeline.yaml
+
+    - defaults: Schema of PipelineComponents for KPOps defaults.yaml
+
+    - config: Schema for KPOps config.yaml  [required]
+  ```
+
+**Options**:
+
+- `--help`: Show this message and exit.
+
+# Editor integration
+
+## Native
+
+We are working towards first-class editor support by providing plugins that work out of the box.
+
+- Neovim: [kpops.nvim](<https://github.com/disrupted/kpops.nvim>)
+- Visual Studio Code: *planned*
+
+## Manual (for unsupported editors with LSP)
+
+1. Install the [yaml-language-server](<https://github.com/redhat-developer/yaml-language-server#clients>) in your editor of choice. (requires LSP support)
+2. Configure the extension with the settings below.
+
+> [!NOTE]
+>
+> **`settings.json`**
+>
+> ```json
+> {
+>     "yaml.schemas": {
+>         "https://bakdata.github.io/kpops/4.0/schema/pipeline.json": [
+>             "pipeline.yaml",
+>             "pipeline_*.yaml"
+>         ],
+>         "https://bakdata.github.io/kpops/4.0/schema/defaults.json": [
+>             "defaults.yaml",
+>             "defaults_*.yaml"
+>         ],
+>         "https://bakdata.github.io/kpops/4.0/schema/config.json": [
+>             "config.yaml",
+>             "config_*.yaml"
+>         ]
+>     }
+> }
+> ```
+
+> [!TIP]
+>
+> **Advanced usage**
+>
+> It is possible to generate schemas with the [`kpops schema`](<https://bakdata.github.io/kpops/dev/user/references/cli-commands/index.md#kpops-schema>) command. Useful for including custom components or when using a pre-release version of KPOps.
+
+---
+
+## Concepts
+
+KPOps provides JSON schemas that enable autocompletion and validation for all YAML files that the user must work with.
+
+### Supported files
+
+- [`pipeline.yaml`](<https://bakdata.github.io/kpops/dev/resources/pipeline-components/pipeline/index.md>)
+- [`defaults.yaml`](<https://bakdata.github.io/kpops/dev/user/core-concepts/defaults/index.md>)
+- [`config.yaml`](<https://bakdata.github.io/kpops/dev/user/core-concepts/config/index.md>)
+
+# GitHub Actions integration
+
+We provided a GitHub composite action `bakdata/kpops` that installs and executes KPOps commands with the given parameters.
+
+## Input Parameters
+
+| Name | Required | Default Value | Type | Description |
+| --- | :---: | :---: | :---: | --- |
+| command | ✅ | \- | string | KPOps command to run. generate, deploy, destroy, reset, clean are possible values. Flags such as --dry-run and --execute need to be specified |
+| pipeline | ✅ | \- | string | Pipeline to run by KPOps |
+| working-directory | ❌ | . | string | root directory used by KPOps to run pipelines |
+| config | ❌ | \- | string | Directory containing the config\*.yaml file(s) |
+| environment | ❌ | \- | string | Environment to run KPOps in |
+| components | ❌ | \- | string | components package path |
+| filter-type | ❌ | \- | string | Whether to include/exclude the steps defined in KPOPS\_PIPELINE\_STEPS |
+| parallel | ❌ | "false" | string | Whether to run pipelines in parallel |
+| python-version | ❌ | "3.14.x" | string | Python version to install (Defaults to the latest stable version of Python 3.14) |
+| kpops-version | ❌ | latest | string | KPOps version to install |
+| helm-version | ❌ | latest | string | Helm version to install |
+| token | ❌ | latest | string | secrets.GITHUB\_TOKEN, needed for setup-helm action if helm-version is set to latest |
+
+## Usage
+
+```yaml
+steps:
+  # ...
+  # This step is useful for debugging reasons
+  - name: Generate Kafka pipeline
+    uses: bakdata/kpops@main
+    with:
+      command: generate
+      working-directory: home/my-kpops-root-dir
+      pipeline: pipelines/my-pipeline-file.yaml
+      kpops-version: 1.2.3
+
+  # It is possible to use a pre-release KPOps version from TestPyPI https://test.pypi.org/project/kpops/#history
+  - name: Deploy Kafka pipeline
+    uses: bakdata/kpops@main
+    with:
+      command: deploy --execute
+      working-directory: home/my-kpops-root-dir
+      pipeline: pipelines/my-pipeline-file.yaml
+      kpops-version: 1.2.5.dev20230707132709
+  # ...
+```
+
+# Migration guides
+
+# Migrate from V1 to V2
+
+## [Derive component type automatically from class name](<https://github.com/bakdata/kpops/pull/309>)
+
+KPOps automatically infers the component `type` from the class name. Therefore, the `type` and `schema_type` attributes can be removed from your custom components. By convention the `type` would be the lower, and kebab cased name of the class.
+
+```diff
+class MyCoolStreamApp(StreamsApp):
+-    type = "my-cool-stream-app"
++    ...
+```
+
+Because of this new convention `producer` has been renamed to `producer-app`. This must be addressed in your `pipeline.yaml` and `defaults.yaml`.
+
+```diff
+- producer:
++ producer-app:
+    app:
+        streams:
+        outputTopic: output_topic
+        extraOutputTopics:
+            output_role1: output_topic1
+            output_role2: output_topic2
+```
+
+## [Refactor input/output types](<https://github.com/bakdata/kpops/pull/232>)
+
+### To section
+
+In the `to` section these have changed:
+
+- The default type is `output`
+- If `role` is set, type is inferred to be `extra`
+- The type `error` needs to be defined explicitly
+
+```diff
+  to:
+    topics:
+      ${pipeline_name}-topic-1:
+-       type: extra
+        role: "role-1"
+        ...
+      ${pipeline_name}-topic-2:
+-       type: output
+        ...
+      ${pipeline_name}-topic-3:
+         type: error
+         ...
+```
+
+### From section
+
+In the `from` section these have changed:
+
+- The default type is `input`
+- `input-pattern` type is replaced by `pattern`
+- If `role` is set, type is inferred to be `extra`
+- If `role` is set, type is explicitly set to `pattern`, this would be inferred type `extra-pattern`
+
+```diff
+  from:
+    topics:
+      ${pipeline_name}-input-topic:
+-       type: input
+        ...
+      ${pipeline_name}-extra-topic:
+-       type: extra
+        role: topic-role
+        ...
+      ${pipeline_name}-input-pattern-topic:
+-       type: input-pattern
++       type: pattern
+        ...
+      ${pipeline_name}-extra-pattern-topic:
+-       type: extra-pattern
++       type: pattern
+        role: some-role
+        ...
+```
+
+## [Remove camel case conversion of internal models](<https://github.com/bakdata/kpops/pull/308>)
+
+All the internal KPOps models are now snake\_case, and only Helm/Kubernetes values require camel casing. You can find an example of a `pipeline.yaml` in the following. Notice that the `app` section here remains untouched.
+
+```diff
+...
+type: streams-app
+  name: streams-app
+  namespace: namespace
+  app:
+    streams:
+      brokers: ${brokers}
+      schemaRegistryUrl: ${schema_registry_url}
+     autoscaling:
+      consumerGroup: consumer-group
+      lagThreshold: 0
+      enabled: false
+      pollingInterval: 30
+
+  to:
+    topics:
+      ${pipeline_name}-output-topic:
+        type: error
+-       keySchema: key-schema
++       key_schema: key-schema
+-       valueSchema: value-schema
++       value_schema: value-schema
+        partitions_count: 1
+        replication_factor: 1
+        configs:
+          cleanup.policy: compact
+    models:
+      model: model
+  prefix: ${pipeline_name}-
+- repoConfig:
++ repo_config:
+-   repositoryName: bakdata-streams-bootstrap
++   repository_name: bakdata-streams-bootstrap
+    url: https://bakdata.github.io/streams-bootstrap/
+-   repoAuthFlags:
++   repo_auth_flags:
+      username: user
+      password: pass
+      ca_file: /home/user/path/to/ca-file
+      insecure_skip_tls_verify: false
+  version: "1.0.4"
+...
+```
+
+## [Refactor handling of Helm flags](<https://github.com/bakdata/kpops/pull/319>)
+
+If you are using the `KubernetesApp` class to define your own Kubernetes resource to deploy, the abstract function `get_helm_chart` that returns the chart for deploying the app using Helm is now a Python property and renamed to `helm_chart`.
+
+```diff
+class MyCoolApp(KubernetesApp):
+
++   @property
+    @override
+-   def get_helm_chart(self) -> str:
++   def helm_chart(self) -> str:
+        return "./charts/charts-folder"
+```
+
+## [Plural broker field in pipeline config](<https://github.com/bakdata/kpops/pull/278>)
+
+Since you can pass a comma separated string of broker address, the broker field in KPOps is now plural. The pluralization has affected multiple areas:
+
+#### config.yaml
+
+```diff
+  environment: development
+- broker: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"
++ brokers: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"
+  kafka_connect_host: "http://localhost:8083"
+  kafka_rest_host: "http://localhost:8082"
+  schema_registry_url: "http://localhost:8081"
+```
+
+#### pipeline.yaml and default.yaml
+
+The variable is now called `brokers`.
+
+```diff
+...
+  app:
+    streams:
+-     brokers: ${broker}
++     brokers: ${brokers}
+      schemaRegistryUrl: ${schema_registry_url}
+    nameOverride: override-with-this-name
+    imageTag: "1.0.0"
+...
+```
+
+#### Environment variable
+
+Previously, if you set the environment variable `KPOPS_KAFKA_BROKER`, you need to replace that now with `KPOPS_KAFKA_BROKERS`.
+
+# Migrate from V10 to V11
+
+## [Reset Kafka Connector offsets using the Kafka Connect API](<https://github.com/bakdata/kpops/pull/646>)
+
+KPOps now uses the Kafka Connect API to reset connector offsets. The custom Kafka Connect resetter has been removed.
+
+If you configured the Kafka Connect resetter in `defaults.yaml` or in a pipeline, the following options can be removed.
+
+#### defaults.yaml
+
+```diff
+ kafka-connector:
+-  version: "1.0.4"
+-  resetter_namespace: kafka-connect
+-  resetter_values:
+-    imageTag: "1.2.3"
+```
+
+#### pipeline.yaml
+
+```diff
+ kafka-source-connector:
+-  offset_topic: kafka-connect-offsets
+```
+
+## [Improve logging and error handling](<https://github.com/bakdata/kpops/pull/657>)
+
+KPOps now provides structured logs and concise error messages with additional context. No configuration changes are required.
+
+```text
+$ kpops deploy word-count --dry-run
+
+# Before: a verbose traceback with little context
+Traceback (most recent call last):
+  ...
+httpx.ConnectError: [Errno 61] Connection refused
+
+# Now: a concise structured error with the affected service and URL
+[info     ] Picked up pipeline pipeline=word-count
+[info     ] Deploy component_name=data-producer
+[error    ] [Kafka REST Proxy] [Errno 61] Connection refused url=http://localhost:8082/
+```
+
+## [Support Python 3.13 and 3.14](<https://github.com/bakdata/kpops/pull/663>)
+
+KPOps v11 now supports the current stable releases of Python. Support for 3.12 and 3.11 remains for now.
+
+# Migrate from V11 to V12
+
+## Remove support for streams-bootstrap v2
+
+Support for deprecated streams-bootstrap v2 components (`streams-bootstrap-v2`, `streams-app-v2`, `producer-app-v2`) has been removed.
+
+If you are still using streams-bootstrap v2, upgrade your components to supported versions of `streams-bootstrap` (v3+). For information on migrating your applications to newer streams-bootstrap versions, please refer to [streams-bootstrap](<https://github.com/bakdata/streams-bootstrap>).
+
+### Component Types
+
+Update any `-v2` component types to their standard component counterparts:
+
+#### pipeline.yaml
+
+```diff
+- - type: producer-app-v2
++ - type: producer-app
+
+- - type: streams-app-v2
++ - type: streams-app
+```
+
+#### defaults.yaml
+
+```diff
+- streams-bootstrap-v2:
++ streams-bootstrap:
+    ...
+
+- producer-app-v2:
++ producer-app:
+    ...
+
+- streams-app-v2:
++ streams-app:
+    ...
+```
+
+### Custom Components
+
+If you have custom Python components inheriting from streams-bootstrap v2 classes, update their imports and base classes:
+
+```diff
+- from kpops.components.streams_bootstrap_v2 import StreamsAppV2
++ from kpops.components.streams_bootstrap import StreamsApp
+
+- class MyStreamsApp(StreamsAppV2):
++ class MyStreamsApp(StreamsApp):
+      ...
+```
+
+## Prefix logs with pipeline and component name
+
+Every log line emitted while deploying, destroying, resetting or cleaning a pipeline is now prefixed with the pipeline and component it belongs to. Each component is assigned a distinct color, making it easy to follow a component's logs even when steps run concurrently with `--parallel`. No configuration changes are required.
+
+```text
+$ kpops deploy word-count --dry-run
+
+# Before
+[info     ] Picked up pipeline pipeline=word-count
+[info     ]
+[info     ] ########################################################################################################
+[info     ] Deploy data-producer
+[info     ] ########################################################################################################
+[info     ]
+[info     ] [Kafka REST Proxy] Topic created. topic_name=word-count-data-producer-topic
+[info     ]
+[info     ] ########################################################################################################
+[info     ] Deploy kafka-sink-connector
+[info     ] ########################################################################################################
+[info     ]
+[error    ] [Kafka Connect] [Errno 61] Connection refused url=http://localhost:8083/
+
+# Now
+[info     ] [word-count] Picked up pipeline
+[info     ] [word-count] [data-producer] Deploy
+[info     ] [word-count] [data-producer] [Kafka REST Proxy] Topic created. topic_name=word-count-data-producer-topic
+[info     ] [word-count] [kafka-sink-connector] Deploy
+[error    ] [word-count] [kafka-sink-connector] [Kafka Connect] [Errno 61] Connection refused url=http://localhost:8083/
+```
+
+# Migrate from V12 to V13
+
+## Python 3.14+ required
+
+KPOps v13 supports only Python 3.14 and 3.15. Upgrade your Python environment before upgrading KPOps.
+
+## `from` and `to` removed from `helm-app` and `kubernetes-app`
+
+`helm-app` and `kubernetes-app` no longer accept the `from` and `to` sections. Previously, `from` had no effect and `to` only wired the next component of the pipeline.
+
+If you need topic support for a Helm-based component, define a custom component that combines the capabilities `ConsumesTopics` and `ProducesTopics` with `HelmApp`:
+
+```python
+from kpops.components.base_components import ConsumesTopics, HelmApp, ProducesTopics
+
+
+class MyKafkaHelmApp(ConsumesTopics, ProducesTopics, HelmApp): ...
+```
+
+The component must implement the topic hooks (`add_input_topics`, `set_output_topic`, …) to map topics into its Helm values.
+
+## Unsupported sections are rejected
+
+Components that do not support the `from` or `to` section now fail validation with a clear error instead of silently ignoring the section:
+
+- `from` on `producer-app` and `kafka-source-connector`
+- `to` on `consumer-app`
+- `from` and `to` on `helm-app` and `kubernetes-app`
+
+This also applies to values merged in from the `defaults.yaml` of shared keys such as `pipeline-component`.
+
+## Kafka connectors inherit `kafka-app` defaults
+
+Kafka connectors are now `KafkaApp`s. Settings defined under `kafka-app` in `defaults.yaml` now also apply to `kafka-connector`, `kafka-source-connector` and `kafka-sink-connector`.
+
+## Defaults schema
+
+`from` and `to` are no longer offered under `pipeline-component`, `kubernetes-app`, `helm-app`, `kafka-app` and `streams-bootstrap` in `defaults.yaml` (and `from` under `kafka-connector`). Define them under the concrete component keys instead.
+
+#### defaults.yaml
+
+```diff
+- kafka-app:
+-   to:
+-     ...
++ streams-app:
++   to:
++     ...
+```
+
+## Custom components (Python API)
+
+- `PipelineComponent.supports_from_section()` has been removed. Use `isinstance(component, ConsumesTopics)` instead.
+- The topic hooks moved from `PipelineComponent` to the capability classes `ConsumesTopics` (input) and `ProducesTopics` (output).
+- `KubernetesApp`, `HelmApp` and `StreamsBootstrap` are generic over their values type:
+
+```diff
+- class MyApp(HelmApp):
++ class MyApp(HelmApp[MyValues]):
+      values: MyValues
+```
+
+- Custom intermediate base classes that are later combined with a built-in app (diamond inheritance, e.g. `class MyProducer(ProducerApp, MyStreamsBootstrapBase)`) should become generic too. Otherwise type checkers report inconsistent type arguments.
+
+```python
+class MyStreamsBootstrapBase[V: StreamsBootstrapValues[Any] = StreamsBootstrapValues](
+    StreamsBootstrap[V]
+): ...
+
+
+class MyProducer(ProducerApp, MyStreamsBootstrapBase[ProducerAppValues]): ...
+```
+
+This replaces former `# pyright: ignore[reportIncompatibleVariableOverride]` workarounds.
+
+- `ConsumerAppValues` gained the generic base `BaseConsumerAppValues[K]`.
+- `StreamsBootstrap.repo_config` and `StreamsBootstrap.version` are now typed as optional.
+
+# Migrate from V2 to V3
+
+[**Jump to the summary**](<#summary>)
+
+## [Use hash and trim long Helm release names instead of only trimming](<https://github.com/bakdata/kpops/pull/390>)
+
+KPOps handles long (more than 53 characters) Helm releases names differently. Helm will not find your (long) old release names anymore. Therefore, it is recommended that you should once destroy your pipeline with KPOps v2 to remove old Helm release names. After a clean destroy, re-deploy your pipeline with the KPOps v3.
+
+For example if you have a component with the Helm release name `example-component-name-too-long-fake-fakefakefakefakefake`. The new release name will shorten the original name to 53 characters and then replace the last 6 characters of the trimmed name with the first 5 characters of the result of SHA-1(helm\_release\_name).
+
+```console
+example-component-name-too-long-fake-fakefakef-0a7fc ----> 53 chars
+---------------------------------------------- -----
+  ^Shortened helm_release_name                 ^first 5 characters of SHA1(helm_release_name)
+```
+
+## [Create HelmApp component](<https://github.com/bakdata/kpops/pull/370>)
+
+All Helm-specific parts of the built-in [`KubernetesApp`](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/kubernetes-app/index.md>) have been extracted to a new child component that is more appropriately named [`HelmApp`](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/helm-app/index.md>). It has to be renamed in your existing pipeline defintions and custom components module.
+
+#### pipeline.yaml
+
+```diff
+-- type: kubernetes-app
++- type: helm-app
+   name: foo
+```
+
+#### custom\_module.py
+
+```diff
+- from kpops.components import KubernetesApp
++ from kpops.components import HelmApp
+
+
+- class CustomHelmApp(KubernetesApp):
++ class CustomHelmApp(HelmApp):
+      ...
+```
+
+## [Create StreamsBootstrap component &amp; refactor cleanup jobs as individual HelmApp](<https://github.com/bakdata/kpops/pull/398>)
+
+Previously the default `KafkaApp` component configured the [streams-bootstrap](<https://bakdata.github.io/streams-bootstrap/>) Helm Charts. Now, this component is no longer tied to Helm (or Kubernetes). Instead, there is a new `StreamsBootstrap` component that configures the Helm Chart repository for the components that use it, e.g. `StreamsApp` and `ProducerApp`. If you are using non-default values for the Helm Chart repository or version, it has to be updated as shown below.
+
+#### defaults.yaml
+
+```diff
+  kafka-app:
+    app:
+      streams: ...
+
++ streams-bootstrap:
+    repo_config: ...
+    version: ...
+```
+
+## [Refactor Kafka Connector resetter as individual HelmApp](<https://github.com/bakdata/kpops/pull/400>)
+
+Internally, the [Kafka Connector resetter](<https://bakdata.github.io/kpops/dev/user/migration-guide/bakdata-kafka-connect-resetter/kafka-connect-resetter>) is now its own standard `HelmApp`, removing a lot of the shared code. It is configured using the `resetter_namespace` (formerly `namespace`) and `resetter_values` attributes.
+
+#### defaults.yaml
+
+```diff
+  kafka-connector:
+-   namespace: my-namespace
++   resetter_namespace: my-namespace
+```
+
+## [Make Kafka REST Proxy &amp; Kafka Connect hosts default and improve Schema Registry config](<https://github.com/bakdata/kpops/pull/354>)
+
+The breaking changes target the `config.yaml` file:
+
+- The `schema_registry_url` is replaced with `schema_registry.url` (default `http://localhost:8081`) and `schema_registry.enabled` (default `false`).
+
+- `kafka_rest_host` is renamed to `kafka_rest.url` (default `http://localhost:8082`).
+
+- `kafka_connect_host` is replaced with `kafka_connect.url` (default `http://localhost:8083`).
+
+- `brokers` is renamed to `kafka_brokers`.
+
+The environment variable names of these config fields changed respectively. Please refer to the [environment variables documentation page](<https://bakdata.github.io/kpops/dev/user/core-concepts/variables/environment_variables/index.md>) to see the newest changes.
+
+#### config.yaml
+
+```diff
+  environment: development
+- brokers: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"
+- kafka_rest_host: "http://my-custom-rest.url:8082"
+- kafka_connect_host: "http://my-custom-connect.url:8083"
+- schema_registry_url: "http://my-custom-sr.url:8081"
++ kafka_brokers: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"
++ kafka_rest:
++   url: "http://my-custom-rest.url:8082"
++ kafka_connect:
++   url: "http://my-custom-connect.url:8083"
++ schema_registry:
++   enabled: true
++   url: "http://my-custom-sr.url:8081"
+```
+
+#### pipeline.yaml and default.yaml
+
+The variable is now called `kafka_brokers`.
+
+```diff
+...
+  app:
+    streams:
+-     brokers: ${brokers}
++     brokers: ${kafka_brokers}
+      schemaRegistryUrl: ${schema_registry_url}
+    nameOverride: override-with-this-name
+    imageTag: "1.0.0"
+...
+```
+
+## [Define custom components module &amp; pipeline base dir globally](<https://github.com/bakdata/kpops/pull/387>)
+
+> [!WARNING]
+>
+> **The previous CLI parameters have been removed.**
+
+The options for a custom `components_module` and `pipeline_base_dir` are now global settings, defined in `config.yaml`.
+
+#### config.yaml
+
+```diff
+  kafka_brokers: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"
+  environment: development
++ components_module: components
++ pipeline_base_dir: pipelines
+```
+
+## [Move GitHub action to repsitory root](<https://github.com/bakdata/kpops/pull/356>)
+
+The location of the GitHub action has changed, and it's now available directly as `bakdata/kpops`.
+
+You'll need to change it in your GitHub CI workflows.
+
+```diff
+steps:
+  - name: kpops deploy
+-   uses: bakdata/kpops/actions/kpops-runner@main
++   uses: bakdata/kpops@main
+    with:
+      command: deploy --execute
+      # ...
+```
+
+## [Allow overriding config files](<https://github.com/bakdata/kpops/pull/391>)
+
+Specifying the environment is no longer mandatory. If not defined, only the global files will be used.
+
+`environment` is no longer specified in `config.yaml`. Instead, it can be either set via the CLI flag `--environment` or with the environment variable `KPOPS_ENVIRONMENT`.
+
+The `--config` flag in the CLI now points to the directory that contains `config*.yaml` files. The files to be used are resolved based on the provided (or not) `environment`.
+
+#### config.yaml
+
+```diff
+- environment: development
+  kafka_brokers: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"
+  schema_registry:
+    enabled: true
+    url: "http://my-custom-sr.url:8081"
+```
+
+## [Change substitution variables separator to `.`](<https://github.com/bakdata/kpops/pull/388>)
+
+The delimiter in the substitution variables is changed to `.`.
+
+#### pipeline.yaml and default.yaml
+
+```diff
+steps:
+  - type: scheduled-producer
+    app:
+      labels:
+-       app_type: "${component_type}"
+-       app_name: "${component_name}"
+-       app_schedule: "${component_app_schedule}"
++       app_type: "${component.type}"
++       app_name: "${component.name}"
++       app_schedule: "${component.app.schedule}"
+```
+
+#### config.yaml
+
+```diff
+topic_name_config:
+- default_error_topic_name: "${pipeline_name}-${component_name}-dead-letter-topic"
+- default_output_topic_name: "${pipeline_name}-${component_name}-topic"
++ default_error_topic_name: "${pipeline_name}-${component.name}-dead-letter-topic"
++ default_output_topic_name: "${pipeline_name}-${component.name}-topic"
+```
+
+## [Refactor generate template for Python API usage](<https://github.com/bakdata/kpops/pull/380>)
+
+The `template` method of every pipeline component has been renamed to `manifest` as it is no longer strictly tied to Helm template. Instead, it can be used to render the final resources of a component, such as Kubernetes manifests.
+
+There is also a new `kpops manifest` command replacing the existing `kpops generate --template` flag.
+
+If you're using this functionality in your custom components, it needs to be updated.
+
+```diff
+  from kpops.components.base_components.models.resource import Resource
+
+  @override
+- def template(self) -> None:
++ def manifest(self) -> Resource:
+  """Render final component resources, e.g. Kubernetes manifests."""
+      return []  # list of manifests
+```
+
+## [Namespace substitution vars](<https://github.com/bakdata/kpops/pull/408>)
+
+The global configuration variables are now namespaced under the config key, such as `${config.kafka_brokers}`, `${config.schema_registry.url}`. Same with pipeline variables, e.g. `${pipeline_name} → ${pipeline.name}`. This would make it more uniform with the existing `${component.<key>}` variables.
+
+#### pipeline.yaml
+
+```diff
+  name: kafka-app
+- prefix: ${pipeline_name}-
++ prefix: ${pipeline.name}-
+  app:
+    streams:
+-     brokers: ${kafka_brokers}
+-     schemaRegistryUrl: ${schema_registry.url}
++     brokers: ${config.kafka_brokers}
++     schemaRegistryUrl: ${config.schema_registry.url}
+```
+
+## Summary
+
+> [!WARNING]
+>
+> [**Helm will not find your (long) old release names anymore.**](<#use-hash-and-trim-long-helm-release-names-instead-of-only-trimming>)
+
+> [!NOTE]
+>
+> **defaults.yaml**
+>
+> ```diff
+>   kafka-app:
+>     app:
+>       streams: ...
+>
+> + streams-bootstrap:
+>     repo_config: ...
+>     version: ...
+> ```
+
+> [!NOTE]
+>
+> **pipeline.yaml**
+>
+> ```diff
+> - - type: kubernetes-app
+> + - type: helm-app
+>   ...
+>   - type: kafka-app
+>     app:
+> -     brokers: ${brokers}
+> +     brokers: ${config.kafka_brokers}
+>       labels:
+> -       app_schedule: "${component_app_schedule}"
+> +       app_schedule: "${component.app.schedule}"
+>   ...
+>   - type: kafka-connector
+> -   namespace: my-namespace
+> +   resetter_namespace: my-namespace
+>   ...
+> ```
+
+> [!NOTE]
+>
+> **config.yaml**
+>
+> ```diff
+> - environment: development
+>
+> + components_module: components
+>
+> + pipeline_base_dir: pipelines
+>
+> - brokers: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"
+> + kafka_brokers: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"
+>
+> - kafka_rest_host: "http://my-custom-rest.url:8082"
+> + kafka_rest:
+> +   url: "http://my-custom-rest.url:8082"
+>
+> - kafka_connect_host: "http://my-custom-connect.url:8083"
+> + kafka_connect:
+> +   url: "http://my-custom-connect.url:8083"
+>
+> - schema_registry_url: "http://my-custom-sr.url:8081"
+> + schema_registry:
+> +   enabled: true
+> +   url: "http://my-custom-sr.url:8081"
+>
+>   topic_name_config:
+> - default_error_topic_name: "${pipeline_name}-${component_name}-dead-letter-topic"
+> + default_error_topic_name: "${pipeline.name}-${component.name}-dead-letter-topic"
+>   ...
+> ```
+
+> [!NOTE]
+>
+> **custom\_module.py**
+>
+> ```diff
+> - from kpops.components import KubernetesApp
+> + from kpops.components import HelmApp
+> + from kpops.components.base_components.models.resource import Resource
+>
+> - class CustomHelmApp(KubernetesApp):
+> + class CustomHelmApp(HelmApp):
+>
+>   @override
+> - def template(self) -> None:
+> + def manifest(self) -> Resource:
+>   """Render final component resources, e.g. Kubernetes manifests."""
+>       return []  # list of manifests
+>   ...
+> ```
+
+> [!NOTE]
+>
+> **github\_ci\_workflow.yaml**
+>
+> ```diff
+>   steps:
+>     - name: ...
+> -     uses: bakdata/kpops/actions/kpops-runner@main
+> +     uses: bakdata/kpops@main
+>   ...
+> ```
+
+# Migrate from V3 to V4
+
+## [Distribute defaults across multiple files](<https://github.com/bakdata/kpops/pull/438/>)
+
+> [!WARNING]
+>
+> **The `--defaults` flag is removed**
+
+It is possible now to use multiple default values. The `defaults.yaml` (or `defaults_<env>.yaml`) files can be distributed across multiple files. These will be picked up by KPOps and get merged into a single `pipeline.yaml` file. KPOps starts from reading the default files from where the pipeline path is defined and picks up every defaults file on its way to where the `pipeline_base_dir` is defined.
+
+For example, imagine the following folder structure:
+
+```text
+└─ pipelines
+   └── distributed-defaults
+       ├── defaults.yaml
+       ├── defaults_dev.yaml
+       └── pipeline-deep
+           ├── defaults.yaml
+           └── pipeline.yaml
+```
+
+The `pipeline_base_dir` is configured to `pipelines`. Now if we generate this pipeline with the following command:
+
+```bash
+kpops generate \
+      --environment dev
+      ./pipelines/distributed-defaults/pipeline-deep/pipeline.yaml
+```
+
+The defaults would be picked in the following order (high to low priority):
+
+- `./pipelines/distributed-defaults/pipeline-deep/defaults.yaml`
+- `./pipelines/distributed-defaults/defaults_dev.yaml`
+- `./pipelines/distributed-defaults/defaults.yaml`
+
+The deepest `defaults.yaml` file in the folder hierarchy (i.e., the closest one to the `pipeline.yaml`) overwrites the higher-level defaults' values.
+
+# Migrate from V4 to V5
+
+## [Allow custom timeout for external services](<https://github.com/bakdata/kpops/pull/485>)
+
+The global `timeout` setting has been removed. Instead, an individual timeout can be set for each external service. The default is 30 seconds.
+
+#### config.yaml
+
+```diff
+- timeout: 300
+
+  kafka_rest:
+    url: "http://my-custom-rest.url:8082"
++   timeout: 30
+  kafka_connect:
+    url: "http://my-custom-connect.url:8083"
++   timeout: 30
+  schema_registry:
+    enabled: true
+    url: "http://my-custom-sr.url:8081"
++   timeout: 30
+```
+
+# Migrate from V5 to V6
+
+## [Deploy multiple pipelines](<https://github.com/bakdata/kpops/pull/487>)
+
+KPOps can now deploy multiple pipelines in a single command. It is possible to pass one or many pipeline.yaml files or pass a directory with many pipeline.yaml files within it.
+
+The environment variable `KPOPS_PIPELINE_PATH` is changed to `KPOPS_PIPELINE_PATHS`.
+
+Read more:
+
+- [CLI Usage](<https://bakdata.github.io/kpops/6.0/user/references/cli-commands/>)
+- [Environment variables](<https://bakdata.github.io/kpops/6.0/user/core-concepts/variables/environment_variables/>)
+
+## [Separate KPOps API from the CLI](<https://github.com/bakdata/kpops/pull/489>)
+
+KPops Python API is now stable and separated from the CLI! 🎉
+
+# Migrate from V6 to V7
+
+## [Automatic loading of namespaced custom components](<https://github.com/bakdata/kpops/pull/500>)
+
+KPOps is now distributed as a Python namespace package (as defined by [PEP 420](<https://peps.python.org/pep-0420/>)). This allows us to standardize the namespace `kpops.components` for both builtin and custom pipeline components.
+
+As a result of the restructure, some imports need to be adjusted:
+
+**KPOps Python API**
+
+```diff
+- import kpops
++ import kpops.api as kpops
+```
+
+**builtin KPOps components**
+
+```diff
+- from kpops.components import (
+-     HelmApp,
+-     KafkaApp,
+-     KafkaConnector,
+-     KafkaSinkConnector,
+-     KafkaSourceConnector,
+-     KubernetesApp,
+-     StreamsBootstrap,
+-     ProducerApp,
+-     StreamsApp,
+-     PipelineComponent,
+-     StreamsApp,
+-     ProducerApp,
+- )
++ from kpops.components.base_components import (
++     HelmApp,
++     KafkaApp,
++     KafkaConnector,
++     KafkaSinkConnector,
++     KafkaSourceConnector,
++     KubernetesApp,
++     PipelineComponent,
++ )
++ from kpops.components.streams_bootstrap import (
++     StreamsBootstrap,
++     StreamsApp,
++     ProducerApp,
++ )
+```
+
+### your custom KPOps components
+
+#### config.yaml
+
+```diff
+- components_module: components
+```
+
+#### Python module
+
+```diff
+- components/__init__.py
++ kpops/components/custom/__init__.py
+```
+
+## [Rename app field](<https://github.com/bakdata/kpops/pull/506>)
+
+The `app` attribute of the builtin KPOps components has been renamed to better differentiate them. Both your `pipeline.yaml` and `defaults.yaml` files have to be updated, e.g.:
+
+#### defaults.yaml
+
+```diff
+  kubernetes-app:
+-   app: {}
++   values: {}
+
+  helm-app:
+-   app: {}
++   values: {}
+
+  kafka-app:
+-   app: {}
++   values: {}
+
+  streams-app:
+-   app: {}
++   values: {}
+
+  producer-app:
+-   app: {}
++   values: {}
+
+  kafka-connector:
+-   app: {}
++   config: {}
+
+  kafka-source-connector:
+-   app: {}
++   config: {}
+
+  kafka-sink-connector:
+-   app: {}
++   config: {}
+```
+
+## [Call destroy from inside of reset or clean](<https://github.com/bakdata/kpops/pull/501>)
+
+Before v7, the KPOps CLI executed `destroy` before running `reset/clean` to ensure the component was destroyed.
+
+This logic has changed. The `destroy` method is now called within the `PipelineComponent`'s `reset`/`clean`.
+
+During migrating to v7, you should check your custom components and see if they override the `reset`/`clean` methods. If so, you need to call the supermethod `reset`/`clean` to trigger the `destroy` inside the parent class. Alternatively, if you are implementing the `PipelineComponent` class, you need to call the `destroy` method at the beginning of the method.
+
+#### components.py
+
+For example, when creating a custom `StreamsApp` or `ProducerApp` (or any other custom component), you **must** call the supermethod `reset`/`clean` to execute the `destroy` in the parent class. **Otherwise, the logic of destroy will not be executed!**
+
+````diff
+class MyStreamsApp(StreamsApp):
+
+    @override
+    async def clean(self, dry_run: bool) -> None:
++       await super().clean(dry_run)
+        # Some custom clean logic
+        # ...
+        ```diff
+        
+ 
+class MyCustomComponent(PipelineComponent):
+    
+    @override
+    async def destroy(self, dry_run: bool) -> None:
+        # Some custom destroy logic
+        # ...
+
+    @override
+    async def clean(self, dry_run: bool) -> None:
++       await super().clean(dry_run)
+        # Some custom clean logic
+        # ...
+````
+
+# Migrate from V7 to V8
+
+## [Add support for streams-bootstrap v3](<https://github.com/bakdata/kpops/pull/519>)
+
+From now on KPOps supports [streams-bootstrap v3](<https://github.com/bakdata/streams-bootstrap/releases/tag/3.0.1>) as its default component. The previous streams-bootstrap version (below 3.x.x) is marked as deprecated and will be removed in a future version of KPOps. If you don't want to migrate your producer or streams app to v3, you should suffix your components with `-v2`. Here is an example of a `pipeline.yaml` file.
+
+#### pipeline.yaml
+
+```diff
+- - type: producer-app
++ - type: producer-app-v2
+
+- - type: streams-app
++ - type: streams-app-v2
+
+# rest of your pipeline
+```
+
+#### my-components.py
+
+```diff
+- class MyStreamsApp(StreamsApp):
++ class MyStreamsApp(StreamsAppV2):
+    ...
+```
+
+> [!NOTE]
+>
+> **Info**
+>
+> The `streams-boostrap`, `streams-app`, and `producer-app` now all take the Helm values of streams-bootstrap version 3. You can find these values under the [Helm charts documentation](<https://github.com/bakdata/streams-bootstrap/tree/master/charts>) or by [referring to the Base model definitions](<https://github.com/bakdata/kpops/tree/v8/kpops/components/streams_bootstrap>).
+
+## [Rename role to label](<https://github.com/bakdata/kpops/pull/525>)
+
+The keyword `role` is renamed to `label`. You need to replace it in your `pipeline.yaml`, `defaults.yaml`, and the Python components definition files. Here is a simple example of the `defaults.yaml`.
+
+#### defaults.yaml
+
+```diff
+streams-app-v2:
+  values:
+    streams:
+      brokers: localhost:9092
+  from:
+    topics:
+      my-labeled-input-topic:
+-       role: my-input-topic-label
++       label: my-input-topic-label
+      my-labeled-input-pattern:
+        type: pattern
+-       role: my-input-topic-labeled-pattern
++       label: my-input-topic-labeled-pattern
+
+  to:
+    topics:
+      my-labeled-topic-output:
+-       role: my-output-topic-label
++       label: my-output-topic-label
+
+# rest of your pipeline
+```
+
+## [Make KafkaApp responsible for deploying/cleaning streams bootstrap components](<https://github.com/bakdata/kpops/pull/522>)
+
+The `KafkaApp` component now only contains the deployment logic of the stream-bootstrap applications (streams-app, producer-app). It should not be used in the `defaults.yaml` nor the `pipeline.yaml`. If you are using it, it should be replaced by `streams-bootstrap`.
+
+#### defaults.yaml
+
+```diff
+- kafka-app:
++ streams-bootstrap-v2:
+    values:
+      streams:
+        brokers: 127.0.0.1:9092
+        schemaRegistryUrl: 127.0.0.1:8081
+```
+
+# Migrate from V8 to V9
+
+## [Introduce KPOps operation and manifest resources for deployment](<https://github.com/bakdata/kpops/pull/541>)
+
+The `kpops manifest` command and `kpops.manifest()` API have been **removed**.
+
+Resource manifesting is now integrated into the *operation* commands (`deploy`, `destroy`, `reset`, `clean`) through the new **operation mode** feature.
+
+To manifest resources, you can:
+
+- Pass `--operation-mode manifest` when executing `kpops` commands.
+- Set the operation mode by defining the `KPOPS_OPERATION_MODE` environment variable.
+
+## [Manifest toSection with Strimzi KafkaTopic](<https://github.com/bakdata/kpops/pull/545>)
+
+KPOps now supports generating valid Kubernetes KafkaTopic resources compatible with [Strimzi](<https://github.com/strimzi/strimzi-kafka-operator/blob/main/examples/topic/kafka-topic.yaml>). When using manifest or argo as the operation\_mode, you must specify the Strimzi cluster label to ensure the topics are recognized by the deployed Strimzi Topic Operator.
+
+```diff
+operation_mode: manifest
+
++ strimzi_topic:
++  label:
++     strimzi.io/cluster: my-cluster
+
+# rest of your config
+```
+
+> [!NOTE]
+>
+> **Info**
+>
+> Refer to the [Strimzi documentation on deploying a standalone topic operator](<https://strimzi.io/docs/operators/latest/deploying#deploying-the-topic-operator-standalone-str>) for more details.
+
+## [Drop support for Python 3.10](<https://github.com/bakdata/kpops/pull/561>)
+
+KPOps V9 no longer supports Python 3.10. Ensure your environment is running Python 3.11 to 3.12.
+
+#### Action Required:
+
+Upgrade your Python version to a supported version (3.11 or 3.12). Update your virtual environments and CI pipelines to reflect this change.
+
+# Migrate from V9 to V10
+
+## Helm diff config
+
+- https://github.com/bakdata/kpops/pull/600
+- https://github.com/bakdata/kpops/pull/601
+
+The Helm diff configuration has moved from `config.yaml` to the `HelmApp` component. To ignore specific keypaths we use string arrays now (formerly dot-notation). It is now possible to ignore YAML keys containing `.` or other special characters.
+
+### Example
+
+#### defaults.yaml
+
+```yaml
+helm-app:
+  diff_config:
+    ignore:
+      - ["metadata", "labels", "helm.sh/chart"]
+```

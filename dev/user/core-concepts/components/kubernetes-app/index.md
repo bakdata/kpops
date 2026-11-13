@@ -1,0 +1,43 @@
+# KubernetesApp
+
+### Usage
+
+Can be used to create components for any Kubernetes app.
+
+### Configuration
+
+> [!NOTE]
+>
+> **`pipeline.yaml`**
+>
+> ```yaml
+> # Base Kubernetes App
+> - type: kubernetes-app
+>   name: kubernetes-app # required
+>   # Pipeline prefix that will prefix every component name. If you wish to not
+>   # have any prefix you can specify an empty string.
+>   prefix: ${pipeline.name}-
+>   namespace: namespace # required
+>   values: # required
+>     image: exampleImage # Example
+>     debug: false # Example
+>     commandLine: {} # Example
+> ```
+
+### Operations
+
+#### deploy
+
+Do nothing.
+
+#### destroy
+
+Do nothing.
+
+#### reset
+
+Do nothing.
+
+#### clean
+
+Do nothing.

@@ -1,0 +1,88 @@
+# ProducerApp
+
+Subclass of [*StreamsBootstrap*](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/streams-bootstrap/index.md>).
+
+### Usage
+
+Configures a [streams-bootstrap](<https://github.com/bakdata/streams-bootstrap>) [Kafka producer app](<https://github.com/bakdata/streams-bootstrap#kafka-producer>)
+
+### Configuration
+
+> [!NOTE]
+>
+> **`pipeline.yaml`**
+>
+> ```yaml
+> # ProducerApp component that configures a streams-bootstrap producer-app.
+> # More documentation on ProducerApp:
+> # https://github.com/bakdata/streams-bootstrap
+> - type: producer-app
+>   name: producer-app # required
+>   # Pipeline prefix that will prefix every component name. If you wish to not
+>   # have any prefix you can specify an empty string.
+>   prefix: ${pipeline.name}-
+>   # Topic(s) into which the component will write output
+>   to:
+>     topics:
+>       ${pipeline.name}-output-topic:
+>         type: output # Implied when role is NOT specified
+>       ${pipeline.name}-extra-topic:
+>         label: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
+>       ${pipeline.name}-error-topic:
+>         type: error
+>         # Currently KPOps supports Avro and JSON schemas.
+>         key_schema: key-schema # must implement SchemaProvider to use
+>         value_schema: value-schema
+>         partitions_count: 1
+>         replication_factor: 1
+>         configs: # https://kafka.apache.org/documentation/#topicconfigs
+>           cleanup.policy: compact
+>     models: # SchemaProvider is initiated with the values given here
+>       model: model
+>   namespace: namespace # required
+>   # Allowed configs:
+>   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
+>   values: # required
+>     kafka: # required, producer-app-specific
+>       bootstrapServers: ${config.kafka_brokers}
+>       schemaRegistryUrl: ${config.schema_registry.url}
+>       outputTopic: output_topic
+>       labeledOutputTopics:
+>         output_role1: output_topic1
+>         output_role2: output_topic2
+>     nameOverride: override-with-this-name # kafka-app-specific
+>     fullnameOverride: override-with-this-name # kafka-app-specific
+>   # Helm repository configuration (optional)
+>   # If not set the helm repo add will not be called. Useful when using local Helm charts
+>   repo_config:
+>     repository_name: bakdata-streams-bootstrap # required
+>     url: https://bakdata.github.io/streams-bootstrap/ # required
+>     repo_auth_flags:
+>       username: user
+>       password: pass
+>       ca_file: /home/user/path/to/ca-file
+>       insecure_skip_tls_verify: false
+>   version: "2.12.0" # Helm chart version
+> ```
+
+### Operations
+
+#### deploy
+
+In addition to [StreamsBootstrap's `deploy`](<https://bakdata.github.io/kpops/dev/user/core-concepts/components/streams-bootstrap/index.md#deploy>):
+
+- Create topics if provided (optional)
+- Submit Avro schemas to the registry if provided (optional)
+
+#### destroy
+
+Uninstall Helm release.
+
+#### reset
+
+Do nothing, producers are stateless.
+
+#### clean
+
+- Delete the output topics of the Kafka producer
+- Delete all associated schemas in the Schema Registry
