@@ -974,6 +974,16 @@ class TestGenerate:
 
         snapshot.assert_match(pipeline.to_yaml(), PIPELINE_YAML)
 
+    def test_key_order_independent_of_source(self, snapshot: Snapshot) -> None:
+        inline = kpops.generate(RESOURCE_PATH / "key-order" / "inline" / PIPELINE_YAML)
+        split = kpops.generate(RESOURCE_PATH / "key-order" / "split" / PIPELINE_YAML)
+
+        assert (
+            split.to_yaml().replace("key-order-split", "key-order-inline")
+            == inline.to_yaml()
+        )
+        snapshot.assert_match(inline.to_yaml(), PIPELINE_YAML)
+
     def test_symlinked_pipeline_as_original_pipeline(
         self,
     ) -> None:

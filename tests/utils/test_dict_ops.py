@@ -8,6 +8,7 @@ from pytest_mock import MockerFixture
 
 from kpops.utils.dict_ops import (
     generate_substitution,
+    sort_nested,
     update_nested,
     update_nested_pair,
 )
@@ -15,6 +16,13 @@ from kpops.utils.types import JsonType
 
 
 class TestDictOps:
+    def test_sort_nested(self) -> None:
+        value = {"b": {"y": 1, "x": [{"d": 1, "c": 2}, 3]}, "a": [2, 1]}
+        result = sort_nested(value)
+        assert json.dumps(result) == json.dumps(
+            {"a": [2, 1], "b": {"x": [{"c": 2, "d": 1}, 3], "y": 1}}
+        )
+
     def test_update_nested(self, mocker: MockerFixture) -> None:
         dicts = [{"k1": {"foo": 1}}, {"k1": {"bar": ""}}, {"k1": {"baz": "2"}}]
         expected = {"k1": {"foo": 1, "bar": "", "baz": "2"}}

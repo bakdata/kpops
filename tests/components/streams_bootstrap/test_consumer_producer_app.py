@@ -160,9 +160,9 @@ class TestConsumerProducerApp:
             },
         )
         assert consumer_producer_app.values.kafka.input_topics == [
-            KafkaTopic(name="example-input"),
-            KafkaTopic(name="b"),
             KafkaTopic(name="a"),
+            KafkaTopic(name="b"),
+            KafkaTopic(name="example-input"),
         ]
         assert consumer_producer_app.values.kafka.labeled_input_topics == {
             "role1": [KafkaTopic(name="topic-extra")],

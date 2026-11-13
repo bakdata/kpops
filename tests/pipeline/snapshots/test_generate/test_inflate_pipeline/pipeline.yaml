@@ -1,7 +1,7 @@
 - type: scheduled-producer
   name: scheduled-producer
-  enabled: true
   prefix: resources-pipeline-with-inflate-
+  enabled: true
   to:
     topics:
       resources-pipeline-with-inflate-scheduled-producer:
@@ -13,6 +13,7 @@
     models:
       com/bakdata/kafka/fake: 1.0.0
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: example-registry/fake-image
     imageTag: 0.0.1
@@ -23,13 +24,12 @@
     commandLine:
       FAKE_ARG: fake-arg-value
     schedule: 30 3/8 * * *
-  version: 3.6.1
   helm_release_name: resources-pipeline-with-inflate-scheduled-producer
   helm_name_override: resources-pipeline-with-inflate-scheduled-producer
 - type: converter
   name: converter
-  enabled: true
   prefix: resources-pipeline-with-inflate-
+  enabled: true
   to:
     topics:
       resources-pipeline-with-inflate-converter:
@@ -46,6 +46,7 @@
           cleanup.policy: compact,delete
     models: {}
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: bakdata-demo-streams-app
     kafka:
@@ -70,13 +71,12 @@
       lagThreshold: 10000
       maxReplicas: 1
     statefulSet: false
-  version: 3.6.1
   helm_release_name: resources-pipeline-with-inflate-converter
   helm_name_override: resources-pipeline-with-inflate-converter
 - type: should-inflate
   name: should-inflate
-  enabled: true
   prefix: resources-pipeline-with-inflate-
+  enabled: true
   to:
     topics:
       resources-pipeline-with-inflate-should-inflate:
@@ -92,6 +92,7 @@
           cleanup.policy: compact,delete
     models: {}
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: fake-registry/filter
     imageTag: 2.4.1
@@ -119,13 +120,12 @@
         - resources-pipeline-with-inflate-should-inflate
     statefulSet: false
     replicaCount: 4
-  version: 3.6.1
   helm_release_name: resources-pipeline-with-inflate-should-inflate
   helm_name_override: resources-pipeline-with-inflate-should-inflate
 - type: kafka-sink-connector
   name: should-inflate-inflated-sink-connector
-  enabled: true
   prefix: resources-pipeline-with-inflate-
+  enabled: true
   to:
     topics:
       kafka-sink-connector:
@@ -140,7 +140,6 @@
     name: resources-pipeline-with-inflate-should-inflate-inflated-sink-connector
     tasks.max: '1'
     topics: resources-pipeline-with-inflate-should-inflate
-    transforms.changeTopic.replacement: resources-pipeline-with-inflate-should-inflate-index-v1
     batch.size: '2000'
     behavior.on.malformed.documents: warn
     behavior.on.null.values: delete
@@ -149,23 +148,25 @@
     linger.ms: '5000'
     max.buffered.records: '20000'
     read.timeout.ms: '120000'
+    transforms.changeTopic.replacement: resources-pipeline-with-inflate-should-inflate-index-v1
 - type: streams-app
   name: should-inflate-inflated-streams-app
-  enabled: true
   prefix: resources-pipeline-with-inflate-
+  enabled: true
   to:
     topics:
-      resources-pipeline-with-inflate-should-inflate-should-inflate-inflated-streams-app:
-        type: output
-        configs: {}
       resources-pipeline-with-inflate-should-inflate-inflated-streams-app-error:
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
         partitions_count: 1
         configs:
           cleanup.policy: compact,delete
+      resources-pipeline-with-inflate-should-inflate-should-inflate-inflated-streams-app:
+        type: output
+        configs: {}
     models: {}
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: bakdata-demo-streams-app
     kafka:
@@ -178,7 +179,6 @@
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
     statefulSet: false
-  version: 3.6.1
   helm_release_name: resources-pipeline-with-inflate-should-inflate--2ea20
   helm_name_override: resources-pipeline-with-inflate-should-inflate-inflated-s-2ea20
 

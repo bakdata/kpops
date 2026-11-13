@@ -1,0 +1,19 @@
+streams-app:
+  prefix: ""
+  namespace: example-namespace
+  my_extra_a: a
+  from:
+    topics:
+      input-a:
+        type: input
+  to:
+    topics:
+      output:
+        type: output
+  values:
+    image: example-image
+    labels:
+      label-a: a
+    kafka:
+      config:
+        a.config: a

@@ -1,8 +1,9 @@
 - type: producer-app
   name: account-producer
-  enabled: true
   prefix: from-pipeline-component-
+  enabled: true
   namespace: ${NAMESPACE}
+  version: 3.6.1
   values:
     image: ${DOCKER_REGISTRY}/atm-demo-accountproducer
     imageTag: 1.0.0
@@ -11,12 +12,11 @@
       schemaRegistryUrl: http://localhost:8081/
     schedule: 0 12 * * *
     suspend: true
-    replicaCount: 1
+    debug: true
     prometheus:
       jmx:
         enabled: false
-    debug: true
-  version: 3.6.1
+    replicaCount: 1
   helm_release_name: from-pipeline-component-account-producer
   helm_name_override: from-pipeline-component-account-producer
 

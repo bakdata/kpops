@@ -1,15 +1,15 @@
 - type: producer-app
   name: account-producer
-  enabled: true
   prefix: resources-pipeline-with-paths-
+  enabled: true
   namespace: test
+  version: 3.6.1
   values:
     image: bakdata-demo-producer-app
     kafka:
       bootstrapServers: test
       schemaRegistryUrl: http://localhost:8081/
       outputTopic: out
-  version: 3.6.1
   helm_release_name: resources-pipeline-with-paths-account-producer
   helm_name_override: resources-pipeline-with-paths-account-producer
 

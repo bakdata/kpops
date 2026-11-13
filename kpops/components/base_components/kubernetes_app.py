@@ -2,12 +2,13 @@ from __future__ import annotations
 
 import re
 from abc import ABC
-from typing import ClassVar, override
+from typing import Annotated, ClassVar, override
 
 import structlog
 from pydantic import ConfigDict
 
 from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.components.base_components.section import Section
 from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel
 
 log = structlog.get_logger("KubernetesApp")
@@ -36,8 +37,8 @@ class KubernetesApp[V: KubernetesAppValues = KubernetesAppValues](
     :param values: Kubernetes app values
     """
 
-    namespace: str
-    values: V
+    namespace: Annotated[str, Section.TARGET]
+    values: Annotated[V, Section.CONFIG]
 
     @override
     def _validate_custom(self) -> None:

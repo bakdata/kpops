@@ -1,0 +1,13 @@
+- type: streams-app
+  name: app
+  my_extra_b: b
+  from:
+    topics:
+      input-b:
+        type: input
+  values:
+    labels:
+      label-b: b
+    kafka:
+      config:
+        b.config: b

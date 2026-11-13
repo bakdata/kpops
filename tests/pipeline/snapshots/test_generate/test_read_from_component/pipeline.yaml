@@ -1,7 +1,7 @@
 - type: producer-app
   name: producer1
-  enabled: true
   prefix: resources-read-from-component-
+  enabled: true
   to:
     topics:
       resources-read-from-component-producer1:
@@ -9,19 +9,19 @@
         configs: {}
     models: {}
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: bakdata-demo-producer-app
     kafka:
       bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       schemaRegistryUrl: http://localhost:8081/
       outputTopic: resources-read-from-component-producer1
-  version: 3.6.1
   helm_release_name: resources-read-from-component-producer1
   helm_name_override: resources-read-from-component-producer1
 - type: producer-app
   name: producer2
-  enabled: true
   prefix: ''
+  enabled: true
   to:
     topics:
       resources-read-from-component-producer2:
@@ -29,19 +29,19 @@
         configs: {}
     models: {}
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: bakdata-demo-producer-app
     kafka:
       bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       schemaRegistryUrl: http://localhost:8081/
       outputTopic: resources-read-from-component-producer2
-  version: 3.6.1
   helm_release_name: producer2
   helm_name_override: producer2
 - type: should-inflate
   name: inflate-step
-  enabled: true
   prefix: resources-read-from-component-
+  enabled: true
   to:
     topics:
       resources-read-from-component-inflate-step:
@@ -57,6 +57,7 @@
           cleanup.policy: compact,delete
     models: {}
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: fake-registry/filter
     imageTag: 2.4.1
@@ -77,28 +78,26 @@
       topics:
         - resources-read-from-component-inflate-step
     statefulSet: false
-  version: 3.6.1
   helm_release_name: resources-read-from-component-inflate-step
   helm_name_override: resources-read-from-component-inflate-step
 - type: kafka-sink-connector
   name: inflate-step-inflated-sink-connector
-  enabled: true
   prefix: resources-read-from-component-
+  enabled: true
   to:
     topics:
-      kafka-sink-connector:
-        type: output
-        configs: {}
       inflate-step-inflated-sink-connector:
         configs: {}
         label: test
+      kafka-sink-connector:
+        type: output
+        configs: {}
     models: {}
   config:
     connector.class: io.confluent.connect.elasticsearch.ElasticsearchSinkConnector
     name: resources-read-from-component-inflate-step-inflated-sink-connector
     tasks.max: '1'
     topics: resources-read-from-component-inflate-step
-    transforms.changeTopic.replacement: resources-read-from-component-inflate-step-index-v1
     batch.size: '2000'
     behavior.on.malformed.documents: warn
     behavior.on.null.values: delete
@@ -107,10 +106,11 @@
     linger.ms: '5000'
     max.buffered.records: '20000'
     read.timeout.ms: '120000'
+    transforms.changeTopic.replacement: resources-read-from-component-inflate-step-index-v1
 - type: streams-app
   name: inflate-step-inflated-streams-app
-  enabled: true
   prefix: resources-read-from-component-
+  enabled: true
   to:
     topics:
       resources-read-from-component-inflate-step-inflate-step-inflated-streams-app:
@@ -124,6 +124,7 @@
           cleanup.policy: compact,delete
     models: {}
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: bakdata-demo-streams-app
     kafka:
@@ -136,13 +137,12 @@
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
     statefulSet: false
-  version: 3.6.1
   helm_release_name: resources-read-from-component-inflate-step-infl-5def2
   helm_name_override: resources-read-from-component-inflate-step-inflated-streams-app
 - type: should-inflate
   name: inflate-step-without-prefix
-  enabled: true
   prefix: ''
+  enabled: true
   to:
     topics:
       resources-read-from-component-inflate-step-without-prefix:
@@ -158,6 +158,7 @@
           cleanup.policy: compact,delete
     models: {}
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: fake-registry/filter
     imageTag: 2.4.1
@@ -178,28 +179,26 @@
       topics:
         - resources-read-from-component-inflate-step-without-prefix
     statefulSet: false
-  version: 3.6.1
   helm_release_name: inflate-step-without-prefix
   helm_name_override: inflate-step-without-prefix
 - type: kafka-sink-connector
   name: inflate-step-without-prefix-inflated-sink-connector
-  enabled: true
   prefix: resources-read-from-component-
+  enabled: true
   to:
     topics:
-      kafka-sink-connector:
-        type: output
-        configs: {}
       inflate-step-without-prefix-inflated-sink-connector:
         configs: {}
         label: test
+      kafka-sink-connector:
+        type: output
+        configs: {}
     models: {}
   config:
     connector.class: io.confluent.connect.elasticsearch.ElasticsearchSinkConnector
     name: resources-read-from-component-inflate-step-without-prefix-inflated-sink-connector
     tasks.max: '1'
     topics: resources-read-from-component-inflate-step-without-prefix
-    transforms.changeTopic.replacement: resources-read-from-component-inflate-step-without-prefix-index-v1
     batch.size: '2000'
     behavior.on.malformed.documents: warn
     behavior.on.null.values: delete
@@ -208,10 +207,11 @@
     linger.ms: '5000'
     max.buffered.records: '20000'
     read.timeout.ms: '120000'
+    transforms.changeTopic.replacement: resources-read-from-component-inflate-step-without-prefix-index-v1
 - type: streams-app
   name: inflate-step-without-prefix-inflated-streams-app
-  enabled: true
   prefix: resources-read-from-component-
+  enabled: true
   to:
     topics:
       inflate-step-without-prefix-inflate-step-without-prefix-inflated-streams-app:
@@ -225,6 +225,7 @@
           cleanup.policy: compact,delete
     models: {}
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: bakdata-demo-streams-app
     kafka:
@@ -237,13 +238,12 @@
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
     statefulSet: false
-  version: 3.6.1
   helm_release_name: resources-read-from-component-inflate-step-with-000dc
   helm_name_override: resources-read-from-component-inflate-step-without-prefix-000dc
 - type: streams-app
   name: consumer1
-  enabled: true
   prefix: resources-read-from-component-
+  enabled: true
   from:
     topics: {}
     components:
@@ -262,6 +262,7 @@
           cleanup.policy: compact,delete
     models: {}
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: bakdata-demo-streams-app
     kafka:
@@ -274,19 +275,18 @@
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
     statefulSet: false
-  version: 3.6.1
   helm_release_name: resources-read-from-component-consumer1
   helm_name_override: resources-read-from-component-consumer1
 - type: streams-app
   name: consumer2
-  enabled: true
   prefix: resources-read-from-component-
+  enabled: true
   from:
     topics: {}
     components:
-      producer1:
-        type: input
       consumer1:
+        type: input
+      producer1:
         type: input
   to:
     topics:
@@ -298,25 +298,25 @@
           cleanup.policy: compact,delete
     models: {}
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: bakdata-demo-streams-app
     kafka:
       bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       schemaRegistryUrl: http://localhost:8081/
       inputTopics:
-        - resources-read-from-component-producer1
         - resources-read-from-component-consumer1
+        - resources-read-from-component-producer1
       errorTopic: resources-read-from-component-consumer2-error
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
     statefulSet: false
-  version: 3.6.1
   helm_release_name: resources-read-from-component-consumer2
   helm_name_override: resources-read-from-component-consumer2
 - type: streams-app
   name: consumer3
-  enabled: true
   prefix: resources-read-from-component-
+  enabled: true
   from:
     topics:
       resources-read-from-component-producer1:
@@ -334,6 +334,7 @@
           cleanup.policy: compact,delete
     models: {}
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: bakdata-demo-streams-app
     kafka:
@@ -346,13 +347,12 @@
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
     statefulSet: false
-  version: 3.6.1
   helm_release_name: resources-read-from-component-consumer3
   helm_name_override: resources-read-from-component-consumer3
 - type: streams-app
   name: consumer4
-  enabled: true
   prefix: resources-read-from-component-
+  enabled: true
   from:
     topics: {}
     components:
@@ -368,6 +368,7 @@
           cleanup.policy: compact,delete
     models: {}
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: bakdata-demo-streams-app
     kafka:
@@ -379,13 +380,12 @@
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
     statefulSet: false
-  version: 3.6.1
   helm_release_name: resources-read-from-component-consumer4
   helm_name_override: resources-read-from-component-consumer4
 - type: streams-app
   name: consumer5
-  enabled: true
   prefix: resources-read-from-component-
+  enabled: true
   from:
     topics: {}
     components:
@@ -401,6 +401,7 @@
           cleanup.policy: compact,delete
     models: {}
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: bakdata-demo-streams-app
     kafka:
@@ -412,7 +413,6 @@
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
     statefulSet: false
-  version: 3.6.1
   helm_release_name: resources-read-from-component-consumer5
   helm_name_override: resources-read-from-component-consumer5
 

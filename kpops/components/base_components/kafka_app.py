@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from collections.abc import Iterator
-from typing import ClassVar, override
+from typing import Annotated, ClassVar, override
 
 import structlog
 from pydantic import AliasChoices, Field
@@ -15,6 +15,7 @@ from kpops.components.base_components.models.from_section import (
 )
 from kpops.components.base_components.models.to_section import ToSection
 from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.components.base_components.section import Section
 from kpops.components.common.topic import (
     KafkaTopic,
     OutputTopicTypes,
@@ -37,7 +38,7 @@ class ConsumesTopics(KafkaApp, ABC):
 
     _kpops_capability: ClassVar[bool] = True
 
-    from_: FromSection | None = Field(
+    from_: Annotated[FromSection | None, Section.INPUT] = Field(
         default=None,
         serialization_alias="from",
         validation_alias=AliasChoices("from", "from_"),
@@ -149,7 +150,7 @@ class ProducesTopics(KafkaApp, ABC):
 
     _kpops_capability: ClassVar[bool] = True
 
-    to: ToSection | None = None
+    to: Annotated[ToSection | None, Section.OUTPUT] = None
 
     @override
     def _apply_topic_sections(self) -> None:
