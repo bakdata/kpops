@@ -17,6 +17,7 @@ from pydantic import (
     computed_field,
 )
 from pydantic.json_schema import SkipJsonSchema
+from pydantic_core import to_jsonable_python
 
 from kpops.config import KpopsConfig, get_config
 from kpops.const.file_type import KpopsFileType
@@ -64,6 +65,8 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         if values.get("enrich", True):
             cls = self.__class__
             values = cls.extend_with_defaults(**values)
+            # resolve placeholders before typed fields are validated, the rest after
+            values = cls.substitute_in_component(**to_jsonable_python(values))
             tmp_self = cls(**values, enrich=False)
             values = tmp_self.model_dump(mode="json", by_alias=True)
             values = cls.substitute_in_component(**values)

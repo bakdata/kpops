@@ -57,4 +57,5 @@ These are special variables that refer to the name and path of a pipeline.
 
 1. **Refer to default component field values**: As long as a value is assigned to a component attribute, it is possible to refer to it with a placeholder. To see all component fields, take a look at the [pipeline schema](../../../schema/pipeline.json).
 2. **Chaining variables**: It is possible to chain any number of variables, see the [example](#component-specific-variables) above.
+   In fields that expect a number or boolean, placeholders can refer to config values and to component values set in the pipeline definition or defaults, but not to values that KPOps derives later, such as `helm_release_name`.
 3. **Cross-component substitution**: [YAML](https://yaml.org/){target=_blank} is quite an intricate language and with some of its [magic](https://yaml.org/spec/1.2.2/#692-node-anchors){target=_blank} one could write cross-component references.

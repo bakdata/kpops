@@ -1,0 +1,12 @@
+- type: streams-app
+  name: app
+  partitions: 3
+  namespace: example-namespace
+  values:
+    image: example-image
+    statefulSet: ${config.retain_clean_jobs}
+  to:
+    topics:
+      output:
+        type: output
+        partitions_count: ${component.partitions}
