@@ -44,6 +44,7 @@ theme:
     - content.code.copy
     - content.code.select
     - content.code.annotate
+    - content.action.copy
 
 plugins:
   - macros
@@ -63,6 +64,33 @@ plugins:
             show_root_heading: true
             show_inheritance_diagram: true
             modernize_annotations: true
+  - llmstxt:
+      base_url: !ENV [DOCS_BASE_URL, https://bakdata.github.io/kpops/main/]
+      full_output: llms-full.txt
+      markdown_description: |
+        KPOps deploys Kafka pipelines to Kubernetes. Pipelines are defined in `pipeline.yaml`, shared settings in `defaults.yaml` and global settings in `config.yaml`.
+
+        JSON schemas for validation: [pipeline](schema/pipeline.json), [defaults](schema/defaults.json), [config](schema/config.json).
+
+        For custom Python components, read the installed `kpops` package source. The [developer guide](developer/getting-started/) covers contributing to KPOps. Release notes are in the [changelog](user/changelog/).
+      sections:
+        Getting started:
+          - user/what-is-kpops.md
+          - user/getting-started/*.md
+          - user/examples/*.md
+        Core concepts:
+          - user/core-concepts/components/overview.md
+          - user/core-concepts/components/*.md
+          - user/core-concepts/config.md
+          - user/core-concepts/defaults.md
+          - user/core-concepts/operation-mode.md
+          - user/core-concepts/variables/*.md
+        References:
+          - user/references/cli-commands.md
+          - user/references/editor-integration.md
+          - user/references/ci-integration/*.md
+        Migration guides:
+          - user/migration-guide/*.md
 
 extra:
   version:
