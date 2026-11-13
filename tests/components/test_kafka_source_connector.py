@@ -157,6 +157,30 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                 },
             )
 
+    def test_substitute_in_typed_topic_configs(
+        self, connector_config: KafkaConnectorConfig
+    ) -> None:
+        connector = KafkaSourceConnector(
+            name=CONNECTOR_NAME,
+            config=connector_config,
+            to={
+                "topics": {
+                    "output-topic": {
+                        "type": "output",
+                        "configs": {
+                            "retention.ms": "${component.retention}",
+                            "preallocate": "${config.retain_clean_jobs}",
+                        },
+                    }
+                }
+            },
+            **{"retention": 1000},
+        )
+        assert connector.to
+        configs = connector.to.topics[TopicName("output-topic")].configs
+        assert configs.retention_ms == 1000
+        assert configs.preallocate is False
+
     def test_from_section_raises_exception(
         self,
         connector_config: KafkaConnectorConfig,
