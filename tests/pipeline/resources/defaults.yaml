@@ -62,7 +62,7 @@ converter:
         type: output
         partitions_count: 50
         configs:
-          retention.ms: "-1"
+          retention.ms: -1
           cleanup.policy: compact,delete
       ${error_topic_name}:
         type: error
@@ -89,7 +89,7 @@ filter:
         type: output
         partitions_count: 50
         configs:
-          retention.ms: "-1"
+          retention.ms: -1
 
 should-inflate:
   values:
@@ -109,7 +109,7 @@ should-inflate:
         type: output
         partitions_count: 50
         configs:
-          retention.ms: "-1"
+          retention.ms: -1
 
 kafka-sink-connector:
   config:
