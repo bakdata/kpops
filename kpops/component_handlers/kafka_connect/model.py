@@ -1,10 +1,13 @@
+import re
 from enum import StrEnum, auto
-from typing import Any, ClassVar, override
+from typing import Annotated, Any, ClassVar, Literal, TypeVar, override
 
 import pydantic
 from pydantic import (
     BaseModel,
     ConfigDict,
+    ValidatorFunctionWrapHandler,
+    WrapValidator,
     computed_field,
     field_serializer,
     field_validator,
@@ -16,18 +19,70 @@ from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
 from kpops.utils.enum import UpperStrEnum
 from kpops.utils.pydantic import (
     DescConfigModel,
+    Templatable,
     by_alias,
     exclude_by_value,
     to_dot,
     to_str,
 )
 
+CONFIG_PROVIDER_PATTERN = re.compile(r"\$\{[\w.-]+:[^}]*\}")
+
+
+def validate_config_provider(
+    value: object, handler: ValidatorFunctionWrapHandler
+) -> object:
+    if isinstance(value, str) and CONFIG_PROVIDER_PATTERN.fullmatch(value):
+        return value
+    return handler(value)
+
+
+_T = TypeVar("_T")
+ConnectorConfigValue = Templatable[
+    Annotated[
+        _T,
+        WrapValidator(validate_config_provider),
+        "Also accepts a Kafka Connect config provider reference, resolved by the worker",
+    ]
+]
+
 
 class KafkaConnectorConfig(DescConfigModel):
-    """Settings specific to Kafka Connectors."""
+    """Settings specific to Kafka Connectors.
+
+    Connector config reference: https://kafka.apache.org/documentation/#connectconfigs
+    Configs that are not listed here can still be set and are passed through as is.
+
+    :param connector_class: Name or alias of the class for this connector. Must be a subclass of org.apache.kafka.connect.connector.Connector.
+    :param name: Globally unique name to use for this connector.
+    :param tasks_max: Maximum number of tasks to use for this connector.
+    :param key_converter: Converter class used to convert between Kafka Connect format and the serialized form that is written to Kafka. This controls the format of the keys in messages written to or read from Kafka. Examples of common formats include JSON and Avro.
+    :param value_converter: Converter class used to convert between Kafka Connect format and the serialized form that is written to Kafka. This controls the format of the values in messages written to or read from Kafka. Examples of common formats include JSON and Avro.
+    :param header_converter: HeaderConverter class used to convert between Kafka Connect format and the serialized form that is written to Kafka. This controls the format of the header values in messages written to or read from Kafka. By default, the SimpleHeaderConverter is used to serialize header values to strings and deserialize them by inferring the schemas.
+    :param transforms: Comma-separated aliases for the transformations to be applied to records.
+    :param predicates: Comma-separated aliases for the predicates used by transformations.
+    :param config_action_reload: The action that Connect should take on the connector when changes in external configuration providers result in a change in the connector's configuration properties. `none` does nothing, `restart` restarts the connector with the updated configuration properties.
+    :param errors_retry_timeout: The maximum duration in milliseconds that a failed operation will be reattempted. The default is 0, which means no retries will be attempted. Use -1 for infinite retries.
+    :param errors_retry_delay_max_ms: The maximum duration in milliseconds between consecutive retry attempts. Jitter will be added to the delay once this limit is reached to prevent thundering herd issues.
+    :param errors_tolerance: Behavior for tolerating errors during connector operation. `none` (default) signals that any error will result in an immediate connector task failure; `all` changes the behavior to skip over problematic records.
+    :param errors_log_enable: If true, write each error and the details of the failed operation and problematic record to the Connect application log. This is false by default, so that only errors that are not tolerated are reported.
+    :param errors_log_include_messages: Whether to include in the log the Connect record that resulted in a failure. This is false by default, which prevents record keys, values, and headers from being written to log files.
+    """
 
     connector_class: str
     name: SkipJsonSchema[str]
+    tasks_max: ConnectorConfigValue[int] | None = None
+    key_converter: str | None = None
+    value_converter: str | None = None
+    header_converter: str | None = None
+    transforms: str | None = None
+    predicates: str | None = None
+    config_action_reload: ConnectorConfigValue[Literal["none", "restart"]] | None = None
+    errors_retry_timeout: ConnectorConfigValue[int] | None = None
+    errors_retry_delay_max_ms: ConnectorConfigValue[int] | None = None
+    errors_tolerance: ConnectorConfigValue[Literal["none", "all"]] | None = None
+    errors_log_enable: ConnectorConfigValue[bool] | None = None
+    errors_log_include_messages: ConnectorConfigValue[bool] | None = None
 
     @override
     @staticmethod
@@ -81,11 +136,24 @@ class KafkaConnectorConfig(DescConfigModel):
 
 
 class KafkaSinkConnectorConfig(KafkaConnectorConfig):
-    """Settings specific to Kafka sink connectors."""
+    """Settings specific to Kafka sink connectors.
+
+    :param topics: List of topics to consume, separated by commas. Only one of `topics` or `topics.regex` should be specified.
+    :param topics_regex: Regular expression giving topics to consume. Under the hood, the regex is compiled to a `java.util.regex.Pattern`. Only one of `topics` or `topics.regex` should be specified.
+    :param errors_deadletterqueue_topic_name: The name of the topic to be used as the dead letter queue (DLQ) for messages that result in an error when processed by this sink connector, or its transformations or converters. The topic name is blank by default, which means that no messages are to be recorded in the DLQ.
+    :param errors_deadletterqueue_topic_replication_factor: Replication factor used to create the dead letter queue topic when it doesn't already exist.
+    :param errors_deadletterqueue_context_headers_enable: If true, add headers containing error context to the messages written to the dead letter queue.
+    """
 
     topics: list[KafkaTopicStr] = []
     topics_regex: str | None = None
     errors_deadletterqueue_topic_name: KafkaTopicStr | None = None
+    errors_deadletterqueue_topic_replication_factor: (
+        ConnectorConfigValue[int] | None
+    ) = None
+    errors_deadletterqueue_context_headers_enable: ConnectorConfigValue[bool] | None = (
+        None
+    )
 
     @pydantic.field_validator("topics", mode="before")
     @classmethod
@@ -102,7 +170,28 @@ class KafkaSinkConnectorConfig(KafkaConnectorConfig):
 
 
 class KafkaSourceConnectorConfig(KafkaConnectorConfig):
-    """Settings specific to Kafka source connectors."""
+    """Settings specific to Kafka source connectors.
+
+    :param topic_creation_groups: Groups of configurations for topics created by source connectors.
+    :param topic_creation_default_replication_factor: Replication factor for new topics created by this connector. Use -1 for the broker's default. Together with `topic.creation.default.partitions`, this enables topic creation for the connector if `topic.creation.enable` is set on the worker.
+    :param topic_creation_default_partitions: Number of partitions for new topics created by this connector. Use -1 for the broker's default. Together with `topic.creation.default.replication.factor`, this enables topic creation for the connector if `topic.creation.enable` is set on the worker.
+    :param exactly_once_support: `required` forces a preflight check to ensure the connector can provide exactly-once semantics with the given configuration. `requested` (default) skips this check. Requires exactly-once source support on the worker.
+    :param transaction_boundary: Where producer transactions are committed. `poll` (default) commits a transaction for every batch of records a task provides to Connect. `interval` commits after a user-defined time interval. `connector` relies on connector-defined transaction boundaries, which not all connectors support.
+    :param transaction_boundary_interval_ms: If `transaction.boundary` is `interval`, the interval in milliseconds for producer transaction commits by connector tasks. Defaults to the worker's `offset.flush.interval.ms`.
+    :param offsets_storage_topic: The name of a separate offsets topic to use for this connector. If not specified, the worker's global offsets topic is used. Only applicable in distributed mode.
+    """
+
+    topic_creation_groups: str | None = None
+    topic_creation_default_replication_factor: ConnectorConfigValue[int] | None = None
+    topic_creation_default_partitions: ConnectorConfigValue[int] | None = None
+    exactly_once_support: (
+        ConnectorConfigValue[Literal["requested", "required"]] | None
+    ) = None
+    transaction_boundary: (
+        ConnectorConfigValue[Literal["poll", "interval", "connector"]] | None
+    ) = None
+    transaction_boundary_interval_ms: ConnectorConfigValue[int] | None = None
+    offsets_storage_topic: KafkaTopicStr | None = None
 
 
 class ConnectorCurrentState(UpperStrEnum):

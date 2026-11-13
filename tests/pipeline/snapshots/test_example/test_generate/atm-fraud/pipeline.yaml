@@ -172,23 +172,23 @@
   config:
     connector.class: io.confluent.connect.jdbc.JdbcSinkConnector
     name: atm-fraud-postgresql-connector
+    tasks.max: '1'
+    key.converter: org.apache.kafka.connect.storage.StringConverter
+    value.converter: io.confluent.connect.avro.AvroConverter
+    transforms: flatten
+    errors.tolerance: all
     topics: atm-fraud-account-linker-topic
     errors.deadletterqueue.topic.name: postgres-request-sink-dead-letters
-    tasks.max: '1'
+    errors.deadletterqueue.topic.replication.factor: '1'
+    errors.deadletterqueue.context.headers.enable: 'true'
     connection.url: jdbc:postgresql://postgresql-dev.${NAMESPACE}.svc.cluster.local:5432/app_db
     connection.user: app1
     connection.password: AppPassword
     connection.ds.pool.size: '5'
     insert.mode: insert
     insert.mode.databaselevel: 'true'
-    value.converter: io.confluent.connect.avro.AvroConverter
     value.converter.schema.registry.url: http://k8kafka-cp-schema-registry.${NAMESPACE}.svc.cluster.local:8081
-    key.converter: org.apache.kafka.connect.storage.StringConverter
-    transforms: flatten
     transforms.flatten.type: org.apache.kafka.connect.transforms.Flatten$Value
     auto.create: 'true'
     table.name.format: fraud_transactions
-    errors.deadletterqueue.context.headers.enable: 'true'
-    errors.deadletterqueue.topic.replication.factor: '1'
-    errors.tolerance: all
     pk.mode: record_value
