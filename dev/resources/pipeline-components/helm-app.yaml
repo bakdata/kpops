@@ -5,6 +5,10 @@
   # have any prefix you can specify an empty string.
   prefix: ${pipeline.name}-
   namespace: namespace # required
+  values: # required
+    image: exampleImage # Example
+    debug: false # Example
+    commandLine: {} # Example
   # Helm repository configuration (optional)
   # If not set the helm repo add will not be called. Useful when using local Helm charts
   repo_config:
@@ -16,7 +20,3 @@
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
   version: "1.0.0" # Helm chart version
-  values: # required
-    image: exampleImage # Example
-    debug: false # Example
-    commandLine: {} # Example
