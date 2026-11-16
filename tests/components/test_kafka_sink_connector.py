@@ -9,6 +9,7 @@ from kpops.component_handlers.kafka_connect.model import (
     ConnectorNewState,
     KafkaConnectorConfig,
     KafkaConnectorType,
+    KafkaSinkConnectorConfig,
 )
 from kpops.components.base_components import ConsumesTopics
 from kpops.components.base_components.kafka_connector import (
@@ -62,13 +63,12 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         topic_pattern = ".*"
         connector = KafkaSinkConnector(
             name=CONNECTOR_NAME,
-            config=KafkaConnectorConfig.model_validate(
-                {
-                    **connector_config.model_dump(),
-                    "topics.regex": topic_pattern,
-                }
-            ),
+            config={
+                **connector_config.model_dump(),
+                "topics.regex": topic_pattern,
+            },
         )
+        assert isinstance(connector.config, KafkaSinkConnectorConfig)
         assert connector.config.topics_regex == topic_pattern
         assert connector.config.model_dump()["topics.regex"] == topic_pattern
 

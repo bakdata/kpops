@@ -10,6 +10,7 @@ from kpops.component_handlers.kafka_connect.model import (
     ConnectorNewState,
     KafkaConnectorConfig,
     KafkaConnectorType,
+    KafkaSourceConnectorConfig,
 )
 from kpops.components.base_components import ConsumesTopics
 from kpops.components.base_components.kafka_connector import (
@@ -57,6 +58,17 @@ class TestKafkaSourceConnector(TestKafkaConnector):
 
     def test_supports_from_section(self) -> None:
         assert not issubclass(KafkaSourceConnector, ConsumesTopics)
+
+    def test_connector_config_parsing(
+        self, connector_config: KafkaConnectorConfig
+    ) -> None:
+        connector = KafkaSourceConnector(
+            name=CONNECTOR_NAME,
+            config={**connector_config.model_dump(), "topics": "a,b"},
+        )
+        assert isinstance(connector.config, KafkaSourceConnectorConfig)
+        assert "topics" not in KafkaSourceConnectorConfig.model_fields
+        assert connector.config.model_dump()["topics"] == "a,b"
 
     def test_from_section_raises_exception(
         self,

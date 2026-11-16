@@ -2117,37 +2117,6 @@
                 "connector.class": {
                     "title": "Connector.Class",
                     "type": "string"
-                },
-                "errors.deadletterqueue.topic.name": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null
-                },
-                "topics": {
-                    "default": [],
-                    "items": {
-                        "type": "string"
-                    },
-                    "title": "Topics",
-                    "type": "array"
-                },
-                "topics.regex": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Topics.Regex"
                 }
             },
             "required": [
@@ -2161,7 +2130,7 @@
             "description": "Kafka sink connector model.",
             "properties": {
                 "config": {
-                    "$ref": "#/$defs/KafkaConnectorConfig",
+                    "$ref": "#/$defs/KafkaSinkConnectorConfig",
                     "description": "Connector config"
                 },
                 "enabled": {
@@ -2232,12 +2201,76 @@
             "title": "KafkaSinkConnector",
             "type": "object"
         },
+        "KafkaSinkConnectorConfig": {
+            "additionalProperties": true,
+            "additional_properties": {
+                "type": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ]
+                }
+            },
+            "description": "Settings specific to Kafka sink connectors.",
+            "properties": {
+                "connector.class": {
+                    "title": "Connector.Class",
+                    "type": "string"
+                },
+                "errors.deadletterqueue.topic.name": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null
+                },
+                "topics": {
+                    "default": [],
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Topics",
+                    "type": "array"
+                },
+                "topics.regex": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Topics.Regex"
+                }
+            },
+            "required": [
+                "connector.class"
+            ],
+            "title": "KafkaSinkConnectorConfig",
+            "type": "object"
+        },
         "KafkaSourceConnector": {
             "additionalProperties": true,
             "description": "Kafka source connector model.",
             "properties": {
                 "config": {
-                    "$ref": "#/$defs/KafkaConnectorConfig",
+                    "$ref": "#/$defs/KafkaSourceConnectorConfig",
                     "description": "Connector config"
                 },
                 "enabled": {
@@ -2293,6 +2326,39 @@
                 "type"
             ],
             "title": "KafkaSourceConnector",
+            "type": "object"
+        },
+        "KafkaSourceConnectorConfig": {
+            "additionalProperties": true,
+            "additional_properties": {
+                "type": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ]
+                }
+            },
+            "description": "Settings specific to Kafka source connectors.",
+            "properties": {
+                "connector.class": {
+                    "title": "Connector.Class",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "connector.class"
+            ],
+            "title": "KafkaSourceConnectorConfig",
             "type": "object"
         },
         "KubernetesApp": {
