@@ -271,3 +271,25 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         await connector.clean(dry_run=True)
 
         dry_run_handler_mock.print_helm_diff.assert_not_called()
+
+    def test_placeholder_in_nested_model(
+        self, connector_config: KafkaConnectorConfig
+    ) -> None:
+        topic_config = TopicConfig.model_validate(
+            {"type": "output", "partitions_count": "${component.partitions}"}
+        )
+        connector = KafkaSourceConnector(
+            name=CONNECTOR_NAME,
+            config=connector_config,
+            to=ToSection(topics={TopicName("output-topic"): topic_config}),
+            **{"partitions": 3},
+        )
+        assert connector.to
+        assert connector.to.topics[TopicName("output-topic")].partitions_count == 3
+
+        with pytest.raises(ValidationError):
+            KafkaSourceConnector(
+                name=CONNECTOR_NAME,
+                config=connector_config,
+                to=ToSection(topics={TopicName("output-topic"): topic_config}),
+            )

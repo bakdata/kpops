@@ -16,6 +16,7 @@ from kpops.api.options import FilterType
 from kpops.cli.main import app
 from kpops.component_handlers.kafka_connect.model import ConnectorNewState
 from kpops.components.base_components.kafka_connector import KafkaSinkConnector
+from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.components.streams_bootstrap.producer.producer_app import ProducerApp
 from kpops.components.streams_bootstrap.streams.streams_app import StreamsApp
@@ -231,6 +232,34 @@ class TestGenerate:
         )
 
         snapshot.assert_match(result.stdout, PIPELINE_YAML)
+
+    @pytest.mark.parametrize(
+        ("environment", "replication_factor"),
+        [
+            pytest.param(None, None, id="pipeline"),
+            pytest.param("development", 2, id="environment"),
+        ],
+    )
+    def test_substitute_in_typed_topic_fields(
+        self, environment: str | None, replication_factor: int | None
+    ) -> None:
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "typed-field-substitution" / PIPELINE_YAML,
+            environment=environment,
+        )
+        streams_app = pipeline.components[0]
+        assert isinstance(streams_app, StreamsApp)
+        assert streams_app.to
+        topic = streams_app.to.topics[TopicName("output")]
+        assert topic.partitions_count == 3
+        assert topic.replication_factor == replication_factor
+
+    def test_unresolved_placeholder_in_typed_topic_field(self) -> None:
+        with pytest.raises(ParsingException) as exc_info:
+            kpops.generate(
+                RESOURCE_PATH / "typed-field-substitution-unresolved" / PIPELINE_YAML
+            )
+        assert "${component.partitons}" in str(exc_info.value.__cause__)
 
     def test_substitute_in_component_infinite_loop(self) -> None:
         with pytest.raises((ValueError, ParsingException)):

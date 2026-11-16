@@ -7,7 +7,7 @@ from typing import Annotated, Any, ClassVar
 import pydantic
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from kpops.utils.pydantic import DescConfigModel, to_str
+from kpops.utils.pydantic import DescConfigModel, Templatable, to_str
 
 
 class OutputTopicTypes(StrEnum):
@@ -42,11 +42,11 @@ class TopicConfig(DescConfigModel):
         default=None,
         title="Value schema",
     )
-    partitions_count: int | None = Field(
+    partitions_count: Templatable[int] | None = Field(
         default=None,
         title="Partitions count",
     )
-    replication_factor: int | None = Field(
+    replication_factor: Templatable[int] | None = Field(
         default=None,
         title="Replication factor",
     )

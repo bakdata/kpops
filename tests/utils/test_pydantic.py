@@ -1,11 +1,14 @@
-from typing import Any
+from typing import Any, Literal
 
 import pytest
+from pydantic import BaseModel, ValidationError
 
 from kpops.utils.pydantic import (
     SerializeAsOptional,
     SerializeAsOptionalModel,
+    Templatable,
     exclude_by_value,
+    placeholders_allowed,
     to_dash,
     to_dot,
     to_snake,
@@ -169,3 +172,65 @@ def test_serialize_as_optional() -> None:
         "optional_list": ["el"],
         "optional_dict": {"foo": "bar"},
     }
+
+
+class TemplatableModel(BaseModel):
+    number: Templatable[int] | None = None
+    choice: Templatable[Literal["a", "b"]] | None = None
+
+
+@pytest.mark.parametrize(
+    ("data", "expected"),
+    [
+        pytest.param({"number": 1}, {"number": 1}, id="int"),
+        pytest.param({"number": "1"}, {"number": 1}, id="numeric string"),
+        pytest.param({"choice": "a"}, {"choice": "a"}, id="literal"),
+        pytest.param(
+            {"number": "${component.number}"},
+            {"number": "${component.number}"},
+            id="placeholder",
+        ),
+        pytest.param(
+            {"choice": "${config.a}${config.b}"},
+            {"choice": "${config.a}${config.b}"},
+            id="multiple placeholders",
+        ),
+    ],
+)
+def test_templatable(data: dict[str, Any], expected: dict[str, Any]) -> None:
+    model = TemplatableModel.model_validate(data)
+    assert model.model_dump(exclude_none=True) == expected
+
+
+@pytest.mark.parametrize(
+    "data",
+    [
+        pytest.param({"number": "one"}, id="invalid int"),
+        pytest.param({"choice": "c"}, id="invalid literal"),
+        pytest.param({"number": "${"}, id="incomplete placeholder"),
+    ],
+)
+def test_templatable_invalid(data: dict[str, Any]) -> None:
+    with pytest.raises(ValidationError) as exc_info:
+        TemplatableModel.model_validate(data)
+    assert exc_info.value.error_count() == 1
+
+
+def test_templatable_placeholders_disallowed() -> None:
+    with placeholders_allowed(False), pytest.raises(ValidationError):
+        TemplatableModel.model_validate({"number": "${component.number}"})
+    with placeholders_allowed(False):
+        assert TemplatableModel.model_validate({"number": "1"}).number == 1
+
+    with placeholders_allowed(False), placeholders_allowed(True):
+        model = TemplatableModel.model_validate({"number": "${component.number}"})
+    assert model.number == "${component.number}"
+
+
+def test_templatable_json_schema() -> None:
+    schema = TemplatableModel.model_json_schema()
+    assert schema["properties"]["number"]["anyOf"] == [
+        {"type": "integer"},
+        {"type": "string", "pattern": r"\$\{.+\}"},
+        {"type": "null"},
+    ]

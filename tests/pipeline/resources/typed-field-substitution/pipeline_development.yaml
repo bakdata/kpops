@@ -1,0 +1,7 @@
+- type: streams-app
+  name: app
+  to:
+    topics:
+      output:
+        type: output
+        replication_factor: ${component.replicas}
