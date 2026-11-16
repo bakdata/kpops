@@ -1,0 +1,181 @@
+# Migrate from V12 to V13
+
+## Python 3.14+ required
+
+KPOps v13 supports only Python 3.14 and 3.15. Upgrade your Python environment before upgrading KPOps.
+
+## `from` and `to` removed from `helm-app` and `kubernetes-app`
+
+`helm-app` and `kubernetes-app` no longer accept the `from` and `to` sections. Previously, `from` had no effect and `to` only wired the next component of the pipeline.
+
+If you need topic support for a Helm-based component, define a custom component that combines the capabilities `ConsumesTopics` and `ProducesTopics` with `HelmApp`:
+
+```python
+from kpops.components.base_components import ConsumesTopics, HelmApp, ProducesTopics
+
+
+class MyKafkaHelmApp(ConsumesTopics, ProducesTopics, HelmApp): ...
+```
+
+The component must implement the topic hooks (`add_input_topics`, `set_output_topic`, …) to map topics into its Helm values.
+
+## Unsupported sections are rejected
+
+Components that do not support the `from` or `to` section now fail validation with a clear error instead of silently ignoring the section:
+
+- `from` on `producer-app` and `kafka-source-connector`
+- `to` on `consumer-app`
+- `from` and `to` on `helm-app` and `kubernetes-app`
+
+This also applies to values merged in from the `defaults.yaml` of shared keys such as `pipeline-component`.
+
+## Kafka connectors inherit `kafka-app` defaults
+
+Kafka connectors are now `KafkaApp`s. Settings defined under `kafka-app` in `defaults.yaml` now also apply to `kafka-connector`, `kafka-source-connector` and `kafka-sink-connector`.
+
+## Separate config for sink and source connectors
+
+The sink-only settings `topics`, `topics.regex` and `errors.deadletterqueue.topic.name` are now only part of the `kafka-sink-connector` schema. Elsewhere, editors flag them, but they keep working.
+
+## Typed connector and topic config
+
+KPOps now validates common connector settings such as `tasks.max`, `errors.tolerance` and `errors.log.enable`, and topic configs such as `retention.ms` and `cleanup.policy`, against their type and allowed range, so invalid values like `errors.tolerance: some` or `tasks.max: 0` fail early. Unlike Kafka Connect, KPOps only accepts lowercase values for options like `errors.tolerance`, so change `errors.tolerance: ALL` to `errors.tolerance: all`. Write numbers and booleans unquoted. Quoted values still work, but editors using the schema flag them. The generated output is unchanged.
+
+```diff
+  - type: kafka-sink-connector
+    name: my-connector
+    config:
+-     tasks.max: "1"
++     tasks.max: 1
+    to:
+      topics:
+        my-topic:
+          type: output
+          configs:
+-           retention.ms: "-1"
++           retention.ms: -1
+```
+
+## Deterministic key order
+
+The output of `kpops generate` no longer depends on whether a setting comes from `pipeline.yaml` or `defaults.yaml`. Previously, keys from `pipeline.yaml` came first, followed by those from `defaults.yaml`. Now keys are always written in the same order, and maps such as topics are sorted alphabetically.
+
+```yaml
+# defaults.yaml
+streams-app:
+  namespace: my-namespace
+  values:
+    image: my-image
+```
+
+```yaml
+# pipeline.yaml
+- type: streams-app
+  name: my-app
+  values:
+    imageTag: 1.0.0
+  from:
+    topics:
+      input-b:
+        type: input
+      input-a:
+        type: input
+```
+
+```yaml
+# kpops generate (shortened)
+- type: streams-app
+  name: my-app
+  prefix: my-pipeline-
+  from:
+    topics:
+      input-a:
+        type: input
+      input-b:
+        type: input
+  namespace: my-namespace
+  values:
+    image: my-image
+    imageTag: 1.0.0
+    kafka:
+      inputTopics:
+        - input-a
+        - input-b
+  helm_release_name: my-pipeline-my-app
+```
+
+Expect a one-time diff in generated output and snapshot tests. Because topics are sorted, derived values such as `values.kafka.inputTopics` can change order, which causes a one-time rollout of affected apps.
+
+To separate real changes from reordered keys, dump the pipeline with sorted keys before and after upgrading and compare both files. This works with v12 and v13:
+
+```python
+from pathlib import Path
+
+import yaml
+
+import kpops.api as kpops
+
+pipeline = kpops.generate(Path("pipeline.yaml"))
+print(yaml.safe_dump(pipeline.generate(), sort_keys=True))
+```
+
+## Defaults schema
+
+`from` and `to` are no longer offered under `pipeline-component`, `kubernetes-app`, `helm-app`, `kafka-app` and `streams-bootstrap` in `defaults.yaml` (and `from` under `kafka-connector`). Define them under the concrete component keys instead.
+
+#### defaults.yaml
+
+```diff
+- kafka-app:
+-   to:
+-     ...
++ streams-app:
++   to:
++     ...
+```
+
+## Custom components (Python API)
+
+- `PipelineComponent.supports_from_section()` has been removed. Use `isinstance(component, ConsumesTopics)` instead.
+- The topic hooks moved from `PipelineComponent` to the capability classes `ConsumesTopics` (input) and `ProducesTopics` (output).
+- `KubernetesApp`, `HelmApp` and `StreamsBootstrap` are generic over their values type, `KafkaConnector` over its config type. The sink-only connector fields moved to `KafkaSinkConnectorConfig`.
+
+```diff
+- class MyApp(HelmApp):
++ class MyApp(HelmApp[MyValues]):
+      values: MyValues
+```
+
+- Custom intermediate base classes that are later combined with a built-in app (diamond inheritance, e.g. `class MyProducer(ProducerApp, MyStreamsBootstrapBase)`) should become generic too. Otherwise type checkers report inconsistent type arguments.
+
+```python
+class MyStreamsBootstrapBase[V: StreamsBootstrapValues[Any] = StreamsBootstrapValues](
+    StreamsBootstrap[V]
+): ...
+
+
+class MyProducer(ProducerApp, MyStreamsBootstrapBase[ProducerAppValues]): ...
+```
+
+This replaces former `# pyright: ignore[reportIncompatibleVariableOverride]` workarounds.
+
+- Fields of custom components appear after `timeout` and before `values`/`config` in the generated output. To place a field elsewhere, annotate it with a `Section`, for computed fields the return type. Overridden fields keep the section of their parent.
+
+```python
+from typing import Annotated
+
+from pydantic import computed_field
+
+from kpops.components.base_components import HelmApp, Section
+
+
+class MyApp(HelmApp):
+    my_namespace_label: Annotated[str, Section.TARGET]
+
+    @computed_field
+    @property
+    def my_full_name(self) -> Annotated[str, Section.IDENTITY]: ...
+```
+
+- `ConsumerAppValues` gained the generic base `BaseConsumerAppValues[K]`.
+- `StreamsBootstrap.repo_config` and `StreamsBootstrap.version` are now typed as optional.
