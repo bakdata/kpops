@@ -73,7 +73,7 @@ class TopicHandler:
             topic_name = topic_in_cluster.topic_name
             topic_config_in_cluster = await self.kafka_rest.get_topic_config(topic_name)
             in_cluster_config, new_config = parse_and_compare_topic_configs(
-                topic_config_in_cluster, topic.config.configs
+                topic_config_in_cluster, topic.config.configs.model_dump()
             )
             if diff := render_diff(in_cluster_config, new_config):
                 log.info("Config changes for topic", topic_name=topic_name, diff=diff)
@@ -101,7 +101,7 @@ class TopicHandler:
             await self.kafka_rest.get_topic(topic.name)
             topic_config_in_cluster = await self.kafka_rest.get_topic_config(topic.name)
             differences = self.__get_topic_config_diff(
-                topic_config_in_cluster, topic.config.configs
+                topic_config_in_cluster, topic.config.configs.model_dump()
             )
 
             if differences:

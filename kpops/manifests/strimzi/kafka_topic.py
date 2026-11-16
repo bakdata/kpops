@@ -67,7 +67,7 @@ class StrimziKafkaTopic(KubernetesManifest):
             {
                 "partitions": topic.config.partitions_count,
                 "replicas": topic.config.replication_factor,
-                "config": topic.config.configs,
+                "config": topic.config.configs.model_dump(),
             }
         )
         return cls(
