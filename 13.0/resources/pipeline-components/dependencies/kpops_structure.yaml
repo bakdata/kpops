@@ -1,0 +1,205 @@
+kpops_components_fields:
+  consumer-app:
+  - name
+  - prefix
+  - enabled
+  - from_
+  - namespace
+  - repo_config
+  - diff_config
+  - version
+  - timeout
+  - values
+  consumer-producer-app:
+  - name
+  - prefix
+  - enabled
+  - from_
+  - to
+  - namespace
+  - repo_config
+  - diff_config
+  - version
+  - timeout
+  - values
+  helm-app:
+  - name
+  - prefix
+  - enabled
+  - namespace
+  - repo_config
+  - diff_config
+  - version
+  - timeout
+  - values
+  kafka-app:
+  - name
+  - prefix
+  - enabled
+  kafka-connector:
+  - name
+  - prefix
+  - enabled
+  - state
+  - to
+  - config
+  kafka-sink-connector:
+  - name
+  - prefix
+  - enabled
+  - state
+  - from_
+  - to
+  - config
+  kafka-source-connector:
+  - name
+  - prefix
+  - enabled
+  - state
+  - to
+  - config
+  kubernetes-app:
+  - name
+  - prefix
+  - enabled
+  - namespace
+  - values
+  pipeline-component:
+  - name
+  - prefix
+  - enabled
+  producer-app:
+  - name
+  - prefix
+  - enabled
+  - to
+  - namespace
+  - repo_config
+  - diff_config
+  - version
+  - timeout
+  - values
+  streams-app:
+  - name
+  - prefix
+  - enabled
+  - from_
+  - to
+  - namespace
+  - repo_config
+  - diff_config
+  - version
+  - timeout
+  - values
+  streams-bootstrap:
+  - name
+  - prefix
+  - enabled
+  - namespace
+  - repo_config
+  - diff_config
+  - version
+  - timeout
+  - values
+kpops_components_inheritance_ref:
+  consumer-app:
+    bases:
+    - kafka-app
+    - streams-bootstrap
+    parents:
+    - streams-bootstrap
+    - kafka-app
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component
+  consumer-producer-app:
+    bases:
+    - kafka-app
+    - streams-bootstrap
+    parents:
+    - streams-bootstrap
+    - kafka-app
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component
+  helm-app:
+    bases:
+    - kubernetes-app
+    parents:
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component
+  kafka-app:
+    bases:
+    - pipeline-component
+    parents:
+    - pipeline-component
+    - base-defaults-component
+  kafka-connector:
+    bases:
+    - kafka-app
+    parents:
+    - kafka-app
+    - pipeline-component
+    - base-defaults-component
+  kafka-sink-connector:
+    bases:
+    - kafka-app
+    - kafka-connector
+    parents:
+    - kafka-connector
+    - kafka-app
+    - pipeline-component
+    - base-defaults-component
+  kafka-source-connector:
+    bases:
+    - kafka-connector
+    parents:
+    - kafka-connector
+    - kafka-app
+    - pipeline-component
+    - base-defaults-component
+  kubernetes-app:
+    bases:
+    - pipeline-component
+    parents:
+    - pipeline-component
+    - base-defaults-component
+  pipeline-component:
+    bases: []
+    parents:
+    - base-defaults-component
+  producer-app:
+    bases:
+    - kafka-app
+    - streams-bootstrap
+    parents:
+    - streams-bootstrap
+    - kafka-app
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component
+  streams-app:
+    bases:
+    - kafka-app
+    - streams-bootstrap
+    parents:
+    - streams-bootstrap
+    - kafka-app
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component
+  streams-bootstrap:
+    bases:
+    - kafka-app
+    - helm-app
+    parents:
+    - kafka-app
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component

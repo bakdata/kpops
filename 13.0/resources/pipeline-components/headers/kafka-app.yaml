@@ -1,0 +1,4 @@
+# Base component for Kafka-based components.
+# Producer or streaming apps should inherit from this class.
+- type: kafka-app # required
+  name: kafka-app # required

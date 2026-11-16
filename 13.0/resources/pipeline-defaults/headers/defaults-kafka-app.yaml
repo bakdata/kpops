@@ -1,0 +1,5 @@
+# Base component for Kafka-based components.
+#
+# Parent of: StreamsBootstrap, KafkaConnector
+# Child of: PipelineComponent
+kafka-app:

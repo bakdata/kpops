@@ -1,0 +1,5 @@
+# ConsumerApp component that configures a streams-bootstrap consumer-app.
+# More documentation on ConsumerApp:
+# https://github.com/bakdata/streams-bootstrap
+- type: consumer-app
+  name: consumer-app # required

@@ -1,0 +1,5 @@
+# Base Kubernetes App
+#
+# Parent of: HelmApp
+# Child of: PipelineComponent
+kubernetes-app:

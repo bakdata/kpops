@@ -1,0 +1,9 @@
+  # Helm repository configuration for resetter
+  repo_config:
+    repository_name: my-repo # required
+    url: https://bakdata.github.io/kafka-connect-resetter/ # required
+    repo_auth_flags:
+      username: user
+      password: pass
+      ca_file: /home/user/path/to/ca-file
+      insecure_skip_tls_verify: false
