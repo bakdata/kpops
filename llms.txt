@@ -7,3 +7,4 @@ The documentation is versioned. Use the version matching the KPOps version of th
 ## Versions
 
 - [main](https://bakdata.github.io/kpops/main/llms.txt): [full text](https://bakdata.github.io/kpops/main/llms-full.txt)
+- [13.0 (latest)](https://bakdata.github.io/kpops/13.0/llms.txt): [full text](https://bakdata.github.io/kpops/13.0/llms-full.txt)
