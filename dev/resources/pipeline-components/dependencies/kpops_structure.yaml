@@ -1,106 +1,106 @@
 kpops_components_fields:
   consumer-app:
-  - enabled
-  - prefix
-  - from_
   - name
+  - prefix
+  - enabled
+  - from_
   - namespace
-  - values
   - repo_config
   - diff_config
   - version
   - timeout
+  - values
   consumer-producer-app:
-  - enabled
+  - name
   - prefix
+  - enabled
   - from_
   - to
-  - name
   - namespace
-  - values
   - repo_config
   - diff_config
   - version
   - timeout
+  - values
   helm-app:
-  - enabled
-  - prefix
   - name
+  - prefix
+  - enabled
   - namespace
-  - values
   - repo_config
   - diff_config
   - version
   - timeout
+  - values
   kafka-app:
-  - enabled
-  - prefix
   - name
+  - prefix
+  - enabled
   kafka-connector:
-  - enabled
-  - prefix
-  - to
   - name
-  - config
-  - state
-  kafka-sink-connector:
-  - enabled
   - prefix
+  - enabled
+  - state
+  - to
+  - config
+  kafka-sink-connector:
+  - name
+  - prefix
+  - enabled
+  - state
   - from_
   - to
-  - name
   - config
-  - state
   kafka-source-connector:
-  - enabled
-  - prefix
-  - to
   - name
-  - config
+  - prefix
+  - enabled
   - state
+  - to
+  - config
   kubernetes-app:
-  - enabled
-  - prefix
   - name
+  - prefix
+  - enabled
   - namespace
   - values
   pipeline-component:
-  - enabled
-  - prefix
   - name
+  - prefix
+  - enabled
   producer-app:
-  - enabled
-  - prefix
-  - to
   - name
+  - prefix
+  - enabled
+  - to
   - namespace
-  - values
   - repo_config
   - diff_config
   - version
   - timeout
+  - values
   streams-app:
-  - enabled
+  - name
   - prefix
+  - enabled
   - from_
   - to
-  - name
   - namespace
-  - values
   - repo_config
   - diff_config
   - version
   - timeout
+  - values
   streams-bootstrap:
-  - enabled
-  - prefix
   - name
+  - prefix
+  - enabled
   - namespace
-  - values
   - repo_config
   - diff_config
   - version
   - timeout
+  - values
 kpops_components_inheritance_ref:
   consumer-app:
     bases:
