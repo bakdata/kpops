@@ -18,7 +18,7 @@ jobs:
   review:
     # forks are never reviewed, the agent runs PR code with secrets in the base branch context
     if: github.event.pull_request.head.repo.full_name == github.repository && github.event.sender.type != 'Bot' && !github.event.pull_request.draft
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 30
     # no write access since the agent has bash, posting happens in a separate job
     permissions:
@@ -83,7 +83,7 @@ jobs:
 
   post:
     needs: review
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 5
     permissions:
       contents: read
