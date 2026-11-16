@@ -61,9 +61,9 @@
   config:
     connector.class: com.github.jcustenborder.kafka.connect.redis.RedisSinkConnector
     name: word-count-redis-sink-connector
-    topics: word-count-word-count-app-topic
-    redis.hosts: redis-headless:6379
-    redis.database: '0'
     tasks.max: '1'
     key.converter: org.apache.kafka.connect.storage.StringConverter
     value.converter: org.apache.kafka.connect.storage.StringConverter
+    topics: word-count-word-count-app-topic
+    redis.hosts: redis-headless:6379
+    redis.database: '0'
