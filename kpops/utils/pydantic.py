@@ -84,22 +84,6 @@ def exclude_by_value[V](
     }
 
 
-def exclude_by_name[V](
-    dumped_model: dict[str, V], *excluded_fields: str
-) -> dict[str, V]:
-    """Strip all key-value pairs with certain field names.
-
-    :param dumped_model: Dumped model
-    :param excluded_fields: Excluded field names
-    :return: Dumped model without excluded fields
-    """
-    return {
-        field_name: field_value
-        for field_name, field_value in dumped_model.items()
-        if field_name not in excluded_fields
-    }
-
-
 def exclude_defaults[V](
     model_cls: type[BaseModel], dumped_model: dict[str, V]
 ) -> dict[str, V]:
@@ -192,6 +176,7 @@ class KeyValueConfigModel(DescConfigModel):
 
     Fields are serialized with their dotted alias, e.g. ``cleanup_policy`` as ``cleanup.policy``.
     Configs that are not declared are passed through as is.
+    Keys are sorted alphabetically, independent of whether they are declared.
     """
 
     model_config: ClassVar[ConfigDict] = ConfigDict(
@@ -208,10 +193,12 @@ class KeyValueConfigModel(DescConfigModel):
         info: SerializationInfo,
     ) -> dict[str, str]:
         result = exclude_by_value(default_serialize_handler(self), None)
-        return {
-            by_alias(self.__class__, name): to_str(value)
-            for name, value in result.items()
-        }
+        return dict(
+            sorted(
+                (by_alias(self.__class__, name), to_str(value))
+                for name, value in result.items()
+            )
+        )
 
 
 @final

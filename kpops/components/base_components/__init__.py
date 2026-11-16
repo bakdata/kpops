@@ -7,6 +7,7 @@ from .kafka_connector import (
 )
 from .kubernetes_app import KubernetesApp
 from .pipeline_component import PipelineComponent
+from .section import Section
 
 __all__ = (
     "ConsumesTopics",
@@ -18,4 +19,5 @@ __all__ = (
     "KubernetesApp",
     "PipelineComponent",
     "ProducesTopics",
+    "Section",
 )

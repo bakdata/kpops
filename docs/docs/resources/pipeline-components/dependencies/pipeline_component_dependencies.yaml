@@ -2,23 +2,23 @@ consumer-app.yaml:
 - prefix.yaml
 - from_.yaml
 - namespace.yaml
-- values-consumer-app.yaml
 - repo_config-helm-app.yaml
 - version-kafka-app.yaml
+- values-consumer-app.yaml
 consumer-producer-app.yaml:
 - prefix.yaml
 - from_.yaml
 - to.yaml
 - namespace.yaml
-- values-consumer-producer-app.yaml
 - repo_config-helm-app.yaml
 - version-kafka-app.yaml
+- values-consumer-producer-app.yaml
 helm-app.yaml:
 - prefix.yaml
 - namespace.yaml
-- values-helm-app.yaml
 - repo_config-helm-app.yaml
 - version.yaml
+- values-helm-app.yaml
 kafka-app.yaml:
 - prefix.yaml
 kafka-connector.yaml:
@@ -42,14 +42,14 @@ producer-app.yaml:
 - prefix.yaml
 - to.yaml
 - namespace.yaml
-- values-producer-app.yaml
 - repo_config-helm-app.yaml
 - version-kafka-app.yaml
+- values-producer-app.yaml
 streams-app.yaml:
 - prefix.yaml
 - from_.yaml
 - to.yaml
 - namespace.yaml
-- values-streams-app.yaml
 - repo_config-helm-app.yaml
 - version-kafka-app.yaml
+- values-streams-app.yaml

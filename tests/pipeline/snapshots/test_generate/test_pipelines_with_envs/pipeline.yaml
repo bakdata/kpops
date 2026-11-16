@@ -1,7 +1,7 @@
 - type: scheduled-producer
   name: input-producer
-  enabled: true
   prefix: resources-pipeline-with-envs-
+  enabled: true
   to:
     topics:
       resources-pipeline-with-envs-input-producer:
@@ -13,6 +13,7 @@
     models:
       com/bakdata/kafka/fake: 1.0.0
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: example-registry/fake-image
     imageTag: 0.0.1
@@ -23,13 +24,12 @@
     commandLine:
       FAKE_ARG: override-arg
     schedule: 20 3/8 * * *
-  version: 3.6.1
   helm_release_name: resources-pipeline-with-envs-input-producer
   helm_name_override: resources-pipeline-with-envs-input-producer
 - type: converter
   name: converter
-  enabled: true
   prefix: resources-pipeline-with-envs-
+  enabled: true
   to:
     topics:
       resources-pipeline-with-envs-converter:
@@ -46,6 +46,7 @@
           cleanup.policy: compact,delete
     models: {}
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: bakdata-demo-streams-app
     kafka:
@@ -70,13 +71,12 @@
       lagThreshold: 10000
       maxReplicas: 1
     statefulSet: false
-  version: 3.6.1
   helm_release_name: resources-pipeline-with-envs-converter
   helm_name_override: resources-pipeline-with-envs-converter
 - type: filter
   name: filter
-  enabled: true
   prefix: resources-pipeline-with-envs-
+  enabled: true
   to:
     topics:
       resources-pipeline-with-envs-filter:
@@ -92,6 +92,7 @@
           cleanup.policy: compact,delete
     models: {}
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: fake-registry/filter
     imageTag: 2.4.1
@@ -119,7 +120,6 @@
         - resources-pipeline-with-envs-filter
     statefulSet: false
     replicaCount: 4
-  version: 3.6.1
   helm_release_name: resources-pipeline-with-envs-filter
   helm_name_override: resources-pipeline-with-envs-filter
 

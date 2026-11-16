@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 from abc import ABC
-from collections.abc import Callable, Iterable, Iterator
-from operator import itemgetter
-from typing import Any, ClassVar
+from collections.abc import Iterator
+from typing import Annotated, Any, ClassVar
 
 import pydantic
 from pydantic import (
@@ -16,30 +15,10 @@ from pydantic import (
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
 )
+from kpops.components.base_components.section import Section, section_sort_key
 from kpops.components.common.topic import KafkaTopic
 from kpops.manifests.kubernetes import KubernetesManifest
-from kpops.utils.pydantic import exclude_by_name, exclude_by_value
-
-GENERATE_LEADING_KEYS = ("enabled", "prefix", "from", "to")
-
-
-def leading_keys_first[T](items: Iterable[T], key: Callable[[T], str] = str) -> list[T]:
-    """Keep common keys at the top, independent of the MRO-based field order.
-
-    capability fields such as `from`/`to` are declared on mixins late in the MRO.
-
-    :param items: Items to order
-    :param key: Maps an item to its serialized key name
-    :returns: The items with leading keys first, remaining order unchanged
-    """
-    return sorted(
-        items,
-        key=lambda item: (
-            GENERATE_LEADING_KEYS.index(name)
-            if (name := key(item)) in GENERATE_LEADING_KEYS
-            else len(GENERATE_LEADING_KEYS)
-        ),
-    )
+from kpops.utils.pydantic import exclude_by_value
 
 
 class PipelineComponent(BaseDefaultsComponent, ABC):
@@ -51,13 +30,13 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         defaults to "${pipeline.name}-"
     """
 
-    name: str
-    enabled: bool = Field(
+    name: Annotated[str, Section.IDENTITY]
+    enabled: Annotated[bool, Section.LIFECYCLE] = Field(
         default=True,
         title="Enabled",
         description="Whether the component is enabled and should be included in the pipeline",
     )
-    prefix: str = "${pipeline.name}-"
+    prefix: Annotated[str, Section.IDENTITY] = "${pipeline.name}-"
 
     model_config: ClassVar[ConfigDict] = ConfigDict(
         extra="allow", use_enum_values=False
@@ -72,15 +51,11 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         result = default_serialize_handler(self)
         if info.context != "generate":
             return result
-        ordered_fields = {"type": self.type, "name": self.name}
-        result = exclude_by_name(result, *ordered_fields.keys())
         # NOTE: from SerializeAsOptionalModel
         if info.exclude_none:
             result = exclude_by_value(result, None)
-        return {
-            **ordered_fields,
-            **dict(leading_keys_first(result.items(), key=itemgetter(0))),
-        }
+        key = section_sort_key(type(self))
+        return {name: result[name] for name in sorted(result, key=key)}
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)

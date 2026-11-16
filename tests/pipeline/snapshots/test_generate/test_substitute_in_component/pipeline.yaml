@@ -1,7 +1,7 @@
 - type: scheduled-producer
   name: scheduled-producer
-  enabled: true
   prefix: resources-component-type-substitution-
+  enabled: true
   to:
     topics:
       resources-component-type-substitution-scheduled-producer:
@@ -13,6 +13,7 @@
     models:
       com/bakdata/kafka/fake: 1.0.0
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: example-registry/fake-image
     imageTag: 0.0.1
@@ -24,16 +25,15 @@
       FAKE_ARG: fake-arg-value
     schedule: 30 3/8 * * *
     labels:
-      app_type: scheduled-producer
       app_name: scheduled-producer
       app_schedule: 30 3/8 * * *
-  version: 3.6.1
+      app_type: scheduled-producer
   helm_release_name: resources-component-type-substitution-scheduled-b0010
   helm_name_override: resources-component-type-substitution-schedule-b0010
 - type: converter
   name: converter
-  enabled: true
   prefix: resources-component-type-substitution-
+  enabled: true
   to:
     topics:
       resources-component-type-substitution-converter:
@@ -50,6 +50,7 @@
           cleanup.policy: compact,delete
     models: {}
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: bakdata-demo-streams-app
     kafka:
@@ -74,13 +75,12 @@
       lagThreshold: 10000
       maxReplicas: 1
     statefulSet: false
-  version: 3.6.1
   helm_release_name: resources-component-type-substitution-converter
   helm_name_override: resources-component-type-substitution-converter
 - type: filter
   name: filter-app
-  enabled: true
   prefix: resources-component-type-substitution-
+  enabled: true
   to:
     topics:
       resources-component-type-substitution-filter-app:
@@ -96,6 +96,7 @@
           cleanup.policy: compact,delete
     models: {}
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: fake-registry/filter
     imageTag: 2.4.1
@@ -123,13 +124,12 @@
         - resources-component-type-substitution-filter-app
     statefulSet: false
     labels:
-      app_type: filter
       app_name: filter-app
       app_resources_requests_memory: 3G
+      app_type: filter
       filter: filter-app-filter
       test_placeholder_in_placeholder: filter-app-filter
     replicaCount: 4
-  version: 3.6.1
   helm_release_name: resources-component-type-substitution-filter-app
   helm_name_override: resources-component-type-substitution-filter-app
 

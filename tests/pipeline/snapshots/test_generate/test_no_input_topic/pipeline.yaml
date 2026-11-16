@@ -1,7 +1,7 @@
 - type: streams-app
   name: app1
-  enabled: true
   prefix: resources-no-input-topic-pipeline-
+  enabled: true
   from:
     topics:
       .*:
@@ -20,6 +20,7 @@
           cleanup.policy: compact,delete
     models: {}
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: bakdata-demo-streams-app
     kafka:
@@ -38,29 +39,29 @@
     commandLine:
       CONVERT_XML: true
     statefulSet: false
-  version: 3.6.1
   helm_release_name: resources-no-input-topic-pipeline-app1
   helm_name_override: resources-no-input-topic-pipeline-app1
 - type: streams-app
   name: app2
-  enabled: true
   prefix: resources-no-input-topic-pipeline-
+  enabled: true
   to:
     topics:
       example-output-extra:
         configs: {}
         label: extra
-      test-output-extra:
-        configs: {}
-        label: test-output
       resources-no-input-topic-pipeline-app2-error:
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
         partitions_count: 1
         configs:
           cleanup.policy: compact,delete
+      test-output-extra:
+        configs: {}
+        label: test-output
     models: {}
   namespace: example-namespace
+  version: 3.6.1
   values:
     image: bakdata-demo-streams-app
     kafka:
@@ -75,7 +76,6 @@
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
     statefulSet: false
-  version: 3.6.1
   helm_release_name: resources-no-input-topic-pipeline-app2
   helm_name_override: resources-no-input-topic-pipeline-app2
 

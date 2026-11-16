@@ -6,7 +6,7 @@ from collections.abc import Generator, Hashable, Sequence
 from dataclasses import asdict
 from functools import cached_property
 from pathlib import Path
-from typing import Any, ClassVar, Self, cast
+from typing import Annotated, Any, ClassVar, Self, cast
 
 import pydantic
 import structlog
@@ -18,12 +18,14 @@ from pydantic import (
 )
 from pydantic.json_schema import SkipJsonSchema
 
+from kpops.components.base_components.section import Section
 from kpops.config import KpopsConfig, get_config
 from kpops.const.file_type import KpopsFileType
 from kpops.utils import cached_classproperty
 from kpops.utils.dataclasses import is_dataclass_instance
 from kpops.utils.dict_ops import (
     generate_substitution,
+    sort_nested,
     update_nested,
     update_nested_pair,
 )
@@ -63,11 +65,12 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
     def __init__(self, **values: Any) -> None:
         if values.get("enrich", True):
             cls = self.__class__
-            values = cls.extend_with_defaults(**values)
+            # key order must not depend on which file a value comes from
+            values = sort_nested(cls.extend_with_defaults(**values))
             with placeholders_allowed(True):
                 tmp_self = cls(**values, enrich=False)
             values = tmp_self.model_dump(mode="json", by_alias=True)
-            values = cls.substitute_in_component(**values)
+            values = sort_nested(cls.substitute_in_component(**values))
             # nothing is substituted after this, so leftover placeholders are errors
             with placeholders_allowed(False):
                 self.__init__(
@@ -86,7 +89,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
 
     @computed_field
     @cached_classproperty
-    def type(cls: type[Self]) -> str:  # ty: ignore[invalid-type-form]
+    def type(cls: type[Self]) -> Annotated[str, Section.IDENTITY]:  # ty: ignore[invalid-type-form]
         """Return calling component's type.
 
         :returns: Component class name in dash-case

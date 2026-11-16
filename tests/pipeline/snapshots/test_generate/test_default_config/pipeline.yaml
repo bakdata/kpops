@@ -1,7 +1,7 @@
 - type: producer-app
   name: app1
-  enabled: true
   prefix: resources-custom-config-
+  enabled: true
   to:
     topics:
       resources-custom-config-app1:
@@ -10,6 +10,7 @@
         configs: {}
     models: {}
   namespace: development-namespace
+  version: 3.6.1
   values:
     image: bakdata-demo-producer-app
     kafka:
@@ -21,27 +22,27 @@
         memory: 2G
       limits:
         memory: 2G
-  version: 3.6.1
   helm_release_name: resources-custom-config-app1
   helm_name_override: resources-custom-config-app1
 - type: streams-app
   name: app2
-  enabled: true
   prefix: resources-custom-config-
+  enabled: true
   to:
     topics:
+      resources-custom-config-app2:
+        type: output
+        partitions_count: 3
+        configs: {}
       resources-custom-config-app2-error:
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
         partitions_count: 1
         configs:
           cleanup.policy: compact,delete
-      resources-custom-config-app2:
-        type: output
-        partitions_count: 3
-        configs: {}
     models: {}
   namespace: development-namespace
+  version: 3.6.1
   values:
     image: some-image
     kafka:
@@ -56,7 +57,6 @@
     statefulSet: false
     labels:
       pipeline: resources-custom-config
-  version: 3.6.1
   helm_release_name: resources-custom-config-app2
   helm_name_override: resources-custom-config-app2
 

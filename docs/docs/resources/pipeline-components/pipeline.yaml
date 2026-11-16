@@ -28,6 +28,17 @@
         type: pattern # Implied to be an extra pattern if `label` is defined
         label: some-role
   namespace: namespace # required
+  # Helm repository configuration (optional)
+  # If not set the helm repo add will not be called. Useful when using local Helm charts
+  repo_config:
+    repository_name: bakdata-streams-bootstrap # required
+    url: https://bakdata.github.io/streams-bootstrap/ # required
+    repo_auth_flags:
+      username: user
+      password: pass
+      ca_file: /home/user/path/to/ca-file
+      insecure_skip_tls_verify: false
+  version: "2.12.0" # Helm chart version
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/consumer-app
   values: # required
@@ -95,17 +106,6 @@
       #   formula: business_hours
       #   target: "1"
       #   metricType: AverageValue
-  # Helm repository configuration (optional)
-  # If not set the helm repo add will not be called. Useful when using local Helm charts
-  repo_config:
-    repository_name: bakdata-streams-bootstrap # required
-    url: https://bakdata.github.io/streams-bootstrap/ # required
-    repo_auth_flags:
-      username: user
-      password: pass
-      ca_file: /home/user/path/to/ca-file
-      insecure_skip_tls_verify: false
-  version: "2.12.0" # Helm chart version
 # ConsumerProducerApp component that configures a streams-bootstrap consumerproducer-app.
 # More documentation on ConsumerProducerApp:
 # https://github.com/bakdata/streams-bootstrap
@@ -154,6 +154,17 @@
     models: # SchemaProvider is initiated with the values given here
       model: model
   namespace: namespace # required
+  # Helm repository configuration (optional)
+  # If not set the helm repo add will not be called. Useful when using local Helm charts
+  repo_config:
+    repository_name: bakdata-streams-bootstrap # required
+    url: https://bakdata.github.io/streams-bootstrap/ # required
+    repo_auth_flags:
+      username: user
+      password: pass
+      ca_file: /home/user/path/to/ca-file
+      insecure_skip_tls_verify: false
+  version: "2.12.0" # Helm chart version
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/consumerproducer-app
   values: # required
@@ -227,17 +238,6 @@
       #   formula: business_hours
       #   target: "1"
       #   metricType: AverageValue
-  # Helm repository configuration (optional)
-  # If not set the helm repo add will not be called. Useful when using local Helm charts
-  repo_config:
-    repository_name: bakdata-streams-bootstrap # required
-    url: https://bakdata.github.io/streams-bootstrap/ # required
-    repo_auth_flags:
-      username: user
-      password: pass
-      ca_file: /home/user/path/to/ca-file
-      insecure_skip_tls_verify: false
-  version: "2.12.0" # Helm chart version
 # Kubernetes app managed through Helm with an associated Helm chart
 - type: helm-app
   name: helm-app # required
@@ -245,10 +245,6 @@
   # have any prefix you can specify an empty string.
   prefix: ${pipeline.name}-
   namespace: namespace # required
-  values: # required
-    image: exampleImage # Example
-    debug: false # Example
-    commandLine: {} # Example
   # Helm repository configuration (optional)
   # If not set the helm repo add will not be called. Useful when using local Helm charts
   repo_config:
@@ -260,6 +256,10 @@
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
   version: "1.0.0" # Helm chart version
+  values: # required
+    image: exampleImage # Example
+    debug: false # Example
+    commandLine: {} # Example
 # Base component for Kafka-based components.
 # Producer or streaming apps should inherit from this class.
 - type: kafka-app # required
@@ -380,6 +380,17 @@
     models: # SchemaProvider is initiated with the values given here
       model: model
   namespace: namespace # required
+  # Helm repository configuration (optional)
+  # If not set the helm repo add will not be called. Useful when using local Helm charts
+  repo_config:
+    repository_name: bakdata-streams-bootstrap # required
+    url: https://bakdata.github.io/streams-bootstrap/ # required
+    repo_auth_flags:
+      username: user
+      password: pass
+      ca_file: /home/user/path/to/ca-file
+      insecure_skip_tls_verify: false
+  version: "2.12.0" # Helm chart version
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
   values: # required
@@ -392,17 +403,6 @@
         output_role2: output_topic2
     nameOverride: override-with-this-name # kafka-app-specific
     fullnameOverride: override-with-this-name # kafka-app-specific
-  # Helm repository configuration (optional)
-  # If not set the helm repo add will not be called. Useful when using local Helm charts
-  repo_config:
-    repository_name: bakdata-streams-bootstrap # required
-    url: https://bakdata.github.io/streams-bootstrap/ # required
-    repo_auth_flags:
-      username: user
-      password: pass
-      ca_file: /home/user/path/to/ca-file
-      insecure_skip_tls_verify: false
-  version: "2.12.0" # Helm chart version
 # StreamsApp component that configures a streams-bootstrap streams-app.
 # More documentation on StreamsApp: https://github.com/bakdata/streams-bootstrap
 - type: streams-app # required
@@ -450,6 +450,17 @@
     models: # SchemaProvider is initiated with the values given here
       model: model
   namespace: namespace # required
+  # Helm repository configuration (optional)
+  # If not set the helm repo add will not be called. Useful when using local Helm charts
+  repo_config:
+    repository_name: bakdata-streams-bootstrap # required
+    url: https://bakdata.github.io/streams-bootstrap/ # required
+    repo_auth_flags:
+      username: user
+      password: pass
+      ca_file: /home/user/path/to/ca-file
+      insecure_skip_tls_verify: false
+  version: "2.12.0" # Helm chart version
   # No arbitrary keys are allowed under `app` here
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/streams-app
@@ -528,14 +539,3 @@
       #   formula: business_hours
       #   target: "1"
       #   metricType: AverageValue
-  # Helm repository configuration (optional)
-  # If not set the helm repo add will not be called. Useful when using local Helm charts
-  repo_config:
-    repository_name: bakdata-streams-bootstrap # required
-    url: https://bakdata.github.io/streams-bootstrap/ # required
-    repo_auth_flags:
-      username: user
-      password: pass
-      ca_file: /home/user/path/to/ca-file
-      insecure_skip_tls_verify: false
-  version: "2.12.0" # Helm chart version

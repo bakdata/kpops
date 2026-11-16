@@ -2,7 +2,7 @@ import re
 from collections import ChainMap as _ChainMap
 from collections.abc import Mapping
 from string import Template
-from typing import Any, ClassVar, override
+from typing import Any, ClassVar, overload, override
 
 
 def update_nested_pair[V: object](
@@ -48,6 +48,28 @@ def update_nested[V: object](*argv: dict[str, V]) -> dict[str, V]:
     if len(argv) == 2:
         return update_nested_pair(*argv)
     return update_nested(update_nested_pair(argv[0], argv[1]), *argv[2:])
+
+
+@overload
+def sort_nested[K, V](value: Mapping[K, V]) -> dict[K, V]: ...
+@overload
+def sort_nested[T](value: list[T]) -> list[T]: ...
+@overload
+def sort_nested[T](value: T) -> T: ...
+def sort_nested(value: object) -> object:
+    """Sort the keys of all mappings recursively, list order is kept.
+
+    :param value: Value to sort
+    :returns: Copy with mappings converted to sorted dicts
+    """
+    if isinstance(value, Mapping):
+        return {
+            key: sort_nested(nested)
+            for key, nested in sorted(value.items(), key=lambda item: str(item[0]))
+        }
+    if isinstance(value, list):
+        return [sort_nested(item) for item in value]
+    return value
 
 
 def flatten_mapping[V: object](
