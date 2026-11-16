@@ -1956,10 +1956,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#typed-connector-config" class="md-nav__link">
+  <a href="#typed-connector-and-topic-config" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Typed connector config
+        Typed connector and topic config
       </span>
     </span>
   </a>
@@ -2522,10 +2522,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#typed-connector-config" class="md-nav__link">
+  <a href="#typed-connector-and-topic-config" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Typed connector config
+        Typed connector and topic config
       </span>
     </span>
   </a>
@@ -2618,17 +2618,31 @@
 <p>Kafka connectors are now <code>KafkaApp</code>s. Settings defined under <code>kafka-app</code> in <code>defaults.yaml</code> now also apply to <code>kafka-connector</code>, <code>kafka-source-connector</code> and <code>kafka-sink-connector</code>.</p>
 <h2 id="separate-config-for-sink-and-source-connectors">Separate config for sink and source connectors<a class="headerlink" href="#separate-config-for-sink-and-source-connectors" title="Permanent link">&para;</a></h2>
 <p>The sink-only settings <code>topics</code>, <code>topics.regex</code> and <code>errors.deadletterqueue.topic.name</code> are now only part of the <code>kafka-sink-connector</code> schema. Elsewhere, editors flag them, but they keep working.</p>
-<h2 id="typed-connector-config">Typed connector config<a class="headerlink" href="#typed-connector-config" title="Permanent link">&para;</a></h2>
-<p>KPOps now validates common connector settings such as <code>tasks.max</code>, <code>errors.tolerance</code> and <code>errors.log.enable</code> against their type and allowed range, so invalid values like <code>errors.tolerance: some</code> or <code>tasks.max: 0</code> fail early. Unlike Kafka Connect, KPOps only accepts lowercase values for options like <code>errors.tolerance</code>, so change <code>errors.tolerance: ALL</code> to <code>errors.tolerance: all</code>. Write numbers and booleans unquoted. Quoted values still work, but editors using the schema flag them. The generated output is unchanged.</p>
-<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
-<span class="normal"><a href="#__codelineno-1-2">2</a></span>
-<span class="normal"><a href="#__codelineno-1-3">3</a></span>
-<span class="normal"><a href="#__codelineno-1-4">4</a></span>
-<span class="normal"><a href="#__codelineno-1-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="w"> </span> - type: kafka-sink-connector
+<h2 id="typed-connector-and-topic-config">Typed connector and topic config<a class="headerlink" href="#typed-connector-and-topic-config" title="Permanent link">&para;</a></h2>
+<p>KPOps now validates common connector settings such as <code>tasks.max</code>, <code>errors.tolerance</code> and <code>errors.log.enable</code>, and topic configs such as <code>retention.ms</code> and <code>cleanup.policy</code>, against their type and allowed range, so invalid values like <code>errors.tolerance: some</code> or <code>tasks.max: 0</code> fail early. Unlike Kafka Connect, KPOps only accepts lowercase values for options like <code>errors.tolerance</code>, so change <code>errors.tolerance: ALL</code> to <code>errors.tolerance: all</code>. Write numbers and booleans unquoted. Quoted values still work, but editors using the schema flag them. The generated output is unchanged.</p>
+<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-1-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-1-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-1-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-1-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-1-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-1-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-1-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-1-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-1-10">10</a></span>
+<span class="normal"><a href="#__codelineno-1-11">11</a></span>
+<span class="normal"><a href="#__codelineno-1-12">12</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="w"> </span> - type: kafka-sink-connector
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="w"> </span>   name: my-connector
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="w"> </span>   config:
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="gd">-     tasks.max: "1"</span>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="gi">+     tasks.max: 1</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="w"> </span>   to:
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="w"> </span>     topics:
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8"></a><span class="w"> </span>       my-topic:
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9"></a><span class="w"> </span>         type: output
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10"></a><span class="w"> </span>         configs:
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11"></a><span class="gd">-           retention.ms: "-1"</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12"></a><span class="gi">+           retention.ms: -1</span>
 </span></code></pre></div></td></tr></table></div>
 <h2 id="defaults-schema">Defaults schema<a class="headerlink" href="#defaults-schema" title="Permanent link">&para;</a></h2>
 <p><code>from</code> and <code>to</code> are no longer offered under <code>pipeline-component</code>, <code>kubernetes-app</code>, <code>helm-app</code>, <code>kafka-app</code> and <code>streams-bootstrap</code> in <code>defaults.yaml</code> (and <code>from</code> under <code>kafka-connector</code>). Define them under the concrete component keys instead.</p>
