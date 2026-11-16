@@ -3158,7 +3158,18 @@
                 "compression.gzip.level": {
                     "anyOf": [
                         {
-                            "type": "integer"
+                            "anyOf": [
+                                {
+                                    "maximum": -1,
+                                    "minimum": -1,
+                                    "type": "integer"
+                                },
+                                {
+                                    "maximum": 9,
+                                    "minimum": 1,
+                                    "type": "integer"
+                                }
+                            ]
                         },
                         {
                             "pattern": "\\$\\{.+\\}",
@@ -3175,6 +3186,8 @@
                 "compression.lz4.level": {
                     "anyOf": [
                         {
+                            "maximum": 17,
+                            "minimum": 1,
                             "type": "integer"
                         },
                         {
@@ -3217,6 +3230,8 @@
                 "compression.zstd.level": {
                     "anyOf": [
                         {
+                            "maximum": 22,
+                            "minimum": -131072,
                             "type": "integer"
                         },
                         {
@@ -3234,6 +3249,7 @@
                 "delete.retention.ms": {
                     "anyOf": [
                         {
+                            "minimum": 0,
                             "type": "integer"
                         },
                         {
@@ -3251,6 +3267,7 @@
                 "file.delete.delay.ms": {
                     "anyOf": [
                         {
+                            "minimum": 0,
                             "type": "integer"
                         },
                         {
@@ -3268,6 +3285,7 @@
                 "flush.messages": {
                     "anyOf": [
                         {
+                            "exclusiveMinimum": 0,
                             "type": "integer"
                         },
                         {
@@ -3285,6 +3303,7 @@
                 "flush.ms": {
                     "anyOf": [
                         {
+                            "minimum": 0,
                             "type": "integer"
                         },
                         {
@@ -3302,6 +3321,7 @@
                 "index.interval.bytes": {
                     "anyOf": [
                         {
+                            "minimum": 0,
                             "type": "integer"
                         },
                         {
@@ -3319,6 +3339,7 @@
                 "local.retention.bytes": {
                     "anyOf": [
                         {
+                            "minimum": -2,
                             "type": "integer"
                         },
                         {
@@ -3336,6 +3357,7 @@
                 "local.retention.ms": {
                     "anyOf": [
                         {
+                            "minimum": -2,
                             "type": "integer"
                         },
                         {
@@ -3353,6 +3375,7 @@
                 "max.compaction.lag.ms": {
                     "anyOf": [
                         {
+                            "exclusiveMinimum": 0,
                             "type": "integer"
                         },
                         {
@@ -3370,6 +3393,7 @@
                 "max.message.bytes": {
                     "anyOf": [
                         {
+                            "minimum": 0,
                             "type": "integer"
                         },
                         {
@@ -3404,6 +3428,7 @@
                 "message.timestamp.after.max.ms": {
                     "anyOf": [
                         {
+                            "minimum": 0,
                             "type": "integer"
                         },
                         {
@@ -3421,6 +3446,7 @@
                 "message.timestamp.before.max.ms": {
                     "anyOf": [
                         {
+                            "minimum": 0,
                             "type": "integer"
                         },
                         {
@@ -3459,6 +3485,8 @@
                 "min.cleanable.dirty.ratio": {
                     "anyOf": [
                         {
+                            "maximum": 1,
+                            "minimum": 0,
                             "type": "number"
                         },
                         {
@@ -3476,6 +3504,7 @@
                 "min.compaction.lag.ms": {
                     "anyOf": [
                         {
+                            "minimum": 0,
                             "type": "integer"
                         },
                         {
@@ -3493,6 +3522,7 @@
                 "min.insync.replicas": {
                     "anyOf": [
                         {
+                            "exclusiveMinimum": 0,
                             "type": "integer"
                         },
                         {
@@ -3578,6 +3608,7 @@
                 "retention.bytes": {
                     "anyOf": [
                         {
+                            "minimum": -1,
                             "type": "integer"
                         },
                         {
@@ -3595,6 +3626,7 @@
                 "retention.ms": {
                     "anyOf": [
                         {
+                            "minimum": -1,
                             "type": "integer"
                         },
                         {
@@ -3612,6 +3644,7 @@
                 "segment.bytes": {
                     "anyOf": [
                         {
+                            "exclusiveMinimum": 0,
                             "type": "integer"
                         },
                         {
@@ -3629,6 +3662,7 @@
                 "segment.index.bytes": {
                     "anyOf": [
                         {
+                            "minimum": 4,
                             "type": "integer"
                         },
                         {
@@ -3646,6 +3680,7 @@
                 "segment.jitter.ms": {
                     "anyOf": [
                         {
+                            "minimum": 0,
                             "type": "integer"
                         },
                         {
@@ -3663,6 +3698,7 @@
                 "segment.ms": {
                     "anyOf": [
                         {
+                            "exclusiveMinimum": 0,
                             "type": "integer"
                         },
                         {
@@ -6660,6 +6696,7 @@
                 "partitions_count": {
                     "anyOf": [
                         {
+                            "exclusiveMinimum": 0,
                             "type": "integer"
                         },
                         {
@@ -6677,6 +6714,8 @@
                 "replication_factor": {
                     "anyOf": [
                         {
+                            "maximum": 32767,
+                            "minimum": 1,
                             "type": "integer"
                         },
                         {
