@@ -57,7 +57,7 @@ docs = [
   # Zensical-compatible fork of mike until native versioning is available
   "mike @ git+https://github.com/squidfunk/mike.git",
   "mkdocstrings[python]>=1.0.0",
-  "zensical>=0.0.64",
+  "zensical>=0.1.1",
 ]
 
 [build-system]
@@ -176,6 +176,7 @@ task-tags = ["TODO", "HACK", "FIXME", "XXX"]
 [tool.ruff.lint.extend-per-file-ignores]
 "tests/*/__init__.py" = ["F401"]
 "tests/**/*.py" = ["PLC0415"] # allow lazy-imports
+".github/**/*.py" = ["INP001"]
 
 [tool.ruff.lint.flake8-bugbear]
 extend-immutable-calls = ["typer.Argument"]

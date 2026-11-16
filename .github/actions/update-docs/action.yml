@@ -41,6 +41,7 @@ runs:
       shell: bash
       if: ${{ inputs.release == 'false' }}
       run: |
+        export DOCS_BASE_URL="https://bakdata.github.io/kpops/${{ inputs.version }}/"
         uv run --frozen --group=docs mike deploy ${{ inputs.version }} --push --config-file ./docs/mkdocs.yml
 
     - name: Deploy ${{ inputs.version }} version (latest) of the documentation with mike
@@ -49,4 +50,16 @@ runs:
       run: |
         sem_version=${{ inputs.version }}
         major_minor_version=${sem_version%.*}
+        export DOCS_BASE_URL="https://bakdata.github.io/kpops/$major_minor_version/"
         uv run --frozen --group=docs mike deploy "$major_minor_version" latest --update-aliases --push --config-file ./docs/mkdocs.yml
+
+    - name: Generate root llms.txt
+      shell: bash
+      run: |
+        pages="$(mktemp -d)"
+        git worktree add "$pages" gh-pages
+        uv run --frozen python "${{ github.action_path }}/gen_root_llmstxt.py" "$pages"
+        git -C "$pages" add llms.txt
+        git -C "$pages" diff --cached --quiet || git -C "$pages" commit -m "Generate root llms.txt"
+        git -C "$pages" push origin gh-pages
+        git worktree remove "$pages"
