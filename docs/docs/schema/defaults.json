@@ -2177,6 +2177,7 @@
                 "errors.retry.delay.max.ms": {
                     "anyOf": [
                         {
+                            "minimum": 0,
                             "type": "integer"
                         },
                         {
@@ -2194,6 +2195,7 @@
                 "errors.retry.timeout": {
                     "anyOf": [
                         {
+                            "minimum": -1,
                             "type": "integer"
                         },
                         {
@@ -2271,6 +2273,7 @@
                 "tasks.max": {
                     "anyOf": [
                         {
+                            "exclusiveMinimum": 0,
                             "type": "integer"
                         },
                         {
@@ -2474,7 +2477,18 @@
                 "errors.deadletterqueue.topic.replication.factor": {
                     "anyOf": [
                         {
-                            "type": "integer"
+                            "anyOf": [
+                                {
+                                    "maximum": -1,
+                                    "minimum": -1,
+                                    "type": "integer"
+                                },
+                                {
+                                    "maximum": 32767,
+                                    "minimum": 1,
+                                    "type": "integer"
+                                }
+                            ]
                         },
                         {
                             "pattern": "\\$\\{.+\\}",
@@ -2525,6 +2539,7 @@
                 "errors.retry.delay.max.ms": {
                     "anyOf": [
                         {
+                            "minimum": 0,
                             "type": "integer"
                         },
                         {
@@ -2542,6 +2557,7 @@
                 "errors.retry.timeout": {
                     "anyOf": [
                         {
+                            "minimum": -1,
                             "type": "integer"
                         },
                         {
@@ -2619,6 +2635,7 @@
                 "tasks.max": {
                     "anyOf": [
                         {
+                            "exclusiveMinimum": 0,
                             "type": "integer"
                         },
                         {
@@ -2836,6 +2853,7 @@
                 "errors.retry.delay.max.ms": {
                     "anyOf": [
                         {
+                            "minimum": 0,
                             "type": "integer"
                         },
                         {
@@ -2853,6 +2871,7 @@
                 "errors.retry.timeout": {
                     "anyOf": [
                         {
+                            "minimum": -1,
                             "type": "integer"
                         },
                         {
@@ -2963,6 +2982,7 @@
                 "tasks.max": {
                     "anyOf": [
                         {
+                            "exclusiveMinimum": 0,
                             "type": "integer"
                         },
                         {
@@ -2980,7 +3000,17 @@
                 "topic.creation.default.partitions": {
                     "anyOf": [
                         {
-                            "type": "integer"
+                            "anyOf": [
+                                {
+                                    "maximum": -1,
+                                    "minimum": -1,
+                                    "type": "integer"
+                                },
+                                {
+                                    "exclusiveMinimum": 0,
+                                    "type": "integer"
+                                }
+                            ]
                         },
                         {
                             "pattern": "\\$\\{.+\\}",
@@ -2997,7 +3027,18 @@
                 "topic.creation.default.replication.factor": {
                     "anyOf": [
                         {
-                            "type": "integer"
+                            "anyOf": [
+                                {
+                                    "maximum": -1,
+                                    "minimum": -1,
+                                    "type": "integer"
+                                },
+                                {
+                                    "maximum": 32767,
+                                    "minimum": 1,
+                                    "type": "integer"
+                                }
+                            ]
                         },
                         {
                             "pattern": "\\$\\{.+\\}",
@@ -3049,6 +3090,7 @@
                 "transaction.boundary.interval.ms": {
                     "anyOf": [
                         {
+                            "minimum": 0,
                             "type": "integer"
                         },
                         {

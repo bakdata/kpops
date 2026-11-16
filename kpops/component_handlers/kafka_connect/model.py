@@ -6,6 +6,8 @@ import pydantic
 from pydantic import (
     BaseModel,
     ConfigDict,
+    NonNegativeInt,
+    PositiveInt,
     ValidatorFunctionWrapHandler,
     WrapValidator,
     computed_field,
@@ -46,6 +48,10 @@ ConnectorConfigValue = Templatable[
     ]
 ]
 
+BrokerDefault = Annotated[int, pydantic.Field(ge=-1, le=-1)]
+Partitions = BrokerDefault | PositiveInt
+ReplicationFactor = BrokerDefault | Annotated[int, pydantic.Field(ge=1, le=32767)]
+
 
 class KafkaConnectorConfig(DescConfigModel):
     """Settings specific to Kafka Connectors.
@@ -71,15 +77,17 @@ class KafkaConnectorConfig(DescConfigModel):
 
     connector_class: str
     name: SkipJsonSchema[str]
-    tasks_max: ConnectorConfigValue[int] | None = None
+    tasks_max: ConnectorConfigValue[PositiveInt] | None = None
     key_converter: str | None = None
     value_converter: str | None = None
     header_converter: str | None = None
     transforms: str | None = None
     predicates: str | None = None
     config_action_reload: ConnectorConfigValue[Literal["none", "restart"]] | None = None
-    errors_retry_timeout: ConnectorConfigValue[int] | None = None
-    errors_retry_delay_max_ms: ConnectorConfigValue[int] | None = None
+    errors_retry_timeout: (
+        ConnectorConfigValue[Annotated[int, pydantic.Field(ge=-1)]] | None
+    ) = None
+    errors_retry_delay_max_ms: ConnectorConfigValue[NonNegativeInt] | None = None
     errors_tolerance: ConnectorConfigValue[Literal["none", "all"]] | None = None
     errors_log_enable: ConnectorConfigValue[bool] | None = None
     errors_log_include_messages: ConnectorConfigValue[bool] | None = None
@@ -149,7 +157,7 @@ class KafkaSinkConnectorConfig(KafkaConnectorConfig):
     topics_regex: str | None = None
     errors_deadletterqueue_topic_name: KafkaTopicStr | None = None
     errors_deadletterqueue_topic_replication_factor: (
-        ConnectorConfigValue[int] | None
+        ConnectorConfigValue[ReplicationFactor] | None
     ) = None
     errors_deadletterqueue_context_headers_enable: ConnectorConfigValue[bool] | None = (
         None
@@ -182,15 +190,17 @@ class KafkaSourceConnectorConfig(KafkaConnectorConfig):
     """
 
     topic_creation_groups: str | None = None
-    topic_creation_default_replication_factor: ConnectorConfigValue[int] | None = None
-    topic_creation_default_partitions: ConnectorConfigValue[int] | None = None
+    topic_creation_default_replication_factor: (
+        ConnectorConfigValue[ReplicationFactor] | None
+    ) = None
+    topic_creation_default_partitions: ConnectorConfigValue[Partitions] | None = None
     exactly_once_support: (
         ConnectorConfigValue[Literal["requested", "required"]] | None
     ) = None
     transaction_boundary: (
         ConnectorConfigValue[Literal["poll", "interval", "connector"]] | None
     ) = None
-    transaction_boundary_interval_ms: ConnectorConfigValue[int] | None = None
+    transaction_boundary_interval_ms: ConnectorConfigValue[NonNegativeInt] | None = None
     offsets_storage_topic: KafkaTopicStr | None = None
 
 

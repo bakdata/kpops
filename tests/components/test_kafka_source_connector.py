@@ -103,6 +103,41 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                 },
             )
 
+    @pytest.mark.parametrize(
+        ("key", "value", "valid"),
+        [
+            ("tasks.max", 1, True),
+            ("tasks.max", 0, False),
+            ("errors.retry.timeout", -1, True),
+            ("errors.retry.timeout", -2, False),
+            ("errors.retry.delay.max.ms", 0, True),
+            ("errors.retry.delay.max.ms", -1, False),
+            ("topic.creation.default.partitions", "-1", True),
+            ("topic.creation.default.partitions", 0, False),
+            ("topic.creation.default.partitions", -2, False),
+            ("topic.creation.default.replication.factor", 32767, True),
+            ("topic.creation.default.replication.factor", 0, False),
+            ("topic.creation.default.replication.factor", 32768, False),
+            ("transaction.boundary.interval.ms", 0, True),
+            ("transaction.boundary.interval.ms", -1, False),
+            ("errors.tolerance", "ALL", False),
+        ],
+    )
+    def test_typed_config_field_constraints(
+        self,
+        connector_config: KafkaConnectorConfig,
+        key: str,
+        value: int | str,
+        valid: bool,
+    ) -> None:
+        config = {**connector_config.model_dump(), key: value}
+        if valid:
+            connector = KafkaSourceConnector(name=CONNECTOR_NAME, config=config)
+            assert connector.config.model_dump()[key] == str(value)
+        else:
+            with pytest.raises(ValidationError):
+                KafkaSourceConnector(name=CONNECTOR_NAME, config=config)
+
     def test_substitute_in_typed_config_fields(
         self, connector_config: KafkaConnectorConfig
     ) -> None:
