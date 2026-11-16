@@ -6,4 +6,4 @@ The documentation is versioned. Use the version matching the KPOps version of th
 
 ## Versions
 
-- [dev](https://bakdata.github.io/kpops/dev/llms.txt): [full text](https://bakdata.github.io/kpops/dev/llms-full.txt)
+- [main](https://bakdata.github.io/kpops/main/llms.txt): [full text](https://bakdata.github.io/kpops/main/llms-full.txt)
