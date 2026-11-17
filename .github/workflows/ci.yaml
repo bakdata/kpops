@@ -21,11 +21,11 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-24.04
+          - ubuntu-26.04
         python-version: ["3.14"]
         include:
           - python-version: "3.14"
-            os: ubuntu-24.04
+            os: ubuntu-26.04
             format-for-github: true
     runs-on: ${{ matrix.os }}
 
@@ -51,7 +51,7 @@ jobs:
 
   format:
     name: Format
-    runs-on: [ubuntu-24.04]
+    runs-on: [ubuntu-26.04]
     steps:
       - uses: actions/checkout@v7
 
@@ -72,7 +72,7 @@ jobs:
       fail-fast: false
       matrix:
         # reduced matrix for merge queue to avoid repeated full run
-        os: ${{ fromJSON(github.event_name == 'merge_group' && '["ubuntu-24.04"]' || '["ubuntu-24.04", "windows-2022"]') }}
+        os: ${{ fromJSON(github.event_name == 'merge_group' && '["ubuntu-26.04"]' || '["ubuntu-26.04", "windows-2022"]') }}
         python-version: ${{ fromJSON(github.event_name == 'merge_group' && '["3.15"]' || '["3.14", "3.15"]') }}
         is-draft-pr:
           - ${{ github.event.pull_request.draft == true }}
@@ -98,7 +98,7 @@ jobs:
 
   docs:
     name: Docs
-    runs-on: [ubuntu-24.04]
+    runs-on: [ubuntu-26.04]
 
     steps:
       - uses: actions/checkout@v7
@@ -142,7 +142,7 @@ jobs:
     name: CI success
     needs: [lint, format, test, docs]
     if: ${{ always() }}
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Fail if any required job failed or was cancelled
         if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped') }}
@@ -152,7 +152,7 @@ jobs:
     name: Auto-merge Dependabot PR
     needs: [ci-success]
     if: github.event_name == 'pull_request' && github.event.pull_request.user.login == 'dependabot[bot]' && github.actor == 'dependabot[bot]'
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: write
       pull-requests: write
@@ -180,7 +180,7 @@ jobs:
     name: Publish snapshot to TestPyPI
     needs: [lint, format, test, docs]
     if: ${{ github.event_name != 'merge_group' }}
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       id-token: write
     steps:
@@ -224,7 +224,7 @@ jobs:
 
   publish-docs-from-main:
     name: Publish docs (main)
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     if: ${{ github.ref == 'refs/heads/main' }}
     needs: [lint, format, test, docs]
     steps:
@@ -240,7 +240,7 @@ jobs:
 
   publish-dev-docs-from-pr:
     name: Publish docs (dev)
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     if: ${{ github.event_name == 'pull_request' }}
     needs: [lint, format, test, docs]
     steps:
