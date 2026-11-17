@@ -58,7 +58,7 @@ jobs:
 
   create-github-release-push-tag:
     needs: [require-green-ci]
-    uses: bakdata/ci-templates/.github/workflows/python-uv-release.yaml@2.3.0
+    uses: bakdata/ci-templates/.github/workflows/python-uv-release.yaml@3.0.0
     name: Release
     with:
       release-type: ${{ inputs.release-type }}
