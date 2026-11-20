@@ -70,7 +70,7 @@ steps = linters
 hooks {
   ["post-checkout"] {
     steps {
-      ["uv-sync"] {
+      ["deps"] {
         step_condition = "is_branch_checkout"
         check = "mise deps"
       }
@@ -78,7 +78,7 @@ hooks {
   }
   ["post-merge"] {
     steps {
-      ["uv-sync"] {
+      ["deps"] {
         check = "mise deps"
       }
     }
