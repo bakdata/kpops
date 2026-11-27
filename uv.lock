@@ -388,7 +388,7 @@ wheels = [
 
 [[package]]
 name = "kpops"
-version = "13.0.0"
+version = "13.0.1"
 source = { editable = "." }
 dependencies = [
     { name = "anyio" },

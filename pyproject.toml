@@ -1,6 +1,6 @@
 [project]
 name = "kpops"
-version = "13.0.0"
+version = "13.0.1"
 description = "KPOps is a tool to deploy Kafka pipelines to Kubernetes"
 readme = "README.md"
 license-files = ["LICENSE"]

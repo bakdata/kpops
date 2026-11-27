@@ -2,6 +2,44 @@
 
 All notable changes to this project will be documented in this file.
 
+## [13.0.1](https://github.com/bakdata/kpops/tree/13.0.1) - 2026-11-27
+### What's changed
+
+* ci: bump runners to ubuntu-26.04 and let Dependabot scan composite actions by @disrupted in [#763](https://github.com/bakdata/kpops/pull/763)
+
+* refactor(hk): rename mise deps hooks by @disrupted in [#775](https://github.com/bakdata/kpops/pull/775)
+
+* ci: enqueue Dependabot PRs with app token by @disrupted in [#748](https://github.com/bakdata/kpops/pull/748)
+
+* chore(deps-dev): bump ruff from 0.17.3 to 0.17.4 by @dependabot[bot] in [#774](https://github.com/bakdata/kpops/pull/774)
+
+* chore(deps-dev): bump ty from 0.0.97 to 0.0.100 by @dependabot[bot] in [#773](https://github.com/bakdata/kpops/pull/773)
+
+* ci: bump astral-sh/setup-uv from 10.3.0 to 10.3.3 in /.github/actions/update-docs by @dependabot[bot] in [#770](https://github.com/bakdata/kpops/pull/770)
+
+* ci: bump actions/add-to-project from 2.0.0 to 2.0.1 by @dependabot[bot] in [#768](https://github.com/bakdata/kpops/pull/768)
+
+* ci: bump astral-sh/setup-uv from 10.3.2 to 10.3.3 by @dependabot[bot] in [#767](https://github.com/bakdata/kpops/pull/767)
+
+* ci: bump jdx/mise-action from 5.2.1 to 5.2.7 by @dependabot[bot] in [#766](https://github.com/bakdata/kpops/pull/766)
+
+* ci: bump dprint/check from 2.5 to 2.6 by @dependabot[bot] in [#765](https://github.com/bakdata/kpops/pull/765)
+
+* chore(deps): bump typer from 0.27.3 to 0.29.0 in the production group by @dependabot[bot] in [#769](https://github.com/bakdata/kpops/pull/769)
+
+* chore(deps): bump cachetools from 7.2.8 to 8.0.0 by @dependabot[bot] in [#772](https://github.com/bakdata/kpops/pull/772)
+
+* chore(deps): bump croniter from 6.2.4 to 7.0.0 by @dependabot[bot] in [#771](https://github.com/bakdata/kpops/pull/771)
+
+* ci: bump the ci-templates group across 1 directory with 2 updates by @dependabot[bot] in [#764](https://github.com/bakdata/kpops/pull/764)
+
+* chore(deps): bump soupsieve from 3.0.4 to 4.0 by @dependabot[bot] in [#776](https://github.com/bakdata/kpops/pull/776)
+
+* Add missing config types by @philipp94831 in [#777](https://github.com/bakdata/kpops/pull/777)
+
+
+**Full Changelog**: https://github.com/bakdata/kpops/compare/13.0.0...13.0.1
+
 ## [13.0.0](https://github.com/bakdata/kpops/tree/13.0.0) - 2026-11-16
 ### What's changed
 
