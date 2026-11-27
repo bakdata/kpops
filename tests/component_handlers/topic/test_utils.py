@@ -261,3 +261,48 @@ def test_get_effective_config() -> None:
         "default.replication.factor": "10",
         "num.partitions": "1",
     }
+
+
+def test_get_effective_config_dynamic_default_broker_config() -> None:
+    broker_config_response = BrokerConfigResponse.model_validate(
+        {
+            "kind": "KafkaBrokerConfigList",
+            "metadata": {
+                "self": "https://pkc-00000.region.provider.confluent.cloud/kafka/v3/clusters/cluster-1/brokers/-/configs",
+                "next": "null",
+            },
+            "data": [
+                {
+                    "kind": "KafkaBrokerConfig",
+                    "metadata": {
+                        "self": "https://pkc-00000.region.provider.confluent.cloud/kafka/v3/clusters/cluster-1/brokers/0/configs/default.replication.factor",
+                        "resource_name": "crn:///kafka=cluster-1/broker=0/config=default.replication.factor",
+                    },
+                    "cluster_id": "cluster-1",
+                    "broker_id": "0",
+                    "name": "default.replication.factor",
+                    "value": "3",
+                    "is_default": "false",
+                    "is_read_only": "false",
+                    "is_sensitive": "false",
+                    "source": "DYNAMIC_DEFAULT_BROKER_CONFIG",
+                    "synonyms": [
+                        {
+                            "name": "default.replication.factor",
+                            "value": "3",
+                            "source": "DYNAMIC_DEFAULT_BROKER_CONFIG",
+                        },
+                        {
+                            "name": "default.replication.factor",
+                            "value": "1",
+                            "source": "DEFAULT_CONFIG",
+                        },
+                    ],
+                },
+            ],
+        }
+    )
+
+    assert get_effective_config(broker_config_response) == {
+        "default.replication.factor": "3",
+    }

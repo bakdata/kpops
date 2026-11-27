@@ -73,7 +73,10 @@ class TopicConfigResponse(BaseModel):
 class KafkaBrokerConfigSource(UpperStrEnum):
     STATIC_BROKER_CONFIG = auto()
     DYNAMIC_BROKER_CONFIG = auto()
+    DYNAMIC_DEFAULT_BROKER_CONFIG = auto()
+    DYNAMIC_BROKER_LOGGER_CONFIG = auto()
     DEFAULT_CONFIG = auto()
+    UNKNOWN = auto()
 
 
 class KafkaBrokerConfigSynonyms(BaseModel):
