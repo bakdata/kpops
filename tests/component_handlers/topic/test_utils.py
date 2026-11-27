@@ -215,6 +215,28 @@ def test_get_effective_config() -> None:
                 {
                     "kind": "KafkaBrokerConfig",
                     "metadata": {
+                        "self": "https://pkc-00000.region.provider.confluent.cloud/kafka/v3/clusters/cluster-1/brokers/0/configs/log.retention.ms",
+                        "resource_name": "crn:///kafka=cluster-1/broker=0/config=log.retention.ms",
+                    },
+                    "cluster_id": "cluster-1",
+                    "broker_id": "0",
+                    "name": "log.retention.ms",
+                    "value": "86400000",
+                    "is_default": "false",
+                    "is_read_only": "false",
+                    "is_sensitive": "false",
+                    "source": "DYNAMIC_DEFAULT_BROKER_CONFIG",
+                    "synonyms": [
+                        {
+                            "name": "log.retention.ms",
+                            "value": "86400000",
+                            "source": "DYNAMIC_DEFAULT_BROKER_CONFIG",
+                        },
+                    ],
+                },
+                {
+                    "kind": "KafkaBrokerConfig",
+                    "metadata": {
                         "self": "https://pkc-00000.region.provider.confluent.cloud/kafka/v3/clusters/cluster-1/brokers/0/configs/log.flush.interval.ms",
                         "resource_name": "crn:///kafka=cluster-1/broker=0/config=log.flush.interval.ms",
                     },
@@ -260,4 +282,5 @@ def test_get_effective_config() -> None:
     assert effective_config == {
         "default.replication.factor": "10",
         "num.partitions": "1",
+        "log.retention.ms": "86400000",
     }
